@@ -3,19 +3,11 @@ import styled, { keyframes } from "styled-components";
 
 export const WrapperHeader = styled(Row)`
 padding: 10px 120px;
-background-color: #4a90e2 
+background-color: #FF3300 ;
+align-items: center;
+flex-wrap : nowrap;
 `
-const blinkAnimation = keyframes`
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.3;
-  }
-  100% {
-    opacity: 1;
-  }
-`;
+
 
 export const WrapperHeaderImage = styled.span`
 `;
@@ -24,7 +16,7 @@ export const WrapperHeaderAccount = styled.div`
     align-items: center;
     color: #fff;
     gap: 10px;
- 
+    white-space: nowrap;
     button.custom-button {
         background-color: #007bff; /* Màu xanh đậm */
         color: #fff; /* Màu chữ trắng */

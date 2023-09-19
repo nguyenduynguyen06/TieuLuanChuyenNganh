@@ -1,4 +1,4 @@
-import HomePage from "../pages/homepages";
+import HomePage from "../pages/HomePage/homepages";
 import NotFoundPage from "../pages/notfoundpage";
 import OrderPage from "../pages/oders";
 import ProductPage from "../pages/product";

@@ -8,15 +8,16 @@ import {
     SearchOutlined
   } from '@ant-design/icons';
 import TypeProducts from "./typeproducts";
-const arr = ['XIaomi','Iphone','Samsung']
+const arr = ['Xiaomi','Iphone','Samsung']
 const Header = () => {
     return (
         <div> 
     <WrapperHeader>
-    <Col span={7} className="ant-col">
+    <Col span={4}></Col>
+    <Col span={4} className="ant-col">
         
          <WrapperHeaderImage className="ant-image">
-            <img src="/image/didong.png" alt="blink" />
+            <img src="/image/didongg.png" alt="blink" />
         </WrapperHeaderImage>
     </Col>
         <Col span={8}>
@@ -41,9 +42,6 @@ const Header = () => {
     <Col span={2}></Col>
         <Col span={7} >
             <WrapperHeaderAccount>
-                <div>
-
-                </div>
             <UserOutlined style={{fontSize: '30px'}}/>
             <div>
                 <span style={{fontSize: '15px'}}>
@@ -60,7 +58,7 @@ const Header = () => {
                     Đăng ký
                 </span>
             </div>
-            <div><button class="custom-button">
+            <div><button class="custom-button" style={{backgroundColor: '#CC0000'}}>
             <ShoppingCartOutlined style={{fontSize: '20px'}} > 
             </ShoppingCartOutlined>&nbsp;Giỏ hàng
             </button>
