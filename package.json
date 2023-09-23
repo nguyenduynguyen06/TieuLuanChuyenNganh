@@ -1,0 +1,26 @@
+{
+  "name": "tieuluanchuyennganh",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon --quiet server/app.js",
+    "client": "npm start --prefix client",
+    "start": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nguyenduynguyen06/TieuLuanChuyenNganh.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nguyenduynguyen06/TieuLuanChuyenNganh/issues"
+  },
+  "homepage": "https://github.com/nguyenduynguyen06/TieuLuanChuyenNganh#readme",
+  "dependencies": {
+    "mongoose": "^7.5.2",
+    "react-router-dom": "^6.16.0"
+  }
+}

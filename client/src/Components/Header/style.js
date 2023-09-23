@@ -32,6 +32,18 @@ export const WrapperHeaderAccount = styled.div`
     button.custom-button:hover {
         background-color: #0056b3; /* Màu xanh đậm khi hover */
     }
+    .popup {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      .custom-toggle:hover {
+        background-color: lightgray;
+      }
 `
 export const WrapperHeaderProduct = styled.div`
     display: flex;
