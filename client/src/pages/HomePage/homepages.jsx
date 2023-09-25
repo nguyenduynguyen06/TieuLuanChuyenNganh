@@ -1,26 +1,36 @@
 import React from "react";
-import { WrapperHomePage, WrapperNa } from "./styled";
+import { WrapperHomePage } from "./styled";
 import { Col} from 'antd'
 import Category from '../category/category'
-import Slide from "../../Components/Slider/Slide";
-import Slider1 from "../../image/slide1.png"
-import Slider2 from "../../image/slide2.png"
-import Slider3 from "../../image/slide3.png"
+import Slide from "../../Components/Slider/Slide"
+import Imagebanner from "./imagebanner";
+import ProductHomePage from "./ProducHomePage/producthomepage";
+
 const HomePage = () => {
     return(
         <div>
             <WrapperHomePage>
-                <Col span={4}></Col>
+            <Col style={{padding: '5px'}}>  </Col>
+         <Col span={4} style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}><Imagebanner></Imagebanner>
+</Col>
+
+                
+                <Col style={{padding: '15px'}}>  </Col>
                  <Col span={15}>
-                    <div id = "container" style={{backgroundColor: '#FF3300', padding: '0 120px'}}>
-                    <Slide arrImage = {[Slider1, Slider2, Slider3]} />
+                    <div id = "container">
+                    <Slide />
                     </div>
                     <br />
                     <br />
                     <Category></Category>
-             
+                    <br />
+                    <br />
+                    <ProductHomePage></ProductHomePage>
                   
-                 </Col> 
+                 </Col>
+                 <Col style={{padding: '15px'}}></Col>
+               <Col span={4} style={{ whiteSpace: 'nowrap',overflow: 'hidden'}}> <Imagebanner/></Col>
+            
             </WrapperHomePage>
         </div>
         

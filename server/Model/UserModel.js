@@ -5,29 +5,31 @@ const UserSchema = new mongoose.Schema({
         type: String,
         require: true
     },
+    phone_number: {
+        type: Number,
+        require: true
+    },
     email: {
         type: String,
         require: true,
         unique: true
     },
-    phone_number: {
-        type: Number,
-        require: true
-    },
-    addRess: {
-        type: String,
-        require: true
-    },
     passWord: {
         type: String,
         require: true
+    },
+    googleId: {
+        type: String
+    },
+    facebookId: {
+        type: String
     },
     role_id: {
         type: String,
         require: true
     },
-    creat_at: {
-        type: Date,
+    addRess: {
+        type: String,
         require: true
     },
     status: {
@@ -35,9 +37,11 @@ const UserSchema = new mongoose.Schema({
         require: true
     },
     avatar: {
-        type: String,
-        require: false
+        type: String
     },
+    birthDay:{
+        type: String
+    }
 });
 const User = mongoose.model('User', UserSchema);
 module.exports = User;

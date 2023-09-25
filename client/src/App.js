@@ -2,6 +2,8 @@ import React, { Fragment } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { routes } from './routes';
 import Default from './Components/defaut';
+import Footer from './Components/Footer/footer';
+
 
 
 function App() {
@@ -11,24 +13,14 @@ function App() {
         <Routes>
           {routes.map((route) => {
             const Layout = route.isShowHeader ? Default : Fragment;
-            return (
-              <Route key={route.path} path={route.path} element={
-                  <Layout>
-                  </Layout>
-              } />
-            );
-          })}
-        </Routes>
-      </Router>
-
-
-      <Router>
-        <Routes>
-          {routes.map((route) => {
             const Page = route.page;
             return (
               <Route key={route.path} path={route.path} element={
-                  <Page />
+                  <>
+                  <Layout/>
+            <Page/>
+            <Footer/>
+                </>
               } />
             );
           })}

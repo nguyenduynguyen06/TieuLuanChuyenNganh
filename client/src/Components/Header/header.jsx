@@ -1,5 +1,5 @@
 import React, { useState }from "react";
-import { Col} from 'antd';
+import { Button, Col} from 'antd';
 import axios from "axios";
 import { WrapperHeader, WrapperHeaderAccount, WrapperHeaderImage, WrapperHeaderProduct} from "./style";
 import Search from "antd/es/input/Search";
@@ -52,19 +52,22 @@ const Header = () => {
     return (
         <div> 
     <WrapperHeader>
-    <Col span={4}></Col>
+    <Col span={2}></Col>
     <Col span={4} className="ant-col">
         
          <WrapperHeaderImage className="ant-image">
-            <img src="/image/didongg.png" alt="blink" />
+           <a href="/"> <img src="/image/didong1.png" alt="blink" /> </a>
         </WrapperHeaderImage>
     </Col>
-        <Col span={8}>
+    <Col span={1}></Col>
+        <Col span={9}>
+        
         <Search
             placeholder="Tìm Kiếm"
             allowClear
-            enterButton={<SearchOutlined />}
+            enterButton={<Button style={{background:'#FF3300'}}><SearchOutlined style={{width: '10px',height: '20px',color: 'white'}}/> </Button>}
             size="large"
+            
             //onSearch={handleSearch}
          />
          <div >
@@ -77,6 +80,7 @@ const Header = () => {
                 )}
             </WrapperHeaderProduct>
          </div>
+         <Col span={1}></Col>
         </Col>
     <Col span={1}></Col>
         <Col span={7} >
@@ -127,6 +131,7 @@ const Header = () => {
             </div>
             </WrapperHeaderAccount>
             </Col>
+            
     </WrapperHeader>
 
 

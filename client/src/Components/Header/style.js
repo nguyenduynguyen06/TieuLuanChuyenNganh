@@ -1,9 +1,11 @@
 import { Row } from "antd";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 
 export const WrapperHeader = styled(Row)`
-padding: 10px 120px;
-background-color: #FF3300 ;
+padding: 15px 120px;
+background-size: cover;
+
+background-image: url('./image/giangsinhvuive.png');
 align-items: center;
 flex-wrap : nowrap;
 `
@@ -41,9 +43,6 @@ export const WrapperHeaderAccount = styled.div`
         -ms-user-select: none;
         user-select: none;
       }
-      .custom-toggle:hover {
-        background-color: lightgray;
-      }
 `
 export const WrapperHeaderProduct = styled.div`
     display: flex;
@@ -53,5 +52,10 @@ export const WrapperHeaderProduct = styled.div`
     color: #fff;
     font-size: 12px; /* Đặt kích thước chữ là 14px */
     font-weight: bold; /* Đặt độ đậm cho chữ */
-    height: 40px;
+    height: 30px;
+`
+export const WrapperHomePage = styled(Row)`
+padding: 20px 0px;
+background-color: #ffff
+
 `

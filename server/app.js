@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const connect2DB = require('./config/data');
-const routerUser = require('./api/user');
+const routerUser = require('./Router/UserRouter');
 const bodyParser = require('body-parser');
 const server = require('http').createServer(app);
 

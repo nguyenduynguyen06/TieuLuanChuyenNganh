@@ -9,10 +9,10 @@ const gridStyle = {
 const Category= () => {
   const handleCardClick = (id) => {
    
-    window.location.href = `/product/${id}`;
+    window.location.href = `/category/${id}`;
   };
   return (
-    <Card title={<span style={{ fontSize: '24px' }}>Danh mục điện thoại</span>}>
+    <Card title={<span style={{ fontSize: '24px' ,color:'#FF3300'}}>Danh mục điện thoại</span>}>
       <Card.Grid style={{ ...gridStyle,cursor: 'pointer' }}   onClick={() => handleCardClick(123)}>
       <img
         src='https://images.fpt.shop/unsafe/fit-in/60x60/filters:quality(90):fill(transparent)/fptshop.com.vn/Uploads/images/2015/img-dienthoai-desk.png'

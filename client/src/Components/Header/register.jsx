@@ -66,7 +66,7 @@ function Register() {
     <form className="form-add-new" onSubmit={signupHandler} >
     <MDBContainer fluid>
 
-      <div className="p-5 bg-image" style={{backgroundImage: 'url(https://mdbootstrap.com/img/new/textures/full/171.jpg)', height: '300px'}}></div>
+      <div className="p-5 bg-image" style={{backgroundImage: 'url(https://img.freepik.com/premium-vector/happy-new-year-merry-christmas-horizontal-greeting_68196-4482.jpg?w=1800)', height: '300px'}}></div>
 
       <MDBCard className='mx-5 mb-5 p-5 shadow-5' style={{marginTop: '-100px', background: 'hsla(0, 0%, 100%, 0.8)', backdropFilter: 'blur(30px)'}}>
         <MDBCardBody className='p-5 text-center'>
@@ -95,7 +95,7 @@ function Register() {
           <MDBInput wrapperClass='mb-4' label='Password' name="passWord" value={user.passWord} onChange={onChange} type='password' tabIndex="5" onBlur={() => {setPasswordsMatch(user.passWord === user.confirmPassword);}} />
           <MDBInput wrapperClass='mb-4' label='Nhập lại password' name="confirmPassword" value={user.confirmPassword} onChange={onChange} type='password' tabIndex="6"  onBlur={() => {setPasswordsMatch(user.passWord === user.confirmPassword);}}/>
 
-          <MDBBtn className='w-100 mb-4' size='md'>Đăng ký</MDBBtn>
+          <MDBBtn className='w-100 mb-4' size='md' style={{background: '#FF3300'}}>Đăng ký</MDBBtn>
 
 
         </MDBCardBody>

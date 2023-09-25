@@ -1,6 +1,0 @@
-/* Thêm CSS vào tệp CSS của bạn hoặc tệp CSS của react-slick */
-.slick-prev:before,
-.slick-next:before {
-  color: #000; /* Màu đen cho biểu tượng nút previous và next */
-  font-size: 24px; /* Kích thước biểu tượng */
-}
