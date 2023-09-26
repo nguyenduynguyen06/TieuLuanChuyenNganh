@@ -25,7 +25,7 @@ import {useDispatch} from 'react-redux'
 import { resetUser } from "../../redux/Slide/userSlice";
 const arr = ['Xiaomi','Iphone','Samsung']
 
-const Header = () => {
+const Header = ({isHiddenSearch = false, isHiddenCart = false}) => {
   const dispatch = useDispatch();
   const handleLogout = async () => {
     try {
@@ -64,7 +64,7 @@ const Header = () => {
     </Col>
     <Col span={1}></Col>
         <Col span={9}>
-        
+        {!isHiddenSearch && (   
         <Search
             placeholder="Tìm Kiếm"
             allowClear
@@ -72,8 +72,9 @@ const Header = () => {
             size="large"
             
             //onSearch={handleSearch}
-         />
+         />)}
          <div >
+         {!isHiddenSearch && (   
             <WrapperHeaderProduct>
                 {arr.map((item) => {
                     return(
@@ -81,7 +82,7 @@ const Header = () => {
                     )
                 }
                 )}
-            </WrapperHeaderProduct>
+            </WrapperHeaderProduct>)}
          </div>
          <Col span={1}></Col>
         </Col>
@@ -127,11 +128,12 @@ const Header = () => {
             </div>   
          </div>
       )}
+      {!isHiddenCart && (
             <div><button class="custom-button" style={{backgroundColor: '#CC0000'}}>
             <ShoppingCartOutlined style={{fontSize: '20px'}} > 
             </ShoppingCartOutlined>&nbsp;Giỏ hàng
             </button>
-            </div>
+            </div>)}
             </WrapperHeaderAccount>
             </Col>
             

@@ -8,30 +8,27 @@ import ProductHomePage from "./ProducHomePage/producthomepage";
 
 const HomePage = () => {
     return(
-        <div>
-            <WrapperHomePage>
-            <Col style={{padding: '5px'}}>  </Col>
-         <Col span={4} style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}><Imagebanner></Imagebanner>
-</Col>
+        <div className="container">
+<WrapperHomePage >
+    <Col style={{ width: '10%' , paddingLeft: '10px' ,overflow: 'hidden'}}>
+    <Imagebanner>
+    </Imagebanner>
+  </Col>
+  <Col style={{ width: '79%', paddingLeft: '10px', paddingRight: '10px' }}>
+    <div id="container">
+      <Slide />
+    </div>
+    <br /> <br />
+    <Category></Category>
+    <br /><br />
+    <ProductHomePage></ProductHomePage>
+  </Col>
+  <Col style={{ width: '10%' , overflow: 'hidden',paddingRight: '20px' }}>
+    <Imagebanner>
+    </Imagebanner>
+  </Col>
+</WrapperHomePage>
 
-                
-                <Col style={{padding: '15px'}}>  </Col>
-                 <Col span={15}>
-                    <div id = "container">
-                    <Slide />
-                    </div>
-                    <br />
-                    <br />
-                    <Category></Category>
-                    <br />
-                    <br />
-                    <ProductHomePage></ProductHomePage>
-                  
-                 </Col>
-                 <Col style={{padding: '15px'}}></Col>
-               <Col span={4} style={{ whiteSpace: 'nowrap',overflow: 'hidden'}}> <Imagebanner/></Col>
-            
-            </WrapperHomePage>
         </div>
         
     );

@@ -1,4 +1,4 @@
-import AdminHomePage from "../Components/admin/adminHomePage";
+import AdminHomePage from "../pages/Admin/AdminPage";
 import HomePage from "../pages/HomePage/homepages";
 import NotFoundPage from "../pages/notfoundpage";
 import OrderPage from "../pages/oders";
