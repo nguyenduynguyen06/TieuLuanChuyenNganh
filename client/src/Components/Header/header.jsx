@@ -20,11 +20,17 @@ import {
     MDBModalBody
   } from 'mdb-react-ui-kit';
 import Register from "./register";
+import { useSelector } from "react-redux";
+import {useDispatch} from 'react-redux'
+import { resetUser } from "../../redux/Slide/userSlice";
 const arr = ['Xiaomi','Iphone','Samsung']
+
 const Header = () => {
+  const dispatch = useDispatch();
   const handleLogout = async () => {
     try {
       await axios.post('http://localhost:5000/user/Logout', {}, { withCredentials: true }); 
+      dispatch(resetUser)
       localStorage.clear();
       window.location.reload();
     } catch (error) {
@@ -39,13 +45,10 @@ const Header = () => {
 
     const toggleShow1 = () => setCentredModal1(!centredModal1);
 
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    const fullName = localStorage.getItem('fullName');
-    const role_id = localStorage.getItem('role_id');
-
-  const closePopup = () => {
-    setCentredModal(false);
-  };
+    const user = useSelector((state)=> state.user)
+    const closePopup = () => {
+      setCentredModal(false);
+    };
 
   
   
@@ -85,14 +88,14 @@ const Header = () => {
     <Col span={1}></Col>
         <Col span={7} >
             <WrapperHeaderAccount>
-            {isLoggedIn ? (        
+            {user?.fullName ? (        
         <div>
           <MDBDropdown clickable >
                <MDBDropdownToggle tag="span"  style={{width: '50px', height: '50px',cursor: 'pointer'}}>
-                       <UserOutlined style={{fontSize: '30px'}}/> Xin chào, {fullName}
+                       <UserOutlined style={{fontSize: '30px'}}/> Xin chào, {user.fullName}
              </MDBDropdownToggle>
                    <MDBDropdownMenu>
-                   {role_id === '1' ? (
+                   {user.role_id == 1 ? (
                       <MDBDropdownItem link  href="/admin">Quản lý</MDBDropdownItem>
                     ) : (
                       <span></span>

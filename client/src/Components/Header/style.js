@@ -2,7 +2,7 @@ import { Row } from "antd";
 import styled from "styled-components";
 
 export const WrapperHeader = styled(Row)`
-padding: 15px 120px;
+padding: 20px 120px;
 background-size: cover;
 
 background-image: url('./image/giangsinhvuive.png');
@@ -54,8 +54,4 @@ export const WrapperHeaderProduct = styled.div`
     font-weight: bold; /* Đặt độ đậm cho chữ */
     height: 30px;
 `
-export const WrapperHomePage = styled(Row)`
-padding: 20px 0px;
-background-color: #ffff
 
-`

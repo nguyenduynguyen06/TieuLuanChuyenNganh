@@ -1,4 +1,4 @@
-import adminHomePage from "../Components/admin/adminHomePage";
+import AdminHomePage from "../Components/admin/adminHomePage";
 import HomePage from "../pages/HomePage/homepages";
 import NotFoundPage from "../pages/notfoundpage";
 import OrderPage from "../pages/oders";
@@ -26,6 +26,6 @@ export const routes = [
     },
     {
         path:'/admin',
-        page: adminHomePage
+        page: AdminHomePage
     }
 ]

@@ -12,10 +12,14 @@ import {
   MDBIcon
 }
 from 'mdb-react-ui-kit';
-
+import jwt_decode from "jwt-decode";
+import {useDispatch} from 'react-redux'
+import { updateUser } from "../../redux/Slide/userSlice";
 
 function Login({ onClose }) {
   const [message, setMessage] = useState('');
+  const axiosJWT = axios.create();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [user, setUser] = useState({
       email: '',
@@ -26,24 +30,39 @@ function Login({ onClose }) {
       setUser({ ...user, [event.target.name]: event.target.value });
   }
 
-  
-  const loginHandler = event => {
+const loginHandler = event => {
       event.preventDefault();
-      axios.post('http://localhost:5000/user/Login', user,
+      axios.post(`http://localhost:5000/user/Login`, user,
           {
               withCredentials: true,
           })
           .then((res) => {
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('fullName', res.data.fullName)
-            localStorage.setItem('role_id', res.data.role_id)
+            localStorage.setItem('access_token', JSON.stringify(res.data.access_Token))
+            if(res.data.access_Token)
+            {
+              const decoded = jwt_decode(res.data.access_Token);
+              if(decoded.id){
+                  handleGetDetails(decoded.id,res.data.access_Token)
+              }
+            }
               navigate('/');
               onClose();
           }).catch((err) => {
               setMessage(`Hãy kiểm tra lại email hoặc password`);
           })
   }
-
+ const handleGetDetails = async (id,access_Token) => {
+    try {
+      const res = await axiosJWT.get(`http://localhost:5000/user/get-Detail/${id}`, {
+          headers: {
+            token: `Bearer ${access_Token}`, 
+          }
+      })
+        dispatch(updateUser({...res.data.data, access_token: access_Token}))
+  } catch (error) {
+      console.log('Lỗi:', error);
+  }
+}
 
 
 

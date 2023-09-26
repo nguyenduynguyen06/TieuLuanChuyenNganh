@@ -41,7 +41,7 @@ function Register() {
         setMessage("Xác nhận password sai");
         return; 
       }
-      axios.post('http://localhost:5000/user/Register', user,
+      axios.post(`http://localhost:5000/user/Register`, user,
           {
               withCredentials: true,
           })

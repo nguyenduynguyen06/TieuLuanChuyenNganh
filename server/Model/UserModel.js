@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema({
         type: String
     },
     role_id: {
-        type: String,
+        type: Number,
         require: true
     },
     addRess: {
