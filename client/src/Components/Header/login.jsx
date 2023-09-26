@@ -32,7 +32,7 @@ function Login({ onClose }) {
 
 const loginHandler = event => {
       event.preventDefault();
-      axios.post(`http://localhost:5000/user/Login`, user,
+      axios.post(`${process.env.REACT_APP_API_URL}/user/Login`, user,
           {
               withCredentials: true,
           })
@@ -53,7 +53,7 @@ const loginHandler = event => {
   }
  const handleGetDetails = async (id,access_Token) => {
     try {
-      const res = await axiosJWT.get(`http://localhost:5000/user/get-Detail/${id}`, {
+      const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/user/get-Detail/${id}`, {
           headers: {
             token: `Bearer ${access_Token}`, 
           }

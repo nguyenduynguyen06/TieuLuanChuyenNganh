@@ -29,7 +29,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/user/Logout', {}, { withCredentials: true }); 
+      await axios.post(`${process.env.REACT_APP_API_URL}/user/Logout`, {}, { withCredentials: true }); 
       dispatch(resetUser)
       localStorage.clear();
       window.location.reload();

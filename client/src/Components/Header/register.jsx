@@ -41,7 +41,7 @@ function Register() {
         setMessage("Xác nhận password sai");
         return; 
       }
-      axios.post(`http://localhost:5000/user/Register`, user,
+      axios.post(`${process.env.REACT_APP_API_URL}/user/Register`, user,
           {
               withCredentials: true,
           })
