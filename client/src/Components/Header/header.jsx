@@ -32,7 +32,7 @@ const Header = ({isHiddenSearch = false, isHiddenCart = false}) => {
       await axios.post(`${process.env.REACT_APP_API_URL}/user/Logout`, {}, { withCredentials: true }); 
       dispatch(resetUser)
       localStorage.clear();
-      window.location.reload();
+      window.location.href = '/';
     } catch (error) {
       console.error('Đã xảy ra lỗi khi đăng xuất:', error);
     }

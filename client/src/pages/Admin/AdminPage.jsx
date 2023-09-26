@@ -79,7 +79,9 @@ const AdminHomePage = () => {
     </>);
   } else {
     return (
-      window.location.href = '/'
+      <div>
+        <h1>Bạn không có quyền truy cập trang Admin</h1>
+      </div>
     );
   }
 }
