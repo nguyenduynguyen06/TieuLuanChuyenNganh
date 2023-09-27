@@ -20,6 +20,11 @@
   },
   "homepage": "https://github.com/nguyenduynguyen06/TieuLuanChuyenNganh#readme",
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.11",
+    "@mui/material": "^5.14.11",
+    "@mui/x-date-pickers": "^6.15.0",
     "mongoose": "^7.5.2",
     "nodemon": "^3.0.1",
     "react-router-dom": "^6.16.0"

@@ -11,10 +11,7 @@ import {
   MDBFile,
 }
 from 'mdb-react-ui-kit';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 import { useSelector } from "react-redux";
 import axios from 'axios';
 const UpdateUser = () => {
