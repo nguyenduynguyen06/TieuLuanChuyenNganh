@@ -6,6 +6,7 @@ const initialState ={
   email: '',
   access_token: '',
   role_id: '',
+  id: ''
 }
 
 export const userSlice = createSlice({
@@ -13,7 +14,8 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     updateUser: (state,action)=>{
-        const {fullName, email, role_id, access_token, addRess, birthDay, phone_number,status} = action.payload
+        const {_id ,fullName, email, role_id, access_token, addRess, birthDay, phone_number,status} = action.payload
+        state._id = _id
         state.fullName = fullName
         state.email = email
         state.role_id = role_id
@@ -24,6 +26,7 @@ export const userSlice = createSlice({
         state.status = status
     },
     resetUser: (state)=>{
+      state.id = ''
       state.fullName = ''
       state.email = ''
       state.role_id = ''

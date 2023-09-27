@@ -50,9 +50,9 @@ const userLogin = async (req, res) => {
                     role_id: userFound.role_id
                 });
                 
-                // Combine access and refresh tokens into a single object
+                
                 const tokenData = refresh_Token
-                res.cookie('refresh_token', tokenData, { httpOnly: true, secure:true, samesite: 'strict',expires: new Date(Date.now() + 860000) });
+                res.cookie('refresh_token', tokenData, { httpOnly: true, secure:true, samesite: 'strict',expires: new Date(Date.now() + 8600000000) });
                 return res.status(200).json({
                    access_Token,
                    refresh_Token

@@ -1,5 +1,6 @@
 import AdminHomePage from "../pages/Admin/AdminPage";
 import HomePage from "../pages/HomePage/homepages";
+import Profilepage from "../pages/Profile/profilepage";
 import NotFoundPage from "../pages/notfoundpage";
 import OrderPage from "../pages/oders";
 import ProductPage from "../pages/product";
@@ -27,5 +28,10 @@ export const routes = [
     {
         path:'/admin',
         page: AdminHomePage
+    },
+    {
+        path:'/profile',
+        page: Profilepage,
+        isShowHeader : true
     }
 ]

@@ -101,7 +101,7 @@ const Header = ({isHiddenSearch = false, isHiddenCart = false}) => {
                     ) : (
                       <span></span>
                     )}
-                     <MDBDropdownItem link>Thông tin cá nhân</MDBDropdownItem>
+                     <MDBDropdownItem link href="/profile">Thông tin cá nhân</MDBDropdownItem>
                      <MDBDropdownItem link onClick={handleLogout}>Đăng xuất</MDBDropdownItem>
                    </MDBDropdownMenu>
               </MDBDropdown>
