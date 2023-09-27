@@ -17,15 +17,12 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useSelector } from "react-redux";
 import axios from 'axios';
-import { useNavigate } from "react-router-dom";
 const UpdateUser = () => {
     const user = useSelector((state)=> state.user)
-    const navigate = useNavigate();
     const [user1, setUser] = useState({
         fullName: '',
         addRess: '',
         phone_number: '',
-        email: '',
         birthDay: '',
         avatar: ''   
       });
@@ -35,19 +32,15 @@ const UpdateUser = () => {
       }
       
 const updateUser = event => {
-        axios.put(`${process.env.REACT_APP_API_URL}/user/update/${user._id}`, user1, {
-            
-          })
+        axios.put(`${process.env.REACT_APP_API_URL}/user/update/${user._id}`, user1)
           .then((res) => {
             setUser({
               fullName: '',
               addRess: '',
               phone_number: '',
-              email: '',
               birthDay: '', 
               avatar: ''    
             });
-            navigate('/');
           }).catch((err) => {
             console.log('err',err)
           })
@@ -61,7 +54,7 @@ const updateUser = event => {
       <MDBCard className='mx-5 mb-5 p-5 shadow-5' style={{marginTop: '-100px', background: 'hsla(0, 0%, 100%, 0.8)', backdropFilter: 'blur(30px)'}}>
         <MDBCardBody className='p-5 text-center'>
      
-        <form className="form-add-new"  onClick={updateUser}>
+        <form className="form-add-new"  onSubmit={updateUser}>
           <h2 className="fw-bold mb-5">Cập nhật thông tin</h2>
           <MDBRow>
             <MDBCol col='6'>
