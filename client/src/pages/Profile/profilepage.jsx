@@ -42,7 +42,7 @@ const Profilepage = () => {
                 fluid />
               <p className="text-muted mb-1"></p>
               <div className="d-flex justify-content-center mb-2">
-              <MDBBtn onClick={toggleShow1}>Cập nhật thông tin</MDBBtn>
+              <MDBBtn onClick={toggleShow1} style={{backgroundColor: "#FF3300"}}>Cập nhật thông tin</MDBBtn>
                 <MDBBtn  className="ms-1">Đổi mật khẩu</MDBBtn>
               </div>
             </MDBCardBody>

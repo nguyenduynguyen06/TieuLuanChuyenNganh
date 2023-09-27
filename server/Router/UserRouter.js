@@ -11,7 +11,7 @@ router.post('/Login', userAuthenticate.userLogin);
 
 router.post('/Logout', userAuthenticate.userLogout);
 
-router.put('/update/:id',  userAuthenticate.userUpdate);
+router.post('/update/:id',  userAuthenticate.userUpdate);
 router.delete('/delete/:id', authMiddleware, userAuthenticate.deleteUser);
 router.get('/getAll',authMiddleware,userAuthenticate.getAllUser)
 
