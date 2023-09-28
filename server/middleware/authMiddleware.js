@@ -41,5 +41,19 @@ const authUserMiddleware = (req,res, next) => {
             }
       });
 }
+const verifyRefreshToken = (req, res, next) => {
+    const refreshToken = req.cookies.refresh_token; 
 
-module.exports = {authMiddleware,authUserMiddleware}
+    if (!refreshToken) {
+        return res.status(401).json({ msg: 'Không tìm thấy refresh_token trong cookie' });
+    }
+
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN, (err, user) => {
+        if (err) {
+            return res.status(401).json({ msg: 'refresh_token không hợp lệ' });
+        }
+        req.user = user; 
+        next();
+    });
+};
+module.exports = {authMiddleware,authUserMiddleware,verifyRefreshToken}

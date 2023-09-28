@@ -15,13 +15,11 @@ import { useSelector } from "react-redux";
 import axios from 'axios';
 const UpdateUser = () => {
     const user = useSelector((state)=> state.user)
-    console.log('user',user)
     const [user1, setUser] = useState({
         fullName:  user.fullName,
         addRess: user.addRess,
         phone_number: user.phone_number,
-        birthDay: user.birthDay,
-        avatar: ``   
+        birthDay: user.birthDay,  
       });
       
       const onChange = event => {
@@ -51,13 +49,6 @@ const UpdateUser = () => {
             `${process.env.REACT_APP_API_URL}/user/update/${user._id}`,
             updatedData
           );
-          setUser({
-            fullName: '',
-            addRess: '',
-            phone_number: '',
-            birthDay: '',
-            avatar: '',
-          });
           window.location.reload();
         } catch (error) {
           console.error('Lỗi khi cập nhật thông tin:', error);
@@ -69,7 +60,7 @@ const UpdateUser = () => {
 
       <div className="p-5 bg-image"></div>
 
-      <MDBCard className='mx-5 mb-5 p-5 shadow-5' style={{marginTop: '-100px', background: 'hsla(0, 0%, 100%, 0.8)', backdropFilter: 'blur(30px)'}}>
+     
         <MDBCardBody className='p-5 text-center'>
      
       
@@ -87,7 +78,7 @@ const UpdateUser = () => {
         <br />
      <a href="/profile"> <MDBBtn className='w-100 mb-4' size='md' style={{background: '#FF3300'}}>Lưu</MDBBtn> </a> 
         </MDBCardBody>
-      </MDBCard>
+      
     </MDBContainer>
     </form>
   )

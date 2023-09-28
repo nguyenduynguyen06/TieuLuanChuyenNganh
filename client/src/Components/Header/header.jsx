@@ -5,9 +5,9 @@ import { WrapperHeader, WrapperHeaderAccount, WrapperHeaderImage, WrapperHeaderP
 import Search from "antd/es/input/Search";
 import { MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem } from 'mdb-react-ui-kit';
 import {
-    UserOutlined,
     ShoppingCartOutlined,
-    SearchOutlined
+    SearchOutlined,
+    UserOutlined
   } from '@ant-design/icons';
 import TypeProducts from "./typeproducts";
 import Login  from "./login"
@@ -60,7 +60,6 @@ const Header = ({isHiddenSearch = false, isHiddenCart = false}) => {
               <a href="/"> <img src="../../image/didong1.png" alt="blink" /> </a>
             </WrapperHeaderImage>
       </div>
-      <div>
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         {!isHiddenSearch && (   
         <Search style={{width: '1fr'}}
@@ -71,18 +70,6 @@ const Header = ({isHiddenSearch = false, isHiddenCart = false}) => {
             // onSearch={handleSearch} 
             />)}
                  </div>
-         <div >
-          
-         {!isHiddenSearch && (   
-            <WrapperHeaderProduct>
-                {arr.map((item) => {
-                    return(
-                        <TypeProducts name = {item} key={item} />
-                    )}
-                )}
-            </WrapperHeaderProduct>)}
-        </div>
-        </div >
         <div className="grid-item">
           <WrapperHeaderAccount>
             {user?.fullName ? (        
