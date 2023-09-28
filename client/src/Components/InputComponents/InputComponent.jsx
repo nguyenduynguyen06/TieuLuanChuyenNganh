@@ -13,4 +13,4 @@ const InputComponent = (size, placeholder, bordered, style, ...rests) => {
     )
 }
 
-export default InputComponent
+export default InputComponent   

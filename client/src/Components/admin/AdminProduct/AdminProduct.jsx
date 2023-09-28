@@ -1,4 +1,4 @@
-import React , {useState} from "react";
+import React , { useState, useEffect} from "react";
 import { Button, Modal, Form} from "antd";
 import { WrapperHeader} from "../AdminUser/style";
 import {PlusOutlined, UploadOutlined} from '@ant-design/icons'
@@ -6,6 +6,9 @@ import TableComponent from "../../TableComponents/TableComponents";
 import InputComponent from "../../InputComponents/InputComponent";
 import { getBase64 } from "../../../ultil";
 import { WrapperUploadFile } from "./style";
+import * as ProductService from "../../../services/ProductService";
+import { useMutationHooks } from "../../../hooks/useMutationHook";
+import Loading from "../../LoadingComponents/Loading";
 
 const AdminProduct = () =>{
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,21 +18,55 @@ const AdminProduct = () =>{
         releaseDate: '',
         warranty: '',
         brand: '',
-        cate: ''
-
+        cate: '',
+        image: ''
     })
+
+    // const mutation = useMutationHooks(
+    //     (data) => {
+    //         const { 
+    //             name,
+    //             desc,
+    //             releaseDate,
+    //             warranty,
+    //             brand,
+    //             cate, 
+    //             image} = data
+    //         ProductService.createProduct({
+    //                 name,
+    //                 desc,
+    //                 releaseDate,
+    //                 warranty,
+    //                 brand,
+    //                 cate,
+    //                 image
+    //         })
+    //     }
+    // )
+
+    // const {data, isLoading, isSuccess, isError} = mutation
+       
+    // useEffect(() =>{
+    //     if(isSuccess && data?.status === 'OK') {
+    //         handleCancel()
+    //     }
+    // }, [isSuccess])
+
     const handleOnChange = (e) => {
         setStateProduct({
             ...stateProduct,
             [e.target.name] : e.target.value
         })
     }
+
     const handleCancel = () => {
         setIsModalOpen(false);
       };
+
     const onFinish = () => {
-        console.log('finish', stateProduct)
+        // mutation.mutate(stateProduct)
     }
+
     const handleOnChangeAvatar = async({fileList}) =>{
         const file = fileList[0]
         if(!file.url && !file.preview) {
@@ -40,6 +77,7 @@ const AdminProduct = () =>{
             image: file.preview
         })
     }
+
     return(
         <div>
             <WrapperHeader>Quản lý sản phẩm</WrapperHeader>
@@ -51,25 +89,17 @@ const AdminProduct = () =>{
             <div style={{marginTop: '15px'}}>
             <TableComponent/>
             </div>
-            <Modal title="Thêm Sản Phẩm" open={isModalOpen} onCancel={handleCancel} okText=''>
+            <Modal title="Thêm Sản Phẩm" open={isModalOpen} onCancel={handleCancel}>
+            {/* <Loading isLoading={isLoading}> */}
             <Form
-                    name="basic"
-                    labelCol={{
-                    span: 8,
-                    }}
-                    wrapperCol={{
-                    span: 16,
-                    }}
-                    style={{
-                    maxWidth: 600,
-                    }}
-                    initialValues={{
-                    remember: true,
-                    }}
-                    onFinish={onFinish}
-                    autoComplete="off"
-                >
-                    <Form.Item
+                name="basic"
+                labelCol={{span: 8,}}
+                wrapperCol={{span: 16,}}
+                style={{maxWidth: 600,}}
+                initialValues={{remember: true,}}
+                onFinish={onFinish}
+                autoComplete="off">
+                <Form.Item
                     label="Tên sản phẩm"
                     name="name"
                     rules={[
@@ -77,10 +107,9 @@ const AdminProduct = () =>{
                         required: true,
                         message: 'Vui lòng nhập tên sản phẩm!',
                         },
-                    ]}
-                    >
+                    ]}>
                     <InputComponent value={stateProduct.name} onChange = {handleOnChange} name="name"/></Form.Item>
-                    <Form.Item
+                <Form.Item
                     label="Mô tả"
                     name="desc"
                     rules={[
@@ -91,7 +120,7 @@ const AdminProduct = () =>{
                     ]}
                     >
                     <InputComponent value={stateProduct.desc} onChange = {handleOnChange} decs="desc"/></Form.Item>
-                    <Form.Item
+                <Form.Item
                     label="Ngày ra mắt"
                     name="releaseDate"
                     rules={[
@@ -102,7 +131,7 @@ const AdminProduct = () =>{
                     ]}
                     >
                     <InputComponent value={stateProduct.releaseDate} onChange = {handleOnChange} releaseDate="releaseDate"/></Form.Item>
-                    <Form.Item
+                <Form.Item
                     label="Hạn bảo hành"
                     name="warranty"
                     rules={[
@@ -113,7 +142,7 @@ const AdminProduct = () =>{
                     ]}
                     >
                     <InputComponent value={stateProduct.warranty} onChange = {handleOnChange} warranty="warranty"/></Form.Item>
-                    <Form.Item
+                <Form.Item
                     label="Thương hiệu"
                     name="brand"
                     rules={[
@@ -124,7 +153,7 @@ const AdminProduct = () =>{
                     ]}
                     >
                     <InputComponent value={stateProduct.brand} onChange = {handleOnChange} brand="brand"/></Form.Item>
-                    <Form.Item
+                <Form.Item
                     label="Danh mục"
                     name="cate"
                     rules={[
@@ -135,7 +164,7 @@ const AdminProduct = () =>{
                     ]}
                     >
                     <InputComponent value={stateProduct.cate} onChange = {handleOnChange} cate="cate"/></Form.Item>
-                    <Form.Item
+                <Form.Item
                     label="Hình ảnh"
                     name="image"
                     rules={[
@@ -156,13 +185,14 @@ const AdminProduct = () =>{
                         }} alt="image"/>
                     )}
                     </WrapperUploadFile>
-                    </Form.Item>
-                    <Form.Item wrapperCol={{offset: 8, span: 16,}}>
+                </Form.Item>
+                <Form.Item wrapperCol={{offset: 8, span: 16,}}>
                     <Button type="primary" htmlType="submit">
                         Submit
                     </Button>
                     </Form.Item>
                 </Form>
+                {/* </Loading> */}
             </Modal>
         </div>
     )
