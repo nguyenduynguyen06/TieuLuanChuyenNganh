@@ -39,9 +39,11 @@ const Profilepage = () => {
             try {
               axios.post(
                 `${process.env.REACT_APP_API_URL}/user/update/${user._id}`,
-                { avatar: info.file.name } 
+                { avatar: info.file.name },  {
+                  withCredentials: true,
+              }
               );
-              window.location.reload();
+              window.location.reload()
             } catch (error) {
              
             }

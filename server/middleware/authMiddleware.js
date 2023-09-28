@@ -51,8 +51,7 @@ const verifyRefreshToken = (req, res, next) => {
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN, (err, user) => {
         if (err) {
             return res.status(401).json({ msg: 'refresh_token không hợp lệ' });
-        }
-        req.user = user; 
+        } 
         next();
     });
 };

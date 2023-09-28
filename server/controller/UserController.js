@@ -192,10 +192,6 @@ const forgotPassword = async (req, res) => {
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
                 padding: 20px;
             }
-            .logo {
-                max-width: 100px;
-                margin: 0 auto;
-            }
             h1 {
                 color: #333;
             }
@@ -215,8 +211,8 @@ const forgotPassword = async (req, res) => {
     </head>
     <body>
         <div class="container">
-            <img class="logo" src="http://localhost:5000/uploads/didong1.png" alt="Your Logo">
-            <h1>Mật khẩu mới của bạn</h1>
+        <h1>Di động Gen Z, Xin chào</h1>
+            <h1>Mật khẩu mới của bạn là</h1>
             <p>Bạn đã yêu cầu đặt lại mật khẩu. Dưới đây là mật khẩu mới của bạn:</p>
             <p class="password">${newPassword}</p>
             <p>Vui lòng lưu trữ mật khẩu này một cách an toàn.</p>

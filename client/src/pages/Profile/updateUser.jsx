@@ -47,7 +47,9 @@ const UpdateUser = () => {
           }
           axios.post(
             `${process.env.REACT_APP_API_URL}/user/update/${user._id}`,
-            updatedData
+            updatedData, {
+              withCredentials: true,
+          }
           );
           window.location.reload();
         } catch (error) {
