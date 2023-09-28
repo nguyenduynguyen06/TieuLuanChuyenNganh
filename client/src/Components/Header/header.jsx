@@ -53,89 +53,80 @@ const Header = ({isHiddenSearch = false, isHiddenCart = false}) => {
   
   
     return (
-        <div> 
-    <WrapperHeader style={{width: '100%', height:'100%'}}>
-    <Col span={2}></Col>
-    <Col span={4} className="ant-col">
-        
-         <WrapperHeaderImage className="ant-image">
-           <a href="/"> <img src="/image/didong1.png" alt="blink" style={{width: '50%',height: '50%', justifySelf: 'auto'}}/> </a>
-        </WrapperHeaderImage>
-    </Col>
-    <Col span={1}></Col>
-        <Col span={9}>
+    <div> 
+    <WrapperHeader >
+      <div>
+            <WrapperHeaderImage className="ant-image">
+              <a href="/"> <img src="../../image/didong1.png" alt="blink" /> </a>
+            </WrapperHeaderImage>
+      </div>
+      <div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         {!isHiddenSearch && (   
-        <Search
+        <Search style={{width: '1fr'}}
             placeholder="Tìm Kiếm"
             allowClear
             enterButton={<Button style={{background:'#FF3300'}}><SearchOutlined style={{width: '10px',height: '20px',color: 'white'}}/> </Button>}
             size="large"
-            //onSearch={handleSearch}
-         />)}
+            // onSearch={handleSearch} 
+            />)}
+                 </div>
          <div >
+          
          {!isHiddenSearch && (   
             <WrapperHeaderProduct>
                 {arr.map((item) => {
                     return(
                         <TypeProducts name = {item} key={item} />
-                    )
-                }
+                    )}
                 )}
             </WrapperHeaderProduct>)}
-         </div>
-         <Col span={1}></Col>
-        </Col>
-    <Col span={1}></Col>
-        <Col span={7} >
-            <WrapperHeaderAccount>
-            {user?.fullName ? (        
-        <div>
-          <MDBDropdown clickable >
-               <MDBDropdownToggle tag="span"  style={{width: '50px', height: '50px',cursor: 'pointer'}}>
-                       <UserOutlined style={{fontSize: '30px'}}/> Xin chào, {user.fullName}
-             </MDBDropdownToggle>
-                   <MDBDropdownMenu>
-                   {user.role_id == 1 ? (
-                      <MDBDropdownItem link  href="/admin">Quản lý</MDBDropdownItem>
-                    ) : (
-                      <span></span>
-                    )}
-                     <MDBDropdownItem link href="/profile">Thông tin cá nhân</MDBDropdownItem>
-                     <MDBDropdownItem link onClick={handleLogout}>Đăng xuất</MDBDropdownItem>
-                   </MDBDropdownMenu>
-              </MDBDropdown>
         </div>
-      ) : (
-        <div>
-                
-                <div  class= "popup" onClick={toggleShow}> 
-                <span style={{fontSize: '15px'}} >
-                    Đăng nhập
-                </span>
-                </div>
-  
-       
-                <span style={{fontSize: '15px'}} >
+        </div >
+        <div className="grid-item">
+          <WrapperHeaderAccount>
+            {user?.fullName ? (        
+          <div>
+          <MDBDropdown clickable >
+            <MDBDropdownToggle tag="span"  style={{width: '50px', height: '50px',cursor: 'pointer'}}>
+              <UserOutlined style={{fontSize: '30px'}}/> Xin chào, {user.fullName}
+            </MDBDropdownToggle>
+           <MDBDropdownMenu>
+              {user.role_id === 1 ? (
+                <MDBDropdownItem link  href="/admin">Quản lý</MDBDropdownItem>
+                  ) : (<span></span>
+              )}
+                <MDBDropdownItem link href="/profile">Thông tin cá nhân</MDBDropdownItem>
+                <MDBDropdownItem link onClick={handleLogout}>Đăng xuất</MDBDropdownItem>
+            </MDBDropdownMenu>
+          </MDBDropdown>
+          </div>
+          ) : (
+          <div>
+            <div  class= "popup" onClick={toggleShow}> 
+              <span style={{fontSize: '15px'}} >
+                Đăng nhập
+              </span>
+            </div>
+              <span style={{fontSize: '15px'}} >
                 &nbsp; / &nbsp;
-                </span>
-           
-         
-                <div  class= "popup" onClick={toggleShow1}> <span style={{fontSize: '15px'}} >
-                    Đăng ký&nbsp;
-                </span>
-             
+              </span>           
+            <div  class= "popup" onClick={toggleShow1}> <span style={{fontSize: '15px'}} >
+                Đăng ký&nbsp;
+              </span>
             </div>   
          </div>
       )}
+
       {!isHiddenCart && (
-            <div><button class="custom-button" style={{backgroundColor: '#CC0000'}}>
-            <ShoppingCartOutlined style={{fontSize: '20px'}} > 
-            </ShoppingCartOutlined>&nbsp;Giỏ hàng
-            </button>
+            <div className="grid-item">
+              <button class="custom-button" style={{backgroundColor: '#CC0000', right: '0px'}}>
+              <ShoppingCartOutlined style={{fontSize: '20px'}} > 
+              </ShoppingCartOutlined>&nbsp;Giỏ hàng
+              </button>
             </div>)}
             </WrapperHeaderAccount>
-            </Col>
-            
+            </div>
     </WrapperHeader>
 
 

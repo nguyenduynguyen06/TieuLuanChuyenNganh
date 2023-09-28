@@ -114,7 +114,6 @@ const Profilepage = () => {
                     
                     <MDBCard style={{ maxWidth: '540px' }}>
                     <MDBRow className='g-0'>
-                        
                         <MDBCol md='4'>
                         <MDBCardImage src='https://cdn.tgdd.vn/Products/Images/42/289700/iphone-14-pro-max-den-thumb-600x600.jpg' alt='...' fluid />
                         </MDBCol>
