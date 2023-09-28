@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState  } from 'react';
 import {
   MDBCol,
   MDBContainer,
@@ -14,18 +14,42 @@ import {
   MDBModal,
   MDBModalDialog,
   MDBModalContent,
-  MDBModalHeader
+  MDBModalHeader,
 } from 'mdb-react-ui-kit';
 import { Card } from 'antd';
 import { useSelector } from 'react-redux';
 import UpdateUser from './updateUser';
+import axios from 'axios';
+import { UploadOutlined } from '@ant-design/icons';
+import { Button, message, Upload } from 'antd';
+
+
 const Profilepage = () => {
-    const user = useSelector((state)=> state.user)
+  const user = useSelector((state)=> state.user)
     const [centredModal1, setCentredModal1] = useState(false);
 
     const toggleShow1 = () => setCentredModal1(!centredModal1);
 
-      
+
+    const props = {
+      name: 'avatar',
+      action: `${process.env.REACT_APP_API_URL}/upload`,
+      onChange(info) {
+        if (info.file.status === 'done') {
+            try {
+              axios.post(
+                `${process.env.REACT_APP_API_URL}/user/update/${user._id}`,
+                { avatar: info.file.name } 
+              );
+              window.location.reload();
+            } catch (error) {
+             
+            }
+        } else if (info.file.status === 'error') {
+          message.error(`${info.file.name} file upload failed.`);
+        }
+      },
+    };
   return (
     <section style={{ backgroundColor: '#eee' }}>
     <MDBContainer className="py-5">
@@ -34,16 +58,21 @@ const Profilepage = () => {
         <MDBCol lg="4">
           <MDBCard className="mb-4">
             <MDBCardBody className="text-center">
-              <MDBCardImage
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
-                alt="avatar"
-                className="rounded-circle"
-                style={{ width: '150px' }}
-                fluid />
-              <p className="text-muted mb-1"></p>
+                            <img
+                  src={`${process.env.REACT_APP_API_URL}/uploads/${user.avatar}`}
+                  alt='avatar'
+                  className="rounded-circle"
+                  style={{ width: '150px' }}
+                />
+            
+                 <div className="text-muted mb-1"></div>
+                 <Upload {...props}>
+                 <MDBBtn style={{ backgroundColor: '#E8E8E8' , color: "black"}}  > <UploadOutlined/> Ảnh đại diện</MDBBtn>
+                 </Upload>
+              <div className="text-muted mb-1"></div>
               <div className="d-flex justify-content-center mb-2">
-              <MDBBtn onClick={toggleShow1} style={{backgroundColor: "#FF3300"}}>Cập nhật thông tin</MDBBtn>
-                <MDBBtn  className="ms-1">Đổi mật khẩu</MDBBtn>
+              <MDBBtn onClick={toggleShow1} style={{backgroundColor: "#FF3300",border: '2px solid black'}}>Cập nhật thông tin</MDBBtn>
+              <MDBBtn className="ms-1" style={{ border: '2px solid #FF3300', color: 'red',backgroundColor:'#F5F5F5' }}>Đổi mật khẩu</MDBBtn>
               </div>
             </MDBCardBody>
           </MDBCard>

@@ -5,6 +5,7 @@ const router = express.Router();
 const userAuthenticate = require('../controller/UserController');
 const { authMiddleware, authUserMiddleware } = require('../middleware/authMiddleware');
 
+
 router.post('/Register', userAuthenticate.userRegister);
 
 router.post('/Login', userAuthenticate.userLogin);

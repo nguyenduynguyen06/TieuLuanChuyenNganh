@@ -5,7 +5,6 @@ import { WrapperHeader, WrapperHeaderAccount, WrapperHeaderImage, WrapperHeaderP
 import Search from "antd/es/input/Search";
 import { MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem } from 'mdb-react-ui-kit';
 import {
-    UserOutlined,
     ShoppingCartOutlined,
     SearchOutlined
   } from '@ant-design/icons';
@@ -92,9 +91,19 @@ const Header = ({isHiddenSearch = false, isHiddenCart = false}) => {
             {user?.fullName ? (        
         <div>
           <MDBDropdown clickable >
-               <MDBDropdownToggle tag="span"  style={{width: '50px', height: '50px',cursor: 'pointer'}}>
-                       <UserOutlined style={{fontSize: '30px'}}/> Xin chào, {user.fullName}
-             </MDBDropdownToggle>
+                    <MDBDropdownToggle tag="span" style={{ width: '50px', height: '50px', cursor: 'pointer' }}>
+                    <img
+                      src={`${process.env.REACT_APP_API_URL}/uploads/${user.avatar}`}
+                      alt="Avatar"
+                      style={{
+                        width: '15%',
+                        height: '15%',
+                        borderRadius: '100%',
+                        display: 'inline-block', 
+                      }}
+                    />
+                     &nbsp;  Xin chào, {user.fullName}
+                   </MDBDropdownToggle>
                    <MDBDropdownMenu>
                    {user.role_id == 1 ? (
                       <MDBDropdownItem link  href="/admin">Quản lý</MDBDropdownItem>
