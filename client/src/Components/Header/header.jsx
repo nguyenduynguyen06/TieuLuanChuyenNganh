@@ -54,12 +54,12 @@ const Header = ({isHiddenSearch = false, isHiddenCart = false}) => {
   
     return (
         <div> 
-    <WrapperHeader>
+    <WrapperHeader style={{width: '100%', height:'100%'}}>
     <Col span={2}></Col>
     <Col span={4} className="ant-col">
         
          <WrapperHeaderImage className="ant-image">
-           <a href="/"> <img src="/image/didong1.png" alt="blink" /> </a>
+           <a href="/"> <img src="/image/didong1.png" alt="blink" style={{width: '50%',height: '50%', justifySelf: 'auto'}}/> </a>
         </WrapperHeaderImage>
     </Col>
     <Col span={1}></Col>
@@ -70,7 +70,6 @@ const Header = ({isHiddenSearch = false, isHiddenCart = false}) => {
             allowClear
             enterButton={<Button style={{background:'#FF3300'}}><SearchOutlined style={{width: '10px',height: '20px',color: 'white'}}/> </Button>}
             size="large"
-            
             //onSearch={handleSearch}
          />)}
          <div >
