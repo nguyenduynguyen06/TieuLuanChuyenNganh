@@ -38,7 +38,7 @@ const refreshTokenJWT = async (token) => {
       }
     });
   };
-  
+
 
 
 module.exports = {generalAcesstoken,generalRefreshtoken,refreshTokenJWT}

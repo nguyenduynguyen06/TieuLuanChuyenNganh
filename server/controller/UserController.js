@@ -2,7 +2,8 @@ const User = require('../Model/UserModel');
 const argon2 = require('argon2');
 const { generalAcesstoken, generalRefreshtoken } = require('../middleware/JWT');
 const JWT = require('../middleware/JWT')
-
+const sendMail = require('../ultils/sendMail')
+const crypto = require('crypto')
 const userRegister = async (req, res) => {
     const hashPass = await argon2.hash(req.body.passWord);
     User.create({
@@ -89,7 +90,6 @@ const deleteUser = async (req, res) => {
             const checkUser = await User.findOne({ _id: userId });
             if (checkUser) {
                  await User.findByIdAndDelete(userId);
-             
             } else {
                 return res.status(401).json({ err: 'Không tồn tại User' });
             }
@@ -153,7 +153,104 @@ const userLogout = (req, res) => {
     res.clearCookie('refresh_token', { httpOnly: true }); 
     return res.status(200).json({ msg: 'Good bye!' });
   };
+function generateRandomPassword(length = 12) {
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let password = "";
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        password += charset[randomIndex];
+    }
+    return password;
+}
+
+const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+    if (!email) throw new Error("missing email");
+    const user = await User.findOne({ email });
+    if (!user) throw new Error("user not found");
+    const newPassword = generateRandomPassword(); 
+    const hashPass = await argon2.hash(newPassword);
+    user.passWord = hashPass;
+    await user.save();
+    const emailContent = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                text-align: center;
+                padding: 20px;
+            }
+            .container {
+                max-width: 500px;
+                margin: 0 auto;
+                background-color: #fff;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+            }
+            .logo {
+                max-width: 100px;
+                margin: 0 auto;
+            }
+            h1 {
+                color: #333;
+            }
+            p {
+                color: #555;
+            }
+            .password {
+                font-size: 24px;
+                font-weight: bold;
+                color: #0073e6;
+            }
+            .footer {
+                margin-top: 20px;
+                color: #777;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <img class="logo" src="http://localhost:5000/uploads/didong1.png" alt="Your Logo">
+            <h1>Mật khẩu mới của bạn</h1>
+            <p>Bạn đã yêu cầu đặt lại mật khẩu. Dưới đây là mật khẩu mới của bạn:</p>
+            <p class="password">${newPassword}</p>
+            <p>Vui lòng lưu trữ mật khẩu này một cách an toàn.</p>
+            <p class="footer">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+        </div>
+    </body>
+    </html>
+    `;
+    const data = {
+        email,
+        html: emailContent,
+    };
+
+    const rs = await sendMail(data); 
+
+    return res.status(200).json({
+        success: true,
+        rs,
+    });
+};
+const changePassword = async(req,res) =>{
+    try {
+        const userId = req.params.id
+        const passWord1 = req.body.passWord1
+        const hashPass = await argon2.hash(passWord1);
+        if (userId) { 
+              await User.findByIdAndUpdate(userId, { passWord: hashPass }, { new: true });
+        } else {
+            return res.status(401).json({ msg: 'Không tìm thấy ID' });
+        }
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+}
 
 
-
-module.exports = { userRegister, userLogin, userLogout , userUpdate, deleteUser,getAllUser,refreshToken,getDetailUser};
+module.exports = { userRegister, userLogin, userLogout , userUpdate, deleteUser,getAllUser,refreshToken,getDetailUser,forgotPassword,changePassword};
