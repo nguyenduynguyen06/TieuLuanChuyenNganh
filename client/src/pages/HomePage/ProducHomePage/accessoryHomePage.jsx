@@ -1,24 +1,6 @@
 import React, { useState } from 'react';
-import {
-  MDBCol,
-  MDBContainer,
-  MDBRow,
-  MDBCard,
-  MDBCardText,
-  MDBRipple,
-  MDBCardImage,
-  MDBBtn,
-  MDBListGroupItem,
-  MDBCardTitle,
-  MDBCardLink,
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalHeader,
-} from 'mdb-react-ui-kit';
 
 import { Card } from 'antd';
-import { fontGrid } from '@mui/material/styles/cssUtils';
 import { WrapperCard } from '../styled';
 const gridStyle = {
     width: '25%',
@@ -27,7 +9,7 @@ const gridStyle = {
 
 
 
-function ProductHomePage() {
+function AccessoryHomePage() {
     const handleCardClick = (id) => {
         window.location.href = `/product/${id}`;
       };
@@ -42,7 +24,7 @@ function ProductHomePage() {
 
   return ( 
     <WrapperCard >
-    <h1 className='title'>Điện Thoại</h1>
+    <h1 className='title'>Phụ Kiện Điện Thoại</h1>
     <br></br>
     <div className='mainContainer' style={containerStyle}>
         <div className='box'>
@@ -215,4 +197,4 @@ function ProductHomePage() {
 
   );
 }
-export default ProductHomePage
+export default AccessoryHomePage
