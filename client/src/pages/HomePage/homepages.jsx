@@ -1,10 +1,11 @@
 import React from "react";
-import { WrapperHomePage } from "./styled";
+import { WrapperHomePage} from "./styled";
 import { Col} from 'antd'
 import Category from '../category/category'
 import Slide from "../../Components/Slider/Slide"
 import Imagebanner from "./imagebanner";
 import ProductHomePage from "./ProducHomePage/producthomepage";
+import AccessoryHomePage from "./ProducHomePage/accessoryHomePage";
 
 const HomePage = () => {
     return(
@@ -22,6 +23,8 @@ const HomePage = () => {
               <Category></Category>
               <br /><br />
               <ProductHomePage></ProductHomePage>
+              <br></br>
+              <AccessoryHomePage></AccessoryHomePage>
             </Col>
             <Col style={{ width: '12%' , overflow: 'hidden',paddingRight: '20px' }}>
               {/* <Imagebanner>
