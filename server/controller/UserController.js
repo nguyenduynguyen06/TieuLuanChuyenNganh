@@ -3,7 +3,6 @@ const argon2 = require('argon2');
 const { generalAcesstoken, generalRefreshtoken } = require('../middleware/JWT');
 const JWT = require('../middleware/JWT')
 const sendMail = require('../ultils/sendMail')
-const crypto = require('crypto')
 const userRegister = async (req, res) => {
     const hashPass = await argon2.hash(req.body.passWord);
     User.create({
@@ -172,6 +171,7 @@ const forgotPassword = async (req, res) => {
     const hashPass = await argon2.hash(newPassword);
     user.passWord = hashPass;
     await user.save();
+    const disclaimer = "<p>Lưu ý: Đây là email tự động, vui lòng không trả lời email này.</p>";
     const emailContent = `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -211,13 +211,13 @@ const forgotPassword = async (req, res) => {
     </head>
     <body>
         <div class="container">
-        <h1>Di động Gen Z, Xin chào</h1>
-            <h1>Mật khẩu mới của bạn là</h1>
+        <h1>Di động Gen Z, xin chào</h1>
             <p>Bạn đã yêu cầu đặt lại mật khẩu. Dưới đây là mật khẩu mới của bạn:</p>
             <p class="password">${newPassword}</p>
             <p>Vui lòng lưu trữ mật khẩu này một cách an toàn.</p>
             <p class="footer">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
         </div>
+        ${disclaimer}
     </body>
     </html>
     `;

@@ -11,10 +11,10 @@ const transporter = nodemailer.createTransport({
   });
 const sendMail =  asyncHandler(async ({email,html}) => {
     const info = await transporter.sendMail({
-        from: '"DiDongGenZ " <no-replyfoo@didonggenz.com>', // sender address
-        to: email, // list of receivers
-        subject: "Quên mật khẩu", // Subject line
-        html: html, // html body
+        from: '"DiDongGenZ " <no-replyfoo@didonggenz.com>', 
+        to: email, 
+        subject: "Quên mật khẩu", 
+        html: html, 
       });
     
     return info;
