@@ -233,20 +233,26 @@ const forgotPassword = async (req, res) => {
         rs,
     });
 };
-const changePassword = async(req,res) =>{
+const changePassword = async (req, res) => {
     try {
-        const userId = req.params.id
-        const passWord1 = req.body.passWord1
-        const hashPass = await argon2.hash(passWord1);
-        if (userId) { 
-              await User.findByIdAndUpdate(userId, { passWord: hashPass }, { new: true });
-        } else {
-            return res.status(401).json({ msg: 'Không tìm thấy ID' });
-        }
+      const userId = req.params.id;
+      const { currentPassword, newPassword } = req.body;
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(401).json({ msg: 'Không tìm thấy ID' });
+      }
+      const isPasswordValid = await argon2.verify(user.passWord, currentPassword);
+      if (!isPasswordValid) {
+        return res.status(401).json({ msg: 'Mật khẩu cũ không đúng' });
+      }
+      const hashPass = await argon2.hash(newPassword);
+      await User.findByIdAndUpdate(userId, { passWord: hashPass }, { new: true });
+      return res.status(200).json({ msg: 'Cập nhật mật khẩu thành công' });
     } catch (error) {
-        return res.status(500).json({ error });
+      return res.status(500).json({ error });
     }
-}
+  };
+  
 
 
 module.exports = { userRegister, userLogin, userLogout , userUpdate, deleteUser,getAllUser,refreshToken,getDetailUser,forgotPassword,changePassword};

@@ -4,7 +4,10 @@ const app = express();
 const connect2DB = require('./config/data');
 const routerUser = require('./Router/UserRouter');
 const routerUpload = require('./Router/UploadRouter')
+const routerProduct = require('./Router/ProductRouter')
+const routerBrand = require('./Router/BrandRouter')
 const bodyParser = require('body-parser');
+const routerCategory = require('./Router/CategoryRouter')
 const server = require('http').createServer(app);
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
@@ -25,6 +28,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('server/images'));
 app.use('/', routerUpload);
 app.use('/user', routerUser);
+app.use('/product', routerProduct);
+app.use('/category',routerCategory);
+app.use('/brand',routerBrand)
 connect2DB();
 const PORT = process.env.PORT || 8080
 server.listen(PORT, () => {

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const crypto = require('crypto')
 const UserSchema = new mongoose.Schema({
     fullName: {
         type: String,
@@ -42,9 +41,8 @@ const UserSchema = new mongoose.Schema({
     birthDay:{
         type: String
     }
-},{
-    timestamps: true
 });
 const User = mongoose.model('User', UserSchema);
+
 module.exports = User;
 
