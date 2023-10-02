@@ -46,7 +46,7 @@ function ProductHomePage() {
     <br></br>
     <div className='mainContainer' style={containerStyle}>
         <div className='box'>
-          <div className='card' onClick={() => handleCardClick(123)}>
+          <div className='card' onClick={() => handleCardClick('./pdd')}>
             <div className='image'>
               <img src='https://cdn.tgdd.vn/Products/Images/42/289700/iphone-14-pro-max-den-thumb-600x600.jpg'/>
             </div>

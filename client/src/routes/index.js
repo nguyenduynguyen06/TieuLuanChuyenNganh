@@ -4,7 +4,7 @@ import Profilepage from "../pages/Profile/profilepage";
 import NotFoundPage from "../pages/notfoundpage";
 import OrderPage from "../pages/oders";
 import ProductPage from "../pages/product";
-
+import ProductDetail from "../pages/ProductDetail/productdetail";
 export const routes = [
     {
         path:'/',
@@ -33,5 +33,10 @@ export const routes = [
         path:'/profile',
         page: Profilepage,
         isShowHeader : true
+    },
+    {
+        path:'/pdd',
+        page: ProductDetail,
+        isShowHeader: true
     }
 ]
