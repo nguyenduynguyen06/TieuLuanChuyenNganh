@@ -93,3 +93,64 @@ export const CustomButton = styled.button`
   place-items: center;
 `;
 
+
+export const WrapperForget = styled.div`
+/* CSS cho container chung */
+.forget-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+}
+
+/* CSS cho form */
+.forget-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+}
+
+.forget-form label {
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+.forget-form input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.forget-form button {
+  margin-top: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+/* CSS cho thông báo */
+.confirmation-message {
+  margin: 20px 0;
+  font-weight: bold;
+}
+
+/* CSS cho nút "Quay lại" */
+.back-button {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+`

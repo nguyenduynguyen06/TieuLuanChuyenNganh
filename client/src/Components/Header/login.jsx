@@ -9,12 +9,19 @@ import {
   MDBCard,
   MDBCardBody,
   MDBInput,
-  MDBIcon
+  MDBIcon,
+  MDBModalBody,
+  MDBModalContent,
+  MDBModalDialog,
+  MDBModal,
+  MDBModalHeader
 }
 from 'mdb-react-ui-kit';
 import jwt_decode from "jwt-decode";
 import {useDispatch} from 'react-redux'
 import { updateUser } from "../../redux/Slide/userSlice";
+import Forget from "./forget";
+
 
 function Login({ onClose }) {
   const [message, setMessage] = useState('');
@@ -30,7 +37,15 @@ function Login({ onClose }) {
       setUser({ ...user, [event.target.name]: event.target.value });
   }
 
-const loginHandler = event => {
+  const [centredModal, setCentredModal] = useState(false);
+
+  const toggleShow = () => setCentredModal(!centredModal);
+
+  const closePopup = () => {
+    setCentredModal(false);
+  };
+
+  const loginHandler = event => {
       event.preventDefault();
       axios.post(`${process.env.REACT_APP_API_URL}/user/Login`, user,
           {
@@ -67,6 +82,7 @@ const loginHandler = event => {
 
 
   return (
+    <div>
     <form className="form-add-new" onSubmit={(e) => {
       loginHandler(e);  
   }} >
@@ -74,7 +90,6 @@ const loginHandler = event => {
 
       <MDBRow className='d-flex justify-content-center align-items-center h-100'>
         <MDBCol col='12'>
-
           <MDBCard className='bg-white my-5 mx-auto' style={{borderRadius: '1rem', maxWidth: '500px'}}>
             <MDBCardBody className='p-5 w-100 d-flex flex-column'>
             {message && (
@@ -94,7 +109,11 @@ const loginHandler = event => {
               <MDBBtn size='lg' type="submit" >
                 Login
               </MDBBtn>
-
+              <div  class= "popup" onClick={toggleShow}> 
+                <span style={{fontSize: '15px'}} clickable >
+                  Quên mật khẩu
+                </span>
+              </div>
               <hr className="my-4" />
 
               <MDBBtn className="mb-2 w-100" size="lg" style={{backgroundColor: '#dd4b39'}}>
@@ -106,15 +125,28 @@ const loginHandler = event => {
                 <MDBIcon fab icon="facebook-f" className="mx-2"/>
                 Sign in with facebook
               </MDBBtn>
-
             </MDBCardBody>
           </MDBCard>
 
         </MDBCol>
       </MDBRow>
-
     </MDBContainer>
     </form>
+    <MDBModal tabIndex='-1' show={centredModal} setShow={setCentredModal}>
+        <MDBModalDialog centered>
+          <MDBModalContent>
+            <MDBModalHeader>
+              <MDBBtn className='btn-close' color='none' onClick={toggleShow}></MDBBtn>
+            </MDBModalHeader>
+            <MDBModalBody>
+             <Forget onClose={closePopup}/>
+            </MDBModalBody>
+          </MDBModalContent>
+        </MDBModalDialog>
+      </MDBModal>
+
+    
+    </div>
   );
 }
 
