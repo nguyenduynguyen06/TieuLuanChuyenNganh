@@ -66,7 +66,7 @@ function ProductHomePage() {
                 <div>
                   {product?.variant.map((variant) => (
                     <Button
-                    className={` ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
+                    className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
                     onClick={() => {
                       setSelectedMemories((prevSelected) => ({
                         ...prevSelected,
@@ -81,6 +81,7 @@ function ProductHomePage() {
                   <span style={{fontWeight: 'bold' }}>
                     {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                   </span>
+                  <br></br>
                   <span style={{ color: '#000', textDecoration: 'line-through' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
                 </div>
               </div>

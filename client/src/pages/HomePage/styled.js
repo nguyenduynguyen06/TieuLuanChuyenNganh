@@ -64,8 +64,8 @@ export const WrapperCard = styled.div`
     background: #fff;
     text-align: center;
     transition: .3s ease-in-out;
-    max-width: 100%;
-    cursor: pointer;
+    max-width: 110%;
+    width: auto;
   }
 
   .mainContainer .box:hover {
@@ -75,11 +75,11 @@ export const WrapperCard = styled.div`
 
   .mainContainer .card {
     // padding: 15px 15px 0;
-    width: auto;
+    width: 110%;
   }
 
   .card .image {
-    width:80%;
+    width:100%;
     backgroud: #f9f9f9;
     margin: 20px auto;
     position: relative;
@@ -101,10 +101,13 @@ export const WrapperCard = styled.div`
   }
 
   .card .image img {
-    width:90px;
+    width:180px;
     transition: .3s ease-in-out;
+    cursor: pointer;
   }
-
+  .memory-button.selected {
+    border: 1px solid #00BFFF	; 
+  }
   .card .desc {
     width: 100%;
     margin: auto;
@@ -125,8 +128,8 @@ export const WrapperCard = styled.div`
   }
 
   .btn {
-    width: 100%;
-    padding: 12px 20px;
+    width: 110%;
+    padding: 12px 33px;
     margin-top: 15px;
     border: none;
     color: #fff;
