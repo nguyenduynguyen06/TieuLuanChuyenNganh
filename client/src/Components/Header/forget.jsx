@@ -29,17 +29,17 @@ function Forget({ onClose }) {
   const forgetHandler = event => {
     event.preventDefault();
     axios.post(`${process.env.REACT_APP_API_URL}/user/forget`, user,
-        {
-            withCredentials: true,
-        })
-        .then((res) => {
-          setSuccess(true);
-              setMessage(`Hãy kiểm tra email xác nhận`);
-        }).catch((err) => {
-          setSuccess(false);
-          setMessage(`Email chưa được đăng ký tài khoản`);
-        })
-}
+      {
+        withCredentials: true,
+      })
+      .then((res) => {
+        setSuccess(true);
+        setMessage(`Hãy kiểm tra email xác nhận`);
+      }).catch((err) => {
+        setSuccess(false);
+        setMessage(`Email chưa được đăng ký tài khoản`);
+      })
+  }
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };

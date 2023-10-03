@@ -1,4 +1,4 @@
-import {Col, Image, InputNumber } from "antd";
+import {Col, Image, InputNumber, Table } from "antd";
 import styled from "styled-components";
 
 export const WrapperStyleImageBig = styled(Image)`
@@ -75,4 +75,11 @@ export const WrapperInputNumber = styled(InputNumber)`
         }
     }
     
+`
+
+export const WrapperPropTable = styled(Table)`
+`
+export const WrapperSeeMore = styled.div`
+    padding-top: 30px;
+    color: #0492c2;
 `
