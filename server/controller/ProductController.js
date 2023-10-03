@@ -79,7 +79,6 @@ const editProduct = async (req, res) => {
       category: category._id,
     };
     const update = await Product.findByIdAndUpdate(productId, updateData, { new: true });
-    console.log('update', update);
     res.status(200).json({ success: true, data: update });
   } catch (error) {
     return res.status(500).json({ msg: 'Lỗi Server' });
