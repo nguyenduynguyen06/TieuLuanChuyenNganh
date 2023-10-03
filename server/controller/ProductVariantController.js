@@ -4,7 +4,7 @@ const Product = require('../Model/ProductModel');
 
 const addProductVariant = async (req, res) => {
   try {
-    const { parentProductName ,sku, color, memory, imPrice, price, quantity, pictures } = req.body;
+    const { parentProductName ,sku, color, memory, imPrice, oldPrice,newPrice, quantity, pictures } = req.body;
     const parentProduct = await Product.findOne({ name: parentProductName });
     if (!parentProduct) {
       return res.status(404).json({ success: false, error: 'Sản phẩm cha không tồn tại' });
@@ -15,7 +15,8 @@ const addProductVariant = async (req, res) => {
       color,
       memory,
       imPrice,
-      price,
+      oldPrice,
+      newPrice,
       quantity,
       pictures,
     });
@@ -55,8 +56,6 @@ const updateProductVariant = async (req, res) => {
       return res.status(404).json({ success: false, error: 'Biến thể không tồn tại' });
     }
     const oldParentProductId = productVariantToUpdate.productName;
-
-
     const newParentProduct = await Product.findOne({ name: newParentProductName });
     if (!newParentProduct) {
       return res.status(404).json({ success: false, error: 'Sản phẩm mới không tồn tại' });
@@ -79,6 +78,15 @@ const updateProductVariant = async (req, res) => {
     return res.status(500).json({ error });
   }
 };
+const getAllbyIdProductVariant = async (req, res) => {
+  try {
+    const productvariantId = req.params.id
 
+    const productVariant = await ProductVariant.findById(productvariantId);
+    res.status(200).json({ success: true, data: productVariant });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
 
-module.exports = { addProductVariant,deleteProductVariant,updateProductVariant };
+module.exports = { addProductVariant,deleteProductVariant,updateProductVariant,getAllbyIdProductVariant };

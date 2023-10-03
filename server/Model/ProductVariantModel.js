@@ -20,7 +20,10 @@ const productVariantSchema = new mongoose.Schema({
     type: Number,
     require: true,
   },
-  price: {
+  oldPrice: {
+    type: Number,
+  },
+  newPrice: {
     type: Number,
     require: true,
   },

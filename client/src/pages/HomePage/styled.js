@@ -81,7 +81,7 @@ export const WrapperCard = styled.div`
   .card .image {
     width:80%;
     backgroud: #f9f9f9;
-    margin: 10px auto;
+    margin: 20px auto;
     position: relative;
   }
 
@@ -106,8 +106,9 @@ export const WrapperCard = styled.div`
   }
 
   .card .desc {
-    width: 60%;
+    width: 100%;
     margin: auto;
+    line-height: 3;
   }
 
   .card .desc h1 {

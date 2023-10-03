@@ -20,7 +20,7 @@ const addProduct = async (req, res) => {
       releaseTime: Date.now(),
       warrantyPeriod,
       brand: brand._id, 
-      category: category._id, 
+      category: category._id,
       isHide: false,
       isOutOfStock: false,
       properties,
@@ -36,7 +36,7 @@ const addProduct = async (req, res) => {
 const getProductByBrandId = async (req, res) => {
   try {
     const brandId = req.params.brandId; 
-    const products = await Product.find({ brand: brandId });
+    const products = await Product.find({ brand: brandId }).populate('variant');
     return res.status(200).json({
       data: products
     });
@@ -48,7 +48,8 @@ const getProductByBrandId = async (req, res) => {
 const getProductsByCategory = async (req, res) => {
   try {
     const categoryId = req.params.categoryId; 
-    const products = await Product.find({ category: categoryId });
+    
+    const products = await Product.find({ category: categoryId }).populate('variant');
 
     res.status(200).json({ success: true, data: products });
   } catch (error) {
