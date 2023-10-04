@@ -163,76 +163,85 @@ function generateRandomPassword(length = 12) {
 }
 
 const forgotPassword = async (req, res) => {
-    const { email } = req.body;
-    if (!email) throw new Error("missing email");
-    const user = await User.findOne({ email });
-    if (!user) throw new Error("user not found");
-    const newPassword = generateRandomPassword(); 
-    const hashPass = await argon2.hash(newPassword);
-    user.passWord = hashPass;
-    await user.save();
-    const disclaimer = "<p>Lưu ý: Đây là email tự động, vui lòng không trả lời email này.</p>";
-    const emailContent = `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
+    try {
+      const { email } = req.body;
+      const user = await User.findOne({ email });     
+      const newPassword = generateRandomPassword();
+      const hashPass = await argon2.hash(newPassword);
+      user.passWord = hashPass;
+      await user.save();
+  
+      const disclaimer = "<p>Lưu ý: Đây là email tự động, vui lòng không trả lời email này.</p>";
+      const emailContent = `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
             body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                text-align: center;
-                padding: 20px;
+              font-family: Arial, sans-serif;
+              background-color: #f4f4f4;
+              text-align: center;
+              padding: 20px;
             }
             .container {
-                max-width: 500px;
-                margin: 0 auto;
-                background-color: #fff;
-                border-radius: 5px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                padding: 20px;
+              max-width: 500px;
+              margin: 0 auto;
+              background-color: #fff;
+              border-radius: 5px;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+              padding: 20px;
             }
             h1 {
-                color: #333;
+              color: #333;
             }
             p {
-                color: #555;
+              color: #555;
             }
             .password {
-                font-size: 24px;
-                font-weight: bold;
-                color: #0073e6;
+              font-size: 24px;
+              font-weight: bold;
+              color: #0073e6;
             }
             .footer {
-                margin-top: 20px;
-                color: #777;
+              margin-top: 20px;
+              color: #777;
             }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-        <h1>Di động Gen Z, xin chào</h1>
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>Di động Gen Z, xin chào</h1>
             <p>Bạn đã yêu cầu đặt lại mật khẩu. Dưới đây là mật khẩu mới của bạn:</p>
             <p class="password">${newPassword}</p>
             <p>Vui lòng lưu trữ mật khẩu này một cách an toàn.</p>
             <p class="footer">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
-        </div>
-        ${disclaimer}
-    </body>
-    </html>
-    `;
-    const data = {
+          </div>
+          ${disclaimer}
+        </body>
+        </html>
+      `;
+  
+      const data = {
         email,
         html: emailContent,
-    };
-
-    const rs = await sendMail(data); 
-
-    return res.status(200).json({
+      };
+  
+      const rs = await sendMail(data);
+  
+      return res.status(200).json({
         success: true,
         rs,
-    });
-};
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({
+        success: false,
+        error: error.message,
+      });
+    }
+  };
+  
 const changePassword = async (req, res) => {
     try {
       const userId = req.params.id;
