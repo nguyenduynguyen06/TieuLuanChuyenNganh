@@ -30,7 +30,6 @@ router.post('/uploadUser/:userID', uploadFile.single('image'), async (req, res) 
         return res.status(400).json({ success: false, error: 'Không có ảnh được tải lên.' });
       }
       const user = await User.findById(userID);
-  console.log('console',user)
       if (!user) {
         return res.status(404).json({ success: false, error: 'Người dùng không tồn tại.' });
       }

@@ -110,7 +110,7 @@ function Login({ onClose }) {
                 Login
               </MDBBtn>
               <div  class= "popup" onClick={toggleShow}> 
-                <span style={{fontSize: '15px'}} clickable >
+                <span style={{fontSize: '15px',cursor:'pointer'}} clickable >
                   Quên mật khẩu
                 </span>
               </div>

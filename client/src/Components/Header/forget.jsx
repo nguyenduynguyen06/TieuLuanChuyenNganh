@@ -17,41 +17,38 @@ import {
   MDBModalFooter,
 } from 'mdb-react-ui-kit';
 
-function Forget({ onClose }) {
+function Forget() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [message, setMessage] = useState('');
   const [user, setUser] = useState({
     email: '',
   });
-
+  const onChange = event => {
+    event.preventDefault();
+    setUser({ ...user, [event.target.name]: event.target.value });
+}
   const [success, setSuccess] = useState(false);
-
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  };
   const forgetHandler = event => {
     event.preventDefault();
-    axios.post(`${process.env.REACT_APP_API_URL}/user/forget`, user,
-      {
-        withCredentials: true,
-      })
+    axios.put(`${process.env.REACT_APP_API_URL}/user/forgotpassword`, user)
       .then((res) => {
         setSuccess(true);
-        setMessage(`Hãy kiểm tra email xác nhận`);
       }).catch((err) => {
         setSuccess(false);
         setMessage(`Email chưa được đăng ký tài khoản`);
       })
   }
-  const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
-  };
 
-  const handleForget = event => {
-    event.preventDefault();
-    toggleModal(); // Hiện thông báo popup khi bấm Xác nhận
-  };
+
 
   return (
     <div>
-      <form className="form-add-new" onSubmit={handleForget}>
+      <form className="form-add-new" onSubmit={(e) => {
+      forgetHandler(e);  
+  }}>
         <MDBContainer fluid>
           <MDBRow className='d-flex justify-content-center align-items-center h-100'>
             <MDBCol col='12'>
@@ -65,7 +62,7 @@ function Forget({ onClose }) {
                   )}
                   <h2 className="fw-bold mb-2 text-center">Quên Mật Khẩu</h2>
                   <p className="text-white-50 mb-3"></p>
-                  <MDBInput wrapperClass='mb-4 w-100' label='Email' name="email" type='email' size="lg" />
+                  <MDBInput wrapperClass='mb-4 w-100' label='Email' name="email" value = {user.email} type='email' size="lg" onChange={onChange} />
                   <MDBBtn size='lg' type="submit">
                     Xác nhận
                   </MDBBtn>
@@ -76,7 +73,7 @@ function Forget({ onClose }) {
         </MDBContainer>
       </form>
 
-      {/* Thông báo popup */}
+
       {isModalVisible && (
         <MDBModal tabIndex='-1' show={isModalVisible} onHide={toggleModal}>
           <MDBModalDialog centered>
@@ -85,8 +82,7 @@ function Forget({ onClose }) {
                 Thông báo
               </MDBModalHeader>
               <MDBModalBody>
-                {/* Nội dung thông báo */}
-                <p>Hãy kiểm tra!</p>
+              <i className="fas fa-check-circle" style={{ color: 'green' }}>&nbsp;</i> <p>Bạn đã yêu cầu gửi lại mật khẩu qua email thành công. Hãy tiến hành kiểm tra email</p>
               </MDBModalBody>
               <MDBModalFooter>
                 <MDBBtn onClick={toggleModal}>
