@@ -13,7 +13,7 @@ function ProductHomePage() {
 
   const getCategoryByName = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/category/getAll');
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
       const categories = res.data.data;
       const categoryName = 'Điện thoại';
       const category = categories.find((cat) => cat.name === categoryName);
@@ -22,7 +22,7 @@ function ProductHomePage() {
         return;
       }
       const response = await axios.get(
-        `http://localhost:5000/product/getIdByCategory/${category._id}`
+        `${process.env.REACT_APP_API_URL}/product/getIdByCategory/${category._id}`
       );
       const productsData = response.data.data;
       setProducts(productsData);
@@ -59,7 +59,7 @@ function ProductHomePage() {
           <div className='box' key={product._id}>
             <div className='card'>
               <div className='image' onClick={() => handleCardClick(product._id)}>
-                <img src='https://cdn.tgdd.vn/Products/Images/42/289700/iphone-14-pro-max-den-thumb-600x600.jpg' />
+                <img src={product.thumnails} />
               </div>
               <div className='desc'>
                 <h1>{product?.name}</h1>

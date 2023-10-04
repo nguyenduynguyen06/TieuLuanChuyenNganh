@@ -32,21 +32,12 @@ const Profilepage = () => {
 
 
     const props = {
-      name: 'avatar',
-      action: `${process.env.REACT_APP_API_URL}/upload`,
+      name: 'image',
+      action: `${process.env.REACT_APP_API_URL}/uploadUser/${user._id}`,
       onChange(info) {
         if (info.file.status === 'done') {
-            try {
-              axios.post(
-                `${process.env.REACT_APP_API_URL}/user/update/${user._id}`,
-                { avatar: info.file.name },  {
-                  withCredentials: true,
-              }
-              );
-              window.location.reload()
-            } catch (error) {
-             
-            }
+          message.success(`${info.file.name} file uploaded successfully.`);
+          window.location.reload();
         } else if (info.file.status === 'error') {
           message.error(`${info.file.name} file upload failed.`);
         }
@@ -61,7 +52,7 @@ const Profilepage = () => {
           <MDBCard className="mb-4">
             <MDBCardBody className="text-center">
                             <img
-                  src={`${process.env.REACT_APP_API_URL}/uploads/${user.avatar}`}
+                  src={user.avatar}
                   alt='avatar'
                   className="rounded-circle"
                   style={{ width: '150px' }}

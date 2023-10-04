@@ -4,13 +4,11 @@ const Product = require('../Model/ProductModel');
 
 const addProductVariant = async (req, res) => {
   try {
-    const { parentProductName ,sku, color, memory, imPrice, oldPrice,newPrice, quantity, pictures } = req.body;
-    const parentProduct = await Product.findOne({ name: parentProductName });
-    if (!parentProduct) {
-      return res.status(404).json({ success: false, error: 'Sản phẩm cha không tồn tại' });
-    }
+    const parentProductName = req.params.id;
+    const parentProduct = await Product.findById(parentProductName)
+    const { sku, color, memory, imPrice, oldPrice,newPrice, quantity, pictures } = req.body
     const productVariant = new ProductVariant({
-      productName: parentProduct._id, 
+      productName: parentProductName, 
       sku,
       color,
       memory,
@@ -31,11 +29,20 @@ const addProductVariant = async (req, res) => {
 };
 const deleteProductVariant = async (req, res) => {
   try {
-    const productvariantId = req.params.id;
-    if (productvariantId) {
-      const product = await ProductVariant.findByIdAndDelete({ _id: productvariantId });
-      if (!product) {
-        return res.status(401).json({ err: 'Sản phẩm không tồn tại' });
+    const productVariantId = req.params.id;
+    if (productVariantId) {
+      const productVariant = await ProductVariant.findById(productVariantId);
+      if (!productVariant) {
+        return res.status(401).json({ err: 'Biến thể sản phẩm không tồn tại' });
+      }
+      await ProductVariant.findByIdAndDelete(productVariantId);
+      const parentProductId = productVariant.productName;
+      const parentProduct = await Product.findById(parentProductId);
+      if (parentProduct) {
+        parentProduct.variant = parentProduct.variant.filter(
+          (variant) => variant.toString() !== productVariantId
+        );
+        await parentProduct.save();
       }
       res.status(200).json({ success: true, message: 'Biến thể đã được xóa thành công' });
     } else {
@@ -45,6 +52,7 @@ const deleteProductVariant = async (req, res) => {
     return res.status(500).json({ msg: 'Lỗi Server' });
   }
 };
+
 const updateProductVariant = async (req, res) => {
   try {
     const productVariantId = req.params.id;

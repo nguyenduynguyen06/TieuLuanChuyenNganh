@@ -1,11 +1,11 @@
 const Product = require('../Model/ProductModel');
 const Brand = require('../Model/BrandModel');
 const Category = require('../Model/CategoryModel');
-const ProductVariant = require('../Model/ProductVariantModel')
+const ProductVariant = require('../Model/ProductVariantModel');
+
 const addProduct = async (req, res) => {
   try {
-    const { name, desc, warrantyPeriod, brandName, categoryName, properties, thumnails } = req.body;
-
+    const { name, desc, warrantyPeriod, brandName, categoryName, properties } = req.body;
     const brand = await Brand.findOne({ name: brandName });
     if (!brand) {
       return res.status(404).json({ success: false, error: 'Brand không tồn tại' });
@@ -19,12 +19,11 @@ const addProduct = async (req, res) => {
       desc,
       releaseTime: Date.now(),
       warrantyPeriod,
-      brand: brand._id, 
+      brand: brand._id,
       category: category._id,
       isHide: false,
       isOutOfStock: false,
-      properties,
-      thumnails,
+      properties
     });
     const newProduct = await product.save();
     res.status(201).json({ success: true, data: newProduct });
@@ -32,6 +31,7 @@ const addProduct = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
 
 const getProductByBrandId = async (req, res) => {
   try {
