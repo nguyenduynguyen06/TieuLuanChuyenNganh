@@ -5,6 +5,7 @@ import NotFoundPage from "../pages/notfoundpage";
 import OrderPage from "../pages/oders";
 import ProductPage from "../pages/product";
 import ProductDetail from "../pages/ProductDetail/productdetail";
+import TypeProductPage from "../pages/ProductTypePage/producttypepage";
 export const routes = [
     {
         path:'/',
@@ -37,6 +38,11 @@ export const routes = [
     {
         path:'/pdd',
         page: ProductDetail,
+        isShowHeader: true
+    },
+    {
+        path:'/type',
+        page: TypeProductPage,
         isShowHeader: true
     }
 ]

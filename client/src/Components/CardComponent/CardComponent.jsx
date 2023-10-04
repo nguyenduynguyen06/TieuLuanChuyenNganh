@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { WrapperCard } from '../styled';
 import axios from 'axios';
 import { Button } from 'antd';
+import { WrapperCard } from './styled';
 
-function ProductHomePage() {
+function CardComponent() {
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
 
@@ -13,7 +13,7 @@ function ProductHomePage() {
 
   const getCategoryByName = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
+      const res = await axios.get('http://localhost:5000/category/getAll');
       const categories = res.data.data;
       const categoryName = 'Điện thoại';
       const category = categories.find((cat) => cat.name === categoryName);
@@ -22,7 +22,7 @@ function ProductHomePage() {
         return;
       }
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/product/getIdByCategory/${category._id}`
+        `http://localhost:5000/product/getIdByCategory/${category._id}`
       );
       const productsData = response.data.data;
       setProducts(productsData);
@@ -46,27 +46,21 @@ function ProductHomePage() {
     setIsExpanded(!isExpanded);
   };
 
-  const containerStyle = {
-    maxHeight: isExpanded ? 'none' : '685px',
-  };
-
   return (
     <WrapperCard>
-      <h1 className='title'>Điện Thoại</h1>
-      <br></br>
-      <div className='mainContainer' style={containerStyle}>
+      <div className='mainContainer'>
         {products.map((product) => (
           <div className='box' key={product._id}>
             <div className='card'>
               <div className='image' onClick={() => handleCardClick(product._id)}>
-                <img src={product.thumnails} />
+                <img src='https://cdn.tgdd.vn/Products/Images/42/289700/iphone-14-pro-max-den-thumb-600x600.jpg' />
               </div>
               <div className='desc'>
                 <h1>{product?.name}</h1>
                 <div>
                   {product?.variant.map((variant) => (
                     <Button
-                    className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
+                    className={` ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
                     onClick={() => {
                       setSelectedMemories((prevSelected) => ({
                         ...prevSelected,
@@ -78,13 +72,10 @@ function ProductHomePage() {
                     {variant.memory}
                   </Button>
                   ))}
-                  <div style={{ margin: 0}}>
-                  <p style={{fontWeight: 700, height:'20px' }}>
-                    {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
-                  </div>
-                  <div style={{ }}>
-                  <p style={{ color: '#000', textDecoration: 'line-through',height:'20px'  }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
-                  </div>
+                  <span style={{fontWeight: 'bold' }}>
+                    {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                  </span>
+                  <span style={{ color: '#000', textDecoration: 'line-through' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
                 </div>
               </div>
               <div className='image'>
@@ -97,12 +88,8 @@ function ProductHomePage() {
           </div>
         ))}
       </div>
-      <button onClick={handleShowMoreClick} id='show-more'>
-        {isExpanded ? 'Thu gọn' : 'Xem thêm'}
-      </button>
-      <br></br>
     </WrapperCard>
   );
 }
 
-export default ProductHomePage;
+export default CardComponent;

@@ -1,40 +1,6 @@
 import { Row } from "antd";
 import styled from "styled-components";
 
-export const WrapperHomePage = styled(Row)`
-width: 100%;
-height:100%;
-overflow: hidden;
-overflow-x: hidden
-`
-
-export const WrapperNa = styled.div`
-display: flex;
-    align-items: center;
-    gap: 10px;
-    justify-content: flex-start;
-    color: #fff;
-    font-size: 12px; 
-    font-weight: bold; 
-    height: 40px;
-`
-
-export const CardContainer = styled.div`
-//   width: 100%; /* Chiều rộng tùy thuộc vào phần tử cha */
-//   padding-top: 100%; /* Tỉ lệ 4:3 */
-  position: relative;
-  display: flex;
-
-`;
-
-export const CardContent = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-`;
 
 export const WrapperCard = styled.div`
   *{
@@ -56,10 +22,7 @@ export const WrapperCard = styled.div`
     align-items: center;
     justify-content: space-between; 
     row-gap: 20px;
-    overflow: hidden;
     padding: 20px;
-    column-gap: 12px;
-
   }
 
   .mainContainer .box {
@@ -67,21 +30,20 @@ export const WrapperCard = styled.div`
     text-align: center;
     transition: .3s ease-in-out;
     max-width: 100%;
-    width: auto;
+    cursor: pointer;
   }
 
   .mainContainer .box:hover {
     box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-    transform: scale(1.05);
   }
 
   .mainContainer .card {
     // padding: 15px 15px 0;
-    width: 100%;
+    width: auto;
   }
 
   .card .image {
-    width:100%;
+    width:80%;
     backgroud: #f9f9f9;
     margin: 20px auto;
     position: relative;
@@ -103,13 +65,10 @@ export const WrapperCard = styled.div`
   }
 
   .card .image img {
-    width:180px;
+    width:90px;
     transition: .3s ease-in-out;
-    cursor: pointer;
   }
-  .memory-button.selected {
-    border: 1px solid #00BFFF	; 
-  }
+
   .card .desc {
     width: 100%;
     margin: auto;
@@ -131,7 +90,7 @@ export const WrapperCard = styled.div`
 
   .btn {
     width: 100%;
-    padding: 12px 33px;
+    padding: 12px 20px;
     margin-top: 15px;
     border: none;
     color: #fff;
@@ -145,9 +104,8 @@ export const WrapperCard = styled.div`
     background: #ff3300;
   }
 
-    .box .card p {
+    .box .card span {
     color: #ff3300;
-    font-size: 15px;
   }
 
   @media screen and (max-width: 998px) {
@@ -160,17 +118,10 @@ export const WrapperCard = styled.div`
     }
   }
 
-  @media screen and (max-width: 1000px) {
+  @media screen and (max-width: 800px) {
     .mainContainer {
-      grid-template-columns: repeat(auto-fit, minmax(100px, 200px));
+      grid-template-columns: repeat(auto-fit, minmax(100px, 600px));
       padding: 5rem 3rem;
-      column-gap: 5px;
-      justify-content: center;
-    }
-    .card .image img {
-      width:90px;
-      transition: .3s ease-in-out;
-      cursor: pointer;
     }
   }
 
