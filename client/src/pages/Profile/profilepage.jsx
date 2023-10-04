@@ -30,7 +30,13 @@ const Profilepage = () => {
 
     const toggleShow1 = () => setCentredModal1(!centredModal1);
 
-
+    function checkFile(file) {
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+      if (!isJpgOrPng) {
+        message.error('Bạn chỉ có thể tải lên tệp tin JPG/PNG!');
+      }
+      return isJpgOrPng;
+    }
     const props = {
       name: 'image',
       action: `${process.env.REACT_APP_API_URL}/uploadUser/${user._id}`,
@@ -42,6 +48,7 @@ const Profilepage = () => {
           message.error(`${info.file.name} file upload failed.`);
         }
       },
+      beforeUpload: checkFile,
     };
   return (
     <section style={{ backgroundColor: '#eee' }}>

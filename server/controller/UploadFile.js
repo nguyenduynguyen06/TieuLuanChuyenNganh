@@ -8,6 +8,7 @@ cloudinary.config({
   api_secret: 'rNCuzXqi0AQ763zSHIcbFipKfiU' 
 });
 
+
 const storage = new CloudinaryStorage({
   cloudinary,
   allowedFormats: ['jpg', 'png'],

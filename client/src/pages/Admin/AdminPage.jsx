@@ -8,17 +8,7 @@ import AdminUser from '../../Components/admin/AdminUser/AdminUser';
 import { useSelector } from 'react-redux';
 
 const AdminHomePage = () => {
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  const role_id = localStorage.getItem('role_id');
-  // useEffect(() => {
-  //   if (isLoggedIn && role_id === '1') {
-  //   } else {
-  //     window.location.href = '/';
-  //   }
-  // }, [isLoggedIn, role_id]);
-  
-  
-  // const [openKeys, setOpenKeys] = useState(['user']);
+
   const [keySelected, setKeySelected] = useState('');
 
   const renderPage = (key) => {
@@ -36,15 +26,7 @@ const AdminHomePage = () => {
     }
   }
 
-  // const onOpenChange = (keys) => {
-  //   const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
-  //   const rootSubmenuKeys = ['user', 'product']; // Định nghĩa biến rootSubmenuKeys ở đây
-  //   if (latestOpenKey && rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-  //     setOpenKeys(keys);
-  //   } else {
-  //     setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
-  //   }
-  // };
+
   
   const items = [
     getItem('Dashboard', 'dashboard', <UserOutlined />),
