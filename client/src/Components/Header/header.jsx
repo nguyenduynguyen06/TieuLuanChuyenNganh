@@ -1,5 +1,5 @@
 import React, { useState }from "react";
-import { Button, Col} from 'antd';
+import { Badge, Button, Col} from 'antd';
 import axios from "axios";
 import { WrapperHeader, WrapperHeaderAccount, WrapperHeaderImage, WrapperHeaderProduct} from "./style";
 import Search from "antd/es/input/Search";
@@ -107,10 +107,12 @@ const Header = ({isHiddenSearch = false, isHiddenCart = false}) => {
 
       {!isHiddenCart && (
             <div className="grid-item">
+              <Badge count={4} size="small">
               <button class="custom-button" style={{backgroundColor: '#CC0000', right: '0px'}}>
               <ShoppingCartOutlined style={{fontSize: '20px'}} > 
               </ShoppingCartOutlined>&nbsp;Giỏ hàng
               </button>
+              </Badge>
             </div>)}
             </WrapperHeaderAccount>
             </div>

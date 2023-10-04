@@ -13,7 +13,9 @@ background-color: #ff3300;
 background-position: center;
 width: 100%;
 // grid-template-columns: repeat(auto-fill, minmax(200px, 300px));
-
+  .grid-item {
+    margin-top: 8px;
+  }
 
 
 `;

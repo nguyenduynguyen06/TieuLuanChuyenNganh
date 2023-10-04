@@ -20,7 +20,7 @@ export const WrapperCard = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1rem));
     align-items: center;
-    justify-content: space-between; 
+    justify-content: space-around; 
     row-gap: 20px;
     padding: 20px;
   }
@@ -30,7 +30,7 @@ export const WrapperCard = styled.div`
     text-align: center;
     transition: .3s ease-in-out;
     max-width: 100%;
-    cursor: pointer;
+    width: auto;
   }
 
   .mainContainer .box:hover {
@@ -39,11 +39,11 @@ export const WrapperCard = styled.div`
 
   .mainContainer .card {
     // padding: 15px 15px 0;
-    width: auto;
+    width: 100%;
   }
 
   .card .image {
-    width:80%;
+    width:100%;
     backgroud: #f9f9f9;
     margin: 20px auto;
     position: relative;
@@ -65,10 +65,13 @@ export const WrapperCard = styled.div`
   }
 
   .card .image img {
-    width:90px;
+    width:180px;
     transition: .3s ease-in-out;
+    cursor: pointer;
   }
-
+  .memory-button.selected {
+    border: 1px solid #00BFFF	; 
+  }
   .card .desc {
     width: 100%;
     margin: auto;
@@ -90,7 +93,7 @@ export const WrapperCard = styled.div`
 
   .btn {
     width: 100%;
-    padding: 12px 20px;
+    padding: 12px 33px;
     margin-top: 15px;
     border: none;
     color: #fff;
@@ -104,13 +107,15 @@ export const WrapperCard = styled.div`
     background: #ff3300;
   }
 
-    .box .card span {
+    .box .card p {
     color: #ff3300;
+    font-size: 15px;
   }
 
   @media screen and (max-width: 998px) {
     .mainContainer{
       padding: 0 3rem;
+      justify-content: center;
     }
 
     .card .image {
@@ -118,10 +123,23 @@ export const WrapperCard = styled.div`
     }
   }
 
-  @media screen and (max-width: 800px) {
+  @media screen and (max-width: 1000px) {
     .mainContainer {
-      grid-template-columns: repeat(auto-fit, minmax(100px, 600px));
+      grid-template-columns: repeat(auto-fit, minmax(100px, 200px));
       padding: 5rem 3rem;
+      column-gap: 6px;
+    }
+    .card .image img {
+      width:90px;
+      transition: .3s ease-in-out;
+      cursor: pointer;
+    }
+    .mainContainer .box:hover {
+      box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+      transform: scale(1);
+    }
+    .card .image:hover img {
+      transform: scale(1.3);
     }
   }
 
