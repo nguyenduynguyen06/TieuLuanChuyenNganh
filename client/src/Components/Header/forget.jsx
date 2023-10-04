@@ -71,7 +71,7 @@ function Forget() {
                   <h2 className="fw-bold mb-2 text-center">Quên Mật Khẩu</h2>
                   <p className="text-white-50 mb-3"></p>
                   <MDBInput wrapperClass='mb-4 w-100' label='Email' name="email" value={user.email} type='email' size="lg" onChange={onChange} />
-                  <MDBBtn size='lg' type="submit" disabled={loading}>
+                  <MDBBtn size='lg' type="submit" disabled={loading} style={{backgroundColor: '#FF3300'}}>
                     {loading ? 'Đang gửi...' : 'Xác nhận'}
                   </MDBBtn>
                 </MDBCardBody>
@@ -89,7 +89,7 @@ function Forget() {
                 Thông báo
               </MDBModalHeader>
               <MDBModalBody>
-                <i className="fas fa-check-circle" style={{ color: 'green' }}>&nbsp;</i> <p>Bạn đã yêu cầu gửi lại mật khẩu qua email thành công. Hãy tiến hành kiểm tra email</p>
+                <i className="fas fa-check-circle" style={{ color: 'green',fontSize:'30px' }}>&nbsp;</i> <p>Bạn đã yêu cầu gửi lại mật khẩu qua email thành công. Hãy tiến hành kiểm tra email</p>
               </MDBModalBody>
               <MDBModalFooter>
                 <MDBBtn onClick={toggleModal}>
