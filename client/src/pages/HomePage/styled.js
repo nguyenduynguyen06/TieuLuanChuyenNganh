@@ -1,5 +1,6 @@
 import { Row } from "antd";
 import styled from "styled-components";
+import ButtonComponent from "../../Components/ButtonComponent/ButtonComponent";
 
 export const WrapperHomePage = styled(Row)`
 width: 100%;
@@ -201,4 +202,16 @@ export const WrapperCard = styled.div`
     border:none
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   }
+`
+
+export const WrapperButtonMore = styled(ButtonComponent)`
+  &:hover {
+    color:#fff;
+    background: #ff3300
+    span {
+      color: #fff;
+    }
+  }
+  width: 100%;
+  text-align: center;
 `

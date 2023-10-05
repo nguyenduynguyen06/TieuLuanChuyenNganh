@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { WrapperCard } from '../styled';
+import { WrapperButtonMore, WrapperCard } from '../styled';
 import axios from 'axios';
 import { Button } from 'antd';
+import ButtonComponent from '../../../Components/ButtonComponent/ButtonComponent';
 
 function ProductHomePage() {
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
+  const [visibleProducts, setVisibleProducts] = useState(4);
 
   useEffect(() => {
     getCategoryByName();
@@ -43,19 +45,38 @@ function ProductHomePage() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleShowMoreClick = () => {
-    setIsExpanded(!isExpanded);
+    setVisibleProducts(visibleProducts + 4);
   };
 
   const containerStyle = {
-    maxHeight: isExpanded ? 'none' : '685px',
+    maxHeight: 'none'
   };
+  const buttonStyle = {
+    border: '1px solid #ff3300',
+    color: '#ff3300',
+    width: '240px',
+    height: '38px',
+    borderRadius: '4px',
+    fontWeight: 500,
+  };
+
+  const buttonHoverStyle = {
+    backgroundColor: '#ff3300',
+    color: 'white',
+    width: '240px',
+    height: '38px',
+    borderRadius: '4px',
+    fontWeight: 500,
+  };
+
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
 
   return (
     <WrapperCard>
       <h1 className='title'>Điện Thoại</h1>
       <br></br>
       <div className='mainContainer' style={containerStyle}>
-        {products.map((product) => (
+        {products.slice(0, visibleProducts).map((product) => (
           <div className='box' key={product._id}>
             <div className='card'>
               <div className='image' onClick={() => handleCardClick(product._id)}>
@@ -66,24 +87,24 @@ function ProductHomePage() {
                 <div>
                   {product?.variant.map((variant) => (
                     <Button
-                    className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
-                    onClick={() => {
-                      setSelectedMemories((prevSelected) => ({
-                        ...prevSelected,
-                        [product._id]: variant.memory,
-                      }));
-                    }}
-                    style={{padding:'5px 5px',marginInlineEnd: '5px'}}
-                  >
-                    {variant.memory}
-                  </Button>
+                      className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
+                      onClick={() => {
+                        setSelectedMemories((prevSelected) => ({
+                          ...prevSelected,
+                          [product._id]: variant.memory,
+                        }));
+                      }}
+                      style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
+                    >
+                      {variant.memory}
+                    </Button>
                   ))}
-                  <div style={{ margin: 0}}>
-                  <p style={{fontWeight: 700, height:'20px' }}>
-                    {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+                  <div style={{ margin: 0 }}>
+                    <p style={{ fontWeight: 700, height: '20px' }}>
+                      {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
                   </div>
-                  <div style={{ }}>
-                  <p style={{ color: '#000', textDecoration: 'line-through',height:'20px'  }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+                  <div style={{}}>
+                    <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
                   </div>
                 </div>
               </div>
@@ -97,10 +118,18 @@ function ProductHomePage() {
           </div>
         ))}
       </div>
-      <button onClick={handleShowMoreClick} id='show-more'>
-        {isExpanded ? 'Thu gọn' : 'Xem thêm'}
-      </button>
-      <br></br>
+      {visibleProducts < products.length && (
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+        <WrapperButtonMore
+          textButton="Xem thêm"
+          type="outline"
+          styleButton={isButtonHovered ? buttonHoverStyle : buttonStyle}
+          onMouseEnter={() => setIsButtonHovered(true)}
+          onMouseLeave={() => setIsButtonHovered(false)}
+          onClick={handleShowMoreClick}
+        >
+        </WrapperButtonMore>
+      </div>)}
     </WrapperCard>
   );
 }

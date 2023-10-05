@@ -87,9 +87,6 @@ function CardComponent() {
                   <img src='https://cdn-v2.didongviet.vn/files/default/2023/6/7/0/1688744699122_nhaan_02_03_1.png' />
                 </div>
               </div>
-              <button className='btn' href='#'>
-                Mua Ngay
-              </button>
             </div>
           ))}
         </div>
