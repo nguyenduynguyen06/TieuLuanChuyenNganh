@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppstoreOutlined, UserOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, UserOutlined,MailOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { getItem} from './utils';
 import Header from '../../Components/Header/header';
@@ -21,6 +21,10 @@ const AdminHomePage = () => {
           return (
             <AdminProduct/>
           )
+        case 'addProduct':
+          return(
+            <div></div>
+          )
       default:
         return <></>
     }
@@ -29,9 +33,14 @@ const AdminHomePage = () => {
 
   
   const items = [
+
     getItem('Dashboard', 'dashboard', <UserOutlined />),
     getItem('Người dùng', 'users', <UserOutlined />),
-    getItem('Sản phẩm', 'products', <AppstoreOutlined />),];
+    getItem('Sản phẩm', 'sub1',<AppstoreOutlined />, [
+      getItem('Danh sách sản phẩm', 'products'),
+      getItem('Thêm sản phẩm', 'addProduct'),
+      getItem('Loại sản phẩm', '3'),
+    ])];
 
   const user = useSelector((state)=> state.user)
   if (user && user.role_id == 1) {

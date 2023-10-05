@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "antd";
 import { WrapperHeader } from "../AdminUser/style";
 import {PlusOutlined} from '@ant-design/icons'
-import TableComponent from "../../TableComponents/TableComponents";
+
 const AdminUser = () =>{
     return(
         <div>
@@ -13,7 +13,7 @@ const AdminUser = () =>{
                 </Button>
             </div>
             <div style={{marginTop: '15px'}}>
-            <TableComponent/>
+      
             </div>
         </div>
     )

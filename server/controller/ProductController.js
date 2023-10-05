@@ -114,13 +114,23 @@ const searchProducts = async (req, res) => {
     const regex = new RegExp(keyword, 'i'); 
     const products = await Product.find({
       name: { $regex: regex }, 
-    });
+    }).populate('brand').populate('category');
     res.status(200).json({ success: true, data: products });
   } catch (error) {
     console.error('Lỗi:', error);
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
+const getAllProduct = async (req, res) => {
+  try {
+    const products = await Product.find()
+    .populate('brand') 
+    .populate('category'); 
+    res.status(200).json({ success: true, data: products });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+}
 
-
-module.exports = { addProduct,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts };
+module.exports = { addProduct,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts,getAllProduct };
