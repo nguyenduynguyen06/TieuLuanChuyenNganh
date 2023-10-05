@@ -83,3 +83,14 @@ export const WrapperSeeMore = styled.div`
     padding-top: 30px;
     color: #0492c2;
 `
+export const WrapperDesc = styled.div`
+    .product-description {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    .product-image {
+        max-width: 100%;
+        height: auto;
+        width: auto;
+      }
+`

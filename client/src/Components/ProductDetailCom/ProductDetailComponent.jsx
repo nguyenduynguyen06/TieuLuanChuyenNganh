@@ -1,4 +1,4 @@
-import React from "react"
+import React , {useState, useEffect} from "react"
 import { Col, Row, Table } from 'antd'
 import imageProduct from '../../image/ip15.webp'
 import imageSmall from '../../image/ip15_2.webp'
@@ -18,6 +18,7 @@ import {
 } from "./style"
 import { StarFilled, PlusOutlined, MinusOutlined } from '@ant-design/icons'
 import ButtonComponent from "../ButtonComponent/ButtonComponent"
+import ProductDescription from "./productdesscription"
 const { Column, ColumnGroup } = Table;
 
 const ProductDetailComponents = () => {
@@ -62,7 +63,20 @@ const ProductDetailComponents = () => {
             info: 'Apple A16 Bionic',
         },
     ];
-    return (
+    const productDescription = `
+    <h3 class="ql-align-justify"><strong>Thiết kế vuông vắn sang trọng</strong></h3>
+    <p class="ql-align-justify">iPhone 15 Pro Max vẫn giữ kiểu dáng vuông vắn và góc cạnh giống như những phiên bản trước đây, cách làm này mang đến cái nhìn sang trọng và thời thượng nhằm giúp bạn tỏa sáng dù ở bất kỳ nơi đâu mỗi khi cầm điện thoại trên tay.</p>
+    <p class="ql-align-justify">&nbsp;Đối với phần khung bao quanh thân máy, năm nay Apple đã không còn sử dụng thép không gỉ nữa mà thay vào đó là chất liệu titanium, điều này mang lại sự tối ưu về khối lượng, song cũng mang lại hiệu quả về mặt độ bền nhờ độ cứng cáp tốt hơn, giảm thiểu mức độ rủi ro khi va đập hoặc xây xát điện thoại.</p>
+    <p class="ql-align-justify"><br></p>
+    <p class="ql-align-justify"><a href="https://cdn.tgdd.vn/Products/Images/42/299033/iphone-15-pro-130923-102854.jpg" rel="noopener noreferrer" target="_blank" style="color: rgb(47, 128, 237);"><img src="https://cdn.tgdd.vn/Products/Images/42/299033/iphone-15-pro-130923-102854.jpg" alt="Thiết kế điện thoại - iPhone 15 Pro Max"></a></p>
+    <h3 class="ql-align-justify"><strong>Thiết kế vuông vắn sang trọng</strong></h3>
+    <p class="ql-align-justify">iPhone 15 Pro Max vẫn giữ kiểu dáng vuông vắn và góc cạnh giống như những phiên bản trước đây, cách làm này mang đến cái nhìn sang trọng và thời thượng nhằm giúp bạn tỏa sáng dù ở bất kỳ nơi đâu mỗi khi cầm điện thoại trên tay.</p>
+    <p class="ql-align-justify">&nbsp;Đối với phần khung bao quanh thân máy, năm nay Apple đã không còn sử dụng thép không gỉ nữa mà thay vào đó là chất liệu titanium, điều này mang lại sự tối ưu về khối lượng, song cũng mang lại hiệu quả về mặt độ bền nhờ độ cứng cáp tốt hơn, giảm thiểu mức độ rủi ro khi va đập hoặc xây xát điện thoại.</p>
+    <p class="ql-align-justify"><br></p>
+    <p class="ql-align-justify"><a href="https://cdn.tgdd.vn/Products/Images/42/299033/iphone-15-pro-130923-102854.jpg" rel="noopener noreferrer" target="_blank" style="color: rgb(47, 128, 237);"><img src="https://cdn.tgdd.vn/Products/Images/42/299033/iphone-15-pro-130923-102854.jpg" alt="Thiết kế điện thoại - iPhone 15 Pro Max"></a></p>
+    `;
+  
+  return (
         <div>
             <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
                 <Col span={10} style={{ border: '1px solid #e5e5e5', paddingRight: '8px' }}>
@@ -148,17 +162,10 @@ const ProductDetailComponents = () => {
             <hr className="my-4" />
             <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
                 <Col span={16} style={{ border: '1px solid #e5e5e5', padding: '10px', borderRadius: '4px' }}>
-                    <Row>
                         <h3>Mô tả sản phẩm</h3>
-                    </Row>
-                    <Row>
-                        <div style={{ textAlign: 'justify' }}>
-                            <span >
-                                iPhone 15 128GB được trang bị màn hình Dynamic Island kích thước 6.1 inch với công nghệ hiển thị Super Retina XDR màn lại trải nghiệm hình ảnh vượt trội. Điện thoại với mặt lưng kính nhám chống bám mồ hôi cùng 5 phiên bản màu sắc lựa chọn: Hồng, Vàng, Xanh lá, Xanh dương và đen. Camera trên iPhone 15 series cũng được nâng cấp lên cảm biến 48MP cùng tính năng chụp zoom quang học tới 2x. Cùng với thiết kế cổng sạc thay đổi từ lightning sang USB-C vô cùng ấn tượng.
-                            </span>
+                        <div style={{height:'600px', overflowY: 'scroll', overflowX: 'scroll', textAlign: 'justify'}}>
+                        <ProductDescription description={productDescription}/>
                         </div>
-                        <WrapperStyleImageBig src={imageProduct} alt="image product" preview={false} />
-                    </Row>
                 </Col>
                 <Col span={8} style={{ paddingLeft: '10px', textAlign: 'center' }}>
                     <WrapperPropTable dataSource={dataSource} pagination={false}>
@@ -168,7 +175,7 @@ const ProductDetailComponents = () => {
                         </ColumnGroup>
                     </WrapperPropTable>
                     <WrapperSeeMore>
-                        <a>Xem toàn bộ thông số</a>
+                        <a href="#">Xem toàn bộ thông số</a>
                     </WrapperSeeMore>
                 </Col>
             </Row>
