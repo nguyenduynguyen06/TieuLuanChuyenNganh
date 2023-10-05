@@ -6,6 +6,7 @@ import Header from '../../Components/Header/header';
 import AdminProduct from '../../Components/admin/AdminProduct/AdminProduct';
 import AdminUser from '../../Components/admin/AdminUser/AdminUser';
 import { useSelector } from 'react-redux';
+import NewProduct from '../../Components/admin/AdminProduct/NewProduct';
 
 const AdminHomePage = () => {
 
@@ -23,7 +24,7 @@ const AdminHomePage = () => {
           )
         case 'addProduct':
           return(
-            <div></div>
+            <div><NewProduct/></div>
           )
       default:
         return <></>
