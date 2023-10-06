@@ -77,7 +77,7 @@ function ProductHomePage() {
       <h1 className='title'>Điện Thoại</h1>
       <br></br>
       <div className='mainContainer' style={containerStyle}>
-        {products.slice(0, visibleProducts).map((product) => (
+        {products.filter((product) => product.isHide === false).slice(0, visibleProducts).map((product) => (
           <div className='box' key={product._id}>
             <div className='card'>
               <div className='image' onClick={() => handleCardClick(product._id)}>

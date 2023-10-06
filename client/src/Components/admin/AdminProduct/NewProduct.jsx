@@ -9,6 +9,8 @@ import {
   Form,
   Input,
   Select,
+  DatePicker,
+  Alert
 } from 'antd';
 const { Option } = Select;
 const formItemLayout = {
@@ -48,26 +50,33 @@ const NewProduct = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [formProperties, setFormProperties] = useState([]);
   const props = {
-  name: 'image',
-  action: `${process.env.REACT_APP_API_URL}/upload`,
-  headers: {
-    authorization: 'authorization-text',
-  },
-  onChange(info) {
-    if (info.file.status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-    if (info.file.status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully`);
-
-  
-      const uploadedFilePath = info.file.response.imageUrl; 
-      form.setFieldsValue({ thumnails: uploadedFilePath }); 
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-};
+    name: 'image',
+    action: `${process.env.REACT_APP_API_URL}/upload`,
+    headers: {
+      authorization: 'authorization-text',
+    },
+    accept: '.jpg, .jpeg, .png',
+    beforeUpload: (file) => {
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+      if (!isJpgOrPng) {
+        message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
+      }
+      return isJpgOrPng;
+    }, 
+    onChange(info) {
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+    
+        const uploadedFilePath = info.file.response.imageUrl; 
+        form.setFieldsValue({ thumnails: uploadedFilePath }); 
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
 
 
   const handlePropertyChange = (propertyKey, value) => {
@@ -228,6 +237,12 @@ const NewProduct = () => {
       }}
       scrollToFirstError
     >
+         <Alert
+            message="Lưu ý: Sau khi thêm sản phẩm phải thêm ít nhất 1 biến thể của sản phẩm thì mới có thể tiếp tục thêm sản phẩm"
+            type="info"
+            showIcon
+            style={{ marginBottom: '16px' }}
+          />
       <Form.Item
         name="name"
         label="Tên sản phẩm"
@@ -243,7 +258,7 @@ const NewProduct = () => {
 
       <Form.Item
         name="warrantyPeriod"
-        label="Bảo hành"
+        label="Bảo hành/tháng"
         rules={[
           {
             required: true,
@@ -251,7 +266,7 @@ const NewProduct = () => {
           },
         ]}
       >
-          <Input/>
+          <Input type="number"/>
       </Form.Item>
 
       <Form.Item
@@ -272,7 +287,18 @@ const NewProduct = () => {
           ))}
         </Select>
       </Form.Item>
-
+      <Form.Item
+        name="releaseTime"
+        label="Ngày ra mắt"
+        rules={[
+          {
+            required: true,
+            message: 'Chọn ngày ra mắt',
+          },
+        ]}
+      >
+        <DatePicker  />
+      </Form.Item>
       <Form.Item
         name="categoryName"
         label="Danh mục"

@@ -47,7 +47,6 @@ const AdminHomePage = () => {
   if (user && user.role_id == 1) {
     const handleOnClick = ({key}) => {
       setKeySelected(key)}
-    console.log('keySelected', keySelected)
     return (
       <>
         <Header isHiddenSearch isHiddenCart/>

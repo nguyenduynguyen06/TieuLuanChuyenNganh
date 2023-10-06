@@ -11,7 +11,7 @@ const productSchema = new mongoose.Schema({
     require: true,
   },
   releaseTime: {
-    type: Date,
+    type: String,
     require: true,
   },
   warrantyPeriod: {

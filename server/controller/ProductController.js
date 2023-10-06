@@ -2,10 +2,12 @@ const Product = require('../Model/ProductModel');
 const Brand = require('../Model/BrandModel');
 const Category = require('../Model/CategoryModel');
 const ProductVariant = require('../Model/ProductVariantModel');
-
+const { format } = require('date-fns');
 const addProduct = async (req, res) => {
   try {
-    const { name, desc, warrantyPeriod, brandName, categoryName, properties,thumnails} = req.body;
+    const { name, desc, warrantyPeriod,brandName, categoryName, properties,thumnails} = req.body;
+    const releaseTimeInput = req.body.releaseTime; 
+    const formattedReleaseTime = format(new Date(releaseTimeInput), 'dd/MM/yyyy'); 
     const brand = await Brand.findOne({ name: brandName });
     if (!brand) {
       return res.status(404).json({ success: false, error: 'Brand không tồn tại' });
@@ -17,11 +19,11 @@ const addProduct = async (req, res) => {
     const product = new Product({
       name,
       desc,
-      releaseTime: Date.now(),
+      releaseTime: formattedReleaseTime,
       warrantyPeriod,
       brand: brand._id,
       category: category._id,
-      isHide: false,
+      isHide: true,
       isOutOfStock: false,
       properties,
       thumnails
@@ -62,30 +64,51 @@ const editProduct = async (req, res) => {
   try {
     const productId = req.params.id;
     const data = req.body;
-    const { brandName, categoryName } = data;
-    const product = await Product.findById(productId);
-    if (!product) {
-      return res.status(404).json({ success: false, error: 'Sản phẩm không tồn tại' });
+    const updateData = {};
+    if (data.brandName) {
+      const brand = await Brand.findOne({ name: data.brandName });
+      if (!brand) {
+        return res.status(404).json({ success: false, error: 'Brand không tồn tại' });
+      }
+      updateData.brand = brand._id;
     }
-    const brand = await Brand.findOne({ name: brandName });
-    if (!brand) {
-      return res.status(404).json({ success: false, error: 'Brand không tồn tại' });
+    if (data.categoryName) {
+      const category = await Category.findOne({ name: data.categoryName });
+      if (!category) {
+        return res.status(404).json({ success: false, error: 'Category không tồn tại' });
+      }
+      updateData.category = category._id;
     }
-    const category = await Category.findOne({ name: categoryName });
-    if (!category) {
-      return res.status(404).json({ success: false, error: 'Category không tồn tại' });
+    if (data.name) {
+      updateData.name = data.name;
     }
-    const updateData = {
-      ...data,
-      brand: brand._id,
-      category: category._id,
-    };
-    const update = await Product.findByIdAndUpdate(productId, updateData, { new: true });
-    res.status(200).json({ success: true, data: update });
+    if (data.desc) {
+      updateData.desc = data.desc;
+    }
+    if (data.releaseTime) {
+      const releaseTimeInput = data.releaseTime; 
+      const formattedReleaseTime = format(new Date(releaseTimeInput), 'dd/MM/yyyy'); 
+      updateData.releaseTime = formattedReleaseTime;
+    }
+    if (data.warrantyPeriod) {
+      updateData.warrantyPeriod = data.warrantyPeriod;
+    }
+    if (data.properties) {
+      updateData.properties = data.properties;
+    }
+    if (data.thumnails) {
+      updateData.thumnails = data.thumnails;
+    }
+    if (data.isHide !== undefined) {
+      updateData.isHide = data.isHide;
+    }
+    const updatedProduct = await Product.findByIdAndUpdate(productId, updateData);
+    res.status(200).json({ success: true, data: updatedProduct });
   } catch (error) {
     return res.status(500).json({ msg: 'Lỗi Server' });
   }
 };
+
 const deleteProduct = async (req, res) => {
   try {
     const productId = req.params.id;
