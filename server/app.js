@@ -26,7 +26,6 @@ app.use(function (req, res, next) {
 app.use(cookieParser());
 app.use(bodyParser.json()); 
 app.use(express.urlencoded({ extended: true }));
-app.use('/uploads', express.static('server/images'));
 app.use('/', routerUpload);
 app.use('/user', routerUser);
 app.use('/product', routerProduct);

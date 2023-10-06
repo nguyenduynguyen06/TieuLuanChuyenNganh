@@ -5,7 +5,7 @@ const ProductVariant = require('../Model/ProductVariantModel');
 
 const addProduct = async (req, res) => {
   try {
-    const { name, desc, warrantyPeriod, brandName, categoryName, properties } = req.body;
+    const { name, desc, warrantyPeriod, brandName, categoryName, properties,thumnails} = req.body;
     const brand = await Brand.findOne({ name: brandName });
     if (!brand) {
       return res.status(404).json({ success: false, error: 'Brand không tồn tại' });
@@ -23,7 +23,8 @@ const addProduct = async (req, res) => {
       category: category._id,
       isHide: false,
       isOutOfStock: false,
-      properties
+      properties,
+      thumnails
     });
     const newProduct = await product.save();
     res.status(201).json({ success: true, data: newProduct });

@@ -1,22 +1,13 @@
 const express = require('express');
-const Product = require('../Model/ProductModel');
 const User = require('../Model/UserModel')
 const { uploadFile } = require('../controller/UploadFile'); 
 const router = express.Router();
 
-router.post('/uploadProduct/:productId', uploadFile.single('image'), async (req, res) => {
+router.post('/upload', uploadFile.single('image'), async (req, res) => {
   try {
-    const { productId } = req.params;
     if (!req.file) {
       return res.status(400).json({ success: false, error: 'Không có ảnh được tải lên.' });
     }
-    const product = await Product.findById(productId);
-
-    if (!product) {
-      return res.status(404).json({ success: false, error: 'Sản phẩm không tồn tại.' });
-    }
-    product.thumnails = req.file.path;
-    await product.save();
     return res.status(200).json({ success: true, message: 'Tải lên ảnh thành công.', imageUrl: req.file.path });
   } catch (error) {
     console.error('Lỗi:', error);
