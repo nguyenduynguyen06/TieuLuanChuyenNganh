@@ -1,4 +1,4 @@
-import {Col, Image, InputNumber, Table } from "antd";
+import {Col, Image, InputNumber, Row, Table } from "antd";
 import styled from "styled-components";
 
 export const WrapperStyleImageBig = styled(Image)`
@@ -93,4 +93,58 @@ export const WrapperDesc = styled.div`
         height: auto;
         width: auto;
       }
+`
+
+export const WrapperButton = styled(Col)`
+      .btn {
+        background: #fff;
+        color: #ff3300;
+        border: 1px solid #ff3300;
+      }
+      .btn:hover {
+        background: #ff3300;
+        color: #fff;
+      }
+      
+`
+export const WrapperTextBox = styled(Col)`
+      .textbox {
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        transition: .5s ease-in-out;
+        padding: 10px;
+    }
+`
+export const WrapperInfo = styled(Row)`
+    .nameinput {
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        transition: .5s ease-in-out;
+        margin-right: 20px;
+        padding: 10px;
+    }
+    .label {
+        font-size: 14px;
+    }
+    .checkbox{
+        margin-left: 7px;
+    }
+`
+export const WrapperComment = styled(Row)`
+    .singlecmt .name{
+        margin-bottom:0px;
+        color: #ff3300;
+        font-weight: '700'
+    }
+    .singlecmt .content{
+        font-size: 15px;
+        margin-bottom:2px;
+        font-style: italic;
+    }
+    .singlecmt button{
+        background: white;
+        border: none;
+        margin-left:10px;
+        
+    }
 `

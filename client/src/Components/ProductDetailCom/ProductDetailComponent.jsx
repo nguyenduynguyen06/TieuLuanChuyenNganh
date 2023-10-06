@@ -19,6 +19,7 @@ import {
 import { StarFilled, PlusOutlined, MinusOutlined } from '@ant-design/icons'
 import ButtonComponent from "../ButtonComponent/ButtonComponent"
 import ProductDescription from "./productdesscription"
+import CommentBox from "./commentcomponent"
 const { Column, ColumnGroup } = Table;
 
 const ProductDetailComponents = () => {
@@ -180,9 +181,11 @@ const ProductDetailComponents = () => {
                 </Col>
             </Row>
             <hr className="my-4" />
-            <Row>
-                BÌNH LUẬN
+            <Row >
+                <CommentBox/>
             </Row>
+            <hr className="my-4" />
+
         </div>
     )
 }
