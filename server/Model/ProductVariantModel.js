@@ -35,9 +35,9 @@ const productVariantSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  pictures: {
-    type: [String],
-  },
+  pictures: [{
+    type: String,
+  }],
 });
 
 const ProductVariant = mongoose.model('ProductVariant', productVariantSchema);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Alert, Modal, Table } from 'antd';
+import { Alert, InputNumber, Modal, Table } from 'antd';
 import { Space } from 'antd';
 import { Switch } from 'antd';
 import { AppstoreAddOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
@@ -47,6 +47,45 @@ const TableProduct = () => {
       }
     },
   };
+  const propss = {
+    name: 'images',
+    action: `${process.env.REACT_APP_API_URL}/uploads`,
+    headers: {
+      authorization: 'authorization-text',
+    },
+    accept: '.jpg, .jpeg, .png',
+    beforeUpload: (file) => {
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+      if (!isJpgOrPng) {
+        message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
+      }
+      return isJpgOrPng;
+    }, 
+    onChange(info) {
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+      
+  
+        const uploadedFilePaths = info.fileList
+          .filter((file) => file.status === 'done')
+          .map((file) => file.response.imageUrls);
+      
+        const allImageUrls = [].concat(...uploadedFilePaths);
+      
+ 
+        form.setFieldsValue({ pictures: allImageUrls });
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+      
+      
+    }
+  };
+  
+  
 
   const [form] = Form.useForm();
   const [categories, setCategories] = useState([])
@@ -94,7 +133,9 @@ const TableProduct = () => {
     {
       render: (text, record) => (
         <Space size="middle">
-          <a ><AppstoreAddOutlined /></a>
+          <a ><AppstoreAddOutlined onClick={() =>  {      
+              setAddVariant(true);
+            }} /></a>
           <a>
               <EditOutlined onClick={() =>  {      
               setUpdate(true);
@@ -212,6 +253,132 @@ const TableProduct = () => {
                 </Form.Item>
               </Form>
             </Modal>
+            <Modal
+            title="Sửa thông tin sản phẩm"
+            visible={isAddVariant}
+            onOk={() => {
+              form
+              .validateFields()
+              .then((values) => {
+                addProductVariant(record._id, values);
+                setAddVariant(false);
+              })
+              .catch((errorInfo) => {
+                console.error('Validation failed:', errorInfo);
+              });
+            }}
+            onCancel={() => {
+              setAddVariant(false);
+            }}>
+      
+            <Form
+              {...formItemLayout}
+              form={form}
+              style={{
+                maxWidth: 600,
+              }}
+              scrollToFirstError
+             >
+         <Form.Item
+             name="sku"
+        label="SKU"
+        rules={[
+          {
+            required: true,
+            message: 'Vui lòng điền SKU!',
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        name="color"
+        label="Màu sắc"
+        rules={[
+          {
+            required: true,
+            message: 'Vui lòng điền màu sắc!',
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        name="memory"
+        label="Bộ nhớ"
+        rules={[
+          {
+            required: true,
+            message: 'Vui lòng điền bộ nhớ!',
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        name="imPrice"
+        label="Giá nhập"
+        rules={[
+          {
+            required: true,
+            message: 'Vui lòng điền giá nhập!',
+          },
+        ]}
+      >
+        <InputNumber style={{ width: '100%' }} />
+      </Form.Item>
+      <Form.Item
+        name="oldPrice"
+        label="Giá cũ"
+        rules={[
+          {
+            required: true,
+            message: 'Vui lòng điền giá cũ!',
+          },
+        ]}
+      >
+        <InputNumber style={{ width: '100%' }} />
+      </Form.Item>
+      <Form.Item
+        name="newPrice"
+        label="Giá mới"
+        rules={[
+          {
+            required: true,
+            message: 'Vui lòng điền giá mới!',
+          },
+        ]}
+      >
+        <InputNumber style={{ width: '100%' }} />
+      </Form.Item>
+      <Form.Item
+        name="quantity"
+        label="Số lượng"
+        rules={[
+          {
+            required: true,
+            message: 'Vui lòng điền số lượng!',
+          },
+        ]}
+      >
+        <InputNumber style={{ width: '100%' }} />
+      </Form.Item>
+      <Form.Item
+        name="pictures"
+        label="Hình ảnh"
+        rules={[
+          {
+            required: true,
+            message: 'Vui lòng chọn ảnh',
+          },
+        ]}
+      >
+       <Upload {...propss}>
+    <Button icon={<UploadOutlined />}>Ảnh</Button>
+  </Upload>
+      </Form.Item>
+    </Form>
+            </Modal>
         </Space>
       ),
     },
@@ -253,6 +420,7 @@ const formItemLayout = {
 
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [isUpdate, setUpdate] = useState(false);
+  const [isAddVariant, setAddVariant] = useState(false);
   const [productData, setProductData] = useState([]);
   useEffect(() => {
     axios
@@ -264,7 +432,18 @@ const formItemLayout = {
         console.error('Lỗi khi gọi API: ', error);
       });
   }, []);
-
+  const addProductVariant = async (parentId, variantData) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/product/addProductvariant/${parentId}`,
+        variantData
+      );
+      form.resetFields();
+      return response.data.data;
+    } catch (error) {
+      throw error; 
+    }
+  };
   const handleSaveEdit = (id, values) => {
     const productId = id;
     axios.put(`${process.env.REACT_APP_API_URL}/product/editProduct/${productId}`, values)
@@ -273,6 +452,7 @@ const formItemLayout = {
       .then((response) => {
         setProductData(response.data.data);
       })
+      form.resetFields();
         setUpdate(false);
       })
       .catch((error) => {
