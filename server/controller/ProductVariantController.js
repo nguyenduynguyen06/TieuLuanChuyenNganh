@@ -5,28 +5,31 @@ const Product = require('../Model/ProductModel');
 const addProductVariant = async (req, res) => {
   try {
     const parentProductName = req.params.id;
-    const parentProduct = await Product.findById(parentProductName)
-    const { sku, color, memory, imPrice, oldPrice,newPrice, quantity, pictures } = req.body
+    const parentProduct = await Product.findById(parentProductName);
+    if (!parentProduct) {
+      return res.status(404).json({ success: false, error: 'Không tìm thấy sản phẩm chính' });
+    }
+    const { memory, imPrice, oldPrice, newPrice, attributes } = req.body;
     const productVariant = new ProductVariant({
-      productName: parentProductName, 
-      sku,
-      color,
+      productName: parentProductName,
       memory,
       imPrice,
       oldPrice,
       newPrice,
-      quantity,
-      pictures,
+      attributes,
     });
     const newProductVariant = await productVariant.save();
     parentProduct.variant.push(newProductVariant._id);
     await parentProduct.save();
-
     res.status(201).json({ success: true, data: newProductVariant });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false,  error });
   }
 };
+
+
+
+
 const deleteProductVariant = async (req, res) => {
   try {
     const productVariantId = req.params.id;
@@ -89,7 +92,6 @@ const updateProductVariant = async (req, res) => {
 const getAllbyIdProductVariant = async (req, res) => {
   try {
     const productvariantId = req.params.id
-
     const productVariant = await ProductVariant.findById(productvariantId);
     res.status(200).json({ success: true, data: productVariant });
   } catch (error) {

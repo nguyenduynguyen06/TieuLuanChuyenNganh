@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Alert, InputNumber, Modal, Table } from 'antd';
 import { Space } from 'antd';
 import { Switch } from 'antd';
-import { AppstoreAddOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { AppstoreAddOutlined, DeleteOutlined, EditOutlined,PlusOutlined,MinusCircleOutlined } from '@ant-design/icons';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { UploadOutlined } from '@ant-design/icons';
-import {  message, Upload } from 'antd';
+import {  message, Upload ,Collapse} from 'antd';
 import {
   Button,
   Form,
@@ -19,7 +19,7 @@ import {
 
 
 const TableProduct = () => {
-  const props = {
+  const props = (fieldKey) => ({
     name: 'image',
     action: `${process.env.REACT_APP_API_URL}/upload`,
     headers: {
@@ -32,59 +32,26 @@ const TableProduct = () => {
         message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
       }
       return isJpgOrPng;
-    }, 
-    onChange(info) {
-      if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
-    
-        const uploadedFilePath = info.file.response.imageUrl; 
-        form.setFieldsValue({ thumnails: uploadedFilePath }); 
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
     },
-  };
-  const propss = {
-    name: 'images',
-    action: `${process.env.REACT_APP_API_URL}/uploads`,
-    headers: {
-      authorization: 'authorization-text',
-    },
-    accept: '.jpg, .jpeg, .png',
-    beforeUpload: (file) => {
-      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-      if (!isJpgOrPng) {
-        message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
-      }
-      return isJpgOrPng;
-    }, 
-    onChange(info) {
-      if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
-      
-  
-        const uploadedFilePaths = info.fileList
-          .filter((file) => file.status === 'done')
-          .map((file) => file.response.imageUrls);
-      
-        const allImageUrls = [].concat(...uploadedFilePaths);
-      
- 
-        form.setFieldsValue({ pictures: allImageUrls });
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-      
-      
+onChange(info) {
+  if (info.file.status !== 'uploading') {
+    console.log(info.file, info.fileList);
+  }
+  if (info.file.status === 'done') {
+    message.success(`${info.file.name} file uploaded successfully`);
+    const uploadedFilePath = info.file.response.imageUrl;
+    if (typeof uploadedFilePath === 'string') {
+      const updatedAttributes = form.getFieldValue('attributes');
+      updatedAttributes[fieldKey].pictures = uploadedFilePath;
+      form.setFieldsValue({ attributes: updatedAttributes });
+    } else {
+      console.error('uploadedFilePath is not a string:', uploadedFilePath);
     }
-  };
-  
+  } else if (info.file.status === 'error') {
+    message.error(`${info.file.name} file upload failed.`);
+  }
+}
+  });
   
 
   const [form] = Form.useForm();
@@ -238,7 +205,7 @@ const TableProduct = () => {
                     name="thumnails"
                     label="Hình ảnh"
                   >
-                    <Upload {...props}>
+                    <Upload >
                        <Button icon={<UploadOutlined />}>Ảnh</Button>
                      </Upload>
                </Form.Item>
@@ -254,131 +221,147 @@ const TableProduct = () => {
               </Form>
             </Modal>
             <Modal
-            title="Sửa thông tin sản phẩm"
-            visible={isAddVariant}
-            onOk={() => {
-              form
-              .validateFields()
-              .then((values) => {
-                addProductVariant(record._id, values);
-                setAddVariant(false);
-              })
-              .catch((errorInfo) => {
-                console.error('Validation failed:', errorInfo);
-              });
-            }}
-            onCancel={() => {
-              setAddVariant(false);
-            }}>
-      
-            <Form
-              {...formItemLayout}
-              form={form}
-              style={{
-                maxWidth: 600,
-              }}
-              scrollToFirstError
-             >
-         <Form.Item
-             name="sku"
-        label="SKU"
-        rules={[
-          {
-            required: true,
-            message: 'Vui lòng điền SKU!',
-          },
-        ]}
-      >
-        <Input />
+  title="Thêm biến thể"
+  visible={isAddVariant}
+  onOk={() => {
+    form
+      .validateFields()
+      .then((values) => {
+        addProductVariant(record._id, values);
+        setAddVariant(false);
+      })
+      .catch((errorInfo) => {
+        console.error('Validation failed:', errorInfo);
+      });
+  }}
+  onCancel={() => {
+    setAddVariant(false);
+  }}
+>
+  <Form
+    {...formItemLayout}
+    form={form}
+    style={{
+      maxWidth: 600,
+    }}
+    scrollToFirstError
+  >
+    <Form.Item
+      name="memory"
+      label="Bộ nhớ"
+    >
+      <Input />
+    </Form.Item>
+    <Form.Item
+      name="imPrice"
+      label="Giá nhập"
+   
+    >
+      <InputNumber style={{ width: '100%' }} />
+    </Form.Item>
+    <Form.Item
+      name="oldPrice"
+      label="Giá cũ"
+    >
+      <InputNumber style={{ width: '100%' }} />
+    </Form.Item>
+    <Form.Item
+      name="newPrice"
+      label="Giá bán"
+    >
+      <InputNumber style={{ width: '100%' }} />
+    </Form.Item>
+    <Form.List name="attributes">
+  {(fields, { add, remove }) => (
+    <>
+      {fields.map(({ key, name, fieldKey, ...restField }) => (
+        <Collapse key={key}>
+          <Collapse.Panel header={`Thuộc tính ${key + 1}`} key={key}>
+            <Form.Item
+              {...restField}
+              name={[name, 'color']}
+              fieldKey={[fieldKey, 'color']}
+              label="Màu sắc"
+              rules={[
+                {
+                  required: true,
+                  message: 'Vui lòng điền màu sắc!',
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              {...restField}
+              name={[name, 'quantity']}
+              fieldKey={[fieldKey, 'quantity']}
+              label="Số lượng"
+              rules={[
+                {
+                  required: true,
+                  message: 'Vui lòng điền số lượng!',
+                },
+              ]}
+            >
+              <InputNumber style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item
+              {...restField}
+              name={[name, 'pictures']}
+              fieldKey={[fieldKey, 'pictures']}
+              label="Hình ảnh"
+              rules={[
+                {
+                  required: true,
+                  message: 'Vui lòng chọn ảnh',
+                },
+              ]}
+            >
+               <Upload {...props(fieldKey)}>
+                <Button icon={<UploadOutlined />}>Ảnh</Button>
+              </Upload>
+            </Form.Item>
+            <Form.Item
+              {...restField}
+              name={[name, 'sku']}
+              fieldKey={[fieldKey, 'sku']}
+              label="SKU"
+              rules={[
+                {
+                  required: true,
+                  message: 'Vui lòng điền SKU!',
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              {...restField}
+              name={[name, 'status']}
+              fieldKey={[fieldKey, 'status']}
+              label="Trạng thái"
+            >
+              <Input />
+            </Form.Item>
+            <MinusCircleOutlined onClick={() => { remove(name); }} />
+          </Collapse.Panel>
+        </Collapse>
+      ))}
+      <Form.Item>
+        <Button
+          type="dashed"
+          onClick={() => { add(); }}
+          icon={<PlusOutlined />}
+        >
+          Thêm thuộc tính
+        </Button>
       </Form.Item>
-      <Form.Item
-        name="color"
-        label="Màu sắc"
-        rules={[
-          {
-            required: true,
-            message: 'Vui lòng điền màu sắc!',
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        name="memory"
-        label="Bộ nhớ"
-        rules={[
-          {
-            required: true,
-            message: 'Vui lòng điền bộ nhớ!',
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        name="imPrice"
-        label="Giá nhập"
-        rules={[
-          {
-            required: true,
-            message: 'Vui lòng điền giá nhập!',
-          },
-        ]}
-      >
-        <InputNumber style={{ width: '100%' }} />
-      </Form.Item>
-      <Form.Item
-        name="oldPrice"
-        label="Giá cũ"
-        rules={[
-          {
-            required: true,
-            message: 'Vui lòng điền giá cũ!',
-          },
-        ]}
-      >
-        <InputNumber style={{ width: '100%' }} />
-      </Form.Item>
-      <Form.Item
-        name="newPrice"
-        label="Giá mới"
-        rules={[
-          {
-            required: true,
-            message: 'Vui lòng điền giá mới!',
-          },
-        ]}
-      >
-        <InputNumber style={{ width: '100%' }} />
-      </Form.Item>
-      <Form.Item
-        name="quantity"
-        label="Số lượng"
-        rules={[
-          {
-            required: true,
-            message: 'Vui lòng điền số lượng!',
-          },
-        ]}
-      >
-        <InputNumber style={{ width: '100%' }} />
-      </Form.Item>
-      <Form.Item
-        name="pictures"
-        label="Hình ảnh"
-        rules={[
-          {
-            required: true,
-            message: 'Vui lòng chọn ảnh',
-          },
-        ]}
-      >
-       <Upload {...propss}>
-    <Button icon={<UploadOutlined />}>Ảnh</Button>
-  </Upload>
-      </Form.Item>
-    </Form>
-            </Modal>
+    </>
+  )}
+</Form.List>
+  </Form>
+</Modal>
+
         </Space>
       ),
     },

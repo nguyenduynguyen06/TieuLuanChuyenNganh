@@ -56,10 +56,10 @@ const productSchema = new mongoose.Schema({
   {
     type: Object,
   },
-  thumnails:
+  thumnails:[
   {
     type: String
-  }
+  }]
 });
 const Product = mongoose.model('Product', productSchema);
 

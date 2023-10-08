@@ -50,8 +50,8 @@ const NewProduct = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [formProperties, setFormProperties] = useState([]);
   const props = {
-    name: 'image',
-    action: `${process.env.REACT_APP_API_URL}/upload`,
+    name: 'images',
+    action: `${process.env.REACT_APP_API_URL}/uploads`,
     headers: {
       authorization: 'authorization-text',
     },
@@ -69,14 +69,18 @@ const NewProduct = () => {
       }
       if (info.file.status === 'done') {
         message.success(`${info.file.name} file uploaded successfully`);
-    
-        const uploadedFilePath = info.file.response.imageUrl; 
-        form.setFieldsValue({ thumnails: uploadedFilePath }); 
+        const uploadedFilePaths = info.fileList
+          .filter((file) => file.status === 'done')
+          .map((file) => file.response.imageUrls);   
+        const allImageUrls = [].concat(...uploadedFilePaths);
+        console.log('')
+        form.setFieldsValue({ thumnails: allImageUrls });
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} file upload failed.`);
       }
-    },
+    }
   };
+  
 
 
   const handlePropertyChange = (propertyKey, value) => {
