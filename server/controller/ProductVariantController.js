@@ -89,14 +89,5 @@ const updateProductVariant = async (req, res) => {
     return res.status(500).json({ error });
   }
 };
-const getAllbyIdProductVariant = async (req, res) => {
-  try {
-    const productvariantId = req.params.id
-    const productVariant = await ProductVariant.findById(productvariantId);
-    res.status(200).json({ success: true, data: productVariant });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
 
-module.exports = { addProductVariant,deleteProductVariant,updateProductVariant,getAllbyIdProductVariant };
+module.exports = { addProductVariant,deleteProductVariant,updateProductVariant };

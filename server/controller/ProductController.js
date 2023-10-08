@@ -149,7 +149,13 @@ const getAllProduct = async (req, res) => {
   try {
     const products = await Product.find()
     .populate('brand') 
-    .populate('category'); 
+    .populate('category')
+    .populate({
+      path: 'variant',
+      populate: {
+        path: 'attributes',
+      },
+    });
     res.status(200).json({ success: true, data: products });
   } catch (error) {
     console.error('Lỗi:', error);

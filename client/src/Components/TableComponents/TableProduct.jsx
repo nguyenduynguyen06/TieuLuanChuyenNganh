@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Alert, InputNumber, Modal, Table } from 'antd';
 import { Space } from 'antd';
 import { Switch } from 'antd';
-import { AppstoreAddOutlined, DeleteOutlined, EditOutlined,PlusOutlined,MinusCircleOutlined } from '@ant-design/icons';
+import { AppstoreAddOutlined, DeleteOutlined, EditOutlined,PlusOutlined,MinusCircleOutlined,AppstoreOutlined } from '@ant-design/icons';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import ReactQuill from 'react-quill';
@@ -16,8 +16,9 @@ import {
   Select,
   DatePicker,
   Image,
+  List 
 } from 'antd';
-import { Carousel } from 'antd';
+
 
 const TableProduct = () => {
   const props = (fieldKey) => ({
@@ -138,6 +139,7 @@ onChange(info) {
       ),
     },    
     {
+      title: 'Thao tác',
       render: (text, record) => (
         <Space size="middle">
           <a ><AppstoreAddOutlined onClick={() =>  {      
@@ -401,7 +403,6 @@ onChange(info) {
 </Form.List>
   </Form>
 </Modal>
-
         </Space>
       ),
     },
@@ -416,10 +417,26 @@ onChange(info) {
           }}
         />
       ),
-    }
-    
+    },
+    {
+      title: "Biến thể",
+      dataIndex: "variant",
+      render: (text, record) => (
+        <Space size="middle">
+          <a
+            onClick={() => {
+              setSelectedProduct(record);
+              setVariantModalVisible(true);
+            }}
+          >
+            <AppstoreOutlined />
+          </a>
+        </Space>
+      ),
+    },
   ];
-
+  const [variantModalVisible, setVariantModalVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const { Option } = Select;
 const formItemLayout = {
   labelCol: {
@@ -439,9 +456,10 @@ const formItemLayout = {
     },
   },
 };
-
-
+const [attributeModalVisible, setAttributeModalVisible] = useState(false);
+const [selectedVariant, setSelectedVariant] = useState(null);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [isDeleteVariantVisible, setDeleteVariantVisible] = useState(false);
   const [isUpdate, setUpdate] = useState(false);
   const [isAddVariant, setAddVariant] = useState(false);
   const [productData, setProductData] = useState([]);
@@ -461,12 +479,22 @@ const formItemLayout = {
         `${process.env.REACT_APP_API_URL}/product/addProductvariant/${parentId}`,
         variantData
       );
+      
+      const updatedProductData = productData.map((product) => {
+        if (product._id === parentId) {
+          return { ...product, variant: [...product.variant, response.data.data] };
+        }
+        return product;
+      });
+  
+      // Cập nhật productData
+      setProductData(updatedProductData)
       form.resetFields();
-      return response.data.data;
     } catch (error) {
       throw error; 
     }
   };
+  
   const handleSaveEdit = (id, values) => {
     const productId = id;
     axios.put(`${process.env.REACT_APP_API_URL}/product/editProduct/${productId}`, values)
@@ -494,6 +522,32 @@ const formItemLayout = {
         console.error('Lỗi khi xóa sản phẩm: ', error);
       });
   };
+  const handleDeleteProductvariant = (variantId) => {
+    axios
+      .delete(`${process.env.REACT_APP_API_URL}/product/deleteVariant/${variantId}`)
+      .then((response) => {
+        const updatedProductData = productData.map((product) => {
+          const updatedVariants = product.variant.filter(
+            (variant) => variant._id !== variantId
+          );
+          return { ...product, variant: updatedVariants };
+        });
+        setProductData(updatedProductData);
+
+        const updatedSelectedProduct = {
+          ...selectedProduct,
+          variant: selectedProduct.variant.filter(
+            (variant) => variant._id !== variantId
+          ),
+        };
+        setSelectedProduct(updatedSelectedProduct);
+      })
+      .catch((error) => {
+        console.error('Lỗi khi xóa biến thể sản phẩm: ', error);
+      });
+  };
+  
+  
   const handleToggleHide = (productId, checked) => {
     axios.put(`${process.env.REACT_APP_API_URL}/product/editProduct/${productId}`, {
         isHide: checked, 
@@ -514,7 +568,10 @@ const formItemLayout = {
       });
   };
   
-  
+  const showAttributesModal = (variant) => {
+    setSelectedVariant(variant);
+    setAttributeModalVisible(true);
+  };
   
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -563,6 +620,120 @@ const formItemLayout = {
         ...product,
         key: index,
       }))} />
+<Modal
+  title="Danh sách biến thể"
+  visible={variantModalVisible}
+  onCancel={() => setVariantModalVisible(false)}
+  footer={null}
+  width={1000}
+>
+  {selectedProduct && (
+    <Table
+      dataSource={selectedProduct.variant}
+      columns={[
+        {
+          title: 'Bộ nhớ',
+          dataIndex: 'memory',
+          key: 'memory',
+        },
+        {
+          title: 'Giá nhập',
+          dataIndex: 'imPrice',
+          key: 'imPrice',
+        },
+        {
+          title: 'Giá cũ',
+          dataIndex: 'oldPrice',
+          key: 'oldPrice',
+        },
+        {
+          title: 'Giá bán',
+          dataIndex: 'newPrice',
+          key: 'newPrice',
+        },
+    
+        {
+          title: 'Thuộc tính',
+          render: (text, record) => (
+            <Space size="middle">
+              <a onClick={() => showAttributesModal(record)}><AppstoreOutlined/> </a>
+            </Space>
+          ),
+        },
+        {
+          title: 'Thao tác',
+          render: (text, record) => (
+            <Space size="middle">
+               <a onClick={() => setDeleteVariantVisible(true)}> <DeleteOutlined /></a>
+                  <Modal
+          title="Xác nhận xoá sản phẩm"
+          visible={isDeleteVariantVisible}
+          onOk={() => {
+            handleDeleteProductvariant(record._id);
+            setDeleteVariantVisible(false); 
+          }}
+          onCancel={() => setDeleteVariantVisible(false)} 
+        >
+          <p>Bạn có chắc chắn muốn xoá sản phẩm này?</p>
+        </Modal>
+              <a><EditOutlined/></a>
+          </Space>
+          ),
+        },
+      ]}
+    />
+  )}
+</Modal>
+
+<Modal
+  title={`Thuộc tính của biến thể - ${selectedVariant?.memory}`}
+  visible={attributeModalVisible}
+  onCancel={() => setAttributeModalVisible(false)}
+  footer={null}
+  width={800}
+>
+  {selectedVariant && (
+    <Table
+      dataSource={selectedVariant.attributes}
+      columns={[
+        {
+          title: 'Mã sản phẩm',
+          dataIndex: 'sku',
+          key: 'sku',
+        },
+        {
+          title: 'Màu sắc',
+          dataIndex: 'color',
+          key: 'color',
+        },
+        {
+          title: 'Số lượng',
+          dataIndex: 'quantity',
+          key: 'quantity',
+        },
+        {
+          title: 'Đã bán',
+          dataIndex: 'sold',
+          key: 'sold',
+        },
+        {
+          title: 'Hình ảnh',
+          dataIndex: 'pictures',
+          key: 'pictures',
+          render: pictures => (
+            <div>
+                <Image
+                  src={pictures}
+                  alt={`Hình ảnh `}
+                  style={{ maxWidth: '100px', maxHeight: '100px', marginRight: '10px' }}
+                />
+            </div>
+          ),
+        },
+      ]}
+    />
+  )}
+</Modal>
     </div>
   );
 };
