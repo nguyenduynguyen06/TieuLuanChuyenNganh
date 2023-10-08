@@ -81,7 +81,7 @@ function ProductHomePage() {
           <div className='box' key={product._id}>
             <div className='card'>
               <div className='image' onClick={() => handleCardClick(product._id)}>
-                <img src={product.thumnails} />
+                <img src={product.thumnails[0]} />
               </div>
               <div className='desc'>
                 <h1>{product?.name}</h1>

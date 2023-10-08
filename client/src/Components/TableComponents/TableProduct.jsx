@@ -14,9 +14,10 @@ import {
   Form,
   Input,
   Select,
-  DatePicker
+  DatePicker,
+  Image,
 } from 'antd';
-
+import { Carousel } from 'antd';
 
 const TableProduct = () => {
   const props = (fieldKey) => ({
@@ -52,8 +53,37 @@ onChange(info) {
   }
 }
   });
-  
-
+  const propss = {
+    name: 'images',
+    action: `${process.env.REACT_APP_API_URL}/uploads`,
+    headers: {
+      authorization: 'authorization-text',
+    },
+    accept: '.jpg, .jpeg, .png',
+    beforeUpload: (file) => {
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+      if (!isJpgOrPng) {
+        message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
+      }
+      return isJpgOrPng;
+    }, 
+    onChange(info) {
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+        const uploadedFilePaths = info.fileList
+          .filter((file) => file.status === 'done')
+          .map((file) => file.response.imageUrls);   
+        const allImageUrls = [].concat(...uploadedFilePaths);
+        console.log('')
+        form.setFieldsValue({ thumnails: allImageUrls });
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    }
+  };
   const [form] = Form.useForm();
   const [categories, setCategories] = useState([])
   const [brands, setBrands] = useState([]); 
@@ -95,8 +125,18 @@ onChange(info) {
     {
       title: "Hình ảnh hiển thị",
       dataIndex: "thumnails",
-      render: theImageURL => <img alt={theImageURL} src={theImageURL} style={{ maxWidth: "100px", maxHeight: "100px" }}  />
-    },
+      render: thumbnails => (
+        <div >
+          {thumbnails.map((imageUrl, index) => (
+              <img
+                src={imageUrl}
+                alt={`Thumbnail ${index}`}
+                style={{ maxWidth: "100px", maxHeight: "100px" }}
+              />
+          ))}
+        </div>
+      ),
+    },    
     {
       render: (text, record) => (
         <Space size="middle">
@@ -205,7 +245,7 @@ onChange(info) {
                     name="thumnails"
                     label="Hình ảnh"
                   >
-                    <Upload >
+                    <Upload {...propss}>
                        <Button icon={<UploadOutlined />}>Ảnh</Button>
                      </Upload>
                </Form.Item>
