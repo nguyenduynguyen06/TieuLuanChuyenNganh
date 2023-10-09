@@ -14,9 +14,7 @@ const userRegister = async (req, res) => {
         facebookId: req.body.facebookId,
         role_id: 2,
         addRess: req.body.addRess,
-        status: 1,
-        avatar: req.body.avatar,
-        birthDay: req.body.birthDay
+        isBlocked: false,
     })
         .then(user => res.status(200).json({ msg: 'thành công' }))
         .catch(err => res.status(400).json({msg : 'thất bại'}))
@@ -69,19 +67,31 @@ const userLogin = async (req, res) => {
     }
 };
 
+const { format } = require('date-fns');
+
 const userUpdate = async (req, res) => {
     try {
         const userId = req.params.id;
         const data = req.body;
-        if (userId) { 
-              await User.findByIdAndUpdate(userId, data, { new: true });
+        if (userId) {
+
+            if (data.birthday) {
+                data.birthday = format(new Date(data.birthday), 'dd/MM/yyyy');
+            }
+            const updatedUser = await User.findByIdAndUpdate(userId, data, { new: true });        
+            if (!updatedUser) {
+                return res.status(404).json({ msg: 'Người dùng không tồn tại' });
+            }
+            return res.status(200).json({ msg: 'Cập nhật thành công', updatedUser });
         } else {
             return res.status(401).json({ msg: 'Không tìm thấy ID' });
         }
     } catch (error) {
+        console.error('Lỗi:', error);
         return res.status(500).json({ msg: 'Lỗi Server' });
     }
 };
+
 const deleteUser = async (req, res) => {
     try {
         const userId = req.params.id;

@@ -31,8 +31,8 @@ const UserSchema = new mongoose.Schema({
         type: String,
         require: true
     },
-    status: {
-        type: Number,
+    isBlocked: {
+        type: Boolean,
         require: true
     },
     avatar: {
