@@ -1,7 +1,7 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import { Card } from 'antd';
 import { CardWrapper } from './style';
-
+import axios from 'axios';
 
 const gridStyle = {
   width: '20%',
@@ -9,53 +9,45 @@ const gridStyle = {
   fontSize: 'auto',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center', // Căn giữa theo chiều dọc
-  alignItems: 'center', // Căn giữa theo chiều ngang
+  justifyContent: 'center', 
+  alignItems: 'center', 
   backgroundImage: 'linear-gradient(to right, #8c52ff,  #ff3300)',
   borderRadius: '5px'
 
 };
 const Category = () => {
-  const handleCardClick = (id) => {
+  const [categories, setCategories] = useState([]);
 
-    window.location.href = `/category/${id}`;
+  useEffect(() => {
+   
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
+        setCategories(response.data.data);
+      } catch (error) {
+        console.error('Lỗi khi lấy danh sách danh mục:', error);
+      }
+    };
+
+    
+    fetchCategories();
+  }, []); 
+
+  const handleCardClick = (name) => {
+    window.location.href = `/type/${name}`;
   };
   return (
     <CardWrapper title={<span style={{ fontSize: '24px', color: '#FF3300' }} >Danh mục</span>}>
-      <Card.Grid style={{ ...gridStyle, cursor: 'pointer' }} onClick={() => handleCardClick(123)}>
-        <img src='https://images.fpt.shop/unsafe/fit-in/60x60/filters:quality(90):fill(transparent)/fptshop.com.vn/Uploads/images/2015/img-dienthoai-desk.png'
-          className='img-fluid rounded'/>
-        <p>Điện thoại</p>
-      </Card.Grid>
-      <Card.Grid style={{ ...gridStyle, cursor: 'pointer' }} onClick={() => handleCardClick(123)}>
-        <img src='https://freepngimg.com/save/33095-phone-case-transparent/680x743'
-          className='img-fluid rounded' alt='' />
-        <p>Ốp lưng</p>
-      </Card.Grid>
-      <Card.Grid style={{ ...gridStyle, cursor: 'pointer' }} onClick={() => handleCardClick(123)}>
-        <img
-          src='https://png.pngtree.com/png-clipart/20230504/ourmid/pngtree-airpods-png-image_7081756.png'
-          className='img-fluid rounded'
-          alt=''
-        />
-        <p>Tai nghe</p>
-      </Card.Grid>
-      <Card.Grid style={{ ...gridStyle, cursor: 'pointer' }} onClick={() => handleCardClick(123)}>
-        <img
-          src='https://static.vecteezy.com/system/resources/previews/016/694/739/original/white-charger-phone-with-transparent-background-png.png'
-          className='img-fluid rounded'
-          alt=''
-        />
-        <p>Cáp sạc</p>
-      </Card.Grid>
-      <Card.Grid style={{ ...gridStyle, cursor: 'pointer' }} onClick={() => handleCardClick(123)}>
-        <img
-          src='https://tlctrading.vn/uploads/Mazer/kinh-cuong-luc/kinh-cuong-luc-iphone-12-pro-max/M_IG2020IP6.1full%202%20500x500.png'
-          className='img-fluid rounded'
-          alt=''
-        />
-        <p>Kính cường lực</p>
-      </Card.Grid>
+      {categories.map((category) => (
+        <Card.Grid
+          key={category._id}
+          style={{ ...gridStyle, cursor: 'pointer' }}
+          onClick={() => handleCardClick(category.name)}
+        >
+          <img src={category.image} className='img-fluid rounded' alt='' />
+          <p>{category.name}</p>
+        </Card.Grid>
+      ))}
     </CardWrapper>
   )
 }

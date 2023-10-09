@@ -60,6 +60,8 @@ const getProductsByCategory = async (req, res) => {
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
+
+
 const editProduct = async (req, res) => {
   try {
     const productId = req.params.id;
