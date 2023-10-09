@@ -297,25 +297,36 @@ onChange(info) {
     <Form.Item
       name="memory"
       label="Bộ nhớ"
+      rules={[
+        {
+          required: true,
+          message: 'Bộ nhớ',
+        },
+      ]}
     >
       <Input />
     </Form.Item>
     <Form.Item
       name="imPrice"
       label="Giá nhập"
-   
-    >
-      <InputNumber style={{ width: '100%' }} />
-    </Form.Item>
-    <Form.Item
-      name="oldPrice"
-      label="Giá cũ"
+      rules={[
+        {
+          required: true,
+          message: 'Giá nhập',
+        },
+      ]}
     >
       <InputNumber style={{ width: '100%' }} />
     </Form.Item>
     <Form.Item
       name="newPrice"
       label="Giá bán"
+      rules={[
+        {
+          required: true,
+          message: 'Giá bán',
+        },
+      ]}
     >
       <InputNumber style={{ width: '100%' }} />
     </Form.Item>
@@ -492,14 +503,93 @@ const [selectedVariant, setSelectedVariant] = useState(null);
         }
         return product;
       });
-  
-      // Cập nhật productData
       setProductData(updatedProductData)
       form.resetFields();
     } catch (error) {
       throw error; 
     }
   };
+  const addAttributes = async (variantId, attributesData) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/product/addAttributes/${variantId}`,
+        { attributes: attributesData }
+      );
+      const updatedProductData = productData.map((product) => {
+        if (product.variant.some((variant) => variant._id === variantId)) {
+          const updatedVariants = product.variant.map((variant) => {
+            if (variant._id === variantId) {
+              return {
+                ...variant,
+                attributes: response.data.data.attributes,
+              };
+            }
+            return variant;
+          });
+          return {
+            ...product,
+            variant: updatedVariants,
+          };
+        }
+        return product;
+      });
+      const updatedSelectedProduct = { ...selectedProduct };
+      updatedSelectedProduct.variant = updatedProductData.find(
+        (product) => product._id === selectedProduct._id
+      ).variant;
+      
+      setSelectedProduct(updatedSelectedProduct);
+      setProductData(updatedProductData);
+      form.resetFields();
+    } catch (error) {
+      console.error("Lỗi khi thêm thuộc tính:", error);
+    }
+  };
+  const updateProductVariant = async (variantId, newData) => {
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}/product/editProductVariant/${variantId}`,
+        newData
+      );
+      console.log('Response from server:', response.data);
+      const updatedProductData = productData.map((product) => {
+        if (product.variant.some((variant) => variant._id === variantId)) {
+          const updatedVariants = product.variant.map((variant) => {
+            if (variant._id === variantId) {
+              return {
+                ...variant,
+                memory: newData.memory,
+                imPrice: newData.imPrice,
+                oldPrice: newData.oldPrice,
+                newPrice: newData.newPrice,
+              };
+            }
+            return variant;
+          });
+          return {
+            ...product,
+            variant: updatedVariants,
+          };
+        }
+        return product;
+      });
+  
+      const updatedSelectedProduct = updatedProductData.find(
+        (product) => product._id === selectedProduct._id
+      );
+      if (updatedSelectedProduct) {
+        setSelectedProduct(updatedSelectedProduct);
+      }
+  
+      setProductData(updatedProductData);
+    } catch (error) {
+      console.error('Lỗi khi cập nhật biến thể sản phẩm:', error);
+      throw error;
+    }
+  };
+  
+  
+  
   
   const handleSaveEdit = (id, values) => {
     const productId = id;
@@ -578,7 +668,8 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     setSelectedVariant(variant);
     setAttributeModalVisible(true);
   };
-  
+  const [isAddAttributes, setAddAttributes] = useState(false);
+  const [isUpdateVariant, setUpdateVariant] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const handleSearch = (query) => {
@@ -672,7 +763,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
             <Space size="middle">
                <a onClick={() => setDeleteVariantVisible(true)}> <DeleteOutlined /></a>
                   <Modal
-          title="Xác nhận xoá sản phẩm"
+          title="Xác nhận xoá biến thể"
           visible={isDeleteVariantVisible}
           onOk={() => {
             handleDeleteProductvariant(record._id);
@@ -680,9 +771,191 @@ const [selectedVariant, setSelectedVariant] = useState(null);
           }}
           onCancel={() => setDeleteVariantVisible(false)} 
         >
-          <p>Bạn có chắc chắn muốn xoá sản phẩm này?</p>
+          <p>Bạn có chắc chắn muốn xoá biến thể này?</p>
         </Modal>
-              <a><EditOutlined/></a>
+              <a><EditOutlined onClick={() =>  {      
+               setUpdateVariant(true);
+            }}/></a>
+              <a ><AppstoreAddOutlined onClick={() =>  {      
+              setAddAttributes(true);
+            }} /></a>
+       <Modal
+  title="Thêm thuộc tính cho biến thể"
+  visible={isAddAttributes}
+  onOk={() => {
+    form
+      .validateFields()
+      .then((values) => {
+        addAttributes(record._id, values.attributes);
+        setAddAttributes(false);
+      })
+      .catch((errorInfo) => {
+        console.error('Validation failed:', errorInfo);
+      });
+  }}
+  onCancel={() => {
+    setAddAttributes(false);
+  }}
+>
+  {/* Biểu mẫu để nhập thông tin thuộc tính */}
+  <Form
+    {...formItemLayout}
+    form={form}
+    style={{
+      maxWidth: 600,
+    }}
+    scrollToFirstError
+  >
+    {/* Tên thuộc tính, số lượng, hình ảnh, SKU, trạng thái */}
+    <Form.Item name="attributes" label="Thuộc tính">
+      <Form.List name="attributes">
+        {(fields, { add, remove }) => (
+          <>
+            {fields.map(({ key, name, fieldKey, ...restField }) => (
+              <Collapse key={key}>
+                <Collapse.Panel header={`Thuộc tính ${key + 1}`} key={key}>
+                  <Form.Item
+                    {...restField}
+                    name={[name, 'color']}
+                    fieldKey={[fieldKey, 'color']}
+                    label="Màu sắc"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Vui lòng điền màu sắc!',
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+              {...restField}
+              name={[name, 'quantity']}
+              fieldKey={[fieldKey, 'quantity']}
+              label="Số lượng"
+              rules={[
+                {
+                  required: true,
+                  message: 'Vui lòng điền số lượng!',
+                },
+              ]}
+            >
+              <InputNumber style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item
+              {...restField}
+              name={[name, 'pictures']}
+              fieldKey={[fieldKey, 'pictures']}
+              label="Hình ảnh"
+              rules={[
+                {
+                  required: true,
+                  message: 'Vui lòng chọn ảnh',
+                },
+              ]}
+            >
+               <Upload {...props(fieldKey)}>
+                <Button icon={<UploadOutlined />}>Ảnh</Button>
+              </Upload>
+            </Form.Item>
+            <Form.Item
+              {...restField}
+              name={[name, 'sku']}
+              fieldKey={[fieldKey, 'sku']}
+              label="SKU"
+              rules={[
+                {
+                  required: true,
+                  message: 'Vui lòng điền SKU!',
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              {...restField}
+              name={[name, 'status']}
+              fieldKey={[fieldKey, 'status']}
+              label="Trạng thái"
+            >
+              <Input />
+            </Form.Item>
+                  <MinusCircleOutlined onClick={() => { remove(name); }} />
+                </Collapse.Panel>
+              </Collapse>
+            ))}
+            <Form.Item>
+              <Button
+                type="dashed"
+                onClick={() => { add(); }}
+                icon={<PlusOutlined />}
+              >
+                Thêm thuộc tính
+              </Button>
+            </Form.Item>
+          </>
+        )}
+      </Form.List>
+    </Form.Item>
+  </Form>
+</Modal>
+
+<Modal
+  title="Sửa biến thể"
+  visible={isUpdateVariant}
+  onOk={() => {
+    form
+      .validateFields()
+      .then((values) => {
+        updateProductVariant(record._id, values);
+        setUpdateVariant(false);
+      })
+      .catch((errorInfo) => {
+        console.error('Validation failed:', errorInfo);
+      });
+  }}
+  onCancel={() => {
+    setUpdateVariant(false);
+  }}
+>
+  <Form
+    {...formItemLayout}
+    form={form}
+    style={{
+      maxWidth: 600,
+    }}
+    scrollToFirstError
+  >
+    <Form.Item
+      name="memory"
+      label="Bộ nhớ"
+    >
+      <Input />
+    </Form.Item>
+    <Form.Item
+      name="imPrice"
+      label="Giá nhập"
+   
+    >
+      <InputNumber style={{ width: '100%' }} />
+    </Form.Item>
+    <Form.Item
+      name="oldPrice"
+      label="Giá cũ"
+    >
+      <InputNumber style={{ width: '100%' }} />
+    </Form.Item>
+    <Form.Item
+      name="newPrice"
+      label="Giá bán"
+    >
+      <InputNumber style={{ width: '100%' }} />
+    </Form.Item>
+  </Form>
+</Modal>
+
+
+
           </Space>
           ),
         },
@@ -690,6 +963,9 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     />
   )}
 </Modal>
+
+
+
 
 <Modal
   title={`Thuộc tính của biến thể - ${selectedVariant?.memory}`}

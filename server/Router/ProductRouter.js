@@ -13,5 +13,7 @@ router.delete('/delete/:id', productController.deleteProduct);
 router.get('/searchProduct', productController.searchProducts);
 router.delete('/deleteVariant/:id', productvariantController.deleteProductVariant);
 router.put('/editProductVariant/:id', productvariantController.updateProductVariant);
+router.post('/addAttributes/:id', productvariantController.addAttributes);
+router.delete('/deleteAttributes/:id/:attributeIdToRemove', productvariantController.deleteAttributes);
 router.get('/getAll',productController.getAllProduct)
 module.exports = router;

@@ -26,6 +26,21 @@ const addProductVariant = async (req, res) => {
     res.status(500).json({ success: false,  error });
   }
 };
+const addAttributes = async (req, res) => {
+  try {
+    const productVariantId = req.params.id; 
+    const { attributes } = req.body; 
+    const productVariant = await ProductVariant.findById(productVariantId);
+    if (!productVariant) {
+      return res.status(404).json({ success: false, error: 'Không tìm thấy sản phẩm biến thể' });
+    }
+    productVariant.attributes.push(...attributes); 
+    const updatedProductVariant = await productVariant.save();
+    res.status(200).json({ success: true, data: updatedProductVariant });
+  } catch (error) {
+    res.status(500).json({ success: false, error });
+  }
+};
 
 
 
@@ -60,34 +75,48 @@ const updateProductVariant = async (req, res) => {
   try {
     const productVariantId = req.params.id;
     const data = req.body;
-    const { parentProductName: newParentProductName } = data;
-
     const productVariantToUpdate = await ProductVariant.findById(productVariantId);
     if (!productVariantToUpdate) {
       return res.status(404).json({ success: false, error: 'Biến thể không tồn tại' });
     }
-    const oldParentProductId = productVariantToUpdate.productName;
-    const newParentProduct = await Product.findOne({ name: newParentProductName });
-    if (!newParentProduct) {
-      return res.status(404).json({ success: false, error: 'Sản phẩm mới không tồn tại' });
-    }
-    productVariantToUpdate.set(data);
-    productVariantToUpdate.productName = newParentProduct._id;
-    await productVariantToUpdate.save();
-    const oldParentProduct = await Product.findById(oldParentProductId);
-    if (oldParentProduct) {
-      oldParentProduct.variant = oldParentProduct.variant.filter((variant) => {
-        return !variant.equals(productVariantId);
-      });
-      await oldParentProduct.save();
-    }
-    newParentProduct.variant.push(productVariantToUpdate._id);
-    await newParentProduct.save();
 
+    if (data.memory !== undefined) {
+      productVariantToUpdate.memory = data.memory;
+    }
+    if (data.imPrice !== undefined) {
+      productVariantToUpdate.imPrice = data.imPrice;
+    }
+    if (data.oldPrice !== undefined) {
+      productVariantToUpdate.oldPrice = data.oldPrice;
+    }
+    if (data.newPrice !== undefined) {
+      productVariantToUpdate.price = data.newPrice;
+    }
+    
+    await productVariantToUpdate.save();
     res.status(200).json({ success: true, data: productVariantToUpdate });
   } catch (error) {
     return res.status(500).json({ error });
   }
 };
+const deleteAttributes = async (req, res) => {
+  try {
+    const variantId = req.params.variantId;
+    const attributeIdToRemove = req.params.attributeIdToRemove; 
+    const productVariant = await ProductVariant.findById(variantId);
+    if (!productVariant) {
+      return res.status(404).json({ success: false, error: 'Biến thể không tồn tại' });
+    }
+    productVariant.attributes = productVariant.attributes.filter(
+      (attribute) => attribute !== attributeIdToRemove
+    );
+    await productVariant.save();
 
-module.exports = { addProductVariant,deleteProductVariant,updateProductVariant };
+    res.status(200).json({ success: true, message: 'Xóa thuộc tính khỏi biến thể thành công' });
+  } catch (error) {
+    res.status(500).json({ success: false, error });
+  }
+};
+
+
+module.exports = { addProductVariant,deleteProductVariant,updateProductVariant,addAttributes,deleteAttributes };
