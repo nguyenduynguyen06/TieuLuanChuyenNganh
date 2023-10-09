@@ -126,8 +126,14 @@ onChange(info) {
     {
       title: "Hình ảnh hiển thị",
       dataIndex: "thumnails",
+  
       render: thumbnails => (
-        <div >
+        <div style={{
+          display: "flex",
+          flexWrap: "nowrap",  
+          overflowX: "scroll",   
+          maxWidth: "100%",
+        }}>
           {thumbnails.map((imageUrl, index) => (
               <img
                 src={imageUrl}

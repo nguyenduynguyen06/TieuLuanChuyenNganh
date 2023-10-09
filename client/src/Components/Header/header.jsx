@@ -49,9 +49,6 @@ const Header = ({isHiddenSearch = false, isHiddenCart = false}) => {
     const closePopup = () => {
       setCentredModal(false);
     };
-
-  
-  
     return (
     <div> 
     <WrapperHeader >

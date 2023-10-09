@@ -17,18 +17,21 @@ import {
   MDBModalHeader,
 } from 'mdb-react-ui-kit';
 import { Card } from 'antd';
-import { useSelector } from 'react-redux';
 import UpdateUser from './updateUser';
+import ChangePassword from './changepass'
 import axios from 'axios';
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, message, Upload } from 'antd';
+import { useSelector } from "react-redux";
 
 
 const Profilepage = () => {
   const user = useSelector((state)=> state.user)
     const [centredModal1, setCentredModal1] = useState(false);
+    const [centredModal2, setCentredModal2] = useState(false);
 
     const toggleShow1 = () => setCentredModal1(!centredModal1);
+    const toggleShow2 = () => setCentredModal2(!centredModal2);
 
     function checkFile(file) {
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -72,7 +75,7 @@ const Profilepage = () => {
               <div className="text-muted mb-1"></div>
               <div className="d-flex justify-content-center mb-2">
               <MDBBtn onClick={toggleShow1} style={{backgroundColor: "#FF3300",border: '2px solid black'}}>Cập nhật thông tin</MDBBtn>
-              <MDBBtn className="ms-1" style={{ border: '2px solid #FF3300', color: 'red',backgroundColor:'#F5F5F5' }}>Đổi mật khẩu</MDBBtn>
+              <MDBBtn onClick={toggleShow2} className="ms-1" style={{ border: '2px solid #FF3300', color: 'red',backgroundColor:'#F5F5F5' }}>Đổi mật khẩu</MDBBtn>
               </div>
             </MDBCardBody>
           </MDBCard>
@@ -202,6 +205,17 @@ const Profilepage = () => {
               <MDBBtn className='btn-close' color='none' onClick={toggleShow1}></MDBBtn>
             </MDBModalHeader>
             <UpdateUser></UpdateUser>
+          </MDBModalContent>
+        </MDBModalDialog>
+      </MDBModal>
+
+      <MDBModal show={centredModal2} tabIndex='-1' setShow={setCentredModal2}>
+        <MDBModalDialog size='xl'>
+          <MDBModalContent>
+            <MDBModalHeader>
+              <MDBBtn className='btn-close' color='none' onClick={toggleShow2}></MDBBtn>
+            </MDBModalHeader>
+            <ChangePassword></ChangePassword>
           </MDBModalContent>
         </MDBModalDialog>
       </MDBModal>
