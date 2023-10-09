@@ -11,7 +11,6 @@ export const routes = [
     {
         path:'/',
         page: HomePage,
-        isShowHeader : true
     },
     {
         path:'/order',

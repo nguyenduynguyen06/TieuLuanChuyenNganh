@@ -25,7 +25,6 @@ function AccessoryHomePage() {
   return ( 
     <WrapperCard >
     <h1 className='title'>Phụ Kiện Điện Thoại</h1>
-    <br></br>
     <div className='mainContainer' style={containerStyle}>
         <div className='box'>
           <div className='card' onClick={() => handleCardClick(123)}>

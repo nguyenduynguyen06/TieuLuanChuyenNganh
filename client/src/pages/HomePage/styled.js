@@ -3,10 +3,12 @@ import styled from "styled-components";
 import ButtonComponent from "../../Components/ButtonComponent/ButtonComponent";
 
 export const WrapperHomePage = styled(Row)`
+
 width: 100%;
 height:100%;
 overflow: hidden;
 overflow-x: hidden
+font-family: Palatino, sans-serif;
 `
 
 export const WrapperNa = styled.div`
@@ -42,16 +44,22 @@ export const WrapperCard = styled.div`
     margin: 0;
     padding: 0;
   }
+  .imgtt {
+    border-radius: 8px 8px 0 0;
+  }
   .title {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     font-size: 24px;
-    color: #ff3300;
+    color: #fff;
     padding: 10px;
-    
+    text-transform: uppercase;
+    font-family:Helvetica, Arial,  sans-serif;
+    text-align: center;
+    border-radius: 4px;
   }
   .mainContainer {
     width:100%;
-    background: #fff;
+    background-image: linear-gradient(to left, #FE9100,  #F29600);
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1rem));
     align-items: center;
@@ -60,6 +68,8 @@ export const WrapperCard = styled.div`
     overflow: hidden;
     padding: 20px;
     column-gap: 12px;
+    border-radius: 0 0 8px 8px;
+
 
   }
 
@@ -109,7 +119,7 @@ export const WrapperCard = styled.div`
     cursor: pointer;
   }
   .memory-button.selected {
-    border: 1px solid #00BFFF	; 
+    border: 1px solid #00BFFF	;
   }
   .card .desc {
     width: 100%;

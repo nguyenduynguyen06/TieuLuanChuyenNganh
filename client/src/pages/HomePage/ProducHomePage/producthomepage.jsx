@@ -4,7 +4,6 @@ import axios from 'axios';
 import { Button } from 'antd';
 import ButtonComponent from '../../../Components/ButtonComponent/ButtonComponent';
 import { Link } from 'react-router-dom';
-
 function ProductHomePage() {
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
@@ -74,8 +73,7 @@ function ProductHomePage() {
 
   return (
     <WrapperCard>
-      <h1 className='title'>Điện Thoại</h1>
-      <br></br>
+      <img className='imgtt' src="..\..\image\bannerpd.jpg" style={{width: '100%'}} alt='title'></img>
       <div className='mainContainer' style={containerStyle}>
         {products.filter((product) => product.isHide === false).slice(0, visibleProducts).map((product) => (
           <div className='box' key={product._id}>

@@ -1,7 +1,7 @@
-import { Row } from "antd";
+import { Col, Row } from "antd";
 import styled from "styled-components";
 
-export const WrapperHeader = styled.div`
+export const WrapperHeader = styled(Row)`
 padding: 7px 120px;
 display: flex;
 flex-wrap: wrap;
@@ -9,15 +9,9 @@ align-item:center;
 justify-content: space-evenly;
 background-size: cover;
 background-color: #ff3300;
-// background-image: url('./image/giangsinhvuive.png');
+background-image: linear-gradient(to right, #8c52ff,  #ff3300);
 background-position: center;
 width: 100%;
-// grid-template-columns: repeat(auto-fill, minmax(200px, 300px));
-  .grid-item {
-    margin-top: 8px;
-  }
-
-
 `;
 // export const Search = styled(Search)`
 //   .ant-input-search-button {
@@ -28,25 +22,33 @@ width: 100%;
 // `;
 
 
-export const WrapperHeaderImage = styled.div`
-  display: n;
-  place-items: center;
-  a {
+export const WrapperHeaderImage = styled(Col)`
+  .logo {
+    padding: 2px;
+    margin: -2px;
+    border-radius: 2px;
     display: block;
-    width: 100%;
+    width: auto;
+    height: auto;
   }
-  img {
-    max-width: 100%;
+  .logo img{
+    width: 162px;
+    height: 50px;
+  }
+  .ant-image {
+    position: relative;
+    top: -0.1875rem;
+    padding-right: 2.5rem;
   }
 `;
 
-export const WrapperHeaderAccount = styled.div`
+export const WrapperHeaderAccount = styled(Col)`
     // margin: 0 50px;
     display : flex;
     align-items: center;
     color: #fff;
     gap: 10px;
-    white-space: nowrap;
+    white-space: wrap;
     position: end;
     button.custom-button {
         background-color: #007bff; 
