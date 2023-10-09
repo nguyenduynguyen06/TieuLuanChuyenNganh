@@ -1,16 +1,14 @@
 import React, { useState } from "react";
-import { Alert } from "antd";
-import { Button, message, Upload } from 'antd';
+import { useSelector } from "react-redux";
 import {
   MDBBtn,
-  MDBContainer,
-  MDBCard,
   MDBCardBody,
   MDBInput,
 }
   from 'mdb-react-ui-kit';
-
+import axios from "axios";
     const ChangePassword = () => {
+    const user1 = useSelector((state) => state.user);
     const [message, setMessage] = useState('');
     const [success, setSuccess] = useState(false);
     const [passwordsMatch, setPasswordsMatch] = useState(true);
@@ -27,19 +25,28 @@ import {
           return;
         }
     }
-    const changeHandler = event => {
+    const changeHandler = async event => {
         event.preventDefault();
         if (!passwordsMatch) {
             setSuccess(false);
             setMessage("Xác nhận password sai");
             return; 
         }
-
+        try {
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/user/changepassword/${user1._id}`, {
+                currentPassword: user.passWord,
+                newPassword: user.newPass,},  { withCredentials: true });
+                setSuccess(true);
+                setMessage("Đổi mật khẩu thành công!");
+        } catch (error) {
+            console.error('Lỗi khi thay đổi mật khẩu:', error);
+            setSuccess(false);
+            setMessage("Kiểm tra lại mật khẩu cũ");
+        }
     }
 
     return (
-        <form className="form-add-new" onSubmit={changeHandler} >
-            <MDBContainer fluid>
+        <form className="form-add-new" onSubmit={changeHandler} >      
                     <MDBCardBody className='p-5 text-center'>
                         {message && (
                             <h2>
@@ -53,12 +60,11 @@ import {
                         )}
                         
                         <h2 className="fw-bold mb-5">Đổi mật khẩu</h2>
-                        <MDBInput wrapperClass='mb-4' label='Password cũ' name="passWord" value={user.passWord} onChange={onChange} type='password' tabIndex="1"/>
-                        <MDBInput wrapperClass='mb-4' label='Password mới' name="newPass" value={user.newPass} onChange={onChange} type='password' tabIndex="2" onBlur={() => { setPasswordsMatch(user.newPass === user.confirmPassword); }} />
+                        <MDBInput wrapperClass='mb-4' label='Password cũ' name="passWord" value={user.currentPassword} onChange={onChange} type='password' tabIndex="1"/>
+                        <MDBInput wrapperClass='mb-4' label='Password mới' name="newPass" value={user.newPassword} onChange={onChange} type='password' tabIndex="2" onBlur={() => { setPasswordsMatch(user.newPass === user.confirmPassword); }} />
                         <MDBInput wrapperClass='mb-4' label='Nhập lại password' name="confirmPassword" value={user.confirmPassword} onChange={onChange} type='password' tabIndex="3" onBlur={() => { setPasswordsMatch(user.newPass === user.confirmPassword); }} />
                         <MDBBtn className='w-100 mb-4' size='md' style={{ background: '#FF3300' }}>Đồng ý</MDBBtn>
                     </MDBCardBody>
-            </MDBContainer>
         </form>
     );
 

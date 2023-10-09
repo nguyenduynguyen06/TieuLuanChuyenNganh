@@ -67,17 +67,12 @@ const userLogin = async (req, res) => {
     }
 };
 
-const { format } = require('date-fns');
 
 const userUpdate = async (req, res) => {
     try {
         const userId = req.params.id;
         const data = req.body;
         if (userId) {
-
-            if (data.birthday) {
-                data.birthday = format(new Date(data.birthday), 'dd/MM/yyyy');
-            }
             const updatedUser = await User.findByIdAndUpdate(userId, data, { new: true });        
             if (!updatedUser) {
                 return res.status(404).json({ msg: 'Người dùng không tồn tại' });

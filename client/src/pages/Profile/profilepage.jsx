@@ -16,7 +16,7 @@ import {
   MDBModalContent,
   MDBModalHeader,
 } from 'mdb-react-ui-kit';
-import { Card } from 'antd';
+import { Card, Modal } from 'antd';
 import UpdateUser from './updateUser';
 import ChangePassword from './changepass'
 import axios from 'axios';
@@ -198,27 +198,27 @@ const Profilepage = () => {
 
 
 
-    <MDBModal show={centredModal1} tabIndex='-1' setShow={setCentredModal1}>
+    <Modal 
+        visible={centredModal1}
+        onCancel={toggleShow1}
+        footer ={null}>
+
         <MDBModalDialog size='xl'>
           <MDBModalContent>
-            <MDBModalHeader>
-              <MDBBtn className='btn-close' color='none' onClick={toggleShow1}></MDBBtn>
-            </MDBModalHeader>
             <UpdateUser></UpdateUser>
           </MDBModalContent>
         </MDBModalDialog>
-      </MDBModal>
-
-      <MDBModal show={centredModal2} tabIndex='-1' setShow={setCentredModal2}>
+      </Modal>
+      <Modal 
+        visible={centredModal2}
+        onCancel={toggleShow2}
+        footer ={null}>
         <MDBModalDialog size='xl'>
           <MDBModalContent>
-            <MDBModalHeader>
-              <MDBBtn className='btn-close' color='none' onClick={toggleShow2}></MDBBtn>
-            </MDBModalHeader>
             <ChangePassword></ChangePassword>
           </MDBModalContent>
         </MDBModalDialog>
-      </MDBModal>
+      </Modal>
   </section>
   )
 }
