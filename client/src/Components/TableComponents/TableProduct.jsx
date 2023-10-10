@@ -184,9 +184,9 @@ onChange(info) {
           >  
             <Alert
             message="Lưu ý: Sửa thuộc tính nào chỉ cần điền vào thuộc tính đó không cần điền tất cả"
-            type="info"
+            type="warning"
             showIcon
-            style={{ marginBottom: '16px' }}
+            style={{ marginBottom: '16px',background:'#FFFF99' }}
           />
           <Form
                 {...formItemLayout}
@@ -284,9 +284,9 @@ onChange(info) {
 >
           <Alert
             message="Lưu ý: Chỉ có điện thoại là có bộ nhớ, nếu sản phẩm không phải điện thoại vui lòng không điền"
-            type="info"
+            type="warning"
             showIcon
-            style={{ marginBottom: '16px' }}
+            style={{ marginBottom: '16px',background:'#FFFF99' }}
           />
   <Form
     {...formItemLayout}
@@ -906,6 +906,12 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     setUpdateVariant(false);
   }}
 >
+<Alert
+            message="Lưu ý: Sửa thuộc tính nào chỉ cần điền vào thuộc tính đó không cần điền tất cả"
+            type="warning"
+            showIcon
+            style={{ marginBottom: '16px',background:'#FFFF99' }}
+          />
   <Form
     {...formItemLayout}
     form={form}

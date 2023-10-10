@@ -242,9 +242,9 @@ const NewProduct = () => {
     >
          <Alert
             message="Lưu ý: Sau khi thêm sản phẩm phải thêm ít nhất 1 biến thể của sản phẩm thì mới có thể tiếp tục thêm sản phẩm"
-            type="info"
+            type="warning"
             showIcon
-            style={{ marginBottom: '16px' }}
+            style={{ marginBottom: '16px',background:'#FFFF99' }}
           />
       <Form.Item
         name="name"

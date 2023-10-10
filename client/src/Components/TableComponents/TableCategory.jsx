@@ -141,17 +141,11 @@ const TableCategory = () => {
       };
     return (
       <div>
-           <Search
-          style={{ width: '50%' }}
-          placeholder="Tìm kiếm danh mục"
-         // onSearch={handleSearch}
-          enterButton
-        />
            <Alert
             message="Lưu ý: Không được xoá những danh mục đang hiện vì nó đang chứa các sản phẩm, nếu xoá sẽ bị lỗi, chỉ xoá những danh mục lỗi nếu quá trình thêm bị sai"
-            type="info"
+            type="warning"
             showIcon
-            style={{ marginBottom: '16px' }}
+            style={{ marginBottom: '16px',background:'#FFFF99' }}
           />
         <Table columns={columns} dataSource={categoryData} /> 
       </div>
