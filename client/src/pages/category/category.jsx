@@ -41,7 +41,7 @@ const Category = () => {
         <span style={{ fontSize: '24px', color: '#fff', fontWeight: 600, textTransform: 'uppercase' }} >Danh mục</span>
       </div>
       <CardWrapper >
-        {categories.map((category) => (
+        {categories.filter((category) => category.isHide === false).map((category) => (
           <Card.Grid
             key={category._id}
             style={{ ...gridStyle, cursor: 'pointer', height: '100px' }}
