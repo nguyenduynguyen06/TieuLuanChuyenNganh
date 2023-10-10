@@ -69,11 +69,22 @@ export const WrapperCard = styled.div`
     padding: 20px;
     column-gap: 12px;
     border-radius: 0 0 8px 8px;
-
-
+  }
+  .mainContainerAcc {
+    width:100%;
+    background-image: linear-gradient(to left, #5f2b89,  #5f2b89);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1rem));
+    align-items: center;
+    justify-content: space-between; 
+    row-gap: 20px;
+    overflow: hidden;
+    padding: 20px;
+    column-gap: 12px;
+    border-radius: 0 0 8px 8px;
   }
 
-  .mainContainer .box {
+  .box {
     background: #fff;
     text-align: center;
     transition: .3s ease-in-out;
@@ -81,12 +92,12 @@ export const WrapperCard = styled.div`
     width: auto;
   }
 
-  .mainContainer .box:hover {
+   .box:hover {
     box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
     transform: scale(1.05);
   }
 
-  .mainContainer .card {
+   .card {
     // padding: 15px 15px 0;
     width: 100%;
   }

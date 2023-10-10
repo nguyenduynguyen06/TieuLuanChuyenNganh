@@ -5,7 +5,7 @@ export const WrapperLabelText = styled.h4`
     font-size:14px;
     font-weight: 500px;
 `
-export const WrapperTextValue =styled.span`
+export const WrapperTextValue =styled.a`
     color: rgb(56,56,61);
     font-size:14px;
     font-weight: 500px;

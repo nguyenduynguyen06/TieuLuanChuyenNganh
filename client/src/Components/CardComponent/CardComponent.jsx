@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Button } from 'antd';
+import { Button, Pagination } from 'antd';
 import { WrapperCard } from './styled';
 
-function CardComponent() {  
+
+function CardComponent() {
   const { name } = useParams();
 
   const [products, setProducts] = useState([]);
@@ -12,7 +13,7 @@ function CardComponent() {
 
   useEffect(() => {
     getProductsByCategoryName(name);
-  }, [name]); 
+  }, [name]);
 
   const getProductsByCategoryName = async (categoryName) => {
     try {
@@ -37,24 +38,25 @@ function CardComponent() {
       console.error('Lỗi:', error);
     }
   };
-  
-    const handleCardClick = (id) => {
-      window.location.href = `/product/${id}`;
-    };
-  
-    const [isExpanded, setIsExpanded] = useState(false);
-  
-    const handleShowMoreClick = () => {
-      setIsExpanded(!isExpanded);
-    };
-  
 
-  
-    return (
+  const handleCardClick = (id) => {
+    window.location.href = `/product/${id}`;
+  };
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(10);
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+
+
+
+  return (
+    <div>
       <WrapperCard>
         <div className='mainContainer'>
-        {products.filter((product) => product.isHide === false).map((product) => (
-            <div className='box' key={product._id}>
+          {currentProducts.filter((product) => product.isHide === false).map((product) => (
+            <div className='box' key={product._id} style={{ padding: '10px' }}>
               <div className='card'>
                 <div className='image' onClick={() => handleCardClick(product._id)}>
                   <img src={product.thumnails[0]} />
@@ -64,24 +66,24 @@ function CardComponent() {
                   <div>
                     {product?.variant.map((variant) => (
                       <Button
-                      className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
-                      onClick={() => {
-                        setSelectedMemories((prevSelected) => ({
-                          ...prevSelected,
-                          [product._id]: variant.memory,
-                        }));
-                      }}
-                      style={{padding:'5px 5px',marginInlineEnd: '5px'}}
-                    >
-                      {variant.memory}
-                    </Button>
+                        className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
+                        onClick={() => {
+                          setSelectedMemories((prevSelected) => ({
+                            ...prevSelected,
+                            [product._id]: variant.memory,
+                          }));
+                        }}
+                        style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
+                      >
+                        {variant.memory}
+                      </Button>
                     ))}
-                    <div style={{ margin: 0}}>
-                    <p style={{fontWeight: 700, height:'20px' }}>
-                      {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+                    <div style={{ margin: 0 }}>
+                      <p style={{ fontWeight: 700, height: '20px' }}>
+                        {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
                     </div>
-                    <div style={{ }}>
-                    <p style={{ color: '#000', textDecoration: 'line-through',height:'20px'  }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+                    <div style={{}}>
+                      <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
                     </div>
                   </div>
                 </div>
@@ -90,7 +92,18 @@ function CardComponent() {
           ))}
         </div>
       </WrapperCard>
-    );
+      <Pagination
+        showQuickJumper
+        defaultCurrent={1}
+        current={currentPage}
+        total={products.length}
+        pageSize={productsPerPage}
+        onChange={(page) => setCurrentPage(page)}
+        style={{ textAlign: 'center', marginBottom: '20px' }}
+      />
+    </div>
+
+  );
 }
 
 export default CardComponent;

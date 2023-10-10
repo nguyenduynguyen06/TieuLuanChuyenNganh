@@ -1,12 +1,12 @@
-import React from "react";
+import React  from "react";
 import NavBarComponent from "../../Components/NavBarComponent/navbarcomponent";
 import CardComponent from "../../Components/CardComponent/CardComponent";
-import { Col, Pagination, Row } from 'antd'
+import { Col, Row } from 'antd'
 import ListBrand from "../../Components/ListBrandComponent/ListBrandComponent";
 import Header from "../../Components/Header/header";
 
 const TypeProductPage = () => {
-    const onChange = () => { }
+
     return (
         <div>
             <Header />
@@ -22,8 +22,6 @@ const TypeProductPage = () => {
                         <CardComponent />
                     </Col>
                 </Row>
-                <Pagination showQuickJumper defaultCurrent={1} total={50} onChange={onChange} style={{ textAlign: 'center', marginTop: '20px' }} />
-
                 <br></br>
             </div>
         </div>

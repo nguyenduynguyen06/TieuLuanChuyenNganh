@@ -1,7 +1,8 @@
 import React from "react";
-import { WrapperContent, WrapperLabelText, WrapperTextPrice, WrapperTextValue } from "./style";
+import { WrapperContent, WrapperTextPrice, WrapperTextValue } from "./style";
 import { Checkbox, Rate } from 'antd';
-import { render } from "react-dom";
+import { Link } from "react-router-dom";
+
 
 const NavBarComponent = () => {
     const onChange = () => { }
@@ -10,7 +11,9 @@ const NavBarComponent = () => {
             case 'text':
                 return options.map((option) => {
                     return (
+                        <Link to={`/type/${option}`} key={option}>
                         <WrapperTextValue >{option}</WrapperTextValue>
+                        </Link>
                     )
                 })
             case 'checkbox':
