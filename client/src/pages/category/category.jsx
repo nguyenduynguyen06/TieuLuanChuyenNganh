@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card } from 'antd';
 import { CardWrapper } from './style';
 import axios from 'axios';
@@ -9,16 +9,17 @@ const gridStyle = {
   fontSize: 'auto',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center', 
-  alignItems: 'center', 
+  justifyContent: 'center',
+  alignItems: 'center',
   borderRadius: '5px',
-  innerHeight: 'auto'
+  minHeight: '150px',
+  height: 'auto',
 };
 const Category = () => {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-   
+
     const fetchCategories = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
@@ -27,27 +28,31 @@ const Category = () => {
         console.error('Lỗi khi lấy danh sách danh mục:', error);
       }
     };
-
-    
     fetchCategories();
-  }, []); 
+  }, []);
 
   const handleCardClick = (name) => {
     window.location.href = `/type/${name}`;
   };
+
   return (
-    <CardWrapper title={<span style={{ fontSize: '24px', color: '#FF3300' }} >Danh mục</span>}>
-      {categories.map((category) => (
-        <Card.Grid
-          key={category._id}
-          style={{ ...gridStyle, cursor: 'pointer' }}
-          onClick={() => handleCardClick(category.name)}
-        >
-          <img src={category.picture} className='img-fluid rounded' alt='' />
-          <p>{category.name}</p>
-        </Card.Grid>
-      ))}
-    </CardWrapper>
+    <div>
+      <div style={{padding: '10px', backgroundImage: 'linear-gradient(to rkght, #5170ff,  #ff66c4)', borderRadius:'6px 6px 0 0'}}>
+        <span style={{ fontSize: '24px', color: '#fff', fontWeight: 600, textTransform: 'uppercase' }} >Danh mục</span>
+      </div>
+      <CardWrapper >
+        {categories.map((category) => (
+          <Card.Grid
+            key={category._id}
+            style={{ ...gridStyle, cursor: 'pointer', height: '100px' }}
+            onClick={() => handleCardClick(category.name)}>
+            <img src={category.picture} className='img-fluid rounded' alt='' />
+            <p>{category.name}</p>
+          </Card.Grid>
+        ))}
+      </CardWrapper>
+    </div>
+
   )
 }
 
