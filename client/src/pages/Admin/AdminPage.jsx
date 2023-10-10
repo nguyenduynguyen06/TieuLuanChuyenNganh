@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppstoreOutlined, UserOutlined,MailOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, UserOutlined,UnorderedListOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { getItem} from './utils';
 import Header from '../../Components/Header/header';
@@ -7,6 +7,7 @@ import AdminProduct from '../../Components/admin/AdminProduct/AdminProduct';
 import AdminUser from '../../Components/admin/AdminUser/AdminUser';
 import { useSelector } from 'react-redux';
 import NewProduct from '../../Components/admin/AdminProduct/NewProduct';
+import AdminCategory from '../../Components/admin/AdminCategory/AdminCategory';
 
 const AdminHomePage = () => {
 
@@ -26,6 +27,14 @@ const AdminHomePage = () => {
           return(
             <div><NewProduct/></div>
           )
+        case 'categorys':
+            return(
+              <div><AdminCategory/></div>
+            )
+        case 'addcategory':
+              return(
+                <div></div>
+              )   
       default:
         return <></>
     }
@@ -40,8 +49,13 @@ const AdminHomePage = () => {
     getItem('Sản phẩm', 'sub1',<AppstoreOutlined />, [
       getItem('Danh sách sản phẩm', 'products'),
       getItem('Thêm sản phẩm', 'addProduct'),
-      getItem('Loại sản phẩm', '3'),
-    ])];
+    ]),
+    getItem('Danh mục', 'category',<UnorderedListOutlined />, [
+      getItem('Danh sách danh mục', 'categorys'),
+      getItem('Thêm danh mục', 'addcategory'),
+    ])
+  ];
+    
 
   const user = useSelector((state)=> state.user)
   if (user && user.role_id == 1) {

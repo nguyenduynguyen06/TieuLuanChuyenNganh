@@ -32,18 +32,6 @@ const updateCategory = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-const deleteCategory = async (req, res) => {
-  try {
-    const categoryId = req.params.id;
-    const deletedCategory = await Category.findByIdAndDelete(categoryId);
-    if (!deletedCategory) {
-      return res.status(404).json({ success: false, error: 'Danh mục không tồn tại' });
-    }
-    res.status(200).json({ success: true, data: deletedCategory });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
 const getAllCategories = async (req, res) => {
   try {
     const categories = await Category.find();
@@ -53,4 +41,4 @@ const getAllCategories = async (req, res) => {
   }
 };
 
-module.exports = { addCategory,updateCategory,deleteCategory,getAllCategories };
+module.exports = { addCategory,updateCategory,getAllCategories };
