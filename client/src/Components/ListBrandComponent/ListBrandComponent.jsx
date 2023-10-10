@@ -1,10 +1,9 @@
 import React from "react";
 import { WrapperBrandList } from "./style";
 
-
 const ListBrand = () => {
     return (
-        <WrapperBrandList>
+        <WrapperBrandList style={{}}>
             <div className="brand-content">
                 <div className="list-brand">
                     <a className="list-brand-item" href="#">

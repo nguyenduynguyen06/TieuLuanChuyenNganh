@@ -3,14 +3,13 @@ import Card from "antd/es/card/Card";
 
 export const CardWrapper = styled(Card)`
 
-  {
-    height: 150px;
-  }
-
+  
   p {
-      font-size: 15px;
+      font-size: 17px;
       margin-bottom: 15px;
       color: #000;
+      font-weight: 500;
+
   }
   .centered-grid {
       display: flex;
@@ -19,7 +18,7 @@ export const CardWrapper = styled(Card)`
     }
     .img-fluid {
       padding-top: 20px;
-      width: 20%;
+      width: 50%;
       height: auto;
     }
   .img-fluid img{

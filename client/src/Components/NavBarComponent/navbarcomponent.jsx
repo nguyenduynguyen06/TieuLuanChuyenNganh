@@ -10,7 +10,7 @@ const NavBarComponent = () => {
             case 'text':
                 return options.map((option) => {
                     return (
-                        <WrapperTextValue>{option}</WrapperTextValue>
+                        <WrapperTextValue >{option}</WrapperTextValue>
                     )
                 })
             case 'checkbox':
@@ -28,7 +28,7 @@ const NavBarComponent = () => {
                     return (
                         <div style={{ display: 'flex', gap: '4px' }}>
                             <Rate style={{ fontSize: '12px' }} disabled defaultValue={option} />
-                            <span>{`từ ${option} sao`}</span>
+                            <span>{`${option} sao`}</span>
                         </div>
                     )
                 }
@@ -47,19 +47,26 @@ const NavBarComponent = () => {
 
     return (
         <div style={{backgroundColor:'#fff'}}>
-            <WrapperLabelText>Label</WrapperLabelText>
+            <p style={{fontSize: '17px', fontWeight: 'bold'}}>Danh mục</p>
             <WrapperContent>
-                {renderContent('text', ['ĐIỆN THOẠI', 'TAI NGHE', 'DÂY SẠC'])}
+                {renderContent('text', ['Điện thoại', 'Ốp lưng', 'Cáp sạc', 'Sạc dự phòng', 'Tai nghe'])}
             </WrapperContent>
+            <hr></hr>
+            <p style={{fontSize: '17px', fontWeight: 'bold'}}>Bộ nhớ</p>
             <WrapperContent>
                 {renderContent('checkbox', [
                     { value: 'A', label: '128GB' },
-                    { value: 'B', label: '256GB' }
+                    { value: 'B', label: '256GB' },
+                    { value: 'C', label: '512GB' },
                 ])}
             </WrapperContent>
+            <hr></hr>
+            <p style={{fontSize: '17px', fontWeight: 'bold'}}>Đánh giá</p>
             <WrapperContent>
-                {renderContent('star', [3, 4, 5])}
+                {renderContent('star', [2, 3, 4])}
             </WrapperContent>
+            <hr></hr>
+            <p style={{fontSize: '17px', fontWeight: 'bold'}}>Mức giá</p>
             <WrapperContent>
                 {renderContent('price', [
                     'Dưới 3 triệu',

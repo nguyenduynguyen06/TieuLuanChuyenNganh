@@ -43,7 +43,6 @@ export const routes = [
     {
         path:'/type/:name',
         page: TypeProductPage,
-        isShowHeader: true
     },
     {
         path:'/cart',
