@@ -8,6 +8,7 @@ import AdminUser from '../../Components/admin/AdminUser/AdminUser';
 import { useSelector } from 'react-redux';
 import NewProduct from '../../Components/admin/AdminProduct/NewProduct';
 import AdminCategory from '../../Components/admin/AdminCategory/AdminCategory';
+import NewCategory from '../../Components/admin/AdminCategory/NewCategory';
 
 const AdminHomePage = () => {
 
@@ -33,7 +34,7 @@ const AdminHomePage = () => {
             )
         case 'addcategory':
               return(
-                <div></div>
+                <div><NewCategory/></div>
               )   
       default:
         return <></>

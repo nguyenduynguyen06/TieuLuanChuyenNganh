@@ -8,10 +8,9 @@ const addCategory = async (req, res) => {
     const category = new Category({
       name,
       picture,
-      isHide: false,
+      isHide: true,
     });
     const newCategory = await category.save();
-
     res.status(201).json({ success: true, data: newCategory });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -40,5 +39,14 @@ const getAllCategories = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+const deleteCategory = async (req, res) => {
+  try {
+    const categoryId = req.params.id
+    const categories = await Category.findByIdAndDelete(categoryId);
+    res.status(200).json({ success: true, data: categories });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
 
-module.exports = { addCategory,updateCategory,getAllCategories };
+module.exports = { addCategory,updateCategory,getAllCategories,deleteCategory };

@@ -108,7 +108,6 @@ const NewProduct = () => {
 
 
   const renderAttributes = () => {
-
       if (selectedCategory === 'Điện thoại') {
         return (
           <>
@@ -197,7 +196,6 @@ const NewProduct = () => {
 >
   <Input onChange={(e) => handlePropertyChange('Pin, Sạc', e.target.value)} />
 </Form.Item>
-
           </>
         );
       } else if (selectedCategory === 'Ốp lưng') {
@@ -225,10 +223,11 @@ const NewProduct = () => {
         `${process.env.REACT_APP_API_URL}/product/addProduct`,{
         ...values, properties: formProperties}
       );  
+      message.success('Thêm sản phẩm thành công')
       form.resetFields();
       setSelectedCategory(null);
     } catch (error) {
-      console.error('API Error:', error);
+      message.error('Hãy thêm biến thể cho danh mục vừa thêm')
     }
   };
   return (

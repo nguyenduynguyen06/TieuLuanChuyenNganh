@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
-import {  Switch, Table, Image, Upload, Button, message} from 'antd';
+import {  Switch, Table, Image, Upload, Button, message, Modal, Alert} from 'antd';
 import axios from "axios";
 import 'react-quill/dist/quill.snow.css';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined,DeleteOutlined } from '@ant-design/icons';
 import Search from "antd/es/input/Search";
+
 
 
 const TableCategory = () => {
     const [categoryData, setcategoryData] = useState([]); 
-    
+    const [isDeleteCategory, setDeleteCategory] = useState(false); 
     const columns = [
       {
         title: 'Tên danh mục',
@@ -74,6 +75,27 @@ const TableCategory = () => {
             );
           },
       },
+      {
+        title: 'Xoá',
+        render: (record) => {
+            return (
+              <div>
+             <a onClick={() => setDeleteCategory(true)}> <DeleteOutlined/></a> 
+             <Modal
+          title="Xác nhận xoá danh mục"
+          visible={isDeleteCategory}
+          onOk={() => {
+            handleDeleteCategory(record._id);
+            setDeleteCategory(false); 
+          }}
+          onCancel={() => setDeleteCategory(false)} 
+        >
+          <p>Bạn có chắc chắn muốn xoá danh mục {record.name} này?</p>
+        </Modal>
+              </div>
+            );
+          },
+      },
     ];
   
     useEffect(() => {
@@ -86,23 +108,6 @@ const TableCategory = () => {
           console.error('Lỗi khi gọi API: ', error);
         });
     }, []);
-    const updateImage = (newImageUrl, categoryId) => {
-        axios
-          .put(`${process.env.REACT_APP_API_URL}/category/updateImage/${categoryId}`, { picture: newImageUrl })
-          .then((response) => {
-            if (response.data.success) {
-              const updatedData = categoryData.map((item) =>
-                item._id === categoryId ? { ...item, picture: newImageUrl } : item
-              );
-              setcategoryData(updatedData);
-            } else {
-              console.error('Lỗi khi cập nhật đường dẫn hình ảnh trong cơ sở dữ liệu');
-            }
-          })
-          .catch((error) => {
-            console.error('Lỗi khi thực hiện cuộc gọi API để cập nhật đường dẫn hình ảnh: ', error);
-          });
-      };
     const handleSwitchChange = (checked, categoryId) => {
         const newIsHide = !checked; 
         axios
@@ -117,6 +122,23 @@ const TableCategory = () => {
             console.error('Lỗi khi cập nhật trạng thái: ', error);
           });
       };
+      const handleDeleteCategory = (categoryId) => {
+        axios
+          .delete(`${process.env.REACT_APP_API_URL}/category/delete/${categoryId}`)
+          .then((response) => {
+            if (response.data.success) {
+              const updatedData = categoryData.filter((item) => item._id !== categoryId);
+              setcategoryData(updatedData);
+              message.success('Xóa danh mục thành công');
+            } else {
+              message.error('Lỗi khi xóa danh mục');
+            }
+          })
+          .catch((error) => {
+            console.error('Lỗi khi gọi API xóa danh mục: ', error);
+            message.error('Lỗi khi xóa danh mục');
+          });
+      };
     return (
       <div>
            <Search
@@ -125,6 +147,12 @@ const TableCategory = () => {
          // onSearch={handleSearch}
           enterButton
         />
+           <Alert
+            message="Lưu ý: Không được xoá những danh mục đang hiện vì nó đang chứa các sản phẩm, nếu xoá sẽ bị lỗi, chỉ xoá những danh mục lỗi nếu quá trình thêm bị sai"
+            type="info"
+            showIcon
+            style={{ marginBottom: '16px' }}
+          />
         <Table columns={columns} dataSource={categoryData} /> 
       </div>
     );

@@ -188,7 +188,6 @@ onChange(info) {
             showIcon
             style={{ marginBottom: '16px' }}
           />
-
           <Form
                 {...formItemLayout}
                 form={form}
@@ -283,6 +282,12 @@ onChange(info) {
     setAddVariant(false);
   }}
 >
+          <Alert
+            message="Lưu ý: Chỉ có điện thoại là có bộ nhớ, nếu sản phẩm không phải điện thoại vui lòng không điền"
+            type="info"
+            showIcon
+            style={{ marginBottom: '16px' }}
+          />
   <Form
     {...formItemLayout}
     form={form}
@@ -294,36 +299,18 @@ onChange(info) {
     <Form.Item
       name="memory"
       label="Bộ nhớ"
-      rules={[
-        {
-          required: true,
-          message: 'Bộ nhớ',
-        },
-      ]}
     >
       <Input />
     </Form.Item>
     <Form.Item
       name="imPrice"
       label="Giá nhập"
-      rules={[
-        {
-          required: true,
-          message: 'Giá nhập',
-        },
-      ]}
     >
       <InputNumber style={{ width: '100%' }} />
     </Form.Item>
     <Form.Item
       name="newPrice"
       label="Giá bán"
-      rules={[
-        {
-          required: true,
-          message: 'Giá bán',
-        },
-      ]}
     >
       <InputNumber style={{ width: '100%' }} />
     </Form.Item>
@@ -500,6 +487,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
         }
         return product;
       });
+      message.success('Thêm biến thể thành công')
       setProductData(updatedProductData)
       form.resetFields();
     } catch (error) {
@@ -534,7 +522,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
       updatedSelectedProduct.variant = updatedProductData.find(
         (product) => product._id === selectedProduct._id
       ).variant;
-      
+      message.success('Thêm thuộc tính thành công')
       setSelectedProduct(updatedSelectedProduct);
       setProductData(updatedProductData);
       form.resetFields();
@@ -577,7 +565,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
       if (updatedSelectedProduct) {
         setSelectedProduct(updatedSelectedProduct);
       }
-  
+      message.success('Sửa biến thể thành công')
       setProductData(updatedProductData);
     } catch (error) {
       console.error('Lỗi khi cập nhật biến thể sản phẩm:', error);
@@ -596,6 +584,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
       .then((response) => {
         setProductData(response.data.data);
       })
+      message.success('Sửa sản phẩm thành công')
       form.resetFields();
         setUpdate(false);
       })
@@ -609,6 +598,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
       .delete(`${process.env.REACT_APP_API_URL}/product/delete/${productId}`)
       .then((response) => {
         const updatedProducts = productData.filter(product => product._id !== productId);
+        message.success('Xoá sản phẩm thành công')
         setProductData(updatedProducts);
       })
       .catch((error) => {
@@ -625,6 +615,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
           );
           return { ...product, variant: updatedVariants };
         });
+        message.success('Xoá biến thể thành công')
         setProductData(updatedProductData);
 
         const updatedSelectedProduct = {
@@ -794,7 +785,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     setAddAttributes(false);
   }}
 >
-  {/* Biểu mẫu để nhập thông tin thuộc tính */}
+ 
   <Form
     {...formItemLayout}
     form={form}
@@ -803,7 +794,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     }}
     scrollToFirstError
   >
-    {/* Tên thuộc tính, số lượng, hình ảnh, SKU, trạng thái */}
+ 
     <Form.Item name="attributes" label="Thuộc tính">
       <Form.List name="attributes">
         {(fields, { add, remove }) => (
