@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 function ProductHomePage() {
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
-  const [visibleProducts, setVisibleProducts] = useState(4);
+  const [visibleProducts, setVisibleProducts] = useState(5);
 
   useEffect(() => {
     getCategoryByName();
@@ -45,7 +45,7 @@ function ProductHomePage() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleShowMoreClick = () => {
-    setVisibleProducts(visibleProducts + 4);
+    setVisibleProducts(visibleProducts + 5);
   };
 
   const containerStyle = {

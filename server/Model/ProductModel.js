@@ -31,6 +31,7 @@ const productSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'ProductVariant', 
     },
+   
   ],
   views: {
     type: Number,

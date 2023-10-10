@@ -11,9 +11,8 @@ const gridStyle = {
   flexDirection: 'column',
   justifyContent: 'center', 
   alignItems: 'center', 
-  backgroundImage: 'linear-gradient(to right, #8c52ff,  #ff3300)',
-  borderRadius: '5px'
-
+  borderRadius: '5px',
+  innerHeight: 'auto'
 };
 const Category = () => {
   const [categories, setCategories] = useState([]);
@@ -44,7 +43,7 @@ const Category = () => {
           style={{ ...gridStyle, cursor: 'pointer' }}
           onClick={() => handleCardClick(category.name)}
         >
-          <img src={category.image} className='img-fluid rounded' alt='' />
+          <img src={category.picture} className='img-fluid rounded' alt='' />
           <p>{category.name}</p>
         </Card.Grid>
       ))}

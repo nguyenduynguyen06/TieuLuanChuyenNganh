@@ -8,7 +8,7 @@ const addBrand = async (req, res) => {
       name,
       picture,
       country,
-      isHide,
+      isHide: false,
     });
 
     const newBrand = await brand.save();

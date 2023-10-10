@@ -5,7 +5,7 @@ export const CardWrapper = styled(Card)`
 p {
     font-size: 15px;
     margin-bottom: 15px;
-    color: white;
+    color: #FF3300;
 }
 .centered-grid {
     display: flex;

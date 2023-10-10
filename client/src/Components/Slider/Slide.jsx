@@ -26,7 +26,7 @@ const Slide = () => {
     };
     
     return (
-        <WrapperBanner style={{ display: 'flex', lineHeight: 0, minHeight: '235px', maxHeight: '235px' }}>
+        <WrapperBanner style={{ display: 'flex', lineHeight: 0, height:'auto' }}>
             <Col  className="mainbanner">
                 <Slider {...settings} className="slider">
                     {arrImage.map((image) => {

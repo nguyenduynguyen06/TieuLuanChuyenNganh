@@ -7,7 +7,8 @@ const addCategory = async (req, res) => {
 
     const category = new Category({
       name,
-      picture
+      picture,
+      isHide: false,
     });
     const newCategory = await category.save();
 
