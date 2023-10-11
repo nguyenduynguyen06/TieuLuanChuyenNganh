@@ -48,5 +48,9 @@ export const routes = [
         path:'/cart',
         page: CartPage,
         isShowHeader: true
-    }
+    },
+    {
+        path:'/not-found',
+        page: NotFoundPage
+    },
 ]
