@@ -1,6 +1,6 @@
 // src/CartComponent/CartList.js
 import React, { useState , useEffect} from 'react';
-import CartItem from './CartItem';
+import CartItem from './CartHeader';
 
 function CartList() {
     const [cart, setCart] = useState([]);
