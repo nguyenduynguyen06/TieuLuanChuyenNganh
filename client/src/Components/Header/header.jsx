@@ -1,8 +1,8 @@
-import React, { useState , useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Badge, Button, Col } from 'antd';
 import axios from "axios";
 
-import { WrapperHeader, WrapperHeaderAccount, WrapperHeaderImage, WrapperHeaderProduct } from "./style";
+import { WrapperCartButton, WrapperHeader, WrapperHeaderAccount, WrapperHeaderImage, WrapperHeaderProduct, WrapperSearch, WrapperSuperHeader } from "./style";
 import Search from "antd/es/input/Search";
 import { MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem } from 'mdb-react-ui-kit';
 import {
@@ -71,68 +71,68 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
 
 
   return (
-    <div>
-      <WrapperHeader style={isScrolled ? { position: 'fixed', zIndex: '100', width: '100%' } : {}}>
-          <WrapperHeaderImage className="ant-image" >
-            <a href="/" className="logo"> <img src="../../image/didong1.png" alt="blink" /> </a>
-          </WrapperHeaderImage>
-        <Col style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <WrapperSuperHeader>
+      <WrapperHeader className="header-container" style={isScrolled ? { position: 'fixed', zIndex: '100', width: '100%' } : {}}>
+        <WrapperHeaderImage className="ant-image" >
+          <a href="/" className="logo"> <img src="../../image/didong1.png" alt="blink" /> </a>
+        </WrapperHeaderImage>
+        <WrapperSearch className="search-box">
           {!isHiddenSearch && (
-            <Search style={{ width: '1fr' }}
+            <Search
               placeholder="Tìm Kiếm"
               allowClear
               enterButton={<Button style={{
-                backgroundImage: 'linear-gradient(to right, #8c52ff,  #ff3300)'
-              }}><SearchOutlined style={{ width: '10px', height: '20px', color: 'white' }} /> </Button>}
+                backgroundImage: 'linear-gradient(to bottom, #ff914d,  #ffde59)'
+              }}><SearchOutlined style={{ width: '10px', height: '20px', color: 'black' }} /> </Button>}
               size="large"
-            // onSearch={handleSearch} 
             />)}
-        </Col>
-        <div className="grid-item">
-          <WrapperHeaderAccount>
-            {user?.fullName ? (
-              <div>
-                <MDBDropdown clickable >
-                  <MDBDropdownToggle tag="span" style={{ width: '50px', height: '50px', cursor: 'pointer' }}>
-                    <UserOutlined style={{ fontSize: '30px' }} /> Xin chào, {user.fullName}
-                  </MDBDropdownToggle>
-                  <MDBDropdownMenu>
-                    {user.role_id === 1 ? (
-                      <MDBDropdownItem link href="/admin">Quản lý</MDBDropdownItem>
-                    ) : (<span></span>
-                    )}
-                    <MDBDropdownItem link href="/profile">Thông tin cá nhân</MDBDropdownItem>
-                    <MDBDropdownItem link onClick={handleLogout}>Đăng xuất</MDBDropdownItem>
-                  </MDBDropdownMenu>
-                </MDBDropdown>
-              </div>
-            ) : (
-              <div>
-                <div class="popup" onClick={toggleShow}>
-                  <span style={{ fontSize: '15px' }} >
-                    Đăng nhập
-                  </span>
-                </div>
+        </WrapperSearch>
+        <WrapperCartButton>
+          {!isHiddenCart && (
+            <div className="grid-item">
+              <Badge count={4} size="small">
+                <button class="custom-button" style={{ backgroundColor: '#CC0000', right: '0px' }}>
+                  <ShoppingCartOutlined style={{ fontSize: '20px' }} >
+                  </ShoppingCartOutlined>&nbsp;Giỏ hàng
+                </button>
+              </Badge>
+            </div>
+          )}
+        </WrapperCartButton>
+        <WrapperHeaderAccount>
+          {user?.fullName ? (
+            <div>
+              <MDBDropdown clickable >
+                <MDBDropdownToggle tag="span" style={{ width: '50px', height: '50px', cursor: 'pointer' }}>
+                  <UserOutlined style={{ fontSize: '30px' }} /> Xin chào, {user.fullName}
+                </MDBDropdownToggle>
+                <MDBDropdownMenu>
+                  {user.role_id === 1 ? (
+                    <MDBDropdownItem link href="/admin">Quản lý</MDBDropdownItem>
+                  ) : (<span></span>
+                  )}
+                  <MDBDropdownItem link href="/profile">Thông tin cá nhân</MDBDropdownItem>
+                  <MDBDropdownItem link onClick={handleLogout}>Đăng xuất</MDBDropdownItem>
+                </MDBDropdownMenu>
+              </MDBDropdown>
+            </div>
+          ) : (
+            <div>
+              <div class="popup" onClick={toggleShow}>
                 <span style={{ fontSize: '15px' }} >
-                  &nbsp; / &nbsp;
+                  Đăng nhập
                 </span>
-                <div class="popup" onClick={toggleShow1}> <span style={{ fontSize: '15px' }} >
+              </div>
+              <span style={{ fontSize: '15px' }} > &nbsp; / &nbsp; </span>
+              <div class="popup" onClick={toggleShow1}>
+                <span style={{ fontSize: '15px' }} >
                   Đăng ký&nbsp;
                 </span>
-                </div>
               </div>
-            )}
-            {!isHiddenCart && (
-              <div className="grid-item">
-                <Badge count={4} size="small">
-                  <button class="custom-button" style={{ backgroundColor: '#CC0000', right: '0px' }}>
-                    <ShoppingCartOutlined style={{ fontSize: '20px' }} >
-                    </ShoppingCartOutlined>&nbsp;Giỏ hàng
-                  </button>
-                </Badge>
-              </div>)}
-          </WrapperHeaderAccount>
-        </div>
+            </div>
+          )}
+        </WrapperHeaderAccount>
+
       </WrapperHeader>
 
 
@@ -162,7 +162,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
           </MDBModalContent>
         </MDBModalDialog>
       </MDBModal>
-    </div>
+    </WrapperSuperHeader>
   )
 }
 export default Header

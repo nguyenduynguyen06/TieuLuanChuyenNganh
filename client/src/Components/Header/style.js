@@ -1,17 +1,33 @@
-import { Col, Row } from "antd";
 import styled from "styled-components";
 
-export const WrapperHeader = styled(Row)`
-padding: 7px 120px;
-display: flex;
-flex-wrap: wrap;
-align-item:center;
-justify-content: space-evenly;
-background-size: cover;
-background-color: #ff3300;
-background-image: linear-gradient(to right, #8c52ff,  #ff3300);
-background-position: center;
+export const WrapperSuperHeader = styled.div`
 width: 100%;
+
+  .header-container {
+    padding: 30px;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    background-image: linear-gradient(to bottom, #004aad,  #cb6ce6);
+    align-item:center;
+    justify-content: space-around;
+    list-style: none;
+    background-size: cover;
+    gap: 20px;
+  }
+
+  .ant-image {
+    display: flex;
+    position: relative;
+    align-self: center;
+    cursor: pointer;
+    left: 10px;
+  }
+`
+
+
+export const WrapperHeader = styled.div`
+
 `;
 // export const Search = styled(Search)`
 //   .ant-input-search-button {
@@ -22,27 +38,18 @@ width: 100%;
 // `;
 
 
-export const WrapperHeaderImage = styled(Col)`
-  .logo {
-    padding: 2px;
-    margin: -2px;
-    border-radius: 2px;
-    display: block;
-    width: auto;
-    height: auto;
-  }
-  .logo img{
-    width: 162px;
-    height: 50px;
-  }
-  .ant-image {
-    position: relative;
-    top: -0.1875rem;
-    padding-right: 2.5rem;
-  }
+export const WrapperHeaderImage = styled.div`
+.logo img{
+  border-radius: 2px;
+  width: 162px;
+  height: 50px;
+}
 `;
-
-export const WrapperHeaderAccount = styled(Col)`
+export const WrapperSearch = styled.div`
+  display: flex;
+  width: 500px;
+`
+export const WrapperHeaderAccount = styled.div`
     // margin: 0 50px;
     display : flex;
     align-items: center;
@@ -50,19 +57,7 @@ export const WrapperHeaderAccount = styled(Col)`
     gap: 10px;
     white-space: wrap;
     position: end;
-    button.custom-button {
-        background-color: #007bff; 
-        color: #fff; 
-        padding: 10px 20px; /* Kích thước nút */
-        border: none; /* Loại bỏ đường viền */
-        border-radius: 5px; /* Bo góc nút */
-        cursor: pointer; /* Biến con trỏ thành bàn tay khi hover */
-        font-size: 16px; /* Kích thước chữ */
-        position: static;
-        display : flex;
-        
     
-    }
     
     
     button.custom-button:hover {
@@ -156,5 +151,19 @@ export const WrapperForget = styled.div`
   border-radius: 5px;
   padding: 10px 20px;
   cursor: pointer;
+}
+`
+
+export const WrapperCartButton = styled.div`
+button.custom-button {
+  background-image: linear-gradient(to bottom, #ff914d,  #ffde59);
+  color: #000; 
+  padding: 10px 20px; /* Kích thước nút */
+  border: none; /* Loại bỏ đường viền */
+  border-radius: 5px; /* Bo góc nút */
+  cursor: pointer; /* Biến con trỏ thành bàn tay khi hover */
+  font-size: 16px; /* Kích thước chữ */
+  position: static;
+  display : flex;
 }
 `
