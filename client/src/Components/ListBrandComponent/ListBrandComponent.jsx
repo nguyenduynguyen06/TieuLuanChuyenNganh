@@ -25,7 +25,6 @@ const ListBrand = () => {
             <div className="brand-content">
                 <div className="list-brand">
                     {brand.filter((brands) => brands.isHide === false).map((brands) => (
-
                         <a className="list-brand-item" href="#">
                             <img className="brand-img" src={brands.picture} alt="Apple" />
                         </a>
