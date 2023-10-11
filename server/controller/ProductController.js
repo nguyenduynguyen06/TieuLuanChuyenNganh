@@ -48,6 +48,20 @@ const getProductByBrandId = async (req, res) => {
     return res.status(500).json({ msg: 'Lỗi Server' });
   }
 };
+const getProductsByCategoryAndBrand = async (req, res) => {
+  try {
+    const categoryId = req.params.categoryId; 
+    const brandId = req.params.brandId; 
+    const products = await Product.find({ category: categoryId, brand: brandId }).populate('variant');
+    return res.status(200).json({
+      data: products
+    });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    return res.status(500).json({ msg: 'Lỗi Server' });
+  }
+};
+
 const getProductsByCategory = async (req, res) => {
   try {
     const categoryId = req.params.categoryId; 
@@ -165,4 +179,4 @@ const getAllProduct = async (req, res) => {
   }
 }
 
-module.exports = { addProduct,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts,getAllProduct };
+module.exports = { addProduct,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts,getAllProduct,getProductsByCategoryAndBrand };

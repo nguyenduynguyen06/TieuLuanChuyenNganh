@@ -6,14 +6,20 @@ import { WrapperCard } from './styled';
 
 
 function CardComponent() {
-  const { name } = useParams();
+  const { nameCategory, nameBrand } = useParams();
 
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
 
   useEffect(() => {
-    getProductsByCategoryName(name);
-  }, [name]);
+    if (nameCategory) {
+      if (nameBrand) {
+        getProductsByCategoryAndBrand(nameCategory, nameBrand);
+      } else {
+        getProductsByCategoryName(nameCategory);
+      }
+    }
+  }, [nameCategory, nameBrand]);
 
   const getProductsByCategoryName = async (categoryName) => {
     try {
@@ -38,6 +44,37 @@ function CardComponent() {
       console.error('Lỗi:', error);
     }
   };
+  const getProductsByCategoryAndBrand = async (categoryName, brandName) => {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
+      const categories = res.data.data;
+      const category = categories.find((cat) => cat.name === categoryName);
+      if (!category) {
+        console.error('Không tìm thấy danh mục');
+        return;
+      }
+      const brandResponse = await axios.get(`${process.env.REACT_APP_API_URL}/brand/getBrand`);
+      const brandsData = brandResponse.data.data;
+      const brand = brandsData.find((b) => b.name === brandName);
+      if (!brand) {
+        console.error('Không tìm thấy thương hiệu');
+        return;
+      }
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/product/getProductsByCategoryAndBrand/${category._id}/${brand._id}`
+      );
+      const productsData = response.data.data;
+      console.log('product',productsData)
+      setProducts(productsData);
+      const initialMemories = {};
+      productsData.forEach((product) => {
+        initialMemories[product._id] = product.variant[0]?.memory;
+      });
+      setSelectedMemories(initialMemories);
+    } catch (error) {
+      console.error('Lỗi:', error);
+    }
+  }
 
   const handleCardClick = (id) => {
     window.location.href = `/product/${id}`;
