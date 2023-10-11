@@ -11,6 +11,10 @@ const brandSchema = new mongoose.Schema({
   country: {
     type: String,
   },
+  categoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category'
+  },
   isHide: {
     type: Boolean,
     default: false,

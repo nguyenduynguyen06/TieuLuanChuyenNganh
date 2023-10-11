@@ -1,12 +1,14 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import {  message, Upload } from 'antd';
 import {
   Button,
   Form,
   Input,
+  Select
 } from 'antd';
 import axios from 'axios';
+const {Option} = Select
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -38,7 +40,7 @@ const tailFormItemLayout = {
   },
 };
 
-const NewCategory = () => {
+const NewBrand = () => {
   const [form] = Form.useForm();
   const props = {
     name: 'image',
@@ -68,6 +70,16 @@ const NewCategory = () => {
       }
     }
   };
+  const [categories, setCategories] = useState([])
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`)
+      .then((response) => {
+        setCategories(response.data.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching categories:', error);
+      });
+  }, []);
   const onFinish = async (values) => {
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/brand/addBrand`, values);
@@ -119,6 +131,24 @@ const NewCategory = () => {
   </Upload>
       </Form.Item>
       <Form.Item
+        name="categoryName"
+        label="Danh mục"
+        rules={[
+          {
+            required: true,
+            message: 'Chọn danh mục',
+          },
+        ]}
+      >
+       <Select placeholder="Chọn danh mục">
+          {categories.map((category) => (
+            <Option key={category.id} value={category.name}>
+              {category.name}
+            </Option>
+          ))}
+        </Select>
+      </Form.Item>
+      <Form.Item
         name="country"
         label="Quốc gia"
         rules={[
@@ -138,4 +168,4 @@ const NewCategory = () => {
       </Form>
   )
 }
-export default NewCategory
+export default NewBrand

@@ -4,7 +4,7 @@ const brandController = require('../controller/BrandController');
 
 
 router.post('/addBrand', brandController.addBrand);
-router.get('/getBrand', brandController.getAllBrand);
+router.get('/getBrand/:categoryId', brandController.getAllBrand);
 router.put('/updateBrand/:id', brandController.updateBrand);
 router.delete('/delete/:id', brandController.deleteBrand);
 module.exports = router;
