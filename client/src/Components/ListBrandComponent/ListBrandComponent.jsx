@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { WrapperBrandList } from "./style";
 import axios from "axios";
-
 const ListBrand = () => {
     const [brand, setBrands] = useState([]);
+
     useEffect(() => {
 
         const fetchCategories = async () => {
@@ -25,15 +25,14 @@ const ListBrand = () => {
             <div className="brand-content">
                 <div className="list-brand">
                     {brand.filter((brands) => brands.isHide === false).map((brands) => (
+
                         <a className="list-brand-item" href="#">
-                            <img className="brand-img" src={brands.picture} alt="brand" />
+                            <img className="brand-img" src={brands.picture} alt="Apple" />
                         </a>
                     ))}
-
                 </div>
             </div>
         </WrapperBrandList>
-
     )
 }
 
