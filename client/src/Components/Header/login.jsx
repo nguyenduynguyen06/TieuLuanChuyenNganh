@@ -45,27 +45,38 @@ function Login({ onClose }) {
     setCentredModal(false);
   };
 
-  const loginHandler = event => {
-      event.preventDefault();
-      axios.post(`${process.env.REACT_APP_API_URL}/user/Login`, user,
-          {
-              withCredentials: true,
+  const loginHandler = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/checkAcc/${user.email}`);
+      const { isBlocked } = response.data;
+      if (isBlocked) {
+        setMessage('Tài khoản của bạn đã bị khoá. Vui lòng liên hệ với quản trị viên.');
+      } else {
+        axios
+          .post(`${process.env.REACT_APP_API_URL}/user/Login`, user, {
+            withCredentials: true,
           })
           .then((res) => {
-            localStorage.setItem('access_token', JSON.stringify(res.data.access_Token))
-            if(res.data.access_Token)
-            {
+            localStorage.setItem('access_token', JSON.stringify(res.data.access_Token));
+            if (res.data.access_Token) {
               const decoded = jwt_decode(res.data.access_Token);
-              if(decoded.id){
-                  handleGetDetails(decoded.id,res.data.access_Token)
+              if (decoded.id) {
+                handleGetDetails(decoded.id, res.data.access_Token);
               }
             }
-              navigate('/');
-              onClose();
-          }).catch((err) => {
-              setMessage(`Hãy kiểm tra lại email hoặc password`);
+            navigate('/');
+            onClose();
           })
-  }
+          .catch((err) => {
+            setMessage('Hãy kiểm tra lại email hoặc password');
+          });
+      }
+    } catch (error) {
+      setMessage('Có lỗi xảy ra khi kiểm tra tài khoản');
+    }
+  };
+  
  const handleGetDetails = async (id,access_Token) => {
     try {
       const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/user/get-Detail/${id}`, {

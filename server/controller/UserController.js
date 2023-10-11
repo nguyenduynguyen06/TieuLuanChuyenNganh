@@ -280,6 +280,19 @@ const changePassword = async (req, res) => {
       res.status(500).json({ success: false, error: 'Lỗi Server' });
     }
   };
+  const checkAcc = async (req, res) => {
+    try {
+      const { email } = req.params;
+      const user = await User.findOne({ email: email });   
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.json({ isBlocked: user.isBlocked });
+    } catch (error) {
+      console.error('Error checking account status:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
 
-
-module.exports = { userRegister, userLogin, userLogout , userUpdate, deleteUser,getAllUser,refreshToken,getDetailUser,forgotPassword,changePassword,searchUser};
+module.exports = { userRegister, userLogin, userLogout , userUpdate, deleteUser,getAllUser,refreshToken,getDetailUser,forgotPassword,changePassword,searchUser,checkAcc};
