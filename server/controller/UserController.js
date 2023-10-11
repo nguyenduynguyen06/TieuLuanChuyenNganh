@@ -73,7 +73,7 @@ const userUpdate = async (req, res) => {
         const userId = req.params.id;
         const data = req.body;
         if (userId) {
-            const updatedUser = await User.findByIdAndUpdate(userId, data, { new: true });        
+            const updatedUser = await User.findByIdAndUpdate(userId, data);        
             if (!updatedUser) {
                 return res.status(404).json({ msg: 'Người dùng không tồn tại' });
             }
@@ -93,7 +93,8 @@ const deleteUser = async (req, res) => {
         if (userId) {
             const checkUser = await User.findOne({ _id: userId });
             if (checkUser) {
-                 await User.findByIdAndDelete(userId);
+                const user = await User.findByIdAndDelete(userId);
+                return res.status(200).json({ data: user });
             } else {
                 return res.status(401).json({ err: 'Không tồn tại User' });
             }
@@ -266,7 +267,19 @@ const changePassword = async (req, res) => {
       return res.status(500).json({ error });
     }
   };
-  
+  const searchUser = async (req, res) => {
+    try {
+      const keyword = req.query.keyword;
+      const regex = new RegExp(keyword, 'i'); 
+      const users = await User.find({
+        email : { $regex: regex }, 
+      })
+      res.status(200).json({ success: true, data: users });
+    } catch (error) {
+      console.error('Lỗi:', error);
+      res.status(500).json({ success: false, error: 'Lỗi Server' });
+    }
+  };
 
 
-module.exports = { userRegister, userLogin, userLogout , userUpdate, deleteUser,getAllUser,refreshToken,getDetailUser,forgotPassword,changePassword};
+module.exports = { userRegister, userLogin, userLogout , userUpdate, deleteUser,getAllUser,refreshToken,getDetailUser,forgotPassword,changePassword,searchUser};

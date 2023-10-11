@@ -24,6 +24,7 @@ router.post('/refresh-token',userAuthenticate.refreshToken)
 
 router.put('/forgotpassword',userAuthenticate.forgotPassword)
 
+router.get('/searchUser', authMiddleware,userAuthenticate.searchUser)
 
 router.put('/changepassword/:id',verifyRefreshToken,userAuthenticate.changePassword)
 module.exports = router

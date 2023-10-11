@@ -1,65 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Alert, InputNumber, Modal, Table } from 'antd';
+import { Modal, Table } from 'antd';
 import { Space } from 'antd';
 import { Switch } from 'antd';
-import { AppstoreAddOutlined, DeleteOutlined, EditOutlined, PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import {  DeleteOutlined} from '@ant-design/icons';
 import axios from "axios";
 import Search from "antd/es/input/Search";
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import { message, Upload, Collapse } from 'antd';
-import {
-    Button,
-    Form,
-    Input,
-    Select,
-    DatePicker
-} from 'antd';
+import { useSelector } from "react-redux";
 
 
 const TableUser = () => {
-    const props = (fieldKey) => ({
-        name: 'image',
-        action: `${process.env.REACT_APP_API_URL}/upload`,
-        headers: {
-            authorization: 'authorization-text',
-        },
-        accept: '.jpg, .jpeg, .png',
-        beforeUpload: (file) => {
-            const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-            if (!isJpgOrPng) {
-                message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
-            }
-            return isJpgOrPng;
-        },
-        onChange(info) {
-            if (info.file.status !== 'uploading') {
-                console.log(info.file, info.fileList);
-            }
-            if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
-                const uploadedFilePath = info.file.response.imageUrl;
-                if (typeof uploadedFilePath === 'string') {
-                    const updatedAttributes = form.getFieldValue('attributes');
-                    updatedAttributes[fieldKey].pictures = uploadedFilePath;
-                    form.setFieldsValue({ attributes: updatedAttributes });
-                } else {
-                    console.error('uploadedFilePath is not a string:', uploadedFilePath);
-                }
-            } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-            }
-        }
-    });
-
-
-    const [form] = Form.useForm();
+    const user = useSelector((state)=> state.user)
     const [users, setUsers] = useState([])
-    const [brands, setBrands] = useState([]);
     useEffect(() => {
-        axios.get(`${process.env.REACT_APP_API_URL}/user/getAll`)
+        const headers = {
+            token: `Bearers ${user.access_token}`,
+        };
+    
+        axios.get(`${process.env.REACT_APP_API_URL}/user/getAll`, { headers })
             .then((response) => {
-                setUsers(response.data.data);
+                const filteredUsers = response.data.data.filter(user => user.role_id !== 1);
+                setUsers(filteredUsers);
             })
             .catch((error) => {
                 console.error('Error fetching users:', error);
@@ -84,21 +44,21 @@ const TableUser = () => {
         },
         {
             title: "Hình ảnh hiển thị",
-            dataIndex: "thumnails",
+            dataIndex: "avatar",
             render: theImageURL => <img alt={theImageURL} src={theImageURL} style={{ maxWidth: "100px", maxHeight: "100px" }} />
         },
         {
             render: (text, record) => (
                 <Space size="middle">
-                    <a onClick={() => setDeleteModalVisible(true)}> <DeleteOutlined /></a>
+                    <a onClick={() => setDeleteUserVisible(true)}> <DeleteOutlined /></a>
                     <Modal
                         title="Xác nhận xoá khách hàng"
-                        visible={isDeleteModalVisible}
+                        visible={isDeleteUserVisible}
                         onOk={() => {
                             handleDeleteUser(record._id);
-                            setDeleteModalVisible(false);
+                            setDeleteUserVisible(false);
                         }}
-                        onCancel={() => setDeleteModalVisible(false)}
+                        onCancel={() => setDeleteUserVisible(false)}
                     >
                         <p>Bạn có chắc chắn muốn xoá khách hàng này?</p>
                     </Modal>
@@ -107,95 +67,46 @@ const TableUser = () => {
         },
         {
             title: 'Khóa/Mở Khóa',
-            dataIndex: 'isHide',
-            render: (isHide, record) => (
+            dataIndex: 'isBlocked',
+            render: (isBlocked, record) => (
                 <Switch
-                    checked={!isHide}
+                    checked={!isBlocked}
                     onChange={(checked) => {
-                        handleToggleHide(record._id, !checked);
+                        handleToggleBlocked(record._id, !checked);
                     }}
                 />
             ),
         }
 
     ];
-
-    const { Option } = Select;
-    const formItemLayout = {
-        labelCol: {
-            xs: {
-                span: 24,
-            },
-            sm: {
-                span: 8,
-            },
-        },
-        wrapperCol: {
-            xs: {
-                span: 24,
-            },
-            sm: {
-                span: 16,
-            },
-        },
-    };
-
-
-    const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
-    const [isUpdate, setUpdate] = useState(false);
-    const [userData, setUserData] = useState([]);
-    useEffect(() => {
-        axios
-            .get(`${process.env.REACT_APP_API_URL}/user/getAll`)
-            .then((response) => {
-                setUserData(response.data.data);
-            })
-            .catch((error) => {
-                console.error('Lỗi khi gọi API: ', error);
-            });
-    }, []);
-    
-    const handleSaveEdit = (id, values) => {
-        const userId = id;
-        axios.put(`${process.env.REACT_APP_API_URL}/user/update/${userId}`, values)
-            .then((response) => {
-                axios.get(`${process.env.REACT_APP_API_URL}/user/getAll`)
-                    .then((response) => {
-                        setUserData(response.data.data);
-                    })
-                form.resetFields();
-                setUpdate(false);
-            })
-            .catch((error) => {
-                console.error("Lỗi khi cập nhật tài khoản: ", error);
-            });
-    };
-
+    const [isDeleteUserVisible, setDeleteUserVisible] = useState(false);
     const handleDeleteUser = (userId) => {
+        const headers = {
+            token: `Bearers ${user.access_token}`,
+        };
         axios
-            .delete(`${process.env.REACT_APP_API_URL}/user/delete/${userId}`)
+            .delete(`${process.env.REACT_APP_API_URL}/user/delete/${userId}`, {headers})
             .then((response) => {
-                const updatedUser = userData.filter(user => user._id !== userId);
-                setUserData(updatedUser);
+                const filteredUsers = response.data.data.filter(user => user.role_id !== 1);
+                setUsers(filteredUsers);
             })
             .catch((error) => {
                 console.error('Lỗi khi xóa tài khoản: ', error);
             });
     };
-    const handleToggleHide = (userId, checked) => {
-        axios.put(`${process.env.REACT_APP_API_URL}/user/update/${userId}`, {
-            isHide: checked,
-        })
+    const handleToggleBlocked = (userId, checked) => {
+        axios.post(`${process.env.REACT_APP_API_URL}/user/update/${userId}`, {
+            isBlocked: checked     
+        }, {withCredentials: true})
             .then((response) => {
                 const updatedUser = {
-                    ...userData.find(user => user._id === userId),
-                    isHide: checked,
+                    ...users.find(user => user._id === userId),
+                    isBlocked: checked,
                 };
-                const updatedUsers = userData.map(user =>
+                const updatedUsers = users.map(user =>
                     user._id === userId ? updatedUser : user
                 );
-                console.log('checked', checked)
-                setUserData(updatedUsers);
+                setUsers(updatedUsers);
             })
             .catch((error) => {
                 console.error('Lỗi khi cập nhật tài khoản: ', error);
@@ -210,8 +121,11 @@ const TableUser = () => {
         setSearchQuery(query);
     };
     useEffect(() => {
+        const headers = {
+            token: `Bearers ${user.access_token}`,
+        };
         if (searchQuery.trim() !== '') {
-            axios.get(`${process.env.REACT_APP_API_URL}/user/searchUser?keyword=${searchQuery}`)
+            axios.get(`${process.env.REACT_APP_API_URL}/user/searchUser?keyword=${searchQuery}`, { headers })
                 .then((response) => {
                     setSearchResults(response.data.data);
                 })
@@ -244,13 +158,13 @@ const TableUser = () => {
                 >
                 </span>
             </div>
-            <Table columns={columns} dataSource={searchQuery.trim() === '' ? userData.map((user, index) => ({
-                ...user,
-                key: index,
-            })) : searchResults.map((user, index) => ({
-                ...user,
-                key: index,
-            }))} />
+            <Table columns={columns} dataSource={searchQuery.trim() === '' ? users.map((user, index) => ({
+        ...user,
+        key: index,
+      })) : searchResults.map((user, index) => ({
+        ...user,
+        key: index,
+      }))} />
         </div>
     );
 };
