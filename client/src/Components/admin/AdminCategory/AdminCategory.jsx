@@ -9,7 +9,7 @@ const AdminCategory = () => {
 
   return (
     <div>
-      <WrapperHeader>Danh sách sản phẩm</WrapperHeader>
+      <WrapperHeader>Danh sách danh mục</WrapperHeader>
       <div style={{ marginTop: '15px' }}>
         <TableCategory  />
       </div>

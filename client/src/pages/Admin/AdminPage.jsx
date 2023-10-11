@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppstoreOutlined, UserOutlined,UnorderedListOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, UserOutlined,UnorderedListOutlined,QqOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { getItem} from './utils';
 import Header from '../../Components/Header/header';
@@ -9,6 +9,9 @@ import { useSelector } from 'react-redux';
 import NewProduct from '../../Components/admin/AdminProduct/NewProduct';
 import AdminCategory from '../../Components/admin/AdminCategory/AdminCategory';
 import NewCategory from '../../Components/admin/AdminCategory/NewCategory';
+import AdminBrand from '../../Components/admin/AdminBrand/AdminBrand';
+import NotFoundPage from '../notfoundpage';
+import NewBrand from '../../Components/admin/AdminBrand/NewBrand';
 
 const AdminHomePage = () => {
 
@@ -36,6 +39,14 @@ const AdminHomePage = () => {
               return(
                 <div><NewCategory/></div>
               )   
+        case 'brands':
+              return(
+                  <div><AdminBrand/></div>
+              )   
+        case 'addbrand':
+              return(
+               <div><NewBrand/></div>
+              )        
       default:
         return <></>
     }
@@ -54,7 +65,11 @@ const AdminHomePage = () => {
     getItem('Danh mục', 'category',<UnorderedListOutlined />, [
       getItem('Danh sách danh mục', 'categorys'),
       getItem('Thêm danh mục', 'addcategory'),
-    ])
+    ]),
+    getItem('Thương hiệu', 'brand',<QqOutlined />, [
+      getItem('Danh sách thương hiệu', 'brands'),
+      getItem('Thêm thương hiệu', 'addbrand'),
+    ]),
   ];
     
 
@@ -68,8 +83,6 @@ const AdminHomePage = () => {
         <div style={{display: 'flex'}}>          
         <Menu
           mode="inline"
-          // openKeys={openKeys}
-          // onOpenChange={onOpenChange}
           style={{
             width: 256,
             boxShadow: '1px 2px 1px #ccc',
@@ -86,7 +99,7 @@ const AdminHomePage = () => {
   } else {
     return (
       <div>
-        <h1>Bạn không có quyền truy cập trang Admin</h1>
+       <NotFoundPage/>
       </div>
     );
   }

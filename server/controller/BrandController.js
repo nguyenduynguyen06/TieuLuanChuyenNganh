@@ -33,7 +33,7 @@ const updateBrand = async (req, res) => {
   try {
     const brandId = req.params.id; 
     const updatedData = req.body; 
-    const updatedBrand = await Brand.findByIdAndUpdate(brandId, updatedData, { new: true });
+    const updatedBrand = await Brand.findByIdAndUpdate(brandId, updatedData);
 
     if (!updatedBrand) {
       return res.status(404).json({ success: false, error: 'Thương hiệu không tồn tại' });
