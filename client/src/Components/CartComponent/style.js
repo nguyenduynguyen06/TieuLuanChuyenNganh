@@ -7,14 +7,15 @@ export const HeaderWrapper = styled.div`
     background: #fff;
     border-bottom: 1px solid rgba(0,0,0,.09);
     height: 6.25rem;
-    min-width: 100%;
+    width: 100%;
 
 }
 .header-container {
     margin-right: auto;
     margin-left: auto;
     width: 100%;
-    display: block;
+    display: flex;
+    align-items: space-around;
 }
 .cart-page-header {
     padding-left: 1.125rem;
@@ -35,7 +36,7 @@ export const HeaderWrapper = styled.div`
     width: 8.125rem;
     height: 2.875rem;
     cursor: pointer;
-    fill: #ee4d2d;
+    fill: #8c52ff;
 }
 .logo-icon img{
     padding-top: 10%;
@@ -51,8 +52,8 @@ export const HeaderWrapper = styled.div`
 }
 .cart-page-name {
     margin-left: 0.9375rem;
-    border-left: 0.0625rem solid #ee4d2d;
-    color: #ee4d2d;
+    border-left: 0.0625rem solid #8c52ff;
+    color: #8c52ff;
     font-size: 1.25rem;
     line-height: 1.875rem;
     height: 1.875rem;
@@ -63,5 +64,25 @@ export const HeaderWrapper = styled.div`
 .cart-page-searchbar {
     width: 38.8125rem;
     position: relative;
+    display: flex;
+  align-items: center;
+}
+.search-bar {
+    --focus-indicator-spacing: 3px;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    height: 2.5rem;
+    box-sizing: border-box;
+    padding: 0.1875rem;
+    border-radius: 2px;
+    flex: 1;
+    background: #fff;
+    padding-right: 30px;
+}
+.search-bar button{
+    background-color: #8c52ff;
+  color: white;
+
 }
 `
