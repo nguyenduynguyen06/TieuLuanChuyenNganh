@@ -12,6 +12,8 @@ import {
   DatePicker,
   Alert
 } from 'antd';
+import { useParams } from "react-router-dom";
+
 const { Option } = Select;
 const formItemLayout = {
   labelCol: {
@@ -49,6 +51,8 @@ const NewProduct = () => {
   const [brands, setBrands] = useState([]); 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [formProperties, setFormProperties] = useState([]);
+  const { nameCategory } = useParams();
+
   const props = {
     name: 'images',
     action: `${process.env.REACT_APP_API_URL}/uploads`,
@@ -80,8 +84,26 @@ const NewProduct = () => {
       }
     }
   };
-  
 
+  useEffect(() => {
+    if (categories) {
+        const category = categories.find((cat) => cat.name === nameCategory);
+        if (category) { 
+            const categoryId = category._id;
+            fetchBrandsByCategory(categoryId);
+        }
+    }
+}, [categories, nameCategory]);
+
+
+  const fetchBrandsByCategory = async (categoryId) => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/brand/getBrand/${categoryId}`);
+        setBrands(response.data.data);
+    } catch (error) {
+        console.error('Lỗi khi lấy danh sách thương hiệu theo danh mục:', error);
+    }
+};
 
   const handlePropertyChange = (propertyKey, value) => {
     setFormProperties({
@@ -213,9 +235,21 @@ const NewProduct = () => {
         return null;
       }
   };
-  const handleCategoryChange = (value) => {
+  const handleCategoryChange = async (value) => {
     setSelectedCategory(value);
+    
+    try {
+      const category = categories.find((cat) => cat.name === value);
+      if (category) {
+        const categoryId = category._id;
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/brand/getBrand/${categoryId}`);
+        setBrands(response.data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching brands for the selected category:', error);
+    }
   };
+  
   const onFinish = async (values) => {
     
     try {
@@ -271,7 +305,24 @@ const NewProduct = () => {
       >
           <Input type="number"/>
       </Form.Item>
-
+      <Form.Item
+        name="categoryName"
+        label="Danh mục"
+        rules={[
+          {
+            required: true,
+            message: 'Chọn danh mục',
+          },
+        ]}
+      >
+       <Select placeholder="Chọn danh mục"  onChange={handleCategoryChange}>
+          {categories.map((category) => (
+            <Option key={category.id} value={category.name}>
+              {category.name}
+            </Option>
+          ))}
+        </Select>
+      </Form.Item>
       <Form.Item
         name="brandName"
         label="Thương hiệu"
@@ -302,24 +353,7 @@ const NewProduct = () => {
       >
         <DatePicker  />
       </Form.Item>
-      <Form.Item
-        name="categoryName"
-        label="Danh mục"
-        rules={[
-          {
-            required: true,
-            message: 'Chọn danh mục',
-          },
-        ]}
-      >
-       <Select placeholder="Chọn danh mục"  onChange={handleCategoryChange}>
-          {categories.map((category) => (
-            <Option key={category.id} value={category.name}>
-              {category.name}
-            </Option>
-          ))}
-        </Select>
-      </Form.Item>
+      
       <Form.Item
         name="thumnails"
         label="Hình ảnh"

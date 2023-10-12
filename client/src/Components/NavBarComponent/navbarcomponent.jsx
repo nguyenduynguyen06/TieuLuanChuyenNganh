@@ -52,7 +52,7 @@ const NavBarComponent = () => {
         <div style={{backgroundColor:'#fff'}}>
             <p style={{fontSize: '17px', fontWeight: 'bold'}}>Danh mục</p>
             <WrapperContent>
-                {renderContent('text', ['Điện thoại', 'Ốp lưng', 'Cáp sạc', 'Sạc dự phòng', 'Tai nghe'])}
+                {renderContent('text', ['Điện thoại', 'Ốp lưng', 'Cáp sạc', 'Pin dự phòng', 'Tai nghe'])}
             </WrapperContent>
             <hr></hr>
             <p style={{fontSize: '17px', fontWeight: 'bold'}}>Bộ nhớ</p>
