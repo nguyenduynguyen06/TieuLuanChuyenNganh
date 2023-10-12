@@ -119,13 +119,6 @@ const NewProduct = () => {
       .catch((error) => {
         console.error('Error fetching categories:', error);
       });
-    axios.get(`${process.env.REACT_APP_API_URL}/brand/getBrand`)
-      .then((response) => {
-        setBrands(response.data.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching brands:', error);
-      });
   }, []);
 
 

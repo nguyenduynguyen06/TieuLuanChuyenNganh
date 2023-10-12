@@ -31,7 +31,7 @@ const Slide = () => {
                 <Slider {...settings} className="slider">
                     {arrImage.map((image) => {
                         return (
-                            <Image src={image} alt='slider' preview={false} width="auto" height="auto" />
+                            <a><Image src={image} alt='slider' preview={false} width="auto" height="auto" /></a>
                         )
                     })}
                 </Slider>
