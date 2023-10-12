@@ -3,7 +3,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
 import { UploadOutlined } from '@ant-design/icons';
-import {  message, Upload } from 'antd';
+import { message, Upload } from 'antd';
 import {
   Button,
   Form,
@@ -48,7 +48,7 @@ const tailFormItemLayout = {
 const NewProduct = () => {
   const [form] = Form.useForm();
   const [categories, setCategories] = useState([])
-  const [brands, setBrands] = useState([]); 
+  const [brands, setBrands] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [formProperties, setFormProperties] = useState([]);
   const { nameCategory } = useParams();
@@ -66,7 +66,7 @@ const NewProduct = () => {
         message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
       }
       return isJpgOrPng;
-    }, 
+    },
     onChange(info) {
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList);
@@ -75,7 +75,7 @@ const NewProduct = () => {
         message.success(`${info.file.name} file uploaded successfully`);
         const uploadedFilePaths = info.fileList
           .filter((file) => file.status === 'done')
-          .map((file) => file.response.imageUrls);   
+          .map((file) => file.response.imageUrls);
         const allImageUrls = [].concat(...uploadedFilePaths);
         console.log('')
         form.setFieldsValue({ thumnails: allImageUrls });
@@ -87,23 +87,23 @@ const NewProduct = () => {
 
   useEffect(() => {
     if (categories) {
-        const category = categories.find((cat) => cat.name === nameCategory);
-        if (category) { 
-            const categoryId = category._id;
-            fetchBrandsByCategory(categoryId);
-        }
+      const category = categories.find((cat) => cat.name === nameCategory);
+      if (category) {
+        const categoryId = category._id;
+        fetchBrandsByCategory(categoryId);
+      }
     }
-}, [categories, nameCategory]);
+  }, [categories, nameCategory]);
 
 
   const fetchBrandsByCategory = async (categoryId) => {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/brand/getBrand/${categoryId}`);
-        setBrands(response.data.data);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/brand/getBrand/${categoryId}`);
+      setBrands(response.data.data);
     } catch (error) {
-        console.error('Lỗi khi lấy danh sách thương hiệu theo danh mục:', error);
+      console.error('Lỗi khi lấy danh sách thương hiệu theo danh mục:', error);
     }
-};
+  };
 
   const handlePropertyChange = (propertyKey, value) => {
     setFormProperties({
@@ -130,114 +130,203 @@ const NewProduct = () => {
 
 
   const renderAttributes = () => {
-      if (selectedCategory === 'Điện thoại') {
-        return (
-          <>
-           <Form.Item
-  label="Màn hình"
-  name="manHinh"
-  rules={[
-    { required: true, message: 'Vui lòng điền Màn hình' },
-  ]}
->
-  <Input onChange={(e) => handlePropertyChange('Màn hình', e.target.value)} />
-</Form.Item>
+    if (selectedCategory === 'Điện thoại') {
+      return (
+        <>
+          <Form.Item
+            label="Màn hình"
+            name="manHinh"
+            rules={[
+              { required: true, message: 'Vui lòng điền Màn hình' },
+            ]}
+          >
+            <Input onChange={(e) => handlePropertyChange('Màn hình', e.target.value)} />
+          </Form.Item>
 
-<Form.Item
-  label="Hệ điều hành"
-  name="heDieuHanh"
-  rules={[
-    { required: true, message: 'Vui lòng điền Hệ điều hành' },
+          <Form.Item
+            label="Hệ điều hành"
+            name="heDieuHanh"
+            rules={[
+              { required: true, message: 'Vui lòng điền Hệ điều hành' },
 
-  ]}
->
-  <Input onChange={(e) => handlePropertyChange('Hệ điều hành', e.target.value)} />
-</Form.Item>
+            ]}
+          >
+            <Input onChange={(e) => handlePropertyChange('Hệ điều hành', e.target.value)} />
+          </Form.Item>
 
-<Form.Item
-  label="Camera sau"
-  name="cameraSau"
-  rules={[
-    { required: true, message: 'Vui lòng điền Camera sau' },
-  ]}
->
-  <Input onChange={(e) => handlePropertyChange('Camera sau', e.target.value)} />
-</Form.Item>
+          <Form.Item
+            label="Camera sau"
+            name="cameraSau"
+            rules={[
+              { required: true, message: 'Vui lòng điền Camera sau' },
+            ]}
+          >
+            <Input onChange={(e) => handlePropertyChange('Camera sau', e.target.value)} />
+          </Form.Item>
 
-<Form.Item
-  label="Camera trước"
-  name="cameraTruoc"
-  rules={[
-    { required: true, message: 'Vui lòng điền Camera trước' },
+          <Form.Item
+            label="Camera trước"
+            name="cameraTruoc"
+            rules={[
+              { required: true, message: 'Vui lòng điền Camera trước' },
 
-  ]}
->
-  <Input onChange={(e) => handlePropertyChange('Camera trước', e.target.value)} />
-</Form.Item>
+            ]}
+          >
+            <Input onChange={(e) => handlePropertyChange('Camera trước', e.target.value)} />
+          </Form.Item>
 
-<Form.Item
-  label="Chip"
-  name="chip"
-  rules={[
-    { required: true, message: 'Vui lòng điền Chip' },
+          <Form.Item
+            label="Chip"
+            name="chip"
+            rules={[
+              { required: true, message: 'Vui lòng điền Chip' },
 
-  ]}
->
-  <Input onChange={(e) => handlePropertyChange('Chip', e.target.value)} />
-</Form.Item>
+            ]}
+          >
+            <Input onChange={(e) => handlePropertyChange('Chip', e.target.value)} />
+          </Form.Item>
 
-<Form.Item
-  label="RAM"
-  name="ram"
-  rules={[
-    { required: true, message: 'Vui lòng điền RAM' },
+          <Form.Item
+            label="RAM"
+            name="ram"
+            rules={[
+              { required: true, message: 'Vui lòng điền RAM' },
 
-  ]}
->
-  <Input onChange={(e) => handlePropertyChange('RAM', e.target.value)} />
-</Form.Item>
+            ]}
+          >
+            <Input onChange={(e) => handlePropertyChange('RAM', e.target.value)} />
+          </Form.Item>
 
-<Form.Item
-  label="SIM"
-  name="sim"
-  rules={[
-    { required: true, message: 'Vui lòng điền SIM' },
+          <Form.Item
+            label="SIM"
+            name="sim"
+            rules={[
+              { required: true, message: 'Vui lòng điền SIM' },
 
-  ]}
->
-  <Input onChange={(e) => handlePropertyChange('SIM', e.target.value)} />
-</Form.Item>
+            ]}
+          >
+            <Input onChange={(e) => handlePropertyChange('SIM', e.target.value)} />
+          </Form.Item>
 
-<Form.Item
-  label="Pin, Sạc"
-  name="pinSac"
-  rules={[
-    { required: true, message: 'Vui lòng điền Pin, Sạc' },
-
-  ]}
->
-  <Input onChange={(e) => handlePropertyChange('Pin, Sạc', e.target.value)} />
-</Form.Item>
-          </>
-        );
-      } else if (selectedCategory === 'Ốp lưng') {
-        return (
-          <>
-            <Form.Item
-              label="Loại ốp lưng"
-              name="caseType"
-            >
-              <Input />
-            </Form.Item>
-          </>
-        );
-      } else {
-        return null;
-      }
+          <Form.Item
+            label="Pin, Sạc"
+            name="pinSac"
+            rules={[
+              { required: true, message: 'Vui lòng điền Pin, Sạc' },
+            ]}
+          >
+            <Input onChange={(e) => handlePropertyChange('Pin, Sạc', e.target.value)} />
+          </Form.Item>
+        </>
+      );
+    } else if (selectedCategory === 'Ốp lưng') {
+      return (
+        <>
+          <Form.Item
+            label="Loại ốp lưng"
+            name="caseType"
+            rules={[
+              { required: true, message: 'Vui lòng điền loại ốp lưng' },
+            ]}
+          >
+            <Input onChange={(e) => handlePropertyChange('Loại ốp lưng', e.target.value)} />
+          </Form.Item>
+        </>
+      );
+    } else if (selectedCategory === 'Cáp sạc') {
+      return (
+        <>
+          <Form.Item
+            label="Loại cáp" name="loaiCap" rules={[{ required: true, message: 'Vui lòng điền loại cáp' },]}>
+            <Input onChange={(e) => handlePropertyChange('Loại cáp', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Chiều dài" name="chieuDai" rules={[{ required: true, message: 'Vui lòng điền chiều dài' },]}>
+            <Input onChange={(e) => handlePropertyChange('Chiều dài', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Công suất sạc" name="congSuatSac" rules={[{ required: true, message: 'Vui lòng điền công suất sạc' },]}>
+            <Input onChange={(e) => handlePropertyChange('Công suất sạc', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Tính năng" name="tinhNang" rules={[{ required: true, message: 'Vui lòng điền tính năng' },]}>
+            <Input onChange={(e) => handlePropertyChange('Tính năng', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Chất liệu" name="chatLieu" rules={[{ required: true, message: 'Vui lòng điền chất liệu' },]}>
+            <Input onChange={(e) => handlePropertyChange('Chất liệu', e.target.value)} />
+          </Form.Item>
+        </>
+      );
+    } else if (selectedCategory === 'Pin dự phòng') {
+      return (
+        <>
+          <Form.Item
+            label="Kích thước" name="kichThuoc" rules={[{ required: true, message: 'Vui lòng điền kích thước' },]}>
+            <Input onChange={(e) => handlePropertyChange('Kích thước', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Trọng lượng" name="trongLuong" rules={[{ required: true, message: 'Vui lòng điền trọng lượng' },]}>
+            <Input onChange={(e) => handlePropertyChange('Trọng lượng', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Dòng điện vào" name="inputE" rules={[{ required: true, message: 'Vui lòng điền dòng điện vào' },]}>
+            <Input onChange={(e) => handlePropertyChange('Dòng điện vào', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Công suất đầu ra" name="congSuatOut" rules={[{ required: true, message: 'Vui lòng điền công suất đầu ra' },]}>
+            <Input onChange={(e) => handlePropertyChange('Công suất đầu ra', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Cổng sạc vào" name="congVao" rules={[{ required: true, message: 'Vui lòng điền cổng sạc vào' },]}>
+            <Input onChange={(e) => handlePropertyChange('Cổng sạc vào', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Cổng sạc ra" name="congRa" rules={[{ required: true, message: 'Vui lòng điền cổng sạc ra' },]}>
+            <Input onChange={(e) => handlePropertyChange('Cổng sạc ra', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Công suất" name="congSuat" rules={[{ required: true, message: 'Vui lòng điền công suất' },]}>
+            <Input onChange={(e) => handlePropertyChange('Công suất', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Dung lượng" name="dungLuong" rules={[{ required: true, message: 'Vui lòng điền dung lượng' },]}>
+            <Input onChange={(e) => handlePropertyChange('Dung lượng', e.target.value)} />
+          </Form.Item>
+        </>
+      );
+    } else if (selectedCategory === 'Tai nghe') {
+      return (
+        <>
+          <Form.Item
+            label="Pin" name="pin" rules={[{ required: true, message: 'Vui lòng điền pin' },]}>
+            <Input onChange={(e) => handlePropertyChange('Pin', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Micro" name="micro" rules={[{ required: true, message: 'Vui lòng điền micro' },]}>
+            <Input onChange={(e) => handlePropertyChange('Micro', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Tương thích" name="tuongThich" rules={[{ required: true, message: 'Vui lòng điền phương thức tương thích' },]}>
+            <Input onChange={(e) => handlePropertyChange('Tương thích', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Phạm vi kết nối" name="connectRange" rules={[{ required: true, message: 'Vui lòng điền phạm vi kết nối' },]}>
+            <Input onChange={(e) => handlePropertyChange('Phạm vi kết nối', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Cổng sạc" name="congSac" rules={[{ required: true, message: 'Vui lòng điền cổng sạc' },]}>
+            <Input onChange={(e) => handlePropertyChange('Cổng sạc', e.target.value)} />
+          </Form.Item>
+        </>
+      );
+    }else {
+      return null;
+    }
   };
   const handleCategoryChange = async (value) => {
     setSelectedCategory(value);
-    
+
     try {
       const category = categories.find((cat) => cat.name === value);
       if (category) {
@@ -249,14 +338,15 @@ const NewProduct = () => {
       console.error('Error fetching brands for the selected category:', error);
     }
   };
-  
+
   const onFinish = async (values) => {
-    
+
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/product/addProduct`,{
-        ...values, properties: formProperties}
-      );  
+        `${process.env.REACT_APP_API_URL}/product/addProduct`, {
+        ...values, properties: formProperties
+      }
+      );
       message.success('Thêm sản phẩm thành công')
       form.resetFields();
       setSelectedCategory(null);
@@ -274,12 +364,12 @@ const NewProduct = () => {
       }}
       scrollToFirstError
     >
-         <Alert
-            message="Lưu ý: Sau khi thêm sản phẩm phải thêm ít nhất 1 biến thể của sản phẩm thì mới có thể tiếp tục thêm sản phẩm"
-            type="warning"
-            showIcon
-            style={{ marginBottom: '16px',background:'#FFFF99' }}
-          />
+      <Alert
+        message="Lưu ý: Sau khi thêm sản phẩm phải thêm ít nhất 1 biến thể của sản phẩm thì mới có thể tiếp tục thêm sản phẩm"
+        type="warning"
+        showIcon
+        style={{ marginBottom: '16px', background: '#FFFF99' }}
+      />
       <Form.Item
         name="name"
         label="Tên sản phẩm"
@@ -290,7 +380,7 @@ const NewProduct = () => {
           },
         ]}
       >
-        <Input/>
+        <Input />
       </Form.Item>
 
       <Form.Item
@@ -303,7 +393,7 @@ const NewProduct = () => {
           },
         ]}
       >
-          <Input type="number"/>
+        <Input type="number" />
       </Form.Item>
       <Form.Item
         name="categoryName"
@@ -315,7 +405,7 @@ const NewProduct = () => {
           },
         ]}
       >
-       <Select placeholder="Chọn danh mục"  onChange={handleCategoryChange}>
+        <Select placeholder="Chọn danh mục" onChange={handleCategoryChange}>
           {categories.map((category) => (
             <Option key={category.id} value={category.name}>
               {category.name}
@@ -351,9 +441,9 @@ const NewProduct = () => {
           },
         ]}
       >
-        <DatePicker  />
+        <DatePicker />
       </Form.Item>
-      
+
       <Form.Item
         name="thumnails"
         label="Hình ảnh"
@@ -364,9 +454,9 @@ const NewProduct = () => {
           },
         ]}
       >
-       <Upload {...props}>
-    <Button icon={<UploadOutlined />}>Ảnh</Button>
-  </Upload>
+        <Upload {...props}>
+          <Button icon={<UploadOutlined />}>Ảnh</Button>
+        </Upload>
       </Form.Item>
       <Form.Item
         name="desc"
@@ -379,8 +469,8 @@ const NewProduct = () => {
         ]}
       >
         <ReactQuill
-          theme="snow" 
-          placeholder="Nhập mô tả ở đây..." 
+          theme="snow"
+          placeholder="Nhập mô tả ở đây..."
         />
       </Form.Item>
       {renderAttributes()}
