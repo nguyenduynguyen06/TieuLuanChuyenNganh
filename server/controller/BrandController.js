@@ -35,6 +35,17 @@ const getAllBrand = async (req, res) => {
       return res.status(500).json({ msg: 'Lỗi Server' });
   }
 };
+const getAll = async (req, res) => {
+  try {
+      const data = await Brand.find();
+      return res.status(200).json({
+          data: data
+      });
+  } catch (error) {
+      console.error('Lỗi:', error);
+      return res.status(500).json({ msg: 'Lỗi Server' });
+  }
+};
 const updateBrand = async (req, res) => {
   try {
     const brandId = req.params.id; 
@@ -64,4 +75,4 @@ const deleteBrand = async (req, res) => {
   }
 };
 
-module.exports = { addBrand,getAllBrand,updateBrand,deleteBrand };
+module.exports = { addBrand,getAllBrand,updateBrand,deleteBrand ,getAll};
