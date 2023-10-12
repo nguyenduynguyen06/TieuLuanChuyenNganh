@@ -74,7 +74,6 @@ export const WrapperInputNumber = styled(InputNumber)`
             display: none !important;
         }
     }
-    
 `
 
 export const WrapperPropTable = styled(Table)`
