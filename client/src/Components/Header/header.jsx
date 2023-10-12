@@ -10,7 +10,6 @@ import {
   SearchOutlined,
   UserOutlined
 } from '@ant-design/icons';
-import TypeProducts from "./typeproducts";
 import Login from "./login"
 import {
   MDBBtn,
@@ -24,11 +23,24 @@ import Register from "./register";
 import { useSelector } from "react-redux";
 import { useDispatch } from 'react-redux'
 import { resetUser } from "../../redux/Slide/userSlice";
-const arr = ['Xiaomi', 'Iphone', 'Samsung']
+
+
 
 const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const dispatch = useDispatch();
-
+  const [searchKeyword, setSearchKeyword] = useState('');
+  
+  const handleSearch = () => {
+    if (searchKeyword) {
+      axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${searchKeyword}`)
+        .then((response) => {
+          window.location.href = `/type?keyword=${searchKeyword}`;
+        })
+        .catch((error) => {
+          console.error('Lỗi khi gọi API tìm kiếm: ', error);
+        });
+    }
+  }
   const handleLogout = async () => {
     try {
       await axios.post(`${process.env.REACT_APP_API_URL}/user/Logout`, {}, { withCredentials: true });
@@ -56,7 +68,6 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-
   const [centredModal, setCentredModal] = useState(false);
   const toggleShow = () => setCentredModal(!centredModal);
 
@@ -78,14 +89,25 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         </WrapperHeaderImage>
         <WrapperSearch className="search-box">
           {!isHiddenSearch && (
-            <Search
-              placeholder="Tìm Kiếm"
-              allowClear
-              enterButton={<Button style={{
-                backgroundImage: 'linear-gradient(to bottom, #ff914d,  #ffde59)'
-              }}><SearchOutlined style={{ width: '10px', height: '20px', color: 'black' }} /> </Button>}
-              size="large"
-            />)}
+        <Search
+        placeholder="Tìm Kiếm"
+        allowClear
+        onSearch={handleSearch}
+        enterButton={
+          <Button style={{
+            backgroundImage: 'linear-gradient(to bottom, #ff914d, #ffde59)',
+          }}>
+            <SearchOutlined style={{ width: '10px', height: '20px', color: 'black' }} />
+          </Button>
+        }
+        size="large"
+        value={searchKeyword}
+        onChange={(e) => {
+          const newSearchKeyword = e.target.value;
+          setSearchKeyword(newSearchKeyword);
+        }}
+      />
+        )}
         </WrapperSearch>
         <WrapperCartButton>
           {!isHiddenCart && (
