@@ -38,11 +38,10 @@ function ProductHomePage() {
     }
   };
 
-  const handleCardClick = (id) => {
-    window.location.href = `/product/${id}`;
+  const handleCardClick = (product) => {
+    const url = `/product/${ product.name}/${selectedMemories[product._id]}`;
+    window.location.href = url;
   };
-
-  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleShowMoreClick = () => {
     setVisibleProducts(visibleProducts + 5);
@@ -78,7 +77,7 @@ function ProductHomePage() {
         {products.filter((product) => product.isHide === false).slice(0, visibleProducts).map((product) => (
           <div className='box' key={product._id}>
             <div className='card'>
-              <div className='image' onClick={() => handleCardClick(product._id)}>
+              <div className='image' onClick={() => handleCardClick(product)}>
                 <img src={product.thumnails[0]} />
               </div>
               <div className='desc'>

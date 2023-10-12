@@ -75,33 +75,28 @@ const updateProductVariant = async (req, res) => {
   try {
     const productVariantId = req.params.id;
     const data = req.body;
-    const productVariantToUpdate = await ProductVariant.findById(productVariantId);
-    if (!productVariantToUpdate) {
-      return res.status(404).json({ success: false, error: 'Biến thể không tồn tại' });
-    }
-
+    const updateData = {};
     if (data.memory !== undefined) {
-      productVariantToUpdate.memory = data.memory;
+      updateData.memory = data.memory;
     }
     if (data.imPrice !== undefined) {
-      productVariantToUpdate.imPrice = data.imPrice;
+      updateData.imPrice = data.imPrice;
     }
     if (data.oldPrice !== undefined) {
-      productVariantToUpdate.oldPrice = data.oldPrice;
+      updateData.oldPrice = data.oldPrice;
     }
     if (data.newPrice !== undefined) {
-      productVariantToUpdate.price = data.newPrice;
+      updateData.newPrice = data.newPrice;
     }
-    
-    await productVariantToUpdate.save();
-    res.status(200).json({ success: true, data: productVariantToUpdate });
+    const updatedProduct = await ProductVariant.findByIdAndUpdate(productVariantId, updateData);
+    res.status(200).json({ success: true, data: updatedProduct });
   } catch (error) {
     return res.status(500).json({ error });
   }
 };
 const deleteAttributes = async (req, res) => {
   try {
-    const variantId = req.params.variantId;
+    const variantId = req.params.id;
     const attributeIdToRemove = req.params.attributeIdToRemove; 
     const productVariant = await ProductVariant.findById(variantId);
     if (!productVariant) {

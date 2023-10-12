@@ -166,6 +166,31 @@ const searchProducts = async (req, res) => {
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
+const detailsProduct = async (req, res) => {
+  try {
+    const { name, memory } = req.params; 
+    const products = await Product.findOne({ name })
+      .populate('brand')
+      .populate('category')
+      .populate({
+        path: 'variant',
+        match: { memory }, 
+        populate: {
+          path: 'attributes',
+        },
+      });
+
+    if (!products) {
+      return res.status(404).json({ success: false, error: 'Sản phẩm không tồn tại' });
+    }
+
+    res.status(200).json({ success: true, data: products });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+
 const getAllProduct = async (req, res) => {
   try {
     const products = await Product.find()
@@ -184,4 +209,4 @@ const getAllProduct = async (req, res) => {
   }
 }
 
-module.exports = { addProduct,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts,getAllProduct,getProductsByCategoryAndBrand };
+module.exports = { addProduct,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts,getAllProduct,getProductsByCategoryAndBrand ,detailsProduct};

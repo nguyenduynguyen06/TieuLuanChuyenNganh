@@ -4,7 +4,7 @@ import ProductDetailComponents from "../../Components/ProductDetailCom/ProductDe
 const ProductDetail = () =>{
     return (
         <div style={{padding: '0 120px', background: '#fff', height: 'auto'}}>
-            <h5>Trang chủ</h5>
+            <h3>Chi tiết sản phẩm</h3>
                 <ProductDetailComponents/>
         </div>
     )

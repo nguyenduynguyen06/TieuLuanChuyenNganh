@@ -29,8 +29,8 @@ function AccessoryHomePage() {
   };
   
 
-  const handleCardClick = (id) => {
-    window.location.href = `/product/${id}`;
+  const handleCardClick = (name) => {
+    window.location.href = `/product/${name}`;
   };
 
   const handleShowMoreClick = () => {
@@ -68,7 +68,7 @@ function AccessoryHomePage() {
         {products.filter((product) => product.isHide === false).slice(0, visibleProducts).map((product) => (
           <div className='box' key={product._id}>
             <div className='card'>
-              <div className='image' onClick={() => handleCardClick(product._id)}>
+              <div className='image' onClick={() => handleCardClick(product.name)}>
                 <img src={product.thumnails[0]} />
               </div>
               <div className='desc'>
