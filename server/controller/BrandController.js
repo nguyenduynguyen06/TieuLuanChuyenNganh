@@ -37,7 +37,7 @@ const getAllBrand = async (req, res) => {
 };
 const getAll = async (req, res) => {
   try {
-      const data = await Brand.find();
+      const data = await Brand.find().populate('categoryId');
       return res.status(200).json({
           data: data
       });

@@ -60,6 +60,7 @@ const TableBrand = () => {
             )
         }
       },
+      
       {
         title: 'Ẩn/Hiện',
         dataIndex: 'isHide',
@@ -73,6 +74,11 @@ const TableBrand = () => {
               </div>
             );
           },
+      },
+      {
+        title: 'Danh mục',
+        dataIndex: 'categoryId',
+        render: category => category.name,
       },
       {
         title: 'Xoá',
