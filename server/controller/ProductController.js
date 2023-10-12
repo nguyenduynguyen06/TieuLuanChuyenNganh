@@ -154,7 +154,12 @@ const searchProducts = async (req, res) => {
     const regex = new RegExp(keyword, 'i'); 
     const products = await Product.find({
       name: { $regex: regex }, 
-    }).populate('brand').populate('category');
+    }).populate('brand').populate('category').populate({
+      path: 'variant',
+      populate: {
+        path: 'attributes',
+      },
+    });
     res.status(200).json({ success: true, data: products });
   } catch (error) {
     console.error('Lỗi:', error);

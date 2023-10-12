@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Pagination } from 'antd';
 import { WrapperCard } from './styled';
@@ -7,7 +7,8 @@ import { WrapperCard } from './styled';
 
 function CardComponent() {
   const { nameCategory, nameBrand } = useParams();
-
+  const location = useLocation();
+  const searchKeyword = new URLSearchParams(location.search).get('keyword');
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
 
@@ -20,7 +21,26 @@ function CardComponent() {
       }
     }
   }, [nameCategory, nameBrand]);
-
+  useEffect(() => {
+    if (searchKeyword) {
+      performSearch(searchKeyword);
+    }
+  }, [searchKeyword]);
+  const performSearch = (keyword) => {
+    axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${keyword}`)
+      .then((response) => {
+        const productsData = response.data.data;
+        setProducts(productsData);
+        const initialMemories = {};
+        productsData.forEach((product) => {
+          initialMemories[product._id] = product.variant[0]?.memory;
+        });
+        setSelectedMemories(initialMemories);
+      })
+      .catch((error) => {
+        console.error('Lỗi khi gọi API tìm kiếm: ', error);
+      });
+  };
   const getProductsByCategoryName = async (categoryName) => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
@@ -64,7 +84,6 @@ function CardComponent() {
         `${process.env.REACT_APP_API_URL}/product/getProductsByCategoryAndBrand/${category._id}/${brand._id}`
       );
       const productsData = response.data.data;
-      console.log('product',productsData)
       setProducts(productsData);
       const initialMemories = {};
       productsData.forEach((product) => {

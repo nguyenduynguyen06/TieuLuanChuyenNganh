@@ -5,6 +5,7 @@ import { Col, Row } from 'antd'
 import ListBrand from "../../Components/ListBrandComponent/ListBrandComponent";
 import Header from "../../Components/Header/header";
 
+
 const TypeProductPage = () => {
 
     return (
@@ -19,7 +20,7 @@ const TypeProductPage = () => {
                         <NavBarComponent />
                     </Col>
                     <Col span={20}>
-                        <CardComponent />
+                        <CardComponent/>
                     </Col>
                 </Row>
                 <br></br>

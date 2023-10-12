@@ -7,7 +7,7 @@ import ProductPage from "../pages/product";
 import ProductDetail from "../pages/ProductDetail/productdetail";
 import TypeProductPage from "../pages/ProductTypePage/producttypepage";
 import CartPage from "../pages/CartPage/CartPage";
-import TypeProductBrandandCategory from "../pages/ProductTypePage/ProductypeBrandandCategory";
+import SearchSuggestion from "../Components/Header/SearchSuggest";
 export const routes = [
     {
         path:'/',
@@ -47,7 +47,11 @@ export const routes = [
     },
     {
         path:'/type/:nameCategory/:nameBrand',
-        page: TypeProductBrandandCategory,
+        page: TypeProductPage,
+    },
+    {
+        path:'/type',
+        page: TypeProductPage,
     },
     {
         path:'/cart',
