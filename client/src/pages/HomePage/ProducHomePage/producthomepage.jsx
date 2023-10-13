@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 function ProductHomePage() {
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
-  const [visibleProducts, setVisibleProducts] = useState(5);
+  const [visibleProducts, setVisibleProducts] = useState(7);
 
   useEffect(() => {
     getCategoryByName();

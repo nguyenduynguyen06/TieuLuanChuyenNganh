@@ -4,7 +4,7 @@ import axios from 'axios';
 
 function AccessoryHomePage() {
   const [products, setProducts] = useState([]);
-  const [visibleProducts, setVisibleProducts] = useState(5);
+  const [visibleProducts, setVisibleProducts] = useState(7);
 
   useEffect(() => {
     getCategoryByName();

@@ -21,48 +21,99 @@ import ProductDescription from "./productdesscription"
 import CommentBox from "./commentcomponent"
 import axios from "axios"
 import { useParams } from "react-router-dom"
+import './button.css'
 const { Column, ColumnGroup } = Table;
 
 const ProductDetailComponents = () => {
     const [productDetails, setProductDetails] = useState(null);
     const { productName, memory } = useParams();
-    const [selectedMemories, setSelectedMemories] = useState({});
     const [selectedColor, setSelectedColor] = useState({});
-    const [selectedQuantity, setSelectedQuantity] = useState(1);
+    const [selectedSold, setSelectedSold] = useState({});
+    const [selectedMemories, setSelectedMemories] = useState({});
     useEffect(() => {
-        axios.get(`${process.env.REACT_APP_API_URL}/product/getDetails/${productName}/${memory}`)
-            .then((response) => {
-                const productDetails = response.data.data;
-                setProductDetails(productDetails);
-                const initialMemories = {};
-                productDetails.forEach((product) => {
-                    initialMemories[product._id] = memory;
+        if (memory !== `undefined`) {
+            axios.get(`${process.env.REACT_APP_API_URL}/product/getDetails/${productName}/${memory}`)
+                .then((response) => {
+                    const productDetails = response.data.data;
+                    setProductDetails(productDetails);
+    
+                    const defaultMemory = memory;
+    
+                    const initialMemories = {
+                        [productDetails._id]: defaultMemory
+                    };
+    
+                    setSelectedMemories(initialMemories);
+    
+                    // Lấy màu đầu tiên từ attributes của variant
+                    if (productDetails && productDetails.variant) {
+                        productDetails.variant.forEach((variant) => {
+                            if (variant.memory === defaultMemory && variant.attributes && variant.attributes.length > 0) {
+                                const defaultColor = variant.attributes[0].color;
+                                setSelectedColor((prevSelected) => ({
+                                    ...prevSelected,
+                                    [variant._id]: defaultColor,
+                                }));
+    
+                                // Cập nhật Sold tương ứng
+                                const selectedAttribute = variant.attributes.find((attribute) => attribute.color === defaultColor);
+                                if (selectedAttribute) {
+                                    setSelectedSold((prevSelected) => ({
+                                        ...prevSelected,
+                                        [variant._id]: selectedAttribute.sold,
+                                    }));
+                                }
+                            }
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error fetching product details:', error);
                 });
-                setSelectedMemories(initialMemories);
-            })
-            .catch((error) => {
-                console.error('Error fetching categories:', error);
-            });
-    }, [productName, memory]);
-
-    const onChange = (value) => {
-        setSelectedQuantity(value);
-    }
-    const handleColorClick = (color) => {
-        const selectedMemory = selectedMemories[productDetails._id];
-        const selectedVariant = productDetails.variant.find(
-            (variant) => variant.memory === selectedMemory
-        );
-        if (selectedVariant && selectedVariant.attributes) {
-            const colorQuantity = selectedVariant.attributes
-                .filter((attribute) => attribute.color === color)
-                .reduce((acc, attribute) => acc + attribute.quantity, 0);
-            setSelectedQuantity(colorQuantity);
+        } else {
+            axios.get(`${process.env.REACT_APP_API_URL}/product/getDetails/${productName}/${memory}`)
+                .then((response) => {
+                    const productDetails = response.data.data;
+                    setProductDetails(productDetails);
+    
+                    const initialMemories = {
+                        [productDetails._id]: productDetails.variant[0].memory
+                    };
+    
+                    setSelectedMemories(initialMemories);
+    
+            
+                    if (productDetails && productDetails.variant) {
+                        productDetails.variant.forEach((variant) => {
+                            if (variant.memory === productDetails.variant[0].memory && variant.attributes && variant.attributes.length > 0) {
+                                const defaultColor = variant.attributes[0].color;
+                                setSelectedColor((prevSelected) => ({
+                                    ...prevSelected,
+                                    [variant._id]: defaultColor,
+                                }));
+    
+            
+                                const selectedAttribute = variant.attributes.find((attribute) => attribute.color === defaultColor);
+                                if (selectedAttribute) {
+                                    setSelectedSold((prevSelected) => ({
+                                        ...prevSelected,
+                                        [variant._id]: selectedAttribute.sold,
+                                    }));
+                                }
+                            }
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error fetching product details:', error);
+                });
         }
+    }, [productName, memory]);
+    
+    
+    
 
-        // Cập nhật màu đã chọn
-        setSelectedColor(color);
-    }
+    const onChange = (value) => {}
     const columns = [
         {
             title: '',
@@ -76,33 +127,24 @@ const ProductDetailComponents = () => {
         },
     ];
 
-    const dataSource = [
-        {
-            key: '1',
-            prop: 'Kích thước màn hình',
-            info: '6.1 inches',
-        },
-        {
-            key: '2',
-            prop: 'Công nghệ màn hình',
-            info: 'Super Retina XDR OLED',
-        },
-        {
-            key: '3',
-            prop: 'Camera sau',
-            info: 'Camera chính: 48MP\nCamera góc rộng: 12MP\nCamera Tele: 12MP',
-        },
-        {
-            key: '4',
-            prop: 'Camera trước',
-            info: '12MP',
-        },
-        {
-            key: '5',
-            prop: 'Chipset',
-            info: 'Apple A16 Bionic',
-        },
-    ];
+    const dataSource = productDetails && productDetails.properties
+    ? Object.keys(productDetails.properties).map((propertyKey) => ({
+        key: propertyKey,
+        prop: propertyKey,
+        info: productDetails.properties[propertyKey] || 'N/A',
+    }))
+    : [];
+    if (memory !== `undefined`) {
+        dataSource.unshift({
+            key: '0', 
+            prop: 'Dung lượng lưu trữ', 
+            info: memory, 
+        });
+    }
+    const handleMemoryClick = (newMemory) => {
+        const newUrl = `/product/${productName}/${newMemory}`;
+       window.location.href = newUrl
+    };
     const productDescription = `
         
     `
@@ -113,79 +155,99 @@ const ProductDetailComponents = () => {
                 <Col span={10} style={{ border: '1px solid #e5e5e5', paddingRight: '8px' }}>
                     <WrapperStyleImageBig src={imageProduct} alt="image product" preview={false} />
                     <Row style={{ paddingTop: '10px', justifyContent: 'space-between' }}>
-                                {productDetails && productDetails.variant ? (
-                    productDetails.variant.map((variants) => (
-                        variants.attributes ? (
-                            variants.attributes.map((attribute, attributeIndex) => (
-                                <WrapperStyleColImage key={attributeIndex} span={4}>
-                                    <WrapperStyleImageSmall src={attribute.pictures} alt={`Attribute ${attributeIndex}`} preview={false} />
-                                </WrapperStyleColImage>
-                            ))
-                        ) : null
-                    ))
+                                    {productDetails && productDetails.variant && selectedMemories[productDetails._id] ? (
+                    productDetails.variant
+                        .filter((variant) => variant.memory === selectedMemories[productDetails._id])
+                        .map((variant) =>
+                            variant.attributes ? (
+                                variant.attributes.map((attribute, attributeIndex) => (
+                                    <WrapperStyleColImage key={attributeIndex} span={4}>
+                                        <WrapperStyleImageSmall src={attribute.pictures} alt={`Attribute ${attributeIndex}`} preview={false} />
+                                    </WrapperStyleColImage>
+                                ))
+                            ) : null
+                        )
                 ) : null}
                     </Row>
                 </Col>
                 <Col span={14} style={{ paddingLeft: '10px' }}>
-                {productDetails ? (
-                    <WrapperStyleNameProduct>{productDetails.name}</WrapperStyleNameProduct>
+                                    {productDetails ? (
+                        memory !== `undefined` ? (
+                            <WrapperStyleNameProduct>{productDetails.name} {memory}</WrapperStyleNameProduct>
+                        ) : (
+                            <div>
+                                <WrapperStyleNameProduct>{productDetails.name}</WrapperStyleNameProduct>
+                            </div>
+                        )
                     ) : (
                         <p>Loading...</p>
                     )}
-                     {productDetails ? (
-                    <div>
-                        <StarFilled style={{ fontSize: '12px', color: 'rgb(253,216,54)' }} />
-                        <StarFilled style={{ fontSize: '12px', color: 'rgb(253,216,54)' }} />
-                        <StarFilled style={{ fontSize: '12px', color: 'rgb(253,216,54)' }} />
-                        <WrapperStyleTextSell>{productDetails.sold}</WrapperStyleTextSell>
-                    </div>
-                        ) : (
-                            <p>Loading...</p>
-                        )}
                         {productDetails?.variant.map((variant) => (
-                            variant.memory && (  
+                            variant?.memory && (  
                             <Button
-                                className={` memory-button ${variant.memory === selectedMemories[productDetails._id] ? 'selected' : ''}`}
+                                className={` memory-button ${variant?.memory === selectedMemories[productDetails._id] ? 'selected' : ''}`}
                                 onClick={() => {
                                 setSelectedMemories((prevSelected) => ({
                                     ...prevSelected,
-                                    [productDetails._id]: variant.memory,
+                                    [productDetails._id]: variant?.memory,
                                 }));
+                               handleMemoryClick(variant.memory)
                                 }}
                                 style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
                             >
-                                {variant.memory}
+                                {variant?.memory}
                             </Button>
                             )
                         ))}
-                        <div>
-                            {productDetails?.variant.map((variant) => {
-                                if (variant.attributes && variant.attributes.length > 0) {
-                                    // Lấy danh sách màu từ mảng attributes
-                                    const colors = variant.attributes.map((attribute) => attribute.color);  
-                                    const uniqueColors = [...new Set(colors)];
-
-                                    if (variant.memory === selectedMemories[productDetails._id]) {
-                                        return uniqueColors.map((color, index) => (
-                                            <Button
-                                                key={index}
-                                                className={` memory-button ${color === selectedColor[variant._id] ? 'selected' : ''}`}
-                                                onClick={() => {
-                                                    setSelectedMemories((prevSelected) => ({
-                                                        ...prevSelected,
-                                                        [variant._id]: color,
-                                                    }));
-                                                }}
-                                                style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
-                                            >
-                                                {color}
-                                            </Button>
-                                        ));
+                  <div>
+    {productDetails?.variant.map((variant) => {
+        if (variant.attributes && variant.attributes.length > 0) {
+            const colors = variant.attributes.map((attribute) => attribute.color);
+            const uniqueColors = [...new Set(colors)];
+            if (variant.memory === selectedMemories[productDetails._id]) {
+                return (
+                    <div key={variant._id}>
+                        {uniqueColors.map((color, index) => (
+                            <Button
+                                key={index}
+                                className={`memory-button ${
+                                    color === selectedColor[variant._id] ? 'selected' : ''
+                                }`}
+                                onClick={() => {
+                                    setSelectedColor((prevSelected) => ({
+                                        ...prevSelected,
+                                        [variant._id]: color,
+                                    }));
+                                    const selectedAttribute = variant.attributes.find(
+                                        (attribute) => attribute.color === color
+                                    );
+                                    if (selectedAttribute) {
+                                        setSelectedSold((prevSelected) => ({
+                                            ...prevSelected,
+                                            [variant._id]: selectedAttribute.sold ,
+                                        }));
+                                        console.log('selectedSold',selectedSold[variant._id])
+                                    } else {
+                                        setSelectedSold((prevSelected) => ({
+                                            ...prevSelected,
+                                            [variant._id]: 'N/A',
+                                        }));
                                     }
-                                }
-                                return null;
-                            })}
-                            </div>
+                                }}
+                                style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
+                            >
+                                {color}
+                            </Button>
+                        ))}
+                         <div> <WrapperStyleTextSell>Sold: {selectedSold[variant._id]}</WrapperStyleTextSell></div>
+                    </div>
+                );
+            }
+        }
+        return null;
+    })}
+</div>
+
                            {productDetails ? (
                     <WrapperPriceProduct>
                         <WrapperPriceTextProduct>
@@ -270,9 +332,9 @@ const ProductDetailComponents = () => {
                             <Column dataIndex="info" key="info" />
                         </ColumnGroup>
                     </WrapperPropTable>
-                    <WrapperSeeMore>
+                    {/* <WrapperSeeMore>
                         <a href="#">Xem toàn bộ thông số</a>
-                    </WrapperSeeMore>
+                    </WrapperSeeMore> */}
                 </Col>
             </Row>
             <hr className="my-4" />
