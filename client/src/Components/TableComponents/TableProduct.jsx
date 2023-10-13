@@ -61,6 +61,7 @@ onChange(info) {
       authorization: 'authorization-text',
     },
     accept: '.jpg, .jpeg, .png',
+    multiple: true,
     beforeUpload: (file) => {
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
       if (!isJpgOrPng) {
