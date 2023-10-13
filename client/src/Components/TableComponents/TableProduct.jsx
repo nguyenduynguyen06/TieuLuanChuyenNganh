@@ -492,46 +492,20 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     }
   };
   const updateProductVariant = async (variantId, newData) => {
-    try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/product/editProductVariant/${variantId}`,
-        newData
-      );
-      console.log('Response from server:', response.data);
-      const updatedProductData = productData.map((product) => {
-        if (product.variant.some((variant) => variant._id === variantId)) {
-          const updatedVariants = product.variant.map((variant) => {
-            if (variant._id === variantId) {
-              return {
-                ...variant,
-                memory: newData.memory,
-                imPrice: newData.imPrice,
-                oldPrice: newData.oldPrice,
-                newPrice: newData.newPrice,
-              };
-            }
-            return variant;
-          });
-          return {
-            ...product,
-            variant: updatedVariants,
-          };
-        }
-        return product;
-      });
-  
-      const updatedSelectedProduct = updatedProductData.find(
-        (product) => product._id === selectedProduct._id
-      );
-      if (updatedSelectedProduct) {
-        setSelectedProduct(updatedSelectedProduct);
-      }
+    axios.put( `${process.env.REACT_APP_API_URL}/product/editProductVariant/${variantId}`,
+    newData)
+      .then((response) => {
+        axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`)
+      .then((response) => {
+        setProductData(response.data.data);
+      })
       message.success('Sửa biến thể thành công')
-      setProductData(updatedProductData);
-    } catch (error) {
-      console.error('Lỗi khi cập nhật biến thể sản phẩm:', error);
-      throw error;
-    }
+      form.resetFields();
+        setUpdate(false);
+      })
+      .catch((error) => {
+        console.error("Lỗi khi cập nhật biến thể: ", error);
+      });
   };
   
   
@@ -673,6 +647,12 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   footer={null}
   width={1000}
 >
+<Alert
+            message="Lưu ý: Sau khi sửa biến thể chỉ cần tắt danh sách đi mở lại sẽ được cập nhật"
+            type="warning"
+            showIcon
+            style={{ marginBottom: '16px',background:'#FFFF99' }}
+          />
   {selectedProduct && (
     <Table
       dataSource={selectedProduct.variant}
