@@ -76,11 +76,16 @@ export const WrapperCard = styled.div`
     width: 100%;
     margin: auto;
     line-height: 3;
+    height: 11em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal
   }
 
   .card .desc h1 {
     font-size: 15px;
     text-transform: uppercase;
+
   }
 
   .card .desc p {

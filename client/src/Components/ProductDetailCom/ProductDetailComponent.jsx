@@ -1,6 +1,5 @@
-import React , {useState, useEffect} from "react"
+import React, { useState, useEffect } from "react"
 import { Button, Col, Row, Table } from 'antd'
-import imageProduct from '../../image/ip15.webp'
 import {
     WrapperStyleColImage,
     WrapperStyleImageSmall,
@@ -22,29 +21,50 @@ import CommentBox from "./commentcomponent"
 import axios from "axios"
 import { useParams } from "react-router-dom"
 import './button.css'
+import Slider from 'react-slick';
+
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+
+
 const { Column, ColumnGroup } = Table;
 
 const ProductDetailComponents = () => {
+
     const [productDetails, setProductDetails] = useState(null);
     const { productName, memory } = useParams();
     const [selectedColor, setSelectedColor] = useState({});
     const [selectedSold, setSelectedSold] = useState({});
     const [selectedMemories, setSelectedMemories] = useState({});
+    const sliderSettings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        autoplay: true,          
+        autoplaySpeed: 2000,
+        appendDots: (dots) => (
+            <ul style={{ position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)', listStyle: 'none', padding: '0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                {dots}
+            </ul>)
+    };
+
     useEffect(() => {
         if (memory !== `undefined`) {
             axios.get(`${process.env.REACT_APP_API_URL}/product/getDetails/${productName}/${memory}`)
                 .then((response) => {
                     const productDetails = response.data.data;
                     setProductDetails(productDetails);
-    
+
                     const defaultMemory = memory;
-    
+
                     const initialMemories = {
                         [productDetails._id]: defaultMemory
                     };
-    
+
                     setSelectedMemories(initialMemories);
-    
+
                     // Lấy màu đầu tiên từ attributes của variant
                     if (productDetails && productDetails.variant) {
                         productDetails.variant.forEach((variant) => {
@@ -54,7 +74,7 @@ const ProductDetailComponents = () => {
                                     ...prevSelected,
                                     [variant._id]: defaultColor,
                                 }));
-    
+
                                 // Cập nhật Sold tương ứng
                                 const selectedAttribute = variant.attributes.find((attribute) => attribute.color === defaultColor);
                                 if (selectedAttribute) {
@@ -75,14 +95,14 @@ const ProductDetailComponents = () => {
                 .then((response) => {
                     const productDetails = response.data.data;
                     setProductDetails(productDetails);
-    
+
                     const initialMemories = {
                         [productDetails._id]: productDetails.variant[0].memory
                     };
-    
+
                     setSelectedMemories(initialMemories);
-    
-            
+
+
                     if (productDetails && productDetails.variant) {
                         productDetails.variant.forEach((variant) => {
                             if (variant.memory === productDetails.variant[0].memory && variant.attributes && variant.attributes.length > 0) {
@@ -91,8 +111,8 @@ const ProductDetailComponents = () => {
                                     ...prevSelected,
                                     [variant._id]: defaultColor,
                                 }));
-    
-            
+
+
                                 const selectedAttribute = variant.attributes.find((attribute) => attribute.color === defaultColor);
                                 if (selectedAttribute) {
                                     setSelectedSold((prevSelected) => ({
@@ -109,11 +129,11 @@ const ProductDetailComponents = () => {
                 });
         }
     }, [productName, memory]);
-    
-    
-    
 
-    const onChange = (value) => {}
+
+
+
+    const onChange = (value) => { }
     const columns = [
         {
             title: '',
@@ -128,50 +148,54 @@ const ProductDetailComponents = () => {
     ];
 
     const dataSource = productDetails && productDetails.properties
-    ? Object.keys(productDetails.properties).map((propertyKey) => ({
-        key: propertyKey,
-        prop: propertyKey,
-        info: productDetails.properties[propertyKey] || 'N/A',
-    }))
-    : [];
+        ? Object.keys(productDetails.properties).map((propertyKey) => ({
+            key: propertyKey,
+            prop: propertyKey,
+            info: productDetails.properties[propertyKey] || 'N/A',
+        }))
+        : [];
     if (memory !== `undefined`) {
         dataSource.unshift({
-            key: '0', 
-            prop: 'Dung lượng lưu trữ', 
-            info: memory, 
+            key: '0',
+            prop: 'Dung lượng lưu trữ',
+            info: memory,
         });
     }
     const handleMemoryClick = (newMemory) => {
         const newUrl = `/product/${productName}/${newMemory}`;
-       window.location.href = newUrl
+        window.location.href = newUrl
     };
-    const productDescription = `
-        
-    `
-  
-  return (
+
+    return (
         <div>
             <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
                 <Col span={10} style={{ border: '1px solid #e5e5e5', paddingRight: '8px' }}>
-                    <WrapperStyleImageBig src={imageProduct} alt="image product" preview={false} />
-                    <Row style={{ paddingTop: '10px', justifyContent: 'space-between' }}>
-                                    {productDetails && productDetails.variant && selectedMemories[productDetails._id] ? (
-                    productDetails.variant
-                        .filter((variant) => variant.memory === selectedMemories[productDetails._id])
-                        .map((variant) =>
-                            variant.attributes ? (
-                                variant.attributes.map((attribute, attributeIndex) => (
-                                    <WrapperStyleColImage key={attributeIndex} span={4}>
-                                        <WrapperStyleImageSmall src={attribute.pictures} alt={`Attribute ${attributeIndex}`} preview={false} />
-                                    </WrapperStyleColImage>
-                                ))
-                            ) : null
-                        )
-                ) : null}
+                    <Slider {...sliderSettings}>
+                        {/* Các ảnh trong Slider */}
+                        {productDetails && productDetails.thumnails.map((thumbnail, index) => (
+                            <WrapperStyleImageBig key={index}>
+                                <img src={thumbnail} alt={`Thumbnail ${index}`} className="slider-image" />
+                            </WrapperStyleImageBig>
+                        ))}
+                    </Slider>
+                    <Row style={{ paddingTop: '10px', justifyContent: 'flex-start' }}>
+                        {productDetails && productDetails.variant && selectedMemories[productDetails._id] ? (
+                            productDetails.variant
+                                .filter((variant) => variant.memory === selectedMemories[productDetails._id])
+                                .map((variant) =>
+                                    variant.attributes ? (
+                                        variant.attributes.map((attribute, attributeIndex) => (
+                                            <WrapperStyleColImage key={attributeIndex} span={4}>
+                                                <WrapperStyleImageSmall src={attribute.pictures} alt={`Attribute ${attributeIndex}`} preview={false} />
+                                            </WrapperStyleColImage>
+                                        ))
+                                    ) : null
+                                )
+                        ) : null}
                     </Row>
                 </Col>
                 <Col span={14} style={{ paddingLeft: '10px' }}>
-                                    {productDetails ? (
+                    {productDetails ? (
                         memory !== `undefined` ? (
                             <WrapperStyleNameProduct>{productDetails.name} {memory}</WrapperStyleNameProduct>
                         ) : (
@@ -182,88 +206,87 @@ const ProductDetailComponents = () => {
                     ) : (
                         <p>Loading...</p>
                     )}
-                        {productDetails?.variant.map((variant) => (
-                            variant?.memory && (  
+                    {productDetails?.variant.map((variant) => (
+                        variant?.memory && (
                             <Button
                                 className={` memory-button ${variant?.memory === selectedMemories[productDetails._id] ? 'selected' : ''}`}
                                 onClick={() => {
-                                setSelectedMemories((prevSelected) => ({
-                                    ...prevSelected,
-                                    [productDetails._id]: variant?.memory,
-                                }));
-                               handleMemoryClick(variant.memory)
+                                    setSelectedMemories((prevSelected) => ({
+                                        ...prevSelected,
+                                        [productDetails._id]: variant?.memory,
+                                    }));
+                                    handleMemoryClick(variant.memory)
                                 }}
                                 style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
                             >
                                 {variant?.memory}
                             </Button>
-                            )
-                        ))}
-                  <div>
-    {productDetails?.variant.map((variant) => {
-        if (variant.attributes && variant.attributes.length > 0) {
-            const colors = variant.attributes.map((attribute) => attribute.color);
-            const uniqueColors = [...new Set(colors)];
-            if (variant.memory === selectedMemories[productDetails._id]) {
-                return (
-                    <div key={variant._id}>
-                        {uniqueColors.map((color, index) => (
-                            <Button
-                                key={index}
-                                className={`memory-button ${
-                                    color === selectedColor[variant._id] ? 'selected' : ''
-                                }`}
-                                onClick={() => {
-                                    setSelectedColor((prevSelected) => ({
-                                        ...prevSelected,
-                                        [variant._id]: color,
-                                    }));
-                                    const selectedAttribute = variant.attributes.find(
-                                        (attribute) => attribute.color === color
+                        )
+                    ))}
+                    <div>
+                        {productDetails?.variant.map((variant) => {
+                            if (variant.attributes && variant.attributes.length > 0) {
+                                const colors = variant.attributes.map((attribute) => attribute.color);
+                                const uniqueColors = [...new Set(colors)];
+                                if (variant.memory === selectedMemories[productDetails._id]) {
+                                    return (
+                                        <div key={variant._id}>
+                                            {uniqueColors.map((color, index) => (
+                                                <Button
+                                                    key={index}
+                                                    className={`memory-button ${color === selectedColor[variant._id] ? 'selected' : ''
+                                                        }`}
+                                                    onClick={() => {
+                                                        setSelectedColor((prevSelected) => ({
+                                                            ...prevSelected,
+                                                            [variant._id]: color,
+                                                        }));
+                                                        const selectedAttribute = variant.attributes.find(
+                                                            (attribute) => attribute.color === color
+                                                        );
+                                                        if (selectedAttribute) {
+                                                            setSelectedSold((prevSelected) => ({
+                                                                ...prevSelected,
+                                                                [variant._id]: selectedAttribute.sold,
+                                                            }));
+                                                            console.log('selectedSold', selectedSold[variant._id])
+                                                        } else {
+                                                            setSelectedSold((prevSelected) => ({
+                                                                ...prevSelected,
+                                                                [variant._id]: 'N/A',
+                                                            }));
+                                                        }
+                                                    }}
+                                                    style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
+                                                >
+                                                    {color}
+                                                </Button>
+                                            ))}
+                                            <div> <WrapperStyleTextSell>Sold: {selectedSold[variant._id]}</WrapperStyleTextSell></div>
+                                        </div>
                                     );
-                                    if (selectedAttribute) {
-                                        setSelectedSold((prevSelected) => ({
-                                            ...prevSelected,
-                                            [variant._id]: selectedAttribute.sold ,
-                                        }));
-                                        console.log('selectedSold',selectedSold[variant._id])
-                                    } else {
-                                        setSelectedSold((prevSelected) => ({
-                                            ...prevSelected,
-                                            [variant._id]: 'N/A',
-                                        }));
-                                    }
-                                }}
-                                style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
-                            >
-                                {color}
-                            </Button>
-                        ))}
-                         <div> <WrapperStyleTextSell>Sold: {selectedSold[variant._id]}</WrapperStyleTextSell></div>
+                                }
+                            }
+                            return null;
+                        })}
                     </div>
-                );
-            }
-        }
-        return null;
-    })}
-</div>
 
-                           {productDetails ? (
-                    <WrapperPriceProduct>
-                        <WrapperPriceTextProduct>
-                        {productDetails?.variant.find((variant) => variant.memory === selectedMemories[productDetails._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                        </WrapperPriceTextProduct>
-                    </WrapperPriceProduct>
-                      ) : (
+                    {productDetails ? (
+                        <WrapperPriceProduct>
+                            <WrapperPriceTextProduct>
+                                {productDetails?.variant.find((variant) => variant.memory === selectedMemories[productDetails._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                            </WrapperPriceTextProduct>
+                        </WrapperPriceProduct>
+                    ) : (
                         <p>Loading...</p>
                     )}
-                        {productDetails ? (
-                    <WrapperPriceProduct  style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>
-                     
-                        {productDetails?.variant.find((variant) => variant.memory === selectedMemories[productDetails._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-               
-                    </WrapperPriceProduct>
-                      ) : (
+                    {productDetails ? (
+                        <WrapperPriceProduct style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>
+
+                            {productDetails?.variant.find((variant) => variant.memory === selectedMemories[productDetails._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+
+                        </WrapperPriceProduct>
+                    ) : (
                         <p>Loading...</p>
                     )}
                     <WrapperAddressProduct>
@@ -316,14 +339,14 @@ const ProductDetailComponents = () => {
             <hr className="my-4" />
             <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
                 <Col span={16} style={{ border: '1px solid #e5e5e5', padding: '10px', borderRadius: '4px' }}>
-                        <h3>Mô tả sản phẩm</h3>
-                        <div style={{height:'600px', overflowY: 'scroll', overflowX: 'scroll', textAlign: 'justify'}}>
+                    <h3>Mô tả sản phẩm</h3>
+                    <div style={{ height: '600px', overflowY: 'scroll', overflowX: 'scroll', textAlign: 'justify' }}>
                         {productDetails ? (
-        <ProductDescription description={productDetails.desc} />
-    ) : (
-        <p>Loading...</p>
-    )}
-                        </div>
+                            <ProductDescription description={productDetails.desc} />
+                        ) : (
+                            <p>Loading...</p>
+                        )}
+                    </div>
                 </Col>
                 <Col span={8} style={{ paddingLeft: '10px', textAlign: 'center' }}>
                     <WrapperPropTable dataSource={dataSource} pagination={false}>
@@ -339,7 +362,7 @@ const ProductDetailComponents = () => {
             </Row>
             <hr className="my-4" />
             <Row >
-                <CommentBox/>
+                <CommentBox />
             </Row>
             <hr className="my-4" />
 

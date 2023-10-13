@@ -1,9 +1,12 @@
 import { Col, Image, InputNumber, Row, Table } from "antd";
 import styled from "styled-components";
 
-export const WrapperStyleImageBig = styled(Image)`
-    height: 100%;
-    width: 100%;
+export const WrapperStyleImageBig = styled.div`
+height: auto;
+    .slider-image {
+        max-width: 100%;
+        height: auto;
+    }
 `
 export const WrapperStyleImageSmall = styled(Image)`
     height: 100px;

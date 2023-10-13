@@ -70,7 +70,7 @@ const Comment = () => {
             </div>
           </div>
           <br></br>
-          <WrapperInfo style={{ display: 'flex', alignContent: 'space-between' }}>
+          {/* <WrapperInfo style={{ display: 'flex', alignContent: 'space-between' }}>
             <input className='nameinput'
               type="text"
               placeholder="Tên của bạn"
@@ -85,7 +85,7 @@ const Comment = () => {
                 onChange={handleAnonymousChange}
               />
             </label>
-          </WrapperInfo>
+          </WrapperInfo> */}
 
         </div>
         <div className='block-comment-list'>
