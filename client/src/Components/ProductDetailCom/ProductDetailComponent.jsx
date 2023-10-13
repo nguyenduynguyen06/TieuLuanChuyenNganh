@@ -174,7 +174,8 @@ const ProductDetailComponents = () => {
                         {/* Các ảnh trong Slider */}
                         {productDetails && productDetails.thumnails.map((thumbnail, index) => (
                             <WrapperStyleImageBig key={index}>
-                                <img src={thumbnail} alt={`Thumbnail ${index}`} className="slider-image" />
+                                <img src={thumbnail} alt={`Thumbnail ${index}`} className="slider-image" style={{ maxWidth: '100%', height: 'auto' }}
+/>
                             </WrapperStyleImageBig>
                         ))}
                     </Slider>
