@@ -1,7 +1,6 @@
 import React , {useState, useEffect} from "react"
-import { Col, Row, Table } from 'antd'
+import { Button, Col, Row, Table } from 'antd'
 import imageProduct from '../../image/ip15.webp'
-import imageSmall from '../../image/ip15_2.webp'
 import {
     WrapperStyleColImage,
     WrapperStyleImageSmall,
@@ -27,17 +26,43 @@ const { Column, ColumnGroup } = Table;
 const ProductDetailComponents = () => {
     const [productDetails, setProductDetails] = useState(null);
     const { productName, memory } = useParams();
- 
+    const [selectedMemories, setSelectedMemories] = useState({});
+    const [selectedColor, setSelectedColor] = useState({});
+    const [selectedQuantity, setSelectedQuantity] = useState(1);
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_API_URL}/product/getDetails/${productName}/${memory}`)
-          .then((response) => {
-            setProductDetails(response.data.data);
-          })
-          .catch((error) => {
-            console.error('Error fetching categories:', error);
-          });
-      }, [productName, memory]);
-    const onChange = () => { }
+            .then((response) => {
+                const productDetails = response.data.data;
+                setProductDetails(productDetails);
+                const initialMemories = {};
+                productDetails.forEach((product) => {
+                    initialMemories[product._id] = memory;
+                });
+                setSelectedMemories(initialMemories);
+            })
+            .catch((error) => {
+                console.error('Error fetching categories:', error);
+            });
+    }, [productName, memory]);
+
+    const onChange = (value) => {
+        setSelectedQuantity(value);
+    }
+    const handleColorClick = (color) => {
+        const selectedMemory = selectedMemories[productDetails._id];
+        const selectedVariant = productDetails.variant.find(
+            (variant) => variant.memory === selectedMemory
+        );
+        if (selectedVariant && selectedVariant.attributes) {
+            const colorQuantity = selectedVariant.attributes
+                .filter((attribute) => attribute.color === color)
+                .reduce((acc, attribute) => acc + attribute.quantity, 0);
+            setSelectedQuantity(colorQuantity);
+        }
+
+        // Cập nhật màu đã chọn
+        setSelectedColor(color);
+    }
     const columns = [
         {
             title: '',
@@ -88,17 +113,17 @@ const ProductDetailComponents = () => {
                 <Col span={10} style={{ border: '1px solid #e5e5e5', paddingRight: '8px' }}>
                     <WrapperStyleImageBig src={imageProduct} alt="image product" preview={false} />
                     <Row style={{ paddingTop: '10px', justifyContent: 'space-between' }}>
-                    {productDetails && productDetails.variant ? (
-        productDetails.variant.map((variants, index) => (
-            variants.attributes ? (
-                variants.attributes.map((attribute, attributeIndex) => (
-                    <WrapperStyleColImage key={attributeIndex} span={4}>
-                        <WrapperStyleImageSmall src={attribute.pictures} alt={`Attribute ${attributeIndex}`} preview={false} />
-                    </WrapperStyleColImage>
-                ))
-            ) : null
-        ))
-    ) : null}
+                                {productDetails && productDetails.variant ? (
+                    productDetails.variant.map((variants) => (
+                        variants.attributes ? (
+                            variants.attributes.map((attribute, attributeIndex) => (
+                                <WrapperStyleColImage key={attributeIndex} span={4}>
+                                    <WrapperStyleImageSmall src={attribute.pictures} alt={`Attribute ${attributeIndex}`} preview={false} />
+                                </WrapperStyleColImage>
+                            ))
+                        ) : null
+                    ))
+                ) : null}
                     </Row>
                 </Col>
                 <Col span={14} style={{ paddingLeft: '10px' }}>
@@ -107,17 +132,78 @@ const ProductDetailComponents = () => {
                     ) : (
                         <p>Loading...</p>
                     )}
+                     {productDetails ? (
                     <div>
                         <StarFilled style={{ fontSize: '12px', color: 'rgb(253,216,54)' }} />
                         <StarFilled style={{ fontSize: '12px', color: 'rgb(253,216,54)' }} />
                         <StarFilled style={{ fontSize: '12px', color: 'rgb(253,216,54)' }} />
-                        <WrapperStyleTextSell> | Đã bán 100+</WrapperStyleTextSell>
+                        <WrapperStyleTextSell>{productDetails.sold}</WrapperStyleTextSell>
                     </div>
+                        ) : (
+                            <p>Loading...</p>
+                        )}
+                        {productDetails?.variant.map((variant) => (
+                            variant.memory && (  
+                            <Button
+                                className={` memory-button ${variant.memory === selectedMemories[productDetails._id] ? 'selected' : ''}`}
+                                onClick={() => {
+                                setSelectedMemories((prevSelected) => ({
+                                    ...prevSelected,
+                                    [productDetails._id]: variant.memory,
+                                }));
+                                }}
+                                style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
+                            >
+                                {variant.memory}
+                            </Button>
+                            )
+                        ))}
+                        <div>
+                            {productDetails?.variant.map((variant) => {
+                                if (variant.attributes && variant.attributes.length > 0) {
+                                    // Lấy danh sách màu từ mảng attributes
+                                    const colors = variant.attributes.map((attribute) => attribute.color);  
+                                    const uniqueColors = [...new Set(colors)];
+
+                                    if (variant.memory === selectedMemories[productDetails._id]) {
+                                        return uniqueColors.map((color, index) => (
+                                            <Button
+                                                key={index}
+                                                className={` memory-button ${color === selectedColor[variant._id] ? 'selected' : ''}`}
+                                                onClick={() => {
+                                                    setSelectedMemories((prevSelected) => ({
+                                                        ...prevSelected,
+                                                        [variant._id]: color,
+                                                    }));
+                                                }}
+                                                style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
+                                            >
+                                                {color}
+                                            </Button>
+                                        ));
+                                    }
+                                }
+                                return null;
+                            })}
+                            </div>
+                           {productDetails ? (
                     <WrapperPriceProduct>
                         <WrapperPriceTextProduct>
-                            36.990.000 đ
+                        {productDetails?.variant.find((variant) => variant.memory === selectedMemories[productDetails._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                         </WrapperPriceTextProduct>
                     </WrapperPriceProduct>
+                      ) : (
+                        <p>Loading...</p>
+                    )}
+                        {productDetails ? (
+                    <WrapperPriceProduct  style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>
+                     
+                        {productDetails?.variant.find((variant) => variant.memory === selectedMemories[productDetails._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+               
+                    </WrapperPriceProduct>
+                      ) : (
+                        <p>Loading...</p>
+                    )}
                     <WrapperAddressProduct>
                         <span>Giao đến </span>
                         <span className="address">Mỹ Hòa, H.Ba Tri, T.Bến Tre</span> -

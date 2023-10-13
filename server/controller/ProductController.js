@@ -173,13 +173,11 @@ const detailsProduct = async (req, res) => {
       .populate('brand')
       .populate('category')
       .populate({
-        path: 'variant',
-        match: { memory }, 
+        path: 'variant', 
         populate: {
           path: 'attributes',
         },
       });
-
     if (!products) {
       return res.status(404).json({ success: false, error: 'Sản phẩm không tồn tại' });
     }

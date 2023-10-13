@@ -29,6 +29,9 @@ export const WrapperStyleTextSell = styled.span`
 export const WrapperPriceProduct = styled.div`
     background: rgb(250, 250, 250);
     border-radius: 4px;
+    .memory-button.selected {
+        border: 1px solid #00BFFF	; 
+      }
 `
 export const WrapperPriceTextProduct = styled.h1`
     font-size: 32px;

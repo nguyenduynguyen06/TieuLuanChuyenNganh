@@ -95,8 +95,9 @@ function CardComponent() {
     }
   }
 
-  const handleCardClick = (id) => {
-    window.location.href = `/product/${id}`;
+  const handleCardClick = (product) => {
+    const url = `/product/${ product.name}/${selectedMemories[product._id]}`;
+    window.location.href = url;
   };
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -114,13 +115,14 @@ function CardComponent() {
           {currentProducts.filter((product) => product.isHide === false).map((product) => (
             <div className='box' key={product._id} style={{ padding: '10px' }}>
               <div className='card'>
-                <div className='image' onClick={() => handleCardClick(product._id)}>
+                <div className='image' onClick={() => handleCardClick(product)}>
                   <img src={product.thumnails[0]} />
                 </div>
                 <div className='desc'>
                   <h1>{product?.name}</h1>
                   <div>
-                    {product?.variant.map((variant) => (
+                  {product?.variant.map((variant) => (
+                    variant?.memory && (  
                       <Button
                         className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
                         onClick={() => {
@@ -133,7 +135,8 @@ function CardComponent() {
                       >
                         {variant.memory}
                       </Button>
-                    ))}
+                    )
+                  ))}
                     <div style={{ margin: 0 }}>
                       <p style={{ fontWeight: 700, height: '20px' }}>
                         {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
