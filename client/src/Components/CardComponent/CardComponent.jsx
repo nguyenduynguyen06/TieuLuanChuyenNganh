@@ -113,7 +113,7 @@ function CardComponent() {
       <WrapperCard>
         <div className='mainContainer'>
           {currentProducts.filter((product) => product.isHide === false).map((product) => (
-            <div className='box' key={product._id} style={{ padding: '10px' }}>
+            <div className='box' key={product._id} style={{ padding: '0' }}>
               <div className='card'>
                 <div className='image' onClick={() => handleCardClick(product)}>
                   <img src={product.thumnails[0]} />
@@ -137,12 +137,11 @@ function CardComponent() {
                       </Button>
                     )
                   ))}
-                    <div style={{ margin: 0 }}>
+                    <div style={{ padding: '0 0 30px 0' }}>
                       <p style={{ fontWeight: 700, height: '20px' }}>
                         {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
-                    </div>
-                    <div style={{}}>
-                      <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+                        <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+
                     </div>
                   </div>
                 </div>

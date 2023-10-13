@@ -67,7 +67,7 @@ export const WrapperCard = styled.div`
     row-gap: 20px;
     overflow: hidden;
     padding: 20px;
-    column-gap: 12px;
+    column-gap: 0px;
     border-radius: 0 0 8px 8px;
   }
   .mainContainerAcc {

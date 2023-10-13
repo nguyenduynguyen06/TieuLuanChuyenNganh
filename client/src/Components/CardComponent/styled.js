@@ -76,9 +76,6 @@ export const WrapperCard = styled.div`
     width: 100%;
     margin: auto;
     line-height: 3;
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
   }
 
   .card .desc h1 {
