@@ -7,6 +7,7 @@ const routerUpload = require('./Router/UploadRouter')
 const routerProduct = require('./Router/ProductRouter')
 const routerBrand = require('./Router/BrandRouter')
 const routerCart = require('./Router/CartRouter')
+const routerComment = require('./Router/CommentRouter')
 const bodyParser = require('body-parser');
 const routerCategory = require('./Router/CategoryRouter')
 const server = require('http').createServer(app);
@@ -31,6 +32,7 @@ app.use('/', routerUpload);
 app.use('/user', routerUser);
 app.use('/product', routerProduct);
 app.use('/category',routerCategory);
+app.use('/comment',routerComment);
 app.use('/brand',routerBrand)
 app.use('/cart',routerCart)
 connect2DB();

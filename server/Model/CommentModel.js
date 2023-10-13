@@ -6,32 +6,21 @@ const commentSchema = new mongoose.Schema({
     ref: 'Product', 
     require: true,
   },
-  author: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Customer', 
+    ref: 'User', 
   },
-  anonymous: {
-    type: Boolean,
-    default: false,
+  author: {
+    type: String,
   },
   content: {
     type: String,
     require: true,
   },
-  replies: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Comment',
-    },
-  ],
-  likes: {
-    type: Number,
-    default: 0,
-  },
-  dislikes: {
-    type: Number,
-    default: 0,
-  },
+ replies: [{
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'Comment',
+}]
 });
 
 const Comment = mongoose.model('Comment', commentSchema);

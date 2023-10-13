@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Button, Col, Row, Table } from 'antd'
+import { Button, Col, Image, Row, Table } from 'antd'
 import {
     WrapperStyleColImage,
     WrapperStyleImageSmall,
@@ -171,11 +171,9 @@ const ProductDetailComponents = () => {
             <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
                 <Col span={10} style={{ border: '1px solid #e5e5e5', paddingRight: '8px' }}>
                     <Slider {...sliderSettings}>
-                        {/* Các ảnh trong Slider */}
                         {productDetails && productDetails.thumnails.map((thumbnail, index) => (
                             <WrapperStyleImageBig key={index}>
-                                <img src={thumbnail} alt={`Thumbnail ${index}`} className="slider-image" style={{ maxWidth: '100%', height: 'auto' }}
-/>
+                                <Image src={thumbnail} alt={`Thumbnail ${index}`} className="slider-image" style={{ maxWidth: '100%', height: 'auto' }}/>
                             </WrapperStyleImageBig>
                         ))}
                     </Slider>
@@ -198,10 +196,12 @@ const ProductDetailComponents = () => {
                 <Col span={14} style={{ paddingLeft: '10px' }}>
                     {productDetails ? (
                         memory !== `undefined` ? (
-                            <WrapperStyleNameProduct>{productDetails.name} {memory}</WrapperStyleNameProduct>
+                            <WrapperStyleNameProduct style={{ fontWeight: 'bold' }}>
+                            {productDetails.name} {memory}
+                            </WrapperStyleNameProduct>
                         ) : (
                             <div>
-                                <WrapperStyleNameProduct>{productDetails.name}</WrapperStyleNameProduct>
+                                <WrapperStyleNameProduct style={{ fontWeight: 'bold' }}>{productDetails.name}</WrapperStyleNameProduct>
                             </div>
                         )
                     ) : (
