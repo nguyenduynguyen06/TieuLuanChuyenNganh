@@ -50,12 +50,12 @@ const TableUser = () => {
         {
             render: (text, record) => (
                 <Space size="middle">
-                    <a onClick={() => setDeleteUserVisible(true)}> <DeleteOutlined /></a>
+                    <a onClick={() => {setDeleteUserVisible(true); setCurrentUserId(record._id)}}> <DeleteOutlined /></a>
                     <Modal
                         title="Xác nhận xoá khách hàng"
                         visible={isDeleteUserVisible}
                         onOk={() => {
-                            handleDeleteUser(record._id);
+                            handleDeleteUser(currentUserId);
                             setDeleteUserVisible(false);
                         }}
                         onCancel={() => setDeleteUserVisible(false)}
@@ -114,7 +114,7 @@ const TableUser = () => {
     };
 
 
-
+    const [currentUserId, setCurrentUserId] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const handleSearch = (query) => {

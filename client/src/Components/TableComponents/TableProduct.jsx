@@ -86,24 +86,8 @@ onChange(info) {
     }
   };
   const [form] = Form.useForm();
-  const [categories, setCategories] = useState([])
-  const [brands, setBrands] = useState([]); 
-  useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`)
-      .then((response) => {
-        setCategories(response.data.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching categories:', error);
-      });
-    axios.get(`${process.env.REACT_APP_API_URL}/brand/getBrand`)
-      .then((response) => {
-        setBrands(response.data.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching brands:', error);
-      });
-  }, []);
+  const [currentProductId, setCurrentProductId] = useState(null);
+  const [currentProductvariantId, setCurrentProducvarianttId] = useState(null);
   const columns = [
     {
       title: 'Tên sản phẩm',
@@ -143,22 +127,27 @@ onChange(info) {
     },    
     {
       title: 'Thao tác',
-      render: (text, record) => (
+      dataIndex: "_id",
+      render:  record => (
         <Space size="middle">
-          <a ><AppstoreAddOutlined onClick={() =>  {      
-              setAddVariant(true);
-            }} /></a>
+            <a>
+        <AppstoreAddOutlined onClick={() => {
+          setCurrentProductId(record);
+          setAddVariant(true);
+        }} />
+      </a>
           <a>
               <EditOutlined onClick={() =>  {      
+                setCurrentProductId(record)
               setUpdate(true);
             }} /> 
             </a>
-          <a onClick={() => setDeleteModalVisible(true)}> <DeleteOutlined /></a>
+          <a onClick={() => {setDeleteModalVisible(true); setCurrentProductId(record);}}> <DeleteOutlined /></a>
                   <Modal
           title="Xác nhận xoá sản phẩm"
           visible={isDeleteModalVisible}
           onOk={() => {
-            handleDeleteProduct(record._id);
+            handleDeleteProduct(currentProductId)
             setDeleteModalVisible(false); 
           }}
           onCancel={() => setDeleteModalVisible(false)} 
@@ -171,7 +160,7 @@ onChange(info) {
               form
               .validateFields()
               .then((values) => {
-                handleSaveEdit(record._id, values);
+                handleSaveEdit(currentProductId, values);
                 setUpdate(false);
               })
               .catch((errorInfo) => {
@@ -211,39 +200,11 @@ onChange(info) {
                 >
                     <Input type="number"/>
                 </Form.Item>
-
-                <Form.Item
-                  name="brandName"
-                  label="Thương hiệu"
-             
-                >
-                  <Select placeholder="Chọn thương hiệu">
-                    {brands.map((brand) => (
-                      <Option key={brand.id} value={brand.name}>
-                        {brand.name}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
                 <Form.Item
                   name="releaseTime"
                   label="Ngày ra mắt"
-              
                 >
                   <DatePicker  />
-                </Form.Item>
-                <Form.Item
-                  name="categoryName"
-                  label="Danh mục"
-
-                >
-                <Select placeholder="Chọn danh mục">
-                    {categories.map((category) => (
-                      <Option key={category.id} value={category.name}>
-                        {category.name}
-                      </Option>
-                    ))}
-                  </Select>
                 </Form.Item>
                    <Form.Item
                     name="thumnails"
@@ -271,7 +232,7 @@ onChange(info) {
     form
       .validateFields()
       .then((values) => {
-        addProductVariant(record._id, values);
+        addProductVariant(currentProductId, values);
         setAddVariant(false);
       })
       .catch((errorInfo) => {
@@ -405,7 +366,7 @@ onChange(info) {
   </Form>
 </Modal>
         </Space>
-      ),
+      )
     },
     {
       title: 'Ẩn/Hiện',
@@ -749,12 +710,12 @@ const [selectedVariant, setSelectedVariant] = useState(null);
           title: 'Thao tác',
           render: (text, record) => (
             <Space size="middle">
-               <a onClick={() => setDeleteVariantVisible(true)}> <DeleteOutlined /></a>
+               <a onClick={() => {setDeleteVariantVisible(true); setCurrentProducvarianttId (record._id)}}> <DeleteOutlined /></a>
                   <Modal
           title="Xác nhận xoá biến thể"
           visible={isDeleteVariantVisible}
           onOk={() => {
-            handleDeleteProductvariant(record._id);
+            handleDeleteProductvariant(currentProductvariantId);
             setDeleteVariantVisible(false); 
           }}
           onCancel={() => setDeleteVariantVisible(false)} 
@@ -763,9 +724,11 @@ const [selectedVariant, setSelectedVariant] = useState(null);
         </Modal>
               <a><EditOutlined onClick={() =>  {      
                setUpdateVariant(true);
+               setCurrentProducvarianttId (record._id)
             }}/></a>
               <a ><AppstoreAddOutlined onClick={() =>  {      
               setAddAttributes(true);
+              setCurrentProducvarianttId (record._id)
             }} /></a>
        <Modal
   title="Thêm thuộc tính cho biến thể"
@@ -774,7 +737,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     form
       .validateFields()
       .then((values) => {
-        addAttributes(record._id, values.attributes);
+        addAttributes(currentProductvariantId, values.attributes);
         setAddAttributes(false);
       })
       .catch((errorInfo) => {
@@ -895,7 +858,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     form
       .validateFields()
       .then((values) => {
-        updateProductVariant(record._id, values);
+        updateProductVariant(currentProductvariantId, values);
         setUpdateVariant(false);
       })
       .catch((errorInfo) => {

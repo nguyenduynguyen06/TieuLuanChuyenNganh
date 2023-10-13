@@ -9,6 +9,7 @@ import { UploadOutlined,DeleteOutlined } from '@ant-design/icons';
 const TableBrand = () => {
     const [brandData, setbrandData] = useState([]); 
     const [isDeleteBrand, setDeleteBrand] = useState(false); 
+    const [currentBrandId, setCurrentBrandId] = useState(null);
     const columns = [
       {
         title: 'Tên thương hiệu',
@@ -85,12 +86,12 @@ const TableBrand = () => {
         render: (record) => {
             return (
               <div>
-             <a onClick={() => setDeleteBrand(true)}> <DeleteOutlined/></a> 
+             <a onClick={() => {setDeleteBrand(true); setCurrentBrandId(record._id)}}> <DeleteOutlined/></a> 
              <Modal
           title="Xác nhận xoá thương hiệu"
           visible={isDeleteBrand}
           onOk={() => {
-            handleDeleteBrand(record._id);
+            handleDeleteBrand(currentBrandId);
             setDeleteBrand(false); 
           }}
           onCancel={() => setDeleteBrand(false)} 

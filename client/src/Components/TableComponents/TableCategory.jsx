@@ -10,6 +10,7 @@ import Search from "antd/es/input/Search";
 const TableCategory = () => {
     const [categoryData, setcategoryData] = useState([]); 
     const [isDeleteCategory, setDeleteCategory] = useState(false); 
+    const [currentCategoryId, setCurrentCategoryId] = useState(null);
     const columns = [
       {
         title: 'Tên danh mục',
@@ -80,12 +81,12 @@ const TableCategory = () => {
         render: (record) => {
             return (
               <div>
-             <a onClick={() => setDeleteCategory(true)}> <DeleteOutlined/></a> 
+             <a onClick={() => {setDeleteCategory(true); setCurrentCategoryId(record._id)}}> <DeleteOutlined/></a> 
              <Modal
           title="Xác nhận xoá danh mục"
           visible={isDeleteCategory}
           onOk={() => {
-            handleDeleteCategory(record._id);
+            handleDeleteCategory(currentCategoryId);
             setDeleteCategory(false); 
           }}
           onCancel={() => setDeleteCategory(false)} 
