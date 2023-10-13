@@ -87,8 +87,14 @@ const TableUser = () => {
         axios
             .delete(`${process.env.REACT_APP_API_URL}/user/delete/${userId}`, {headers})
             .then((response) => {
-                const filteredUsers = response.data.data.filter(user => user.role_id !== 1);
-                setUsers(filteredUsers);
+                axios.get(`${process.env.REACT_APP_API_URL}/user/getAll`, { headers })
+                .then((response) => {
+                    const filteredUsers = response.data.data.filter(user => user.role_id !== 1);
+                    setUsers(filteredUsers);
+                })
+                .catch((error) => {
+                    console.error('Error fetching users:', error);
+                });
             })
             .catch((error) => {
                 console.error('Lỗi khi xóa tài khoản: ', error);
