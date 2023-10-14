@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Button, Col, Image, Row, Table } from 'antd'
+import { Button, Col, Image, Row, Table, Rate } from 'antd'
 import {
     WrapperStyleColImage,
     WrapperStyleImageSmall,
@@ -13,6 +13,7 @@ import {
     WrapperInputNumber,
     WrapperPropTable,
     WrapperSeeMore,
+    WrapperDetail,
 } from "./style"
 import { StarFilled, PlusOutlined, MinusOutlined } from '@ant-design/icons'
 import ButtonComponent from "../ButtonComponent/ButtonComponent"
@@ -42,7 +43,7 @@ const ProductDetailComponents = () => {
         speed: 500,
         slidesToShow: 1,
         slidesToScroll: 1,
-        autoplay: true,          
+        autoplay: true,
         autoplaySpeed: 2000,
         appendDots: (dots) => (
             <ul style={{ position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)', listStyle: 'none', padding: '0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -167,13 +168,30 @@ const ProductDetailComponents = () => {
     };
 
     return (
-        <div>
+        <WrapperDetail>
+            <Row style={{ padding: '15px 12px' }}>
+                {productDetails ? (
+                    memory !== `undefined` ? (
+                        <WrapperStyleNameProduct style={{ fontWeight: 'bold' }}>
+                            {productDetails.name} {memory}
+                        </WrapperStyleNameProduct>
+                    ) : (
+                        <div>
+                            <WrapperStyleNameProduct style={{ fontWeight: 'bold' }}>{productDetails.name}</WrapperStyleNameProduct>
+                        </div>
+                    )
+                ) : (
+                    <p>Loading...</p>
+                )}
+            </Row>
             <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
-                <Col span={10} style={{ border: '1px solid #e5e5e5', paddingRight: '8px' }}>
-                    <Slider {...sliderSettings}>
+                <Col span={14} style={{ border: '1px solid #e5e5e5', paddingRight: '8px' }}>
+                    <Slider {...sliderSettings} className="slider">
                         {productDetails && productDetails.thumnails.map((thumbnail, index) => (
                             <WrapperStyleImageBig key={index}>
-                                <Image src={thumbnail} alt={`Thumbnail ${index}`} className="slider-image" style={{ maxWidth: '100%', height: 'auto' }}/>
+                                <div style={{display: 'flex', justifyContent:'center'}}>                                
+                                    <Image src={thumbnail} alt={`Thumbnail ${index}`} className="slider-image" />
+                                </div>
                             </WrapperStyleImageBig>
                         ))}
                     </Slider>
@@ -184,7 +202,7 @@ const ProductDetailComponents = () => {
                                 .map((variant) =>
                                     variant.attributes ? (
                                         variant.attributes.map((attribute, attributeIndex) => (
-                                            <WrapperStyleColImage key={attributeIndex} span={4}>
+                                            <WrapperStyleColImage key={attributeIndex} span={3}>
                                                 <WrapperStyleImageSmall src={attribute.pictures} alt={`Attribute ${attributeIndex}`} preview={false} />
                                             </WrapperStyleColImage>
                                         ))
@@ -193,45 +211,33 @@ const ProductDetailComponents = () => {
                         ) : null}
                     </Row>
                 </Col>
-                <Col span={14} style={{ paddingLeft: '10px' }}>
-                    {productDetails ? (
-                        memory !== `undefined` ? (
-                            <WrapperStyleNameProduct style={{ fontWeight: 'bold' }}>
-                            {productDetails.name} {memory}
-                            </WrapperStyleNameProduct>
-                        ) : (
-                            <div>
-                                <WrapperStyleNameProduct style={{ fontWeight: 'bold' }}>{productDetails.name}</WrapperStyleNameProduct>
-                            </div>
-                        )
-                    ) : (
-                        <p>Loading...</p>
-                    )}
-                    {productDetails?.variant.map((variant) => (
-                        variant?.memory && (
-                            <Button
-                                className={` memory-button ${variant?.memory === selectedMemories[productDetails._id] ? 'selected' : ''}`}
-                                onClick={() => {
-                                    setSelectedMemories((prevSelected) => ({
-                                        ...prevSelected,
-                                        [productDetails._id]: variant?.memory,
-                                    }));
-                                    handleMemoryClick(variant.memory)
-                                }}
-                                style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
-                            >
-                                {variant?.memory}
-                            </Button>
-                        )
-                    ))}
-                    <div>
+                <Col span={10} style={{ paddingLeft: '10px' }}>
+                    <div style={{ padding: '0 0 10px' }}>
+                        {productDetails?.variant.map((variant) => (
+                            variant?.memory && (
+                                <Button
+                                    className={` memory-button ${variant?.memory === selectedMemories[productDetails._id] ? 'selected' : ''}`}
+                                    onClick={() => {
+                                        setSelectedMemories((prevSelected) => ({
+                                            ...prevSelected,
+                                            [productDetails._id]: variant?.memory,
+                                        }));
+                                        handleMemoryClick(variant.memory)
+                                    }}
+                                    style={{ padding: '5px 5px', marginInlineEnd: '5px' }}>
+                                    {variant?.memory}
+                                </Button>
+                            )
+                        ))}
+                    </div>
+                    <div >
                         {productDetails?.variant.map((variant) => {
                             if (variant.attributes && variant.attributes.length > 0) {
                                 const colors = variant.attributes.map((attribute) => attribute.color);
                                 const uniqueColors = [...new Set(colors)];
                                 if (variant.memory === selectedMemories[productDetails._id]) {
                                     return (
-                                        <div key={variant._id}>
+                                        <div style={{ padding: '10xp' }} key={variant._id}>
                                             {uniqueColors.map((color, index) => (
                                                 <Button
                                                     key={index}
@@ -366,8 +372,7 @@ const ProductDetailComponents = () => {
                 <CommentBox />
             </Row>
             <hr className="my-4" />
-
-        </div>
+        </WrapperDetail>
     )
 }
 
