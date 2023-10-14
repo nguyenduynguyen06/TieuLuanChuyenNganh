@@ -2,10 +2,17 @@ import { Col, Image, InputNumber, Row, Table } from "antd";
 import styled from "styled-components";
 
 export const WrapperStyleImageBig = styled.div`
-height: auto;
+display: flex;
+justify-contents: center;
     .slider-image {
+        display: block;
+        object-fit: contain;
         max-width: 100%;
-        height: auto;
+        max-height: 400px;
+    }
+    .slider-image img{
+        width: auto;
+        height: 400px;
     }
 `
 export const WrapperStyleImageSmall = styled(Image)`
@@ -309,4 +316,13 @@ export const WrapperCommentNew = styled.div`
         margin-top: 15px;
         width: calc(100% - 25px);
     }
+`
+export const WrapperDetail = styled.div`
+    .slider {
+        height: 400px; /* Đặt chiều cao cố định cho slider ở đây */
+        overflow: hidden;
+        align-items: center;
+        justify-contents: center;
+    }
+    
 `

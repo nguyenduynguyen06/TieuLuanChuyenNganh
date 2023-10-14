@@ -61,13 +61,12 @@ export const WrapperCard = styled.div`
     width:100%;
     background-image: linear-gradient(to left, #FE9100,  #F29600);
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1rem));
+    grid-template-columns: repeat(7, minmax(200px, 1rem));
     align-items: center;
-    justify-content: space-between; 
     row-gap: 20px;
     overflow: hidden;
     padding: 20px;
-    column-gap: 0px;
+    column-gap: 20px;
     border-radius: 0 0 8px 8px;
   }
   .mainContainerAcc {
