@@ -215,6 +215,13 @@ onChange(info) {
                        <Button icon={<UploadOutlined />}>Ảnh</Button>
                      </Upload>
                </Form.Item>
+               <Form.Item
+                  name="include"
+                  label="Sản phẩm gồm"
+                
+                >
+                  <Input/>
+                </Form.Item>
                 <Form.Item
                   name="desc"
                   label="Mô tả"

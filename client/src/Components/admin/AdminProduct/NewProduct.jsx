@@ -437,7 +437,18 @@ const NewProduct = () => {
       >
         <DatePicker />
       </Form.Item>
-
+      <Alert
+        message="Lưu ý: Sản phẩm có phụ kiện đi kèm thì điền vào"
+        type="info"
+        showIcon
+        style={{ marginBottom: '16px' }}
+      />
+      <Form.Item
+        name="include"
+        label="Sản phẩm gồm"
+      >
+        <Input />
+      </Form.Item>
       <Form.Item
         name="thumnails"
         label="Hình ảnh"

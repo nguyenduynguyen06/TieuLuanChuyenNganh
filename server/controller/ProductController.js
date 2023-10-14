@@ -5,7 +5,7 @@ const ProductVariant = require('../Model/ProductVariantModel');
 const { format } = require('date-fns');
 const addProduct = async (req, res) => {
   try {
-    const { name, desc, warrantyPeriod,brandName, categoryName, properties,thumnails} = req.body;
+    const { name, desc, warrantyPeriod,brandName, categoryName, properties,thumnails,include} = req.body;
     const releaseTimeInput = req.body.releaseTime; 
     const formattedReleaseTime = format(new Date(releaseTimeInput), 'dd/MM/yyyy'); 
     const brand = await Brand.findOne({ name: brandName });
@@ -26,7 +26,8 @@ const addProduct = async (req, res) => {
       isHide: true,
       isOutOfStock: false,
       properties,
-      thumnails
+      thumnails,
+      include
     });
     const newProduct = await product.save();
     res.status(201).json({ success: true, data: newProduct });
@@ -114,6 +115,9 @@ const editProduct = async (req, res) => {
     }
     if (data.thumnails) {
       updateData.thumnails = data.thumnails;
+    }
+    if (data.include) {
+      updateData.include = data.include;
     }
     if (data.isHide !== undefined) {
       updateData.isHide = data.isHide;

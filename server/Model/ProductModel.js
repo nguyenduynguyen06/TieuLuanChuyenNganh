@@ -31,7 +31,6 @@ const productSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'ProductVariant', 
     },
-   
   ],
   views: {
     type: Number,
@@ -45,6 +44,9 @@ const productSchema = new mongoose.Schema({
       comment: String, 
     },
   ],
+  include: {
+    type: String,
+  },
   isHide: {
     type: Boolean,
     default: false,
