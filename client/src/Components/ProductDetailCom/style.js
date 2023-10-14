@@ -31,23 +31,30 @@ export const WrapperStyleNameProduct = styled.h1`
     line-height: 32px;
     word-break: break-word;
 `
-export const WrapperStyleTextSell = styled.span`
+export const WrapperStyleTextSell = styled.div`
+    p {
+    padding: 20px 0 0 0;
     font-size: 15px;
     line-height: 24px;
     color: rgb(120, 120, 120);
+    }
 `
-export const WrapperPriceProduct = styled.div`
+export const WrapperPriceProduct = styled.span`
     background: rgb(250, 250, 250);
     border-radius: 4px;
+    font-size: 20px;
+
+
 
 `
-export const WrapperPriceTextProduct = styled.h1`
+export const WrapperPriceTextProduct = styled.span`
     font-size: 32px;
     line-height: 40px;
     margin-right: 8px;
     font-weight: 500;
     padding: 10px;
     margin-top: 10px;
+    color: #ff3300
 `
 
 export const WrapperAddressProduct = styled.div`
@@ -74,6 +81,10 @@ export const WrapperQuantityProduct = styled.div`
     border-radius: 4px;
     border: 1px solid #ccc;
     width: 120px;
+
+    .ant-input-number-handler-wrap {
+        display: none;
+      }
 `
 
 export const WrapperInputNumber = styled(InputNumber)`
@@ -325,4 +336,32 @@ export const WrapperDetail = styled.div`
         justify-contents: center;
     }
     
+`
+export const WrapperPolicy = styled(Row)` 
+    .policy_intuitive {
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+        margin-bottom: 25px;
+    }
+    .policy {
+        margin: 20px 16px 0 16px;
+        padding: 12px 0;
+    }
+    .policy__list{
+        display: flex;
+        flex-wrap: wrap;
+        list-style: none;
+    }
+    .policy__list li{
+        padding-right: 20px;
+        border-bottom: 1px solid #f1f1f1;
+        position: relative;
+        padding: 12px 0 12px 35px;
+        width: 50%;
+        display: inline-block;
+    }
+    .policy__list p{
+        line-height: 20px;
+        padding-left: 5px;
+    }
 `

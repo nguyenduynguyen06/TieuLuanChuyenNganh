@@ -8,14 +8,13 @@ import {
     WrapperStyleTextSell,
     WrapperPriceTextProduct,
     WrapperPriceProduct,
-    WrapperAddressProduct,
     WrapperQuantityProduct,
     WrapperInputNumber,
     WrapperPropTable,
-    WrapperSeeMore,
     WrapperDetail,
+    WrapperPolicy,
 } from "./style"
-import { StarFilled, PlusOutlined, MinusOutlined } from '@ant-design/icons'
+import { PlusOutlined, MinusOutlined, RetweetOutlined, PropertySafetyOutlined, DropboxOutlined } from '@ant-design/icons'
 import ButtonComponent from "../ButtonComponent/ButtonComponent"
 import ProductDescription from "./productdesscription"
 import CommentBox from "./commentcomponent"
@@ -133,20 +132,22 @@ const ProductDetailComponents = () => {
 
 
 
+    const [quantity, setQuantity] = useState(1); // Đặt giá trị ban đầu là 3
 
-    const onChange = (value) => { }
-    const columns = [
-        {
-            title: '',
-            dataIndex: 'prop',
-            key: 'prop',
-        },
-        {
-            title: '',
-            dataIndex: 'info',
-            key: 'info',
-        },
-    ];
+    const handleDecreaseQuantity = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
+        }
+    };
+
+    const handleIncreaseQuantity = () => {
+        // Có thể thêm kiểm tra tối đa ở đây nếu bạn muốn
+        setQuantity(quantity + 1);
+    };
+    const handleChange = (value) => {
+        setQuantity(value);
+    };
+
 
     const dataSource = productDetails && productDetails.properties
         ? Object.keys(productDetails.properties).map((propertyKey) => ({
@@ -172,9 +173,14 @@ const ProductDetailComponents = () => {
             <Row style={{ padding: '15px 12px' }}>
                 {productDetails ? (
                     memory !== `undefined` ? (
-                        <WrapperStyleNameProduct style={{ fontWeight: 'bold' }}>
-                            {productDetails.name} {memory}
-                        </WrapperStyleNameProduct>
+                        <div style={{ display: "flex", gap: '20px' }}>
+                            <WrapperStyleNameProduct style={{ fontWeight: 'bold' }}>
+                                {productDetails.name} {memory}
+                            </WrapperStyleNameProduct>
+                            <Rate disabled allowHalf defaultValue={4} />
+                            <span style={{ fontSize: 16, paddingTop: 6 }}>{4}</span>
+                        </div>
+
                     ) : (
                         <div>
                             <WrapperStyleNameProduct style={{ fontWeight: 'bold' }}>{productDetails.name}</WrapperStyleNameProduct>
@@ -185,24 +191,24 @@ const ProductDetailComponents = () => {
                 )}
             </Row>
             <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
-                <Col span={14} style={{ border: '1px solid #e5e5e5', paddingRight: '8px' }}>
-                    <Slider {...sliderSettings} className="slider">
+                <Col span={14} style={{ border: '1px solid #e5e5e5', padding: '8px' }}>
+                    <Slider {...sliderSettings} className="slider" style={{ border: '1px solid #ccc', borderRadius: '4px' }}>
                         {productDetails && productDetails.thumnails.map((thumbnail, index) => (
                             <WrapperStyleImageBig key={index}>
-                                <div style={{display: 'flex', justifyContent:'center'}}>                                
+                                <div style={{ display: 'flex', justifyContent: 'center' }}>
                                     <Image src={thumbnail} alt={`Thumbnail ${index}`} className="slider-image" />
                                 </div>
                             </WrapperStyleImageBig>
                         ))}
                     </Slider>
-                    <Row style={{ paddingTop: '10px', justifyContent: 'flex-start' }}>
+                    <Row style={{ marginTop: '10px', paddingTop: '10px', justifyContent: 'flex-start', border: '1px solid #ccc', borderRadius: '4px' }}>
                         {productDetails && productDetails.variant && selectedMemories[productDetails._id] ? (
                             productDetails.variant
                                 .filter((variant) => variant.memory === selectedMemories[productDetails._id])
                                 .map((variant) =>
                                     variant.attributes ? (
                                         variant.attributes.map((attribute, attributeIndex) => (
-                                            <WrapperStyleColImage key={attributeIndex} span={3}>
+                                            <WrapperStyleColImage key={attributeIndex} span={3} >
                                                 <WrapperStyleImageSmall src={attribute.pictures} alt={`Attribute ${attributeIndex}`} preview={false} />
                                             </WrapperStyleColImage>
                                         ))
@@ -210,6 +216,34 @@ const ProductDetailComponents = () => {
                                 )
                         ) : null}
                     </Row>
+                    <hr></hr>
+                    <WrapperPolicy>
+                        <div className="policy_intuitive cate42 scenarioNomal">
+                            <div className="policy">
+                                <ul className="policy__list">
+                                    <li>
+                                        <RetweetOutlined style={{fontSize: '30px',left:0, position: 'absolute',top: '18px'}}></RetweetOutlined>
+                                        <p>
+                                            1 đổi 1 trong&nbsp;
+                                            <b>30 ngày&nbsp;</b>đối với sản phẩm lỗi trên phạm vi toàn quốc&nbsp;
+                                            <a href="/" title="Chính sách dổi trả">Xem chi tiết</a>
+                                        </p>
+                                    </li>
+                                    <li data-field="IsSameBHAndDT">
+                                    <PropertySafetyOutlined style={{fontSize: '30px',left:0, position: 'absolute',top: '18px'}}></PropertySafetyOutlined>
+                                        <p>Bảo hành chính hãng điện thoại&nbsp;
+                                            <b>1 năm</b> tại các trung tâm bảo hành hãng&nbsp;
+                                            <a href="/" title="Chính sách bảo hành">Xem chính sách bảo hành</a>
+                                        </p>
+                                    </li>
+                                    <li>
+                                        <DropboxOutlined style={{fontSize: '30px',left:0, position: 'absolute',top: '18px'}}></DropboxOutlined>
+                                            <p>Bộ sản phẩm gồm Bộ sản phẩm gồm: Hộp, Sách hướng dẫn, Cây lấy sim, Ốp lưng, Cáp Type C, Củ sạc nhanh rời đầu Type A </p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </WrapperPolicy>
                 </Col>
                 <Col span={10} style={{ paddingLeft: '10px' }}>
                     <div style={{ padding: '0 0 10px' }}>
@@ -269,7 +303,9 @@ const ProductDetailComponents = () => {
                                                     {color}
                                                 </Button>
                                             ))}
-                                            <div> <WrapperStyleTextSell>Sold: {selectedSold[variant._id]}</WrapperStyleTextSell></div>
+                                            <WrapperStyleTextSell>
+                                                <p>Đã bán: {selectedSold[variant._id]}</p>
+                                            </WrapperStyleTextSell>
                                         </div>
                                     );
                                 }
@@ -280,6 +316,9 @@ const ProductDetailComponents = () => {
 
                     {productDetails ? (
                         <WrapperPriceProduct>
+                            <WrapperPriceProduct style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>
+                                {productDetails?.variant.find((variant) => variant.memory === selectedMemories[productDetails._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                            </WrapperPriceProduct>
                             <WrapperPriceTextProduct>
                                 {productDetails?.variant.find((variant) => variant.memory === selectedMemories[productDetails._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                             </WrapperPriceTextProduct>
@@ -287,28 +326,27 @@ const ProductDetailComponents = () => {
                     ) : (
                         <p>Loading...</p>
                     )}
-                    {productDetails ? (
-                        <WrapperPriceProduct style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>
 
-                            {productDetails?.variant.find((variant) => variant.memory === selectedMemories[productDetails._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-
-                        </WrapperPriceProduct>
-                    ) : (
-                        <p>Loading...</p>
-                    )}
-                    <WrapperAddressProduct>
-                        <span>Giao đến </span>
-                        <span className="address">Mỹ Hòa, H.Ba Tri, T.Bến Tre</span> -
-                        <span className="change-address">Đổi địa chỉ</span>
-                    </WrapperAddressProduct>
                     <div style={{ margin: '10px 0 20px', padding: '10px 0', borderTop: '1px solid #e5e5e5', borderBottom: '1px solid #e5e5e5' }}>
                         <div style={{ marginBottom: '10px' }}>Số lượng:</div>
                         <WrapperQuantityProduct>
-                            <button style={{ border: 'none', background: 'transparent' }}>
+                            <button
+                                style={{ border: 'none', background: 'transparent' }}
+                                onClick={handleDecreaseQuantity}>
                                 <MinusOutlined style={{ color: '#000', fontSize: '20px' }} />
                             </button>
-                            <WrapperInputNumber /*min={1} max={10}*/ defaultValue={3} onChange={onChange} size="small" />
-                            <button style={{ border: 'none', background: 'transparent' }}>
+                            <WrapperInputNumber
+                                type="number"
+                                value={quantity}
+                                onChange={handleChange}
+                                size="small"
+                                style={{ width: '60px' }}
+                                upHandler={null}
+                                downHandler={null}
+                            />
+                            <button
+                                style={{ border: 'none', background: 'transparent' }}
+                                onClick={handleIncreaseQuantity}>
                                 <PlusOutlined style={{ color: '#000', fontSize: '20px' }} />
                             </button>
                         </WrapperQuantityProduct>
@@ -343,6 +381,7 @@ const ProductDetailComponents = () => {
                     </div>
                 </Col>
             </Row>
+
             <hr className="my-4" />
             <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
                 <Col span={16} style={{ border: '1px solid #e5e5e5', padding: '10px', borderRadius: '4px' }}>
