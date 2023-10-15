@@ -3,7 +3,7 @@ import ProductDetailComponents from "../../Components/ProductDetailCom/ProductDe
 
 const ProductDetail = () =>{
     return (
-        <div style={{padding: '0 120px', background: '#fff', height: 'auto'}}>
+        <div style={{padding: '0 120px', background: '#efefef', height: 'auto'}}>
                 <ProductDetailComponents/>
         </div>
     )
