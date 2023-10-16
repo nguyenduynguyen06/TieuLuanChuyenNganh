@@ -3,11 +3,9 @@ import HomePage from "../pages/HomePage/homepages";
 import Profilepage from "../pages/Profile/profilepage";
 import NotFoundPage from "../pages/notfoundpage";
 import OrderPage from "../pages/oders";
-import ProductPage from "../pages/product";
 import ProductDetail from "../pages/ProductDetail/productdetail";
 import TypeProductPage from "../pages/ProductTypePage/producttypepage";
 import CartPage from "../pages/CartPage/CartPage";
-import SearchSuggestion from "../Components/Header/SearchSuggest";
 export const routes = [
     {
         path:'/',

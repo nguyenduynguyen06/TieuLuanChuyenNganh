@@ -1,135 +1,189 @@
 import { Input, Row } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { WrapperButton, WrapperComment, WrapperCommentNew, WrapperInfo, WrapperTextBox } from './style';
 import { LikeFilled, DislikeFilled, MessageFilled, SendOutlined } from '@ant-design/icons'
-
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import {
+  MDBBtn,
+  MDBContainer,
+  MDBRow,
+  MDBCol,
+  MDBCard,
+  MDBCardBody,
+  MDBInput,
+  MDBModal,
+  MDBModalDialog,
+  MDBModalContent,
+  MDBModalHeader,
+  MDBModalBody,
+  MDBModalFooter,
+} from 'mdb-react-ui-kit';
+import { useSelector } from 'react-redux';
 const Comment = () => {
-  const [commentText, setCommentText] = useState('');
-  const [author, setAuthor] = useState('');
-  const [comments, setComments] = useState([]);
+  const user = useSelector((state)=> state.user)
+  const [commentData, setCommentData] = useState(null);
   const [showReplyForm, setShowReplyForm] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const {productName} = useParams();
+  const [comment, setComment] = useState({
+    userName: user.fullName || '',
+    content: ''
+});
+const [reply, setReply] = useState({
+  userName: user.fullName || '',
+  content: '',
+  commentId: null,
+});
+useEffect(() => {
+  setComment(prevComment => ({
+    ...prevComment,
+    userName: user.fullName || '',
+  }));
+}, [user.fullName]);
+const toggleModal = () => {
+  setIsModalVisible(!isModalVisible);
+};
+const onChange = event => {
+  event.preventDefault();
+  setComment({ ...comment, [event.target.name]: event.target.value });
+  setReply({ ...reply, [event.target.name]: event.target.value });
+}
 
-  const [showNameInput, setShowNameInput] = useState(false);
-
-  const handleSendClick = () => {
-    const nameInput = document.getElementById('nameinput');
-    const textarea = document.getElementById('textarea');
-
-    const nameValue = nameInput.value.trim();
-    const textareaValue = textarea.value.trim();
-
-    if (nameValue === '' || textareaValue === '') {
-      if (nameValue === '') {
-        document.getElementById('name-error-msg').textContent = 'Vui lòng nhập tên của bạn.';
-      } else {
-        document.getElementById('name-error-msg').textContent = '';
-      }
-
-      if (textareaValue === '') {
-        document.getElementById('textarea-error-msg').textContent = 'Vui lòng nhập câu hỏi của bạn.';
-      } else {
-        document.getElementById('textarea-error-msg').textContent = '';
-      }
-    } else {
-      // Both fields are filled, so you can proceed with your logic
-      document.getElementById('name-error-msg').textContent = '';
-      document.getElementById('textarea-error-msg').textContent = '';
-
-      // Your logic to handle the form submission
+  const addComment = event => {   
+    event.preventDefault();
+    if (comment.userName.trim() !== '' && comment.content.trim() !== '') {
+      axios.post(`${process.env.REACT_APP_API_URL}/comment/addComment/${productName}`, comment)
+        .then((res) => {
+          toggleModal();
+          setComment({
+            userName: user.fullName || '',
+            content: ''
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     }
   };
-
-
-  const handleAuthorChange = (e) => {
-    setAuthor(e.target.value);
-  };
-
-
-  const handleCommentSubmit = () => {
-    if (commentText && author) {
-
-      const newComment = {
-        author: 'Người dùng ẩn danh',
-        text: commentText,
-        likes: 0,
-        dislikes: 0,
-        replies: [],
-      };
-
-
-      setComments([...comments, newComment]);
-
-
-      setCommentText('');
-      setAuthor('');
+  const addReply = (event, commentId) => {   
+    event.preventDefault();
+    if (reply.userName.trim() !== '' && reply.content.trim() !== '') {
+      axios.post(`${process.env.REACT_APP_API_URL}/comment/addReply/${commentId}`, reply)
+        .then((res) => {
+          toggleModal();
+          setReply({
+            userName: user.fullName || '',
+            content: ''
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     }
   };
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/comment/getCommentsByProduct/${productName}`)
+      .then((response) => {
+        setCommentData(response.data.data)
+      })
+      .catch((error) => {
+        console.error('Lỗi khi gọi API: ', error);
+      });
+  }, []);
   return (
     <WrapperCommentNew style={{ width: '65%' }}>
       <div className='comment-container'>
         <div className='comment-form'>
           <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#ff3300' }}>Hỏi và đáp</p>
+          <form onSubmit={addComment}>
             <WrapperInfo style={{ display: 'flex', alignContent: 'space-between' }}>
-              <input id='nameinput' className='nameinput'
+      
+              <input className='nameinput'
+              name='userName'
+              value={comment.userName}
                 type="text"
                 placeholder="Tên của bạn"
+                onChange={onChange}
               />
               <div className="error-msg" id="name-error-msg"></div>
             </WrapperInfo>
-          
+
           <div className='comment-form-content'>
             <div className='textarea-comment'>
               <img src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/af808c10-144a-4f31-b08d-e2108b4481bc/d622juu-a6a55fc8-da00-46b5-ab1f-8a32e5d48e1d.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2FmODA4YzEwLTE0NGEtNGYzMS1iMDhkLWUyMTA4YjQ0ODFiY1wvZDYyMmp1dS1hNmE1NWZjOC1kYTAwLTQ2YjUtYWIxZi04YTMyZTVkNDhlMWQucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.OVHJUeMJdQ-ojp4LQwln1WdAjdmTAL4T8Q8d6ydk-qM' width={55} alt='icon' className='icon-img' />
               <textarea className='textarea' id='textarea' placeholder='Hãy để lại câu hỏi, chúng tôi sẽ giải đáp thắc mắc cho bạn!'
-                cols="120" onClick={setShowNameInput}
+                cols="120" 
+                name='content'
+                value={comment.content}
+                onChange={onChange}
               ></textarea>
-              <button className='btn-send' id='btn-send' onClick={handleSendClick}>
+              <button className='btn-send' id='btn-send' >
                 <SendOutlined />Gửi
-              </button>
+              </button>      
             </div>
-
           </div>
+          </form>
+          {isModalVisible && (
+            <MDBModal tabIndex='-1' show={isModalVisible} onHide={toggleModal}>
+          <MDBModalDialog centered>
+            <MDBModalContent st>
+              <MDBModalHeader >
+                Thông báo
+              </MDBModalHeader>
+              <MDBModalBody>
+                <i className="fas fa-check-circle" style={{ color: 'green',fontSize:'30px' }}>&nbsp;</i> <p>Bình luận của bạn đã được gửi để kiểm duyệt, sau đó sẽ hiển thị ra</p>
+              </MDBModalBody>
+              <MDBModalFooter>
+                <MDBBtn onClick={toggleModal}>
+                  Quay lại
+                </MDBBtn>
+              </MDBModalFooter>
+            </MDBModalContent>
+          </MDBModalDialog>
+        </MDBModal>
+        )}
           <div className="error-msg" id="textarea-error-msg"></div>
 
           <br></br>
-          {/* 
-            <label className='label'>
-              Đăng ẩn danh:
-              <input className='checkbox'
-                type="checkbox"
-                checked={isAnonymous}
-                onChange={handleAnonymousChange}
-              />
-            </label>
-           */}
-
         </div>
+        {commentData ? (
+          commentData.map((comments, index) => (
         <div className='block-comment-list'>
           <br></br>
+    
           <div id className='list-comment'>
             <hr></hr>
+            
             <div className='item-comment'>
+              
               <div className='box-cmt'>
+                
                 <div className='cmt-inf'>
                   <div className='box-inf'>
                     <div className='box-inf-avt'>
                       <span>A</span>
                     </div>
-                    <div className='box-inf-name'>Người dùng ẩn danh</div>
+                    <div className='box-inf-name'>{comments.author}</div>
                   </div>
                 </div>
                 <div className='cmt-quest'>
-                  <div className='content'>
-                    <p>Có iPhone 15 Pro Max không sốp?</p>
+                  <div className='content'>           
+                  <p>{comments.content}</p>
                   </div>
                   <button className='btn-rep' onClick={setShowReplyForm}>
                     <MessageFilled />
                   </button>
                   {showReplyForm && (
+                    <form onSubmit={(e) => addReply(e, comments._id)}>
                     <div className='reply-form'>
                       <Input
                         type="text"
                         className='name-input'
+                        name='userName'
+                        value={reply.userName}
+                        onChange={onChange}
                         placeholder='Nhập tên'
                         style={{ width: '200px', height: '50px' }}
                       />
@@ -140,6 +194,9 @@ const Comment = () => {
                             className='textarea'
                             placeholder='Trả lời!'
                             cols="120"
+                            name='content'
+                            onChange={onChange}
+                            value={reply.content}
                           ></textarea>
                           <button className='btn-send'>
                             <SendOutlined /> Gửi
@@ -147,32 +204,36 @@ const Comment = () => {
                         </div>
                       </div>
                     </div>
+                    </form>
                   )}
                 </div>
                 <div className='cmt-rep'>
                   <div className='list-cmt-rep'>
+                  {comments.replies.map((reply, replyIndex) => (
                     <div className='item-cmt-rep'>
                       <div className='box-inf'>
                         <div className='box-inf-avt'>
                           <span>D</span>
                         </div>
-                        <div className='box-inf-name'>Di Động Gen Z</div>
+                        <div className='box-inf-name'>{reply.author}</div>
                       </div>
                       <div className='cmt-quest'>
                         <div className='content'>
-                          <p>Chào bạn, có bạn nhé! Mua đi chờ chi!</p>
-                        </div>
-                        <button className='btn-rep'>
-                          <MessageFilled />
-                        </button>
+                          <p>{reply.content}</p>
+                        </div>        
                       </div>
                     </div>
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+           ))
+           ) : (
+             <p>Loading...</p>
+           )}
       </div>
     </WrapperCommentNew>
   );

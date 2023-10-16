@@ -12,6 +12,7 @@ import NewCategory from '../../Components/admin/AdminCategory/NewCategory';
 import AdminBrand from '../../Components/admin/AdminBrand/AdminBrand';
 import NotFoundPage from '../notfoundpage';
 import NewBrand from '../../Components/admin/AdminBrand/NewBrand';
+import AdminComment from '../../Components/admin/AdminComment/AdminComment';
 
 const AdminHomePage = () => {
 
@@ -46,7 +47,11 @@ const AdminHomePage = () => {
         case 'addbrand':
               return(
                <div><NewBrand/></div>
-              )        
+              )   
+        case 'comments':
+              return(
+                <div><AdminComment/></div>
+                )        
       default:
         return <></>
     }
@@ -70,6 +75,7 @@ const AdminHomePage = () => {
       getItem('Danh sách thương hiệu', 'brands'),
       getItem('Thêm thương hiệu', 'addbrand'),
     ]),
+    getItem('Bình luận', 'comments', <UserOutlined />),
   ];
     
 

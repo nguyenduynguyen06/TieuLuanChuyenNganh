@@ -46,13 +46,11 @@ const addReply = async (req, res) => {
         content,
         check: false,
       });
-      
       parentComment.replies.push(reply);
-      
       await reply.save(); 
       await parentComment.save();
       
-      res.status(201).json({ message: 'Reply added successfully' });
+      return res.status(201).json({ success: true ,message: 'Reply added successfully' });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'An error occurred' });
@@ -60,14 +58,14 @@ const addReply = async (req, res) => {
   };
   
   
-const getCommentsByProduct = async (req, res) => {
+  const getCommentsByProduct = async (req, res) => {
     try {
       const { productName } = req.params;
       const product = await Product.findOne({ name: productName });
       if (!product) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm với tên này.' });
       }
-      const comments = await Comment.find({ product: product._id })
+      const comments = await Comment.find({ product: product._id, check: true })
         .populate('user')
         .populate({
           path: 'replies',
@@ -79,12 +77,13 @@ const getCommentsByProduct = async (req, res) => {
         return res.status(404).json({ success: false, message: 'Không tìm thấy bình luận nào cho sản phẩm này.' });
       }
   
-      res.status(200).json({ success: true, data: comments });
+      return res.status(200).json({ success: true, data: comments });
     } catch (error) {
       console.error(error);
       res.status(500).json({ success: false, message: 'Đã xảy ra lỗi khi lấy danh sách bình luận.' });
     }
 };
+
 const deleteComment = async (req, res) => {
   try {
     const { commentId } = req.params;
@@ -93,18 +92,36 @@ const deleteComment = async (req, res) => {
       return res.status(404).json({ error: 'Comment not found' });
     } 
     await Comment.findByIdAndDelete(commentId);
-    return res.status(200).json({ message: 'Comment deleted successfully' });
+    return res.status(200).json({ success: true ,message: 'Comment deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error });
+  }
+};
+const getAll = async (req, res) => {
+  try {
+    const comment = await Comment.find().populate('product');
+    return res.status(200).json({ data: comment });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred' });
   }
 };
+const check = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+    comment.check = !comment.check;
+    await comment.save(); 
+    return res.status(200).json({ success: true, data: comment  });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error });
+  }
+};
 
-module.exports = { deleteComment };
 
-
-
-  
-  
-
-module.exports = {addComment, addReply,getCommentsByProduct,deleteComment}
+module.exports = {addComment, addReply,getCommentsByProduct,deleteComment,getAll,check}
