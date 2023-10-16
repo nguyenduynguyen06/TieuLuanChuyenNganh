@@ -4,11 +4,40 @@ import { WrapperButton, WrapperComment, WrapperCommentNew, WrapperInfo, WrapperT
 import { LikeFilled, DislikeFilled, MessageFilled, SendOutlined } from '@ant-design/icons'
 
 const Comment = () => {
-  const [commentText, setCommentText] = useState(''); 
+  const [commentText, setCommentText] = useState('');
   const [author, setAuthor] = useState('');
-  const [comments, setComments] = useState([]); 
-  const [showNameInput, setShowNameInput] = useState(false);
+  const [comments, setComments] = useState([]);
   const [showReplyForm, setShowReplyForm] = useState(false);
+
+  const [showNameInput, setShowNameInput] = useState(false);
+
+  const handleSendClick = () => {
+    const nameInput = document.getElementById('nameinput');
+    const textarea = document.getElementById('textarea');
+
+    const nameValue = nameInput.value.trim();
+    const textareaValue = textarea.value.trim();
+
+    if (nameValue === '' || textareaValue === '') {
+      if (nameValue === '') {
+        document.getElementById('name-error-msg').textContent = 'Vui lòng nhập tên của bạn.';
+      } else {
+        document.getElementById('name-error-msg').textContent = '';
+      }
+
+      if (textareaValue === '') {
+        document.getElementById('textarea-error-msg').textContent = 'Vui lòng nhập câu hỏi của bạn.';
+      } else {
+        document.getElementById('textarea-error-msg').textContent = '';
+      }
+    } else {
+      // Both fields are filled, so you can proceed with your logic
+      document.getElementById('name-error-msg').textContent = '';
+      document.getElementById('textarea-error-msg').textContent = '';
+
+      // Your logic to handle the form submission
+    }
+  };
 
 
   const handleAuthorChange = (e) => {
@@ -18,16 +47,16 @@ const Comment = () => {
 
   const handleCommentSubmit = () => {
     if (commentText && author) {
- 
+
       const newComment = {
-        author:  'Người dùng ẩn danh',
+        author: 'Người dùng ẩn danh',
         text: commentText,
         likes: 0,
         dislikes: 0,
         replies: [],
       };
 
-     
+
       setComments([...comments, newComment]);
 
 
@@ -39,34 +68,31 @@ const Comment = () => {
     <WrapperCommentNew style={{ width: '65%' }}>
       <div className='comment-container'>
         <div className='comment-form'>
-          <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#ff3300'}}>Hỏi và đáp</p>
-          {showNameInput && (
-              <Input
+          <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#ff3300' }}>Hỏi và đáp</p>
+            <WrapperInfo style={{ display: 'flex', alignContent: 'space-between' }}>
+              <input id='nameinput' className='nameinput'
                 type="text"
-                className='name-input'
-                placeholder='Nhập tên'
-                style={{width: '200px', height: '50px'}}
+                placeholder="Tên của bạn"
               />
-            )}
+              <div className="error-msg" id="name-error-msg"></div>
+            </WrapperInfo>
+          
           <div className='comment-form-content'>
             <div className='textarea-comment'>
               <img src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/af808c10-144a-4f31-b08d-e2108b4481bc/d622juu-a6a55fc8-da00-46b5-ab1f-8a32e5d48e1d.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2FmODA4YzEwLTE0NGEtNGYzMS1iMDhkLWUyMTA4YjQ0ODFiY1wvZDYyMmp1dS1hNmE1NWZjOC1kYTAwLTQ2YjUtYWIxZi04YTMyZTVkNDhlMWQucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.OVHJUeMJdQ-ojp4LQwln1WdAjdmTAL4T8Q8d6ydk-qM' width={55} alt='icon' className='icon-img' />
-              <textarea className='textarea' placeholder='Hãy để lại câu hỏi, chúng tôi sẽ giải đáp thắc mắc cho bạn!'
-                          cols="120"  onClick={setShowNameInput}
-                          ></textarea>
-              <button className='btn-send'>
+              <textarea className='textarea' id='textarea' placeholder='Hãy để lại câu hỏi, chúng tôi sẽ giải đáp thắc mắc cho bạn!'
+                cols="120" onClick={setShowNameInput}
+              ></textarea>
+              <button className='btn-send' id='btn-send' onClick={handleSendClick}>
                 <SendOutlined />Gửi
               </button>
             </div>
+
           </div>
+          <div className="error-msg" id="textarea-error-msg"></div>
+
           <br></br>
-          {/* <WrapperInfo style={{ display: 'flex', alignContent: 'space-between' }}>
-            <input className='nameinput'
-              type="text"
-              placeholder="Tên của bạn"
-              value={author}
-              onChange={handleAuthorChange}
-            />
+          {/* 
             <label className='label'>
               Đăng ẩn danh:
               <input className='checkbox'
@@ -75,7 +101,7 @@ const Comment = () => {
                 onChange={handleAnonymousChange}
               />
             </label>
-          </WrapperInfo> */}
+           */}
 
         </div>
         <div className='block-comment-list'>
@@ -87,7 +113,7 @@ const Comment = () => {
                 <div className='cmt-inf'>
                   <div className='box-inf'>
                     <div className='box-inf-avt'>
-                    <span>A</span>
+                      <span>A</span>
                     </div>
                     <div className='box-inf-name'>Người dùng ẩn danh</div>
                   </div>
@@ -100,28 +126,28 @@ const Comment = () => {
                     <MessageFilled />
                   </button>
                   {showReplyForm && (
-        <div className='reply-form'>
-          <Input
-            type="text"
-            className='name-input'
-            placeholder='Nhập tên'
-            style={{ width: '200px', height: '50px' }}
-          />
-          <div className='comment-form-content'>
-            <div className='textarea-comment'>
-              <img src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/af808c10-144a-4f31-b08d-e2108b4481bc/d622juu-a6a55fc8-da00-46b5-ab1f-8a32e5d48e1d.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2FmODA4YzEwLTE0NGEtNGYzMS1iMDhkLWUyMTA4YjQ0ODFiY1wvZDYyMmp1dS1hNmE1NWZjOC1kYTAwLTQ2YjUtYWIxZi04YTMyZTVkNDhlMWQucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.OVHJUeMJdQ-ojp4LQwln1WdAjdmTAL4T8Q8d6ydk-qM' width={55} alt='icon' className='icon-img' />
-              <textarea
-                className='textarea'
-                placeholder='Trả lời!'
-                cols="120"
-              ></textarea>
-              <button className='btn-send'>
-                <SendOutlined/> Gửi
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                    <div className='reply-form'>
+                      <Input
+                        type="text"
+                        className='name-input'
+                        placeholder='Nhập tên'
+                        style={{ width: '200px', height: '50px' }}
+                      />
+                      <div className='comment-form-content'>
+                        <div className='textarea-comment'>
+                          <img src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/af808c10-144a-4f31-b08d-e2108b4481bc/d622juu-a6a55fc8-da00-46b5-ab1f-8a32e5d48e1d.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2FmODA4YzEwLTE0NGEtNGYzMS1iMDhkLWUyMTA4YjQ0ODFiY1wvZDYyMmp1dS1hNmE1NWZjOC1kYTAwLTQ2YjUtYWIxZi04YTMyZTVkNDhlMWQucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.OVHJUeMJdQ-ojp4LQwln1WdAjdmTAL4T8Q8d6ydk-qM' width={55} alt='icon' className='icon-img' />
+                          <textarea
+                            className='textarea'
+                            placeholder='Trả lời!'
+                            cols="120"
+                          ></textarea>
+                          <button className='btn-send'>
+                            <SendOutlined /> Gửi
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className='cmt-rep'>
                   <div className='list-cmt-rep'>

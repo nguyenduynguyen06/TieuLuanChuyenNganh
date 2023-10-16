@@ -183,6 +183,11 @@ export const WrapperCommentNew = styled.div`
         padding: 10px;
         width: 100%;
     }
+    .error-msg {
+        color: red;
+        font-size: 14px;
+        margin-top: 4px;
+      }
     .comment-form{
         display: block;
     }
@@ -405,17 +410,21 @@ width: 100%;
         text-decoration: underline;
     }
     .boxReview .boxReview-review .boxReview-star{
-        flex-direction: column;
-    width: 60%;
-    display: flex;
-    justify-content: space-evenly!important;
+        flex-direction: end;
+        width: 60%;
+        display: flex;
+        justify-content: space-evenly!important;
     }
     .star-icon{
         fill: #FFD700
     }
     .rating-level{
-        display: flex!important;
         align-items: center!important;
         justify-content: space-evenly!important;
+    }
+    .boxReview-star progress{
+        border-radius: 5px;
+        height: 8px;
+        max-width: 70%;
     }
 `
