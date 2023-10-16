@@ -24,7 +24,7 @@ const addComment = async (req, res) => {
     }
   };
   
-  const addReply = async (req, res) => {
+const addReply = async (req, res) => {
     try {
       const { userName, author, content } = req.body;
       const commentId = req.params.commentId;
@@ -44,6 +44,7 @@ const addComment = async (req, res) => {
         user: user ? user._id : null,
         author: author || (user ? user.fullName : userName),
         content,
+        check: false,
       });
       
       parentComment.replies.push(reply);
