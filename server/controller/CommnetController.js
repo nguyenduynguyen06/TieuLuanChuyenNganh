@@ -14,8 +14,8 @@ const addComment = async (req, res) => {
         user: user ? user._id : null,
         author: user ? user.fullName : userName,
         content,
+        check: false,
       });
-  
       await comment.save();
       res.status(201).json({ message: 'Comment added successfully' });
     } catch (error) {
@@ -48,8 +48,8 @@ const addComment = async (req, res) => {
       
       parentComment.replies.push(reply);
       
-      await reply.save(); // Lưu reply vào cơ sở dữ liệu trước
-      await parentComment.save(); // Lưu parentComment sau khi đã thêm reply
+      await reply.save(); 
+      await parentComment.save();
       
       res.status(201).json({ message: 'Reply added successfully' });
     } catch (error) {
@@ -66,14 +66,12 @@ const getCommentsByProduct = async (req, res) => {
       if (!product) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm với tên này.' });
       }
-  
-      // Lấy các bình luận cho sản phẩm và nạp bình luận con
       const comments = await Comment.find({ product: product._id })
         .populate('user')
         .populate({
           path: 'replies',
-          model: 'Comment', // Tên mô hình bình luận con
-          populate: { path: 'user' }, // Nạp thông tin người dùng cho bình luận con
+          model: 'Comment', 
+          populate: { path: 'user' }, 
         });
   
       if (!comments) {
@@ -86,8 +84,26 @@ const getCommentsByProduct = async (req, res) => {
       res.status(500).json({ success: false, message: 'Đã xảy ra lỗi khi lấy danh sách bình luận.' });
     }
 };
+const deleteComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ error: 'Comment not found' });
+    } 
+    await Comment.findByIdAndDelete(commentId);
+    return res.status(200).json({ message: 'Comment deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+};
+
+module.exports = { deleteComment };
+
+
 
   
   
 
-module.exports = {addComment, addReply,getCommentsByProduct}
+module.exports = {addComment, addReply,getCommentsByProduct,deleteComment}

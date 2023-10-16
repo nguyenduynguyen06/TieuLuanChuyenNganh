@@ -65,7 +65,7 @@ const ProductDetailComponents = () => {
 
                     setSelectedMemories(initialMemories);
 
-                    // Lấy màu đầu tiên từ attributes của variant
+                 
                     if (productDetails && productDetails.variant) {
                         productDetails.variant.forEach((variant) => {
                             if (variant.memory === defaultMemory && variant.attributes && variant.attributes.length > 0) {
@@ -75,7 +75,7 @@ const ProductDetailComponents = () => {
                                     [variant._id]: defaultColor,
                                 }));
 
-                                // Cập nhật Sold tương ứng
+                              
                                 const selectedAttribute = variant.attributes.find((attribute) => attribute.color === defaultColor);
                                 if (selectedAttribute) {
                                     setSelectedSold((prevSelected) => ({
@@ -220,27 +220,39 @@ const ProductDetailComponents = () => {
                     <WrapperPolicy>
                         <div className="policy_intuitive cate42 scenarioNomal">
                             <div className="policy">
+                         
                                 <ul className="policy__list">
                                     <li>
                                         <RetweetOutlined style={{fontSize: '30px',left:0, position: 'absolute',top: '18px'}}></RetweetOutlined>
                                         <p>
                                             1 đổi 1 trong&nbsp;
-                                            <b>30 ngày&nbsp;</b>đối với sản phẩm lỗi trên phạm vi toàn quốc&nbsp;
+                                            <b>7 ngày&nbsp;</b>đối với sản phẩm là điện thoại và trong thời gian bảo hành đối với sản phẩm là phụ kiện&nbsp;
                                             <a href="/" title="Chính sách dổi trả">Xem chi tiết</a>
                                         </p>
                                     </li>
+                                    {productDetails && productDetails.warrantyPeriod ?(
                                     <li data-field="IsSameBHAndDT">
                                     <PropertySafetyOutlined style={{fontSize: '30px',left:0, position: 'absolute',top: '18px'}}></PropertySafetyOutlined>
                                         <p>Bảo hành chính hãng điện thoại&nbsp;
-                                            <b>1 năm</b> tại các trung tâm bảo hành hãng&nbsp;
+                                            <b>{productDetails.warrantyPeriod} tháng</b> tại các trung tâm bảo hành hãng&nbsp;
                                             <a href="/" title="Chính sách bảo hành">Xem chính sách bảo hành</a>
                                         </p>
                                     </li>
+                                    ) : (
+                                        <li data-field="IsSameBHAndDT">
+                                        <PropertySafetyOutlined style={{fontSize: '30px',left:0, position: 'absolute',top: '18px'}}></PropertySafetyOutlined>
+                                            <p> Không bảo hành
+                                            </p>
+                                        </li>
+                                    )}
+                                    {productDetails && productDetails.include ? (
                                     <li>
-                                        <DropboxOutlined style={{fontSize: '30px',left:0, position: 'absolute',top: '18px'}}></DropboxOutlined>
-                                            <p>Bộ sản phẩm gồm Bộ sản phẩm gồm: Hộp, Sách hướng dẫn, Cây lấy sim, Ốp lưng, Cáp Type C, Củ sạc nhanh rời đầu Type A </p>
+                                        <DropboxOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></DropboxOutlined>
+                                        <p>Bộ sản phẩm gồm Bộ sản phẩm gồm: {productDetails.include} </p>
                                     </li>
+                                    ) : null}
                                 </ul>
+                         
                             </div>
                         </div>
                     </WrapperPolicy>

@@ -20,7 +20,10 @@ const commentSchema = new mongoose.Schema({
  replies: [{
   type: mongoose.Schema.Types.ObjectId,
   ref: 'Comment',
-}]
+}],
+check: {
+  type: Boolean 
+}
 });
 
 const Comment = mongoose.model('Comment', commentSchema);
