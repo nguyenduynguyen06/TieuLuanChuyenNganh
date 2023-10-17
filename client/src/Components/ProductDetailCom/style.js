@@ -1,5 +1,8 @@
 import { Col, Image, InputNumber, Row, Table } from "antd";
 import styled from "styled-components";
+import ButtonComponent from "../../Components/ButtonComponent/ButtonComponent";
+import Slider from 'react-slick';
+
 
 export const WrapperStyleImageBig = styled.div`
 display: flex;
@@ -545,3 +548,97 @@ width: 100%;
         height: auto;
       }
 `
+
+
+export const WrapperSlider = styled(Slider)`
+    width: 100%;
+    background: #fff;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    align-items: center;
+    justify-content: space-between; 
+    overflow: hidden;
+    gap: 6px;
+    border-radius: 0 0 8px 8px;
+    padding: 10px;
+    .box {
+        background: #fff;
+        text-align: center;
+        transition: .3s ease-in-out;
+        max-width: 100%;
+        width: auto;
+    }
+   .card {
+    width: 100%;
+    }
+
+  .card .image {
+    width:100%;
+    backgroud: #f9f9f9;
+    margin: 20px auto;
+    position: relative;
+  }
+
+
+
+  .card .image img {
+    width:180px;
+    transition: .3s ease-in-out;
+    cursor: pointer;
+  }
+  .memory-button.selected {
+    border: 1px solid #00BFFF	;
+  }
+  .card .desc {
+    width: 100%;
+    margin: auto;
+    line-height: 3;
+    height: 11em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal
+  }
+
+  .card .desc h1 {
+    font-size: 15px;
+    text-transform: uppercase;
+  }
+
+  .card .desc p {
+    font-size: 12px;
+  }
+
+  .card span {
+    font-size: 15px;
+  }
+  .box .btn,
+  .box .card .image::before {
+    background: #ff3300;
+  }
+
+    .box .card p {
+    color: #ff3300;
+    font-size: 15px;
+  }
+
+  @media screen and (max-width: 998px) {
+    padding: 0 3rem;
+    justify-content: center;
+
+    .card .image {
+      width: 50%
+    }
+  }
+
+  @media screen and (max-width: 1000px) {
+      grid-template-columns: repeat(auto-fit, minmax(100px, 200px));
+      padding: 5rem 3rem;
+      column-gap: 6px;
+    .card .image img {
+      width:90px;
+      transition: .3s ease-in-out;
+      cursor: pointer;
+    }
+`
+
+

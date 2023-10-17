@@ -26,6 +26,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Rating from "./ratecomponent"
+import SuggestProduct from "./suggestproductcomponent"
 
 
 const { Column, ColumnGroup } = Table;
@@ -418,6 +419,10 @@ const ProductDetailComponents = () => {
                         <a href="#">Xem toàn bộ thông số</a>
                     </WrapperSeeMore> */}
                 </Col>
+            </Row>
+            <hr className="my-4"/>
+            <Row>
+                <SuggestProduct></SuggestProduct>
             </Row>
             <hr className="my-4"/>
             <Row>
