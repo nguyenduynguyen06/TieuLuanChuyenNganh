@@ -31,11 +31,6 @@ const Category = () => {
     };
     fetchCategories();
   }, []);
-
-  const handleCardClick = (name) => {
-    window.location.href = `/type/${name}`;
-  };
-
   return (
     <div>
       <div style={{padding: '10px', backgroundImage: 'linear-gradient(to right, #5170ff,  #ff66c4)', borderRadius:'6px 6px 0 0'}}>
@@ -45,10 +40,12 @@ const Category = () => {
         {categories.filter((category) => category.isHide === false).map((category) => (      
           <Card.Grid
             key={category._id}
-            style={{ ...gridStyle, cursor: 'pointer', height: '100px',backgroundImage: 'linear-gradient(to right, #94b9ff,  #cdffd8)' }}
-            onClick={() => handleCardClick(category.name)}>
+            style={{ ...gridStyle, height: '100px',backgroundImage: 'linear-gradient(to right, #94b9ff,  #cdffd8)' }}
+            >
+            <NavLink to={`/type/${category.name}`}>
             <img src={category.picture} className='img-fluid rounded' alt='' />
             <p>{category.name}</p>
+            </NavLink>
           </Card.Grid>
         ))}
       </CardWrapper>

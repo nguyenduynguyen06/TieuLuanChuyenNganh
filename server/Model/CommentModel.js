@@ -23,6 +23,9 @@ const commentSchema = new mongoose.Schema({
 }],
 check: {
   type: Boolean 
+},
+isReply:{
+  type:Boolean
 }
 });
 

@@ -15,6 +15,7 @@ const addComment = async (req, res) => {
         author,
         content,
         check: false,
+        isReply: false
       });
       await comment.save();
       res.status(201).json({ message: 'Comment added successfully' });
@@ -49,11 +50,56 @@ const addReply = async (req, res) => {
         author,
         content,
         check: false,
+        isReply: true
       });
       parentComment.replies.push(reply);
       await reply.save(); 
       await parentComment.save();
+      return res.status(201).json({ success: true ,message: 'Reply added successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred' });
+    }
+  };
+  const addReplytoReply = async (req, res) => {
+    try {
+      const {  author, content } = req.body;
+      const commentId = req.params.commentId;
+      const userId  = req.params.userId
+      const productName  = req.params.productName
+      const product = await Product.findOne({ name: productName });
+      let user;
       
+      if (userId) {
+        user = await User.findOne({ _id: userId });
+      }
+      const parentComment = await Comment.findOne({replies: commentId});
+      if (parentComment) {
+        const reply = new Comment({
+          product: product._id,
+          user: user ? user._id : null,
+          author,
+          content,
+          check: false,
+          isReply: true
+        });
+        parentComment.replies.push(reply);
+        await reply.save(); 
+        await parentComment.save();
+        return res.status(201).json({ success: true ,message: 'Reply added successfully' });
+      }
+      const replyy = await Comment.findById(commentId);
+      const reply1 = new Comment({
+        product: product._id,
+        user: user ? user._id : null,
+        author,
+        content,
+        check: false,
+        isReply: true
+      });
+      replyy.replies.push(reply1);
+      await reply1.save(); 
+      await replyy.save();
       return res.status(201).json({ success: true ,message: 'Reply added successfully' });
     } catch (error) {
       console.error(error);
@@ -69,13 +115,17 @@ const addReply = async (req, res) => {
       if (!product) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm với tên này.' });
       }
-      const comments = await Comment.find({ product: product._id, check: true })
-        .populate('user')
-        .populate({
-          path: 'replies',
-          model: 'Comment', 
-          populate: { path: 'user' }, 
-        });
+      const comments = await Comment.find({
+        product: product._id,
+        check: true,
+        isReply: false
+      })
+      .populate('user')
+      .populate({
+        path: 'replies',
+        model: 'Comment',
+        populate: { path: 'user' },
+      });
   
       if (!comments) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy bình luận nào cho sản phẩm này.' });
@@ -86,7 +136,8 @@ const addReply = async (req, res) => {
       console.error(error);
       res.status(500).json({ success: false, message: 'Đã xảy ra lỗi khi lấy danh sách bình luận.' });
     }
-};
+  };
+  
 
 const deleteComment = async (req, res) => {
   try {
@@ -128,4 +179,4 @@ const check = async (req, res) => {
 };
 
 
-module.exports = {addComment, addReply,getCommentsByProduct,deleteComment,getAll,check}
+module.exports = {addComment, addReply,getCommentsByProduct,deleteComment,getAll,check,addReplytoReply}

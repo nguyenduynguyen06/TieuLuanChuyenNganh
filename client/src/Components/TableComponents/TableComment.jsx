@@ -12,6 +12,7 @@ const TableComment = () => {
     const [form] = Form.useForm();
     const [commentData, setcommentData] = useState([]); 
     const [currentCommentId, setCurrentCommentId] = useState(null);
+    const [currentProductName, setCurrentProductName] = useState(null);
     const [reply,setReply] = useState(false);
     const columns = [
       {
@@ -35,12 +36,22 @@ const TableComment = () => {
         render: product => product?.name
       },
       {
+        title: 'Đây là Reply',
+        dataIndex: 'isReply',
+        render: isReply => (
+          <span style={{ color: isReply ? 'green' : 'red' }}>
+            {isReply ? '✔️ ' : '❌ '}
+          </span>
+        )
+      },
+      {
         render: record => ( 
         <Space size="middle">
             <Button style={{backgroundColor: "#FF6A6A"}} onClick={() => handleDeleteComment(record._id)}>Xoá</Button>
             <Button style={{backgroundColor: "#97FFFF"}} onClick={() => handleCheckcomment(record._id)}>Duyệt</Button>
             <Button style={{backgroundColor: "#00FFFF"}} onClick={() => {      
                 setCurrentCommentId(record._id)
+                setCurrentProductName(record.product.name)
                 setReply(true);
             }}>Trả lời</Button>
                  <Modal
@@ -50,7 +61,7 @@ const TableComment = () => {
             form
             .validateFields()
             .then((values) => {
-              Reply(currentCommentId,values)
+              Reply(currentCommentId,currentProductName,values)
               setReply(false);
             })
             .catch((errorInfo) => {
@@ -116,10 +127,10 @@ const TableComment = () => {
             message.error('Lỗi khi xóa bình luận');
           });
       };
-      const Reply = (commentId,values) => {
-        const updatedValues = { ...values, userName: user.fullName };
+      const Reply = (commentId,productName,values) => {
+        const updatedValues = { ...values, author: user.fullName };
         axios
-          .post(`${process.env.REACT_APP_API_URL}/comment/addReply/${commentId}`,updatedValues)
+          .post(`${process.env.REACT_APP_API_URL}/comment/addReplytoReply/${commentId}/${user._id}/${productName}`,updatedValues)
           .then((response) => {
             if (response.data.success) {
               message.success('Trả lời thành công');
