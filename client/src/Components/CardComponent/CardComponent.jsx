@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { NavLink, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Pagination } from 'antd';
 import { WrapperCard } from './styled';
@@ -114,10 +114,10 @@ function CardComponent() {
         <div className='mainContainer'>
           {currentProducts.filter((product) => product.isHide === false).map((product) => (
             <div className='box' key={product._id} style={{ padding: '0' }}>
-              <div className='card' onClick={() => handleCardClick(product)} style={{cursor: 'pointer'}}>
-                <div className='image' onClick={() => handleCardClick(product)}>
+              <div className='card' >
+              <NavLink className='image' to={`/product/${ product.name}/${selectedMemories[product._id]}`}>
                   <img src={product.thumnails[0]} />
-                </div>
+                </NavLink>
                 <div className='desc'>
                   <h1>{product?.name}</h1>
                   <div>

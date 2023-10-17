@@ -27,24 +27,24 @@ const Comment = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const {productName} = useParams();
   const [comment, setComment] = useState({
-    userName: user.fullName || '',
+    author: user.fullName || '',
     content: ''
 });
 const [reply, setReply] = useState({
-  userName: user.fullName || '',
+  author: user.fullName || '',
   content: '',
   commentId: null,
 });
 useEffect(() => {
   setComment(prevComment => ({
     ...prevComment,
-    userName: user.fullName || '',
+    author: user.fullName || '',
   }));
 }, [user.fullName]);
 useEffect(() => {
   setReply(prevComment => ({
     ...prevComment,
-    userName: user.fullName || '',
+    author: user.fullName || '',
   }));
 }, [user.fullName]);
 const toggleModal = () => {
@@ -63,12 +63,12 @@ const onChange = event => {
 
   const addComment = event => {   
     event.preventDefault();
-    if (comment.userName.trim() !== '' && comment.content.trim() !== '') {
-      axios.post(`${process.env.REACT_APP_API_URL}/comment/addComment/${productName}`, comment)
+    if (comment.author.trim() !== '' && comment.content.trim() !== '') {
+      axios.post(`${process.env.REACT_APP_API_URL}/comment/addComment/${productName}/${user._id}`, comment)
         .then((res) => {
           toggleModal();
           setComment({
-            userName: user.fullName || '',
+            author: user.fullName || '',
             content: ''
           });
         })
@@ -79,12 +79,12 @@ const onChange = event => {
   };
   const addReply = (event, commentId) => {   
     event.preventDefault();
-    if (reply.userName.trim() !== '' && reply.content.trim() !== '') {
-      axios.post(`${process.env.REACT_APP_API_URL}/comment/addReply/${commentId}`, reply)
+    if (reply.author.trim() !== '' && reply.content.trim() !== '') {
+      axios.post(`${process.env.REACT_APP_API_URL}/comment/addReply/${commentId}/${user._id}/${productName}`, reply)
         .then((res) => {
           toggleModal();
           setReply({
-            userName: user.fullName || '',
+            author: user.fullName || '',
             content: ''
           });
         })
@@ -112,8 +112,8 @@ const onChange = event => {
             <WrapperInfo style={{ display: 'flex', alignContent: 'space-between' }}>
       
               <input className='nameinput'
-              name='userName'
-              value={comment.userName}
+              name='author'
+              value={comment.author}
                 type="text"
                 placeholder="Tên của bạn"
                 onChange={onChange}
@@ -176,7 +176,7 @@ const onChange = event => {
                     <div className='box-inf-avt'>
                       <span>A</span>
                     </div>
-                    <div className='box-inf-name'>{comments.author}</div>
+                    <div className='box-inf-name'>{comments.author} {comments.user && comments.user.role_id === 1 ? ' (QTV)' : ''}</div>
                   </div>
                 </div>
                 <div className='cmt-quest'>
@@ -192,8 +192,8 @@ const onChange = event => {
                       <Input
                         type="text"
                         className='name-input'
-                        name='userName'
-                        value={reply.userName}
+                        name='author'
+                        value={reply.author}
                         onChange={onChange}
                         placeholder='Nhập tên'
                         style={{ width: '200px', height: '50px' }}
@@ -226,7 +226,7 @@ const onChange = event => {
                         <div className='box-inf-avt'>
                           <span>D</span>
                         </div>
-                        <div className='box-inf-name'>{reply.author}</div>
+                        <div className='box-inf-name'>{reply.author} {reply.user && reply.user.role_id === 1 ? ' (QTV)' : ''}</div>
                       </div>
                       <div className='cmt-quest'>
                         <div className='content'>

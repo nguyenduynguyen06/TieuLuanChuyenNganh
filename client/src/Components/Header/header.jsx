@@ -23,6 +23,7 @@ import Register from "./register";
 import { useSelector } from "react-redux";
 import { useDispatch } from 'react-redux'
 import { resetUser } from "../../redux/Slide/userSlice";
+import { NavLink } from "react-router-dom";
 
 
 
@@ -85,7 +86,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     <WrapperSuperHeader>
       <WrapperHeader className="header-container" style={isScrolled ? { position: 'fixed', zIndex: '100', width: '100%' } : {}}>
         <WrapperHeaderImage className="ant-image" >
-          <a href="/" className="logo"> <img src="../../image/didong1.png" alt="blink" /> </a>
+          <NavLink to={`/`} className="logo">  <img src="../../image/didong1.png" alt="blink" /> </NavLink>
         </WrapperHeaderImage>
         <WrapperSearch className="search-box">
           {!isHiddenSearch && (

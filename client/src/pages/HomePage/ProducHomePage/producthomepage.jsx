@@ -3,7 +3,7 @@ import { WrapperButtonMore, WrapperCard } from '../styled';
 import axios from 'axios';
 import { Button } from 'antd';
 import ButtonComponent from '../../../Components/ButtonComponent/ButtonComponent';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 function ProductHomePage() {
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
@@ -37,12 +37,6 @@ function ProductHomePage() {
       console.error('Lỗi:', error);
     }
   };
-
-  const handleCardClick = (product) => {
-    const url = `/product/${ product.name}/${selectedMemories[product._id]}`;
-    window.location.href = url;
-  };
-
   const handleShowMoreClick = () => {
     setVisibleProducts(visibleProducts + 5);
   };
@@ -76,10 +70,10 @@ function ProductHomePage() {
       <div className='mainContainer' style={containerStyle}>
         {products.filter((product) => product.isHide === false).slice(0, visibleProducts).map((product) => (
           <div className='box' key={product._id}>
-            <div className='card' onClick={() => handleCardClick(product)} style={{cursor: 'pointer'}}>
-              <div className='image' onClick={() => handleCardClick(product)}>
+            <div className='card'>
+            <NavLink className="image" to={`/product/${product.name}/${selectedMemories[product._id]}`}>
                 <img src={product.thumnails[0]} />
-              </div>
+                     </NavLink>
               <div className='desc'>
                 <h1>{product?.name}</h1>
                 <div>

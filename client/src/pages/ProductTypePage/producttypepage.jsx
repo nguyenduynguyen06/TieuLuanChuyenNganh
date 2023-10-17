@@ -1,4 +1,4 @@
-import React  from "react";
+import React, { useEffect }  from "react";
 import NavBarComponent from "../../Components/NavBarComponent/navbarcomponent";
 import CardComponent from "../../Components/CardComponent/CardComponent";
 import { Col, Row } from 'antd'
@@ -7,7 +7,9 @@ import Header from "../../Components/Header/header";
 
 
 const TypeProductPage = () => {
-
+    useEffect(()=>{
+        window.scrollTo({top:0,behavior: "instant"})
+    },[])
     return (
         <div>
             <Header />
