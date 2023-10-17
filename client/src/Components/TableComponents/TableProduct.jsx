@@ -231,6 +231,15 @@ onChange(info) {
                     placeholder="Nhập mô tả ở đây..." 
                   />
                 </Form.Item>
+                <Form.Item
+                    name='promotion'
+                    label="Khuyến mãi"
+                  >
+                   <ReactQuill
+                    theme="snow" 
+                    placeholder="Nhập khuyến mãi ở đây..." 
+                  />
+                  </Form.Item>
               </Form>
             </Modal>
             <Modal

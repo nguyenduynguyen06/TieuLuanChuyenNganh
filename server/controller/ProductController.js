@@ -122,6 +122,9 @@ const editProduct = async (req, res) => {
     if (data.isHide !== undefined) {
       updateData.isHide = data.isHide;
     }
+    if (data.promotion) {
+      updateData.promotion = data.promotion;
+    }
     const updatedProduct = await Product.findByIdAndUpdate(productId, updateData);
     res.status(200).json({ success: true, data: updatedProduct });
   } catch (error) {

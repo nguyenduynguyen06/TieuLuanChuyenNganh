@@ -62,7 +62,10 @@ const productSchema = new mongoose.Schema({
   thumnails:[
   {
     type: String
-  }]
+  }],
+  promotion: {
+    type: String
+  }
 });
 const Product = mongoose.model('Product', productSchema);
 

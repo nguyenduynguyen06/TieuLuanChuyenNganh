@@ -58,6 +58,9 @@ const toggleReplyForm = (commentIndex) => {
 const onChange = event => {
   event.preventDefault();
   setComment({ ...comment, [event.target.name]: event.target.value });
+}
+const onChange1 = event => {
+  event.preventDefault();
   setReply({ ...reply, [event.target.name]: event.target.value });
 }
 
@@ -174,7 +177,10 @@ const onChange = event => {
                 <div className='cmt-inf'>
                   <div className='box-inf'>
                     <div className='box-inf-avt'>
-                      <span>A</span>
+                      {comments.user.avatar ? (
+                      <img src={comments.user.avatar} style={{width:"40px"}}/>  
+                      ):  <img src='../../image/logo.png' style={{width:"40px"}}/>  }
+                      &nbsp;
                     </div>
                     <div className='box-inf-name'>{comments.author} {comments.user && comments.user.role_id === 1 ? ' (QTV)' : ''}</div>
                   </div>
@@ -194,7 +200,7 @@ const onChange = event => {
                         className='name-input'
                         name='author'
                         value={reply.author}
-                        onChange={onChange}
+                        onChange={onChange1}
                         placeholder='Nhập tên'
                         style={{ width: '200px', height: '50px' }}
                       />
@@ -206,7 +212,7 @@ const onChange = event => {
                             placeholder='Trả lời!'
                             cols="120"
                             name='content'
-                            onChange={onChange}
+                            onChange={onChange1}
                             value={reply.content}
                           ></textarea>
                           <button className='btn-send'>
@@ -223,8 +229,11 @@ const onChange = event => {
                   {comments.replies.map((reply, replyIndex) => (
                     <div className='item-cmt-rep'>
                       <div className='box-inf'>
-                        <div className='box-inf-avt'>
-                          <span>D</span>
+                      <div className='box-inf-avt'>
+                          {reply.user.avatar ? (
+                          <img src={reply.user.avatar} style={{width:"40px"}}/>  
+                          ):  <img src='../../image/logo.png' style={{width:"40px"}}/>  }
+                          &nbsp;
                         </div>
                         <div className='box-inf-name'>{reply.author} {reply.user && reply.user.role_id === 1 ? ' (QTV)' : ''}</div>
                       </div>
