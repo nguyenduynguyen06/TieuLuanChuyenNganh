@@ -395,12 +395,9 @@ const ProductDetailComponents = () => {
                         </ButtonComponent>
                     </div>
                     <br></br>
-                    <div style={{ height: '600px',  textAlign: 'justify'}}>
-                        {productDetails &&  productDetails.promotion ? (
-                            <div style={{fontSize:'20px'}}> 
-                            <div style={{fontSize:'40px',color:'red'}}> <GiftOutlined /> Khuyến mãi</div> 
-                            <ProductSale promotion={productDetails.promotion} />
-                            </div>
+                    <div style={{ height: '600px', overflowY: 'scroll',  textAlign: 'justify'}}>
+                        {productDetails ? (
+                            <ProductSale promotion={productDetails.desc} />
                         ) : (
                             null
                         )}
