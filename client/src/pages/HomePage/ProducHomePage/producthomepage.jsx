@@ -76,7 +76,7 @@ function ProductHomePage() {
       <div className='mainContainer' style={containerStyle}>
         {products.filter((product) => product.isHide === false).slice(0, visibleProducts).map((product) => (
           <div className='box' key={product._id}>
-            <div className='card'>
+            <div className='card' onClick={() => handleCardClick(product)} style={{cursor: 'pointer'}}>
               <div className='image' onClick={() => handleCardClick(product)}>
                 <img src={product.thumnails[0]} />
               </div>

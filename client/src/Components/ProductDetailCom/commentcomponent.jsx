@@ -23,7 +23,7 @@ import { useSelector } from 'react-redux';
 const Comment = () => {
   const user = useSelector((state)=> state.user)
   const [commentData, setCommentData] = useState(null);
-  const [showReplyForm, setShowReplyForm] = useState(false);
+  const [showReplyForms, setShowReplyForms] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const {productName} = useParams();
   const [comment, setComment] = useState({
@@ -41,8 +41,19 @@ useEffect(() => {
     userName: user.fullName || '',
   }));
 }, [user.fullName]);
+useEffect(() => {
+  setReply(prevComment => ({
+    ...prevComment,
+    userName: user.fullName || '',
+  }));
+}, [user.fullName]);
 const toggleModal = () => {
   setIsModalVisible(!isModalVisible);
+};
+const toggleReplyForm = (commentIndex) => {
+  const newShowReplyForms = [...showReplyForms];
+  newShowReplyForms[commentIndex] = !newShowReplyForms[commentIndex];
+  setShowReplyForms(newShowReplyForms);
 };
 const onChange = event => {
   event.preventDefault();
@@ -172,10 +183,10 @@ const onChange = event => {
                   <div className='content'>           
                   <p>{comments.content}</p>
                   </div>
-                  <button className='btn-rep' onClick={setShowReplyForm}>
+                  <button className='btn-rep' onClick={() => toggleReplyForm(index)}>
                     <MessageFilled />
                   </button>
-                  {showReplyForm && (
+                  {showReplyForms[index] && (
                     <form onSubmit={(e) => addReply(e, comments._id)}>
                     <div className='reply-form'>
                       <Input

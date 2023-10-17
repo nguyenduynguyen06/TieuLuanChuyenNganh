@@ -114,7 +114,7 @@ function CardComponent() {
         <div className='mainContainer'>
           {currentProducts.filter((product) => product.isHide === false).map((product) => (
             <div className='box' key={product._id} style={{ padding: '0' }}>
-              <div className='card'>
+              <div className='card' onClick={() => handleCardClick(product)} style={{cursor: 'pointer'}}>
                 <div className='image' onClick={() => handleCardClick(product)}>
                   <img src={product.thumnails[0]} />
                 </div>
