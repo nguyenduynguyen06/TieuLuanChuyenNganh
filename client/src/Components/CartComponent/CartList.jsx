@@ -1,6 +1,7 @@
 // src/CartComponent/CartList.js
 import React, { useState } from 'react';
 import { Space, Table, Button, Input } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons'
 
 function CartList() {
   const columns = [
@@ -27,14 +28,14 @@ function CartList() {
       dataIndex: 'quantity',
       render: (text, record, index) => (
         <div>
-          <Button type="primary" size='medium' style={{background:'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px'}} onClick={() => handleDecreaseQuantity(index)}>-</Button>
+          <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={() => handleDecreaseQuantity(index)}>-</Button>
           <Input
             type="number"
             value={quantities[index]}
-            style={{ width: '50px'}}
+            style={{ width: '50px' }}
             onChange={(e) => handleQuantityChange(index, parseInt(e.target.value, 10))}
           />
-          <Button type="primary" size='medium' style={{background:'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px'}} onClick={() => handleIncreaseQuantity(index)}>+</Button>
+          <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={() => handleIncreaseQuantity(index)}>+</Button>
         </div>
       ),
     },
@@ -51,10 +52,11 @@ function CartList() {
     {
       title: 'Thao tác',
       key: 'action',
-      sorter: true,
       render: () => (
         <Space size="middle">
-          <a>Xóa</a>
+          <Button type="primary" danger>
+            <DeleteOutlined />
+          </Button>
         </Space>
       ),
     },

@@ -27,6 +27,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Rating from "./ratecomponent"
 import SuggestProduct from "./suggestproductcomponent"
+import ProductSale from "./productsale"
 
 
 const { Column, ColumnGroup } = Table;
@@ -67,7 +68,7 @@ const ProductDetailComponents = () => {
 
                     setSelectedMemories(initialMemories);
 
-                 
+
                     if (productDetails && productDetails.variant) {
                         productDetails.variant.forEach((variant) => {
                             if (variant.memory === defaultMemory && variant.attributes && variant.attributes.length > 0) {
@@ -77,7 +78,7 @@ const ProductDetailComponents = () => {
                                     [variant._id]: defaultColor,
                                 }));
 
-                              
+
                                 const selectedAttribute = variant.attributes.find((attribute) => attribute.color === defaultColor);
                                 if (selectedAttribute) {
                                     setSelectedSold((prevSelected) => ({
@@ -143,7 +144,7 @@ const ProductDetailComponents = () => {
     };
 
     const handleIncreaseQuantity = () => {
-    
+
         setQuantity(quantity + 1);
     };
     const handleChange = (value) => {
@@ -222,39 +223,39 @@ const ProductDetailComponents = () => {
                     <WrapperPolicy>
                         <div className="policy_intuitive cate42 scenarioNomal">
                             <div className="policy">
-                         
+
                                 <ul className="policy__list">
                                     <li>
-                                        <RetweetOutlined style={{fontSize: '30px',left:0, position: 'absolute',top: '18px'}}></RetweetOutlined>
+                                        <RetweetOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></RetweetOutlined>
                                         <p>
                                             1 đổi 1 trong&nbsp;
                                             <b>7 ngày&nbsp;</b>đối với sản phẩm là điện thoại và trong thời gian bảo hành đối với sản phẩm là phụ kiện&nbsp;
                                             <a href="/" title="Chính sách dổi trả">Xem chi tiết</a>
                                         </p>
                                     </li>
-                                    {productDetails && productDetails.warrantyPeriod ?(
-                                    <li data-field="IsSameBHAndDT">
-                                    <PropertySafetyOutlined style={{fontSize: '30px',left:0, position: 'absolute',top: '18px'}}></PropertySafetyOutlined>
-                                        <p>Bảo hành chính hãng điện thoại&nbsp;
-                                            <b>{productDetails.warrantyPeriod} tháng</b> tại các trung tâm bảo hành hãng&nbsp;
-                                            <a href="/" title="Chính sách bảo hành">Xem chính sách bảo hành</a>
-                                        </p>
-                                    </li>
+                                    {productDetails && productDetails.warrantyPeriod ? (
+                                        <li data-field="IsSameBHAndDT">
+                                            <PropertySafetyOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></PropertySafetyOutlined>
+                                            <p>Bảo hành chính hãng điện thoại&nbsp;
+                                                <b>{productDetails.warrantyPeriod} tháng</b> tại các trung tâm bảo hành hãng&nbsp;
+                                                <a href="/" title="Chính sách bảo hành">Xem chính sách bảo hành</a>
+                                            </p>
+                                        </li>
                                     ) : (
                                         <li data-field="IsSameBHAndDT">
-                                        <PropertySafetyOutlined style={{fontSize: '30px',left:0, position: 'absolute',top: '18px'}}></PropertySafetyOutlined>
+                                            <PropertySafetyOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></PropertySafetyOutlined>
                                             <p> Không bảo hành
                                             </p>
                                         </li>
                                     )}
                                     {productDetails && productDetails.include ? (
-                                    <li>
-                                        <DropboxOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></DropboxOutlined>
-                                        <p>Bộ sản phẩm gồm Bộ sản phẩm gồm: {productDetails.include} </p>
-                                    </li>
+                                        <li>
+                                            <DropboxOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></DropboxOutlined>
+                                            <p>Bộ sản phẩm gồm Bộ sản phẩm gồm: {productDetails.include} </p>
+                                        </li>
                                     ) : null}
                                 </ul>
-                         
+
                             </div>
                         </div>
                     </WrapperPolicy>
@@ -393,6 +394,14 @@ const ProductDetailComponents = () => {
                             styleTextButton={{ color: 'rgb(13,92,182)', fontSize: '15px' }}>
                         </ButtonComponent>
                     </div>
+                    <br></br>
+                    <div style={{ height: '600px', overflowY: 'scroll',  textAlign: 'justify'}}>
+                        {productDetails ? (
+                            <ProductSale promotion={productDetails.desc} />
+                        ) : (
+                            <p>Loading...</p>
+                        )}
+                    </div>
                 </Col>
             </Row>
 
@@ -400,7 +409,7 @@ const ProductDetailComponents = () => {
             <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
                 <Col span={16} style={{ border: '1px solid #e5e5e5', padding: '10px', borderRadius: '4px' }}>
                     <h3>Mô tả sản phẩm</h3>
-                    <div style={{ height: '600px', overflowY: 'scroll', overflowX: 'scroll', textAlign: 'justify' }}>
+                    <div style={{ height: '600px', overflowY: 'scroll', textAlign: 'justify' }}>
                         {productDetails ? (
                             <ProductDescription description={productDetails.desc} />
                         ) : (
@@ -415,18 +424,15 @@ const ProductDetailComponents = () => {
                             <Column dataIndex="info" key="info" />
                         </ColumnGroup>
                     </WrapperPropTable>
-                    {/* <WrapperSeeMore>
-                        <a href="#">Xem toàn bộ thông số</a>
-                    </WrapperSeeMore> */}
                 </Col>
             </Row>
-            <hr className="my-4"/>
-                {memory !== "undefined" && (
-                    <Row>
-                        <SuggestProduct></SuggestProduct>
-                    </Row>
-                    )} 
-            <hr className="my-4"/>
+            <hr className="my-4" />
+            {memory !== "undefined" && (
+                <Row>
+                    <SuggestProduct></SuggestProduct>
+                </Row>
+            )}
+            <hr className="my-4" />
             <Row>
                 <Rating></Rating>
             </Row>
