@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { WrapperBrandList } from "./style";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 
 const ListBrand = () => {
     const { nameCategory } = useParams();
@@ -41,18 +41,16 @@ const ListBrand = () => {
         }
     };
 
-    const handleCardClick = (name) => {
-        window.location.href = `/type/${nameCategory}/${name}`;
-    };
+
 
     return (
         <WrapperBrandList>
             <div className="brand-content">
                 <div className="list-brand">
                     {brands.filter((brand) => brand.isHide === false).map((brand) => (
-                        <a className="list-brand-item" onClick={() => handleCardClick(brand.name)}>
+                        <NavLink className="list-brand-item" to={`/type/${nameCategory}/${brand.name}`}>
                             <img className="brand-img" src={brand.picture} alt={brand.name} />
-                        </a>
+                        </NavLink>
                     ))}
                 </div>
             </div>

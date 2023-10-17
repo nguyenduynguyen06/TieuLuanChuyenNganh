@@ -143,7 +143,7 @@ const ProductDetailComponents = () => {
     };
 
     const handleIncreaseQuantity = () => {
-        // Có thể thêm kiểm tra tối đa ở đây nếu bạn muốn
+    
         setQuantity(quantity + 1);
     };
     const handleChange = (value) => {
@@ -421,9 +421,11 @@ const ProductDetailComponents = () => {
                 </Col>
             </Row>
             <hr className="my-4"/>
-            <Row>
-                <SuggestProduct></SuggestProduct>
-            </Row>
+                {memory !== "undefined" && (
+                    <Row>
+                        <SuggestProduct></SuggestProduct>
+                    </Row>
+                    )} 
             <hr className="my-4"/>
             <Row>
                 <Rating></Rating>
