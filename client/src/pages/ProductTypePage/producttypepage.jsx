@@ -24,7 +24,6 @@ const TypeProductPage = () => {
                     </Col>
                     <Col span={20}>
                         <CardComponent/>
-                        <FilterCard/>
                     </Col>
                 </Row>
                 <br></br>
