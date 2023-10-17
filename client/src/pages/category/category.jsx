@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Card } from 'antd';
 import { CardWrapper } from './style';
 import axios from 'axios';
+import { Link, NavLink } from 'react-router-dom';
 
 const gridStyle = {
   width: '20%',
@@ -41,7 +42,7 @@ const Category = () => {
       <span style={{ fontSize: '24px', color: '#fff', fontWeight: 600, textTransform: 'uppercase' }} >Danh mục</span>
       </div>
       <CardWrapper >
-        {categories.filter((category) => category.isHide === false).map((category) => (
+        {categories.filter((category) => category.isHide === false).map((category) => (      
           <Card.Grid
             key={category._id}
             style={{ ...gridStyle, cursor: 'pointer', height: '100px',backgroundImage: 'linear-gradient(to right, #94b9ff,  #cdffd8)' }}

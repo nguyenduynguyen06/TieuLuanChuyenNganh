@@ -17,6 +17,13 @@ const TableComment = () => {
       {
         title: 'Tên người bình luận',
         dataIndex: 'author',
+        render: (text, record) => {
+          if (record.user.role_id === 1) {
+            return text + ' (QTV)';
+          } else {
+            return text;
+          }
+        },
       },
       {
         title: 'Nội dung',

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { WrapperHomePage } from "./styled";
 import { Col, Row } from 'antd'
 import Category from '../category/category'
@@ -9,6 +9,9 @@ import AccessoryHomePage from "./ProducHomePage/accessoryHomePage";
 import Header from "../../Components/Header/header";
 
 const HomePage = () => {
+  useEffect(()=>{
+    window.scrollTo({top:0,behavior: "instant"})
+},[])
   return (
     <div className="home-container">
       <Header></Header>

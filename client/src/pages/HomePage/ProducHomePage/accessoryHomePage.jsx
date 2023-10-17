@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { WrapperButtonMore, WrapperCard } from '../styled';
 import axios from 'axios';
+import { NavLink } from 'react-router-dom';
 
 function AccessoryHomePage() {
   const [products, setProducts] = useState([]);
@@ -29,10 +30,6 @@ function AccessoryHomePage() {
   };
   
 
-  const handleCardClick = (product) => {
-    const url = `/product/${product.name}/undefined`;
-    window.location.href = url;
-  };
 
   const handleShowMoreClick = () => {
     setVisibleProducts(visibleProducts + 5);
@@ -68,10 +65,10 @@ function AccessoryHomePage() {
       <div className='mainContainerAcc' style={containerStyle}>
         {products.filter((product) => product.isHide === false).slice(0, visibleProducts).map((product) => (
           <div className='box' key={product._id}>
-            <div className='card' onClick={() => handleCardClick(product)} style={{cursor: 'pointer'}}>
-              <div className='image' onClick={() => handleCardClick(product)}>
+            <div className='card' >
+            <NavLink className="image" to={`/product/${product.name}/undefined`}>
                 <img src={product.thumnails[0]} />
-              </div>
+              </NavLink>
               <div className='desc'>
                 <h1>{product?.name}</h1>
                 <div>

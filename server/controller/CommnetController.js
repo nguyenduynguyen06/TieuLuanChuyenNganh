@@ -4,15 +4,15 @@ const User = require('../Model/UserModel');
 
 const addComment = async (req, res) => {
     try {
-      const { productName } = req.params;
+      const { productName,userId } = req.params;
       const product = await Product.findOne({ name: productName });
-      const { userName, content } = req.body;
+      const { author, content } = req.body;
       let user
-     user = await User.findOne({ fullName: userName });
+      user = await User.findOne({ _id: userId });
       const comment = new Comment({
         product: product._id,
         user: user ? user._id : null,
-        author: user ? user.fullName : userName,
+        author,
         content,
         check: false,
       });
@@ -26,12 +26,15 @@ const addComment = async (req, res) => {
   
 const addReply = async (req, res) => {
     try {
-      const { userName, author, content } = req.body;
+      const {  author, content } = req.body;
       const commentId = req.params.commentId;
+      const userId  = req.params.userId
+      const productName  = req.params.productName
+      const product = await Product.findOne({ name: productName });
       let user;
       
-      if (userName) {
-        user = await User.findOne({ fullName: userName });
+      if (userId) {
+        user = await User.findOne({ _id: userId });
       }
       
       const parentComment = await Comment.findById(commentId);
@@ -41,8 +44,9 @@ const addReply = async (req, res) => {
       }
   
       const reply = new Comment({
+        product: product._id,
         user: user ? user._id : null,
-        author: author || (user ? user.fullName : userName),
+        author,
         content,
         check: false,
       });
@@ -100,7 +104,7 @@ const deleteComment = async (req, res) => {
 };
 const getAll = async (req, res) => {
   try {
-    const comment = await Comment.find().populate('product');
+    const comment = await Comment.find().populate('product').populate('user');
     return res.status(200).json({ data: comment });
   } catch (error) {
     console.error(error);
