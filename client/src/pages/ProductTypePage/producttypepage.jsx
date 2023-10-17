@@ -4,6 +4,7 @@ import CardComponent from "../../Components/CardComponent/CardComponent";
 import { Col, Row } from 'antd'
 import ListBrand from "../../Components/ListBrandComponent/ListBrandComponent";
 import Header from "../../Components/Header/header";
+import FilterCard from "../../Components/CardComponent/filtercard";
 
 
 const TypeProductPage = () => {
@@ -23,6 +24,7 @@ const TypeProductPage = () => {
                     </Col>
                     <Col span={20}>
                         <CardComponent/>
+                        <FilterCard/>
                     </Col>
                 </Row>
                 <br></br>

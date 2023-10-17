@@ -395,7 +395,7 @@ const ProductDetailComponents = () => {
                         </ButtonComponent>
                     </div>
                     <br></br>
-                    <div style={{ height: '600px', overflowY: 'scroll',  textAlign: 'justify'}}>
+                    <div style={{ height: '465px', overflowY: 'scroll',  textAlign: 'justify'}}>
                         {productDetails ? (
                             <ProductSale promotion={productDetails.desc} />
                         ) : (
