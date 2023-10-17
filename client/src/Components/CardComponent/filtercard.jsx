@@ -10,7 +10,6 @@ function FilterCard() {
     const location = useLocation();
     const searchKeyword = new URLSearchParams(location.search).get('keyword');
     const [products, setProducts] = useState([]);
-    const [selectedMemories, setSelectedMemories] = useState({});
 
     useEffect(() => {
         if (nameCategory) {
@@ -30,12 +29,7 @@ function FilterCard() {
         axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${keyword}`)
             .then((response) => {
                 const productsData = response.data.data;
-                setProducts(productsData);
-                const initialMemories = {};
-                productsData.forEach((product) => {
-                    initialMemories[product._id] = product.variant[0]?.memory;
-                });
-                setSelectedMemories(initialMemories);
+                setProducts(productsData);  
             })
             .catch((error) => {
                 console.error('Lỗi khi gọi API tìm kiếm: ', error);
@@ -55,11 +49,8 @@ function FilterCard() {
             );
             const productsData = response.data.data;
             setProducts(productsData);
-            const initialMemories = {};
-            productsData.forEach((product) => {
-                initialMemories[product._id] = product.variant[0]?.memory;
-            });
-            setSelectedMemories(initialMemories);
+         
+     
         } catch (error) {
             console.error('Lỗi:', error);
         }
@@ -85,20 +76,14 @@ function FilterCard() {
             );
             const productsData = response.data.data;
             setProducts(productsData);
-            const initialMemories = {};
-            productsData.forEach((product) => {
-                initialMemories[product._id] = product.variant[0]?.memory;
-            });
-            setSelectedMemories(initialMemories);
+          
+          
         } catch (error) {
             console.error('Lỗi:', error);
         }
     }
 
-    const handleCardClick = (product) => {
-        const url = `/product/${product.name}/${selectedMemories[product._id]}`;
-        window.location.href = url;
-    };
+ 
 
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(10);
@@ -118,7 +103,7 @@ function FilterCard() {
                             product.variant.map((variant) => (
                                 <div className='box' key={product._id + variant.memory} style={{ padding: '0' }}>
                                     <div className='card'>
-                                        <NavLink className='image' to={`/product/${product.name}/${selectedMemories[product._id]}`}>
+                                        <NavLink className='image' to={`/product/${product.name}/${variant.memory}`}>
                                             <img src={product.thumnails[0]} />
                                         </NavLink>
                                         <div className='desc'>
