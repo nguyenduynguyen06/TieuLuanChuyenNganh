@@ -12,14 +12,46 @@ function FilterCard() {
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const minPrice = searchParams.get('minPrice');
+        const maxPrice = searchParams.get('maxPrice');
+        const includeOldPrice = searchParams.get('includeOldPrice');
+        const selectedMemory = searchParams.get('selectedMemory');
         if (nameCategory) {
+        if (minPrice !== null && maxPrice !== null || includeOldPrice !== null || selectedMemory !== null  ) {
+            if (location.pathname.startsWith('/lowtoHigh')) {
+                getProductsByCategoryNameWithPrice(nameCategory, minPrice, maxPrice,includeOldPrice,selectedMemory);
+            } else if (location.pathname.startsWith('/hightoLow')) {
+                getProductsByCategoryNameHightoLowWithPrice(nameCategory, minPrice, maxPrice,includeOldPrice,selectedMemory);
+            }
+        } else {
             if (nameBrand) {
                 getProductsByCategoryAndBrand(nameCategory, nameBrand);
             } else {
-                getProductsByCategoryName(nameCategory);
+                if (location.pathname.startsWith('/lowtoHigh')) {
+                    getProductsByCategoryName(nameCategory);
+                } else if (location.pathname.startsWith('/hightoLow')) {
+                    getProductsByCategoryNameHightoLow(nameCategory);
+                }
             }
         }
-    }, [nameCategory, nameBrand]);
+    }
+    }, [nameCategory, nameBrand, location.pathname]);
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const minPrice = searchParams.get('minPrice');
+        const maxPrice = searchParams.get('maxPrice');
+        const includeOldPrice = searchParams.get('includeOldPrice');
+        const selectedMemory = searchParams.get('selectedMemory');
+      
+        if (minPrice !== null && maxPrice !== null || includeOldPrice !== null || selectedMemory !== null) {
+          if (location.pathname.startsWith('/lowtoHigh')) {
+            getProductsByCategoryNameWithPrice(nameCategory, minPrice, maxPrice, includeOldPrice, selectedMemory);
+          } else if (location.pathname.startsWith('/hightoLow')) {
+            getProductsByCategoryNameHightoLowWithPrice(nameCategory, minPrice, maxPrice, includeOldPrice, selectedMemory);
+          }
+        }
+      }, [location.search]);
     useEffect(() => {
         if (searchKeyword) {
             performSearch(searchKeyword);
@@ -45,7 +77,7 @@ function FilterCard() {
                 return;
             }
             const response = await axios.get(
-                `${process.env.REACT_APP_API_URL}/product/getIdByCategory/${category._id}`
+                `${process.env.REACT_APP_API_URL}/product/filter/${category._id}`
             );
             const productsData = response.data.data;
             setProducts(productsData);
@@ -55,6 +87,64 @@ function FilterCard() {
             console.error('Lỗi:', error);
         }
     };
+    const getProductsByCategoryNameHightoLow = async (categoryName) => {
+        try {
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
+            const categories = res.data.data;
+            const category = categories.find((cat) => cat.name === categoryName);
+            if (!category) {
+                console.error('Không tìm thấy danh mục');
+                return;
+            }
+            const response = await axios.get(
+                `${process.env.REACT_APP_API_URL}/product/filter/highToLow/${category._id}`
+            );
+            const productsData = response.data.data;
+            setProducts(productsData);
+         
+     
+        } catch (error) {
+            console.error('Lỗi:', error);
+        }
+    };
+    const getProductsByCategoryNameWithPrice = async (categoryName, minPrice, maxPrice, includeOldPrice, selectedMemory) => {
+        try {
+          const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
+          const categories = res.data.data;
+          const category = categories.find((cat) => cat.name === categoryName);
+          if (!category) {
+            console.error('Không tìm thấy danh mục');
+            return;
+          }
+          let queryParams = `minPrice=${minPrice || ''}&maxPrice=${maxPrice || ''}&includeOldPrice=${includeOldPrice || ''}&selectedMemory=${selectedMemory || ''}`;
+      
+          const response = await axios.get(
+            `${process.env.REACT_APP_API_URL}/product/filter/${category._id}?${queryParams}`
+          );
+          const productsData = response.data.data;
+          setProducts(productsData);
+        } catch (error) {
+          console.error('Lỗi:', error);
+        }
+      };
+      const getProductsByCategoryNameHightoLowWithPrice = async (categoryName, minPrice, maxPrice,includeOldPrice,selectedMemory) => {
+        try {
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
+            const categories = res.data.data;
+            const category = categories.find((cat) => cat.name === categoryName);
+            if (!category) {
+                console.error('Không tìm thấy danh mục');
+                return;
+            }
+            let queryParams = `minPrice=${minPrice || ''}&maxPrice=${maxPrice || ''}&includeOldPrice=${includeOldPrice || ''}&selectedMemory=${selectedMemory || ''}`;
+          const response = await axios.get(
+            `${process.env.REACT_APP_API_URL}/product/filter/highToLow/${category._id}?${queryParams}`)
+                const productsData = response.data.data;
+          setProducts(productsData);
+        } catch (error) {
+          console.error('Lỗi:', error);
+        }
+      };
     const getProductsByCategoryAndBrand = async (categoryName, brandName) => {
         try {
             const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);

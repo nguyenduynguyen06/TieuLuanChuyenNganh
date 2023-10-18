@@ -27,7 +27,9 @@ gap: 10px;
     top: 100%;
     right: 0;
   }
-  
+  .memory-button.selected {
+    border: 1px solid #FE3300;
+  }
 `
 export const WrapperTextValue =styled.a`
     color: rgb(56,56,61);

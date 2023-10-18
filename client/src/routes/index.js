@@ -44,6 +44,10 @@ export const routes = [
         page: TypeProductPage,
     },
     {
+        path:'/type',
+        page: TypeProductPage,
+    },
+    {
         path:'/product/:productName/:memory',
         page: ProductDetail,
         isShowHeader: true
@@ -54,7 +58,27 @@ export const routes = [
         isShowHeader: true
     },
     {
-        path:'/filter',
+        path:'/lowtoHigh/:nameCategory/:nameBrand',
+        page: FilterProductPage,
+    },
+    {
+        path:'/lowtoHigh/:nameCategory',
+        page: FilterProductPage,
+    },
+    {
+        path:'/lowtoHigh',
+        page: FilterProductPage,
+    },
+    {
+        path:'/highToLow/:nameCategory/:nameBrand',
+        page: FilterProductPage,
+    },
+    {
+        path:'/highToLow/:nameCategory',
+        page: FilterProductPage,
+    },
+    {
+        path:'/highToLow',
         page: FilterProductPage,
     },
   

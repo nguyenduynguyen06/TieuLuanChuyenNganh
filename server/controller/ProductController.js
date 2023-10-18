@@ -214,4 +214,73 @@ const getAllProduct = async (req, res) => {
   }
 }
 
-module.exports = { addProduct,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts,getAllProduct,getProductsByCategoryAndBrand ,detailsProduct};
+const filterProductsByCategory = async (req, res) => {
+  try {
+    const categoryId = req.params.categoryId;
+    const minPrice = parseFloat(req.query.minPrice) || 0;
+    const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_VALUE;
+    const includeOldPrice = req.query.includeOldPrice === 'true';
+    const selectedMemory = req.query.selectedMemory;
+
+    let matchCondition = {
+      newPrice: {
+        $gte: minPrice,
+        $lte: maxPrice,
+      },
+    };
+
+    if (includeOldPrice) {
+      matchCondition.$or = [{ oldPrice: { $exists: true } }];
+    }
+
+    if (selectedMemory) {
+      matchCondition.$and = [
+        {
+          $or: [
+            { memory: selectedMemory },
+            { memory: { $exists: false } },
+          ],
+        },
+      ];
+    }
+
+    const products = await Product.find({ category: categoryId })
+      .populate('variant', null, matchCondition)
+      .populate('brand')
+      .populate('category');
+
+    let filteredProducts = products.filter((product) =>
+      product.variant.some((variant) =>
+        variant.newPrice >= minPrice && variant.newPrice <= maxPrice
+      )
+    );
+
+    const sortMode = req.query.sort || 'lowToHigh';
+    if (sortMode === 'highToLow') {
+      filteredProducts = filteredProducts.sort((a, b) => {
+        const priceA = a.variant[0].newPrice;
+        const priceB = b.variant[0].newPrice;
+        return priceB - priceA;
+      });
+    } else {
+      filteredProducts = filteredProducts.sort((a, b) => {
+        const priceA = a.variant[0].newPrice;
+        const priceB = b.variant[0].newPrice;
+        return priceA - priceB;
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: filteredProducts,
+    });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+
+
+
+
+module.exports = { addProduct,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts,getAllProduct,getProductsByCategoryAndBrand ,detailsProduct,filterProductsByCategory};

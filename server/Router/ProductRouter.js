@@ -18,4 +18,9 @@ router.post('/addAttributes/:id', productvariantController.addAttributes);
 router.delete('/deleteAttributes/:id/:attributeIdToRemove', productvariantController.deleteAttributes);
 router.get('/getAll',productController.getAllProduct)
 router.get('/getDetails/:name/:memory', productController.detailsProduct);
+router.get('/filter/:categoryId', productController.filterProductsByCategory);
+router.get('/filter/highToLow/:categoryId', (req, res) => {
+  req.query.sort = 'highToLow';
+  productController.filterProductsByCategory(req, res);
+});
 module.exports = router;
