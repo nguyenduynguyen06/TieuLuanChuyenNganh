@@ -17,21 +17,21 @@ const FilterBar = () => {
 
     const menu2 = (
         <Menu>
-            <Menu.Item key="5">32GB</Menu.Item>
-            <Menu.Item key="6">64GB</Menu.Item>
-            <Menu.Item key="7">128GB</Menu.Item>
-            <Menu.Item key="8">256GB</Menu.Item>
-            <Menu.Item key="9">512GB</Menu.Item>
-            <Menu.Item key="10">1TB</Menu.Item>
+            <Menu.Item key="7">32GB</Menu.Item>
+            <Menu.Item key="8">64GB</Menu.Item>
+            <Menu.Item key="9">128GB</Menu.Item>
+            <Menu.Item key="10">256GB</Menu.Item>
+            <Menu.Item key="11">512GB</Menu.Item>
+            <Menu.Item key="12">1TB</Menu.Item>
         </Menu>
     );
     const menu3 = (
         <Menu>
-            <Menu.Item key="11">5 sao</Menu.Item>
-            <Menu.Item key="12">4 sao</Menu.Item>
-            <Menu.Item key="13">3 sao</Menu.Item>
-            <Menu.Item key="14">2 sao</Menu.Item>
-            <Menu.Item key="15">1 sao</Menu.Item>
+            <Menu.Item key="13">5 sao</Menu.Item>
+            <Menu.Item key="14">4 sao</Menu.Item>
+            <Menu.Item key="15">3 sao</Menu.Item>
+            <Menu.Item key="16">2 sao</Menu.Item>
+            <Menu.Item key="17">1 sao</Menu.Item>
 
         </Menu>
     );
