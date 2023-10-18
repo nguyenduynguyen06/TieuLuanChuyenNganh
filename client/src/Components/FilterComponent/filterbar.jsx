@@ -138,11 +138,11 @@ const FilterBar = () => {
     );
     const menu3 = (
         <Menu>
-            <Menu.Item key="11">5 sao</Menu.Item>
-            <Menu.Item key="12">4 sao</Menu.Item>
-            <Menu.Item key="13">3 sao</Menu.Item>
-            <Menu.Item key="14">2 sao</Menu.Item>
-            <Menu.Item key="15">1 sao</Menu.Item>
+            <Menu.Item key="13">5 sao</Menu.Item>
+            <Menu.Item key="14">4 sao</Menu.Item>
+            <Menu.Item key="15">3 sao</Menu.Item>
+            <Menu.Item key="16">2 sao</Menu.Item>
+            <Menu.Item key="17">1 sao</Menu.Item>
 
         </Menu>
     );
