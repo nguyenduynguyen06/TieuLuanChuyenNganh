@@ -6,6 +6,7 @@ import OrderPage from "../pages/oders";
 import ProductDetail from "../pages/ProductDetail/productdetail";
 import TypeProductPage from "../pages/ProductTypePage/producttypepage";
 import CartPage from "../pages/CartPage/CartPage";
+import FilterProductPage from "../pages/ProductTypePage/productfilterpage";
 export const routes = [
     {
         path:'/',
@@ -48,13 +49,13 @@ export const routes = [
         isShowHeader: true
     },
     {
-        path:'/type',
-        page: TypeProductPage,
-    },
-    {
         path:'/cart',
         page: CartPage,
         isShowHeader: true
+    },
+    {
+        path:'/filter',
+        page: FilterProductPage,
     },
   
 ]
