@@ -252,7 +252,7 @@ const onChange1 = event => {
         </div>
            ))
            ) : (
-             <p>Loading...</p>
+              null
            )}
       </div>
     </WrapperCommentNew>
