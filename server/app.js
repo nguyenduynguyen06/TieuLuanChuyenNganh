@@ -36,12 +36,11 @@ app.use('/api/category',routerCategory);
 app.use('/api/comment',routerComment);
 app.use('/api/brand',routerBrand)
 app.use('/api/cart',routerCart)
-if(process.env.NODE_ENV === 'production')
-{
-    app.use(express.static('./client/build'));
-    app.get("*",(req,res) => {
-        res.sendFile(path.resolve(__dirname,'./client',"build",'index.html'))
-    })
+if(process.env.NODE_ENV === 'production'){
+    app.use(express.static(path.join(__dirname,'../client/build')))
+app.get('*',(req,res) =>{
+    res.sendFile(path.join(__dirname,'../client/build/index.html'))
+})
 }
 connect2DB();
 const PORT = process.env.PORT 
