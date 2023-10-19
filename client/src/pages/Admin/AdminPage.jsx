@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppstoreOutlined, UserOutlined,UnorderedListOutlined,QqOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { getItem} from './utils';
@@ -15,7 +15,9 @@ import NewBrand from '../../Components/admin/AdminBrand/NewBrand';
 import AdminComment from '../../Components/admin/AdminComment/AdminComment';
 
 const AdminHomePage = () => {
-
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" })
+}, [])
   const [keySelected, setKeySelected] = useState('');
 
   const renderPage = (key) => {

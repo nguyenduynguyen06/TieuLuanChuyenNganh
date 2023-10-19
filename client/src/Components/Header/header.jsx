@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Badge, Button, Col } from 'antd';
+import { Badge, Button, Col,Menu,Dropdown } from 'antd';
 import axios from "axios";
 
 import { WrapperCartButton, WrapperHeader, WrapperHeaderAccount, WrapperHeaderImage, WrapperHeaderProduct, WrapperSearch, WrapperSuperHeader } from "./style";
@@ -8,7 +8,8 @@ import { MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem } from
 import {
   ShoppingCartOutlined,
   SearchOutlined,
-  UserOutlined
+  UserOutlined,
+  DownOutlined
 } from '@ant-design/icons';
 import Login from "./login"
 import {
@@ -81,7 +82,22 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     setCentredModal(false);
   };
 
-
+  const menu = (
+    <Menu>
+      {user.role_id === 1 && (
+        <Menu.Item key="1">
+          <NavLink to="/admin">Quản lý</NavLink>
+        </Menu.Item>
+      )}
+      <Menu.Item key="2">
+        <NavLink to="/profile">Thông tin cá nhân</NavLink>
+      </Menu.Item>
+      <Menu.Item key="3">
+        <NavLink  onClick={handleLogout}>Đăng xuất</NavLink>
+      </Menu.Item>
+    </Menu>
+  );
+  
   return (
     <WrapperSuperHeader>
       <WrapperHeader className="header-container" style={isScrolled ? { position: 'fixed', zIndex: '100', width: '100%' } : {}}>
@@ -125,19 +141,11 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         <WrapperHeaderAccount>
           {user?.fullName ? (
             <div>
-              <MDBDropdown clickable >
-                <MDBDropdownToggle tag="span" style={{ width: '50px', height: '50px', cursor: 'pointer' }}>
-                  <UserOutlined style={{ fontSize: '30px' }} /> Xin chào, {user.fullName}
-                </MDBDropdownToggle>
-                <MDBDropdownMenu>
-                  {user.role_id === 1 ? (
-                    <MDBDropdownItem link href="/admin">Quản lý</MDBDropdownItem>
-                  ) : (<span></span>
-                  )}
-                  <MDBDropdownItem link href="/profile">Thông tin cá nhân</MDBDropdownItem>
-                  <MDBDropdownItem link onClick={handleLogout}>Đăng xuất</MDBDropdownItem>
-                </MDBDropdownMenu>
-              </MDBDropdown>
+                  <Dropdown overlay={menu} placement="bottomLeft" style={{ width: '50px', height: '50px', cursor: 'pointer' }} >
+                    <div className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                    <UserOutlined style={{ fontSize: '30px' }} /> Xin chào, {user.fullName} 
+                    </div>
+                  </Dropdown>
             </div>
           ) : (
             <div>
