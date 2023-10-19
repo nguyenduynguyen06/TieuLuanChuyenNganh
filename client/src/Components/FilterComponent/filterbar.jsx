@@ -15,12 +15,16 @@ const FilterBar = () => {
     } else if (location.pathname.startsWith('/hightoLow')) {
       pathToUse = '/hightoLow';
     }
+    else if (location.pathname.startsWith('/type')) {
+        pathToUse = '/lowtoHigh';
+    }
+    const hasNameBrand = nameBrand ? `/${nameBrand}` : '';
     const menu1 = (
         <Menu>
             <Menu.Item key="1">     
             <NavLink
             to={{
-                pathname: `${pathToUse}/${nameCategory}`,
+                pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
                 search: '?minPrice=0&maxPrice=2000000',
             }}
             >
@@ -30,7 +34,7 @@ const FilterBar = () => {
             <Menu.Item key="2">
                 <NavLink
                 to={{
-                    pathname: `${pathToUse}/${nameCategory}`,
+                    pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
                     search: '?minPrice=2000000&maxPrice=4000000',
                 }}
                 >
@@ -40,7 +44,7 @@ const FilterBar = () => {
             <Menu.Item key="3">
             <NavLink
                 to={{
-                    pathname: `${pathToUse}/${nameCategory}`,
+                    pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
                     search: '?minPrice=4000000&maxPrice=7000000',
                 }}
                 >
@@ -50,7 +54,7 @@ const FilterBar = () => {
             <Menu.Item key="4">
             <NavLink
                 to={{
-                    pathname: `${pathToUse}/${nameCategory}`,
+                    pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
                     search: '?minPrice=7000000&maxPrice=13000000',
                 }}
                 >
@@ -59,7 +63,7 @@ const FilterBar = () => {
             <Menu.Item key="5">
             <NavLink
                 to={{
-                    pathname: `${pathToUse}/${nameCategory}`,
+                    pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
                     search: '?minPrice=13000000&maxPrice=20000000',
                 }}
                 >
@@ -68,7 +72,7 @@ const FilterBar = () => {
             <Menu.Item key="6">
             <NavLink
                 to={{
-                    pathname: `${pathToUse}/${nameCategory}`,
+                    pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
                     search: '?minPrice=20000000&maxPrice=9999999999999',
                 }}
                 >
@@ -82,7 +86,7 @@ const FilterBar = () => {
             <Menu.Item key="5">
             <NavLink
                 to={{
-                    pathname: `${pathToUse}/${nameCategory}`,
+                    pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
                     search: '?selectedMemory=32GB',
                 }}
                 >
@@ -92,7 +96,7 @@ const FilterBar = () => {
             <Menu.Item key="6">
             <NavLink
                 to={{
-                    pathname: `${pathToUse}/${nameCategory}`,
+                    pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
                     search: '?selectedMemory=64GB',
                 }}
                 >
@@ -101,7 +105,7 @@ const FilterBar = () => {
             <Menu.Item key="7">
             <NavLink
                 to={{
-                    pathname: `${pathToUse}/${nameCategory}`,
+                    pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
                     search: '?selectedMemory=128GB',
                 }}
                 >
@@ -110,7 +114,7 @@ const FilterBar = () => {
             <Menu.Item key="8">
             <NavLink
                 to={{
-                    pathname: `${pathToUse}/${nameCategory}`,
+                    pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
                     search: '?selectedMemory=256GB',
                 }}
                 >
@@ -119,7 +123,7 @@ const FilterBar = () => {
             <Menu.Item key="9">
             <NavLink
                 to={{
-                    pathname: `${pathToUse}/${nameCategory}`,
+                    pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
                     search: '?selectedMemory=512GB',
                 }}
                 >
@@ -128,7 +132,7 @@ const FilterBar = () => {
             <Menu.Item key="10">
             <NavLink
                 to={{
-                    pathname: `${pathToUse}/${nameCategory}`,
+                    pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
                     search: '?selectedMemory=1TB',
                 }}
                 >
@@ -148,11 +152,11 @@ const FilterBar = () => {
     );
    return (
         <WrapperFilterList>
-            <NavLink to= {`/hightoLow/${nameCategory}`}>
+            <NavLink to= {`/hightoLow/${nameCategory}${hasNameBrand}`}>
             <Button style={{ display: 'inline-flex', alignItems: 'center' }} className={isFilterPage1 ? 'memory-button selected' : 'memory-button'}>
             <FallOutlined style={{ verticalAlign: 'middle', marginRight: '5px' }}/>Giá Cao - Thấp</Button></NavLink>
             
-            <NavLink to= {`/lowtoHigh/${nameCategory}`} ><Button style={{ display: 'inline-flex', alignItems: 'center' }} className={isFilterPage ? 'memory-button selected' : 'memory-button'}> 
+            <NavLink to= {`/lowtoHigh/${nameCategory}${hasNameBrand}`} ><Button style={{ display: 'inline-flex', alignItems: 'center' }} className={isFilterPage ? 'memory-button selected' : 'memory-button'}> 
             <RiseOutlined style={{ verticalAlign: 'middle', marginRight: '5px' }}/>Giá Thấp - Cao</Button></NavLink>
 
             <Dropdown overlay={menu1} placement="bottomLeft">
@@ -172,7 +176,7 @@ const FilterBar = () => {
           </a>
         </Dropdown>
         <NavLink  to={{
-                    pathname: `${pathToUse}/${nameCategory}`,
+                    pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
                     search: '?includeOldPrice=true',
                 }} ><Button style={{ marginLeft: '10px' }}>Giảm giá</Button></NavLink>
       </div>
