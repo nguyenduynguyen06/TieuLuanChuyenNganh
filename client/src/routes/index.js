@@ -78,5 +78,8 @@ export const routes = [
         path:'/highToLow',
         page: FilterProductPage,
     },
-
+    {
+        path:'/payment-infor',
+        page: PaymentInfo
+    }
 ]
