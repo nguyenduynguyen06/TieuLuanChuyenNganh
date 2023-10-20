@@ -97,7 +97,19 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
       </Menu.Item>
     </Menu>
   );
-  
+  useEffect(() => {
+    if (user && user._id) {
+      axios.get(`${process.env.REACT_APP_API_URL}/cart/getToCart/${user._id}`)
+        .then((response) => {
+          const cartData = response.data.data;
+          setData(cartData);
+        })
+        .catch((error) => {
+          console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
+        });
+    }
+  }, [user]);
+  const [data,setData] = useState(null);
   return (
     <WrapperSuperHeader>
       <WrapperHeader className="header-container" style={isScrolled ? { position: 'fixed', zIndex: '100', width: '100%' } : {}}>
@@ -126,10 +138,11 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
       />
         )}
         </WrapperSearch>
+        <NavLink to={`/cart`}>
         <WrapperCartButton>
           {!isHiddenCart && (
             <div className="grid-item">
-              <Badge count={4} size="small">
+              <Badge count={data ? data.length : 0} size="small">
                 <button class="custom-button" style={{ backgroundColor: '#CC0000', right: '0px' }}>
                   <ShoppingCartOutlined style={{ fontSize: '20px' }} >
                   </ShoppingCartOutlined>&nbsp;Giỏ hàng
@@ -138,6 +151,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             </div>
           )}
         </WrapperCartButton>
+        </NavLink>
         <WrapperHeaderAccount>
           {user?.fullName ? (
             <div>

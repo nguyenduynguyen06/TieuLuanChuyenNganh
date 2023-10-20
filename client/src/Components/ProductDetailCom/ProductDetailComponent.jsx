@@ -28,17 +28,20 @@ import 'slick-carousel/slick/slick-theme.css';
 import Rating from "./ratecomponent"
 import SuggestProduct from "./suggestproductcomponent"
 import ProductSale from "./productsale"
+import { useSelector } from "react-redux"
+import { CommentsDisabledOutlined } from "@mui/icons-material"
 
 
 const { Column, ColumnGroup } = Table;
 
 const ProductDetailComponents = () => {
-
+    const user = useSelector((state)=> state.user)
     const [productDetails, setProductDetails] = useState(null);
     const { productName, memory } = useParams();
-    const [selectedColor, setSelectedColor] = useState({});
+    const [selectedColor, setSelectedColor] = useState('');
     const [selectedSold, setSelectedSold] = useState({});
     const [selectedMemories, setSelectedMemories] = useState({});
+    const [selectedSKU, setSelectedSKU] = useState({});
     const sliderSettings = {
         dots: true,
         infinite: true,
@@ -52,6 +55,14 @@ const ProductDetailComponents = () => {
                 {dots}
             </ul>)
     };
+    const addToCart = async (userId, productName, SKU, quantity) => {
+        try {
+          const response = await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${userId}&productName=${productName}&SKU=${SKU}&quantity=${quantity}`) 
+          return response.data; 
+        } catch (error) {
+          throw error;
+        }
+      };
 
     useEffect(() => {
         if (memory !== `undefined`) {
@@ -77,13 +88,15 @@ const ProductDetailComponents = () => {
                                     ...prevSelected,
                                     [variant._id]: defaultColor,
                                 }));
-
-
                                 const selectedAttribute = variant.attributes.find((attribute) => attribute.color === defaultColor);
                                 if (selectedAttribute) {
                                     setSelectedSold((prevSelected) => ({
                                         ...prevSelected,
                                         [variant._id]: selectedAttribute.sold,
+                                    }));
+                                    setSelectedSKU((prevSelected) => ({
+                                        ...prevSelected,
+                                        [variant._id]: selectedAttribute.sku,
                                     }));
                                 }
                             }
@@ -102,10 +115,7 @@ const ProductDetailComponents = () => {
                     const initialMemories = {
                         [productDetails._id]: productDetails.variant[0].memory
                     };
-
                     setSelectedMemories(initialMemories);
-
-
                     if (productDetails && productDetails.variant) {
                         productDetails.variant.forEach((variant) => {
                             if (variant.memory === productDetails.variant[0].memory && variant.attributes && variant.attributes.length > 0) {
@@ -114,13 +124,15 @@ const ProductDetailComponents = () => {
                                     ...prevSelected,
                                     [variant._id]: defaultColor,
                                 }));
-
-
                                 const selectedAttribute = variant.attributes.find((attribute) => attribute.color === defaultColor);
                                 if (selectedAttribute) {
                                     setSelectedSold((prevSelected) => ({
                                         ...prevSelected,
                                         [variant._id]: selectedAttribute.sold,
+                                    }));
+                                    setSelectedSKU((prevSelected) => ({
+                                        ...prevSelected,
+                                        [variant._id]: selectedAttribute.sku,
                                     }));
                                 }
                             }
@@ -132,8 +144,27 @@ const ProductDetailComponents = () => {
                 });
         }
     }, [productName, memory]);
-
-
+    const handleAddToCart = async () => {
+        try {
+          if (memory !== 'undefined') {
+            const selectedVariant = productDetails.variant.find((variant) => variant.memory === memory);
+            if (selectedVariant) {
+              const selectedSKUName = selectedSKU[selectedVariant._id]
+                console.log('selectedSKUName',selectedSKUName)
+                await addToCart(user._id, productName, selectedSKUName, quantity);
+            }
+          } else{
+            const selectValues = Object.values(selectedSKU);
+            const selectedColorName = selectValues[selectValues.length - 1];
+            await addToCart(user._id, productName, selectedColorName, quantity);
+          }
+        } catch (error) {
+          console.error('Lỗi:', error);
+        }
+      };
+      
+      
+  
 
     const [quantity, setQuantity] = useState(1); // Đặt giá trị ban đầu là 3
 
@@ -166,11 +197,6 @@ const ProductDetailComponents = () => {
             info: memory,
         });
     }
-    const handleMemoryClick = (newMemory) => {
-        const newUrl = `/product/${productName}/${newMemory}`;
-        window.location.href = newUrl
-    };
-
     return (
         <WrapperDetail>
             <Row style={{ padding: '15px 12px' }}>
@@ -263,10 +289,12 @@ const ProductDetailComponents = () => {
                 <Col span={10} style={{ paddingLeft: '10px' }}>
                     <div style={{ padding: '0 0 10px' }}>
                         {productDetails?.variant.map((variant) => (
+                            
                             variant?.memory && (
                                 <NavLink to={`/product/${productName}/${variant.memory}`}>
                                 <Button
                                     className={` memory-button ${variant?.memory === selectedMemories[productDetails._id] ? 'selected' : ''}`}
+                                    
                                     onClick={() => {
                                         setSelectedMemories((prevSelected) => ({
                                             ...prevSelected,
@@ -306,19 +334,29 @@ const ProductDetailComponents = () => {
                                                                 ...prevSelected,
                                                                 [variant._id]: selectedAttribute.sold,
                                                             }));
-                                                            console.log('selectedSold', selectedSold[variant._id])
+                                                            setSelectedSKU((prevSelected) => ({
+                                                                ...prevSelected,
+                                                                [variant._id]: selectedAttribute.sku,
+                                                            }));
                                                         } else {
                                                             setSelectedSold((prevSelected) => ({
                                                                 ...prevSelected,
                                                                 [variant._id]: 'N/A',
                                                             }));
-                                                        }
+                                                            setSelectedSKU((prevSelected) => ({
+                                                                ...prevSelected,
+                                                                [variant._id]: 'N/A',
+                                                            }));
+                                                        }  
                                                     }}
                                                     style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
                                                 >
                                                     {color}
                                                 </Button>
                                             ))}
+                                            <WrapperStyleTextSell>
+                                                <p>SKU: {selectedSKU[variant._id]}</p>
+                                            </WrapperStyleTextSell>
                                             <WrapperStyleTextSell>
                                                 <p>Đã bán: {selectedSold[variant._id]}</p>
                                             </WrapperStyleTextSell>
@@ -391,6 +429,7 @@ const ProductDetailComponents = () => {
                                 border: '1px solid rgb(13,92,182)',
                                 borderRadius: '4px'
                             }}
+                            onClick={handleAddToCart}
                             textButton={'Thêm vào giỏ'}
                             styleTextButton={{ color: 'rgb(13,92,182)', fontSize: '15px' }}>
                         </ButtonComponent>

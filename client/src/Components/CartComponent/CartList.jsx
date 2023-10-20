@@ -1,27 +1,36 @@
-// src/CartComponent/CartList.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Space, Table, Button, Input } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
-
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 function CartList() {
+  const user = useSelector((state)=> state.user)
   const columns = [
     {
       title: 'Sản phẩm',
       dataIndex: 'product',
-      render: (text, record) => (
+      render: (product, record) => (
         <div>
-          <img src={record.image} alt={record.product} style={{ width: '50px', marginRight: '10px' }} />
-          <span>{text}</span>
+          <img src={record.pictures} alt={record.product} style={{ width: '100px', marginRight: '100px' }} />
+          <span>{product.name} {record?.memory}</span>
         </div>
       ),
     },
     {
-      title: 'Thuộc tính',
-      dataIndex: 'attribute',
+      title: 'Màu',
+      dataIndex: 'color',
     },
     {
       title: 'Đơn giá',
-      dataIndex: 'dongia',
+      dataIndex: 'price',
+      render: price => (
+        <span>
+          {new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+          }).format(price)}
+        </span>
+      ),
     },
     {
       title: 'Số lượng',
@@ -31,7 +40,7 @@ function CartList() {
           <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={() => handleDecreaseQuantity(index)}>-</Button>
           <Input
             type="number"
-            value={quantities[index]}
+            value={quantities[index]|| text}
             style={{ width: '50px' }}
             onChange={(e) => handleQuantityChange(index, parseInt(e.target.value, 10))}
           />
@@ -40,14 +49,16 @@ function CartList() {
       ),
     },
     {
-      title: 'Số tiền',
-      dataIndex: 'amount',
-      render: (text, record, index) => {
-        const price = parseFloat(record.dongia);
-        const qty = quantities[index];
-        const totalAmount = price * qty;
-        return totalAmount;
-      },
+      title: 'Tổng tiền',
+      dataIndex: 'subtotal',
+      render: subtotal => (
+        <span>
+          {new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+          }).format(subtotal)}
+        </span>
+      ),
     },
     {
       title: 'Thao tác',
@@ -61,18 +72,20 @@ function CartList() {
       ),
     },
   ];
-  const data = [];
-  for (let i = 1; i <= 10; i++) {
-    data.push({
-      key: i,
-      product: 'Iphone',
-      attribute: 'White 126GB',
-      dongia: `22200000`,
-      quantity: `2`,
-      amount: `44400000`,
-    });
-  }
-  const [quantities, setQuantities] = useState(data.map(() => 2)); // Số lượng mặc định
+  useEffect(() => {
+    if (user && user._id) {
+      axios.get(`${process.env.REACT_APP_API_URL}/cart/getToCart/${user._id}`)
+        .then((response) => {
+          const cartData = response.data.data;
+          setData(cartData);
+        })
+        .catch((error) => {
+          console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
+        });
+    }
+  }, [user]);
+  const [data,setData] = useState(null);
+  const [quantities, setQuantities] = useState(''); 
   const handleQuantityChange = (index, value) => {
     const updatedQuantities = [...quantities];
     updatedQuantities[index] = value;
@@ -94,20 +107,6 @@ function CartList() {
     }
   };
 
-
-
-  const defaultExpandable = {
-    expandedRowRender: (record) => <p>{record.description}</p>,
-  };
-  const defaultTitle = () => 'Here is title';
-  const defaultFooter = () => 'Here is footer';
-  const [showHeader, setShowHeader] = useState(true);
-  const [showfooter, setShowFooter] = useState(true);
-  const [showTitle, setShowTitle] = useState(false);
-  const [rowSelection, setRowSelection] = useState({});
-  const [hasData, setHasData] = useState(true);
-  const [bottom, setBottom] = useState('bottomRight');
-  const [ellipsis, setEllipsis] = useState(false);
   const [yScroll, setYScroll] = useState(false);
   const [xScroll, setXScroll] = useState();
 
@@ -120,28 +119,19 @@ function CartList() {
   }
   const tableColumns = columns.map((item) => ({
     ...item,
-    ellipsis,
+
   }));
   if (xScroll === 'fixed') {
     tableColumns[0].fixed = true;
     tableColumns[tableColumns.length - 1].fixed = 'right';
   }
-  const tableProps = {
-    title: showTitle ? defaultTitle : undefined,
-    showHeader,
-    footer: showfooter ? defaultFooter : undefined,
-    rowSelection,
-  };
+
 
   return (
     <>
       <Table
-        {...tableProps}
-        pagination={{
-          position: [bottom],
-        }}
         columns={tableColumns}
-        dataSource={hasData ? data : []}
+        dataSource={ data }
         scroll={scroll}
       />
     </>
