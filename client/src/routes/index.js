@@ -78,5 +78,5 @@ export const routes = [
         path:'/highToLow',
         page: FilterProductPage,
     },
-  
+
 ]
