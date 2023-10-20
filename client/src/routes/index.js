@@ -7,6 +7,7 @@ import ProductDetail from "../pages/ProductDetail/productdetail";
 import TypeProductPage from "../pages/ProductTypePage/producttypepage";
 import CartPage from "../pages/CartPage/CartPage";
 import FilterProductPage from "../pages/ProductTypePage/productfilterpage";
+import PaymentInfo from "../pages/PaymentPage/paymentinfo";
 export const routes = [
     {
         path:'/',
@@ -81,5 +82,9 @@ export const routes = [
         path:'/highToLow',
         page: FilterProductPage,
     },
-  
+    {
+        path:'/payment-info',
+        page: PaymentInfo,
+    },
+
 ]
