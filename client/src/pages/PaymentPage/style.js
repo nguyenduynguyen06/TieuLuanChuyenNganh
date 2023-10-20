@@ -125,17 +125,12 @@ export const WrapperPaymentInfo = styled.div`
         border: 1px solid rgba(145,158,171,.239);
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
-        bottom: 0;
         box-shadow: 0 -4px 20px -1px rgba(40,124,234,.15);
-        width: 60%;
+        width: 100%;
         padding: 10px 10px 20px;
-        position: fixed;
-        right: 50%;
-        transform: translateX(50%);
-        z-index: 20;
         margin-top: auto;
         margin-left: auto;
-    margin-right: auto;
+        margin-right: auto;
     }
     .total-box{
         align-items: flex-start!important;

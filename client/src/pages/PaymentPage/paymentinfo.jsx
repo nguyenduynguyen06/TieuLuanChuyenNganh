@@ -13,7 +13,7 @@ import {
     from 'mdb-react-ui-kit';
 import { WrapperPaymentInfo } from "./style";
 import { WrapperHomePage } from "../HomePage/styled";
-import { Col, Row } from "antd";
+import { Cascader, Col, Row } from "antd";
 import Header from "../../Components/Header/header";
 const PaymentInfo = () => {
     const [user, setUser] = useState({
@@ -22,12 +22,40 @@ const PaymentInfo = () => {
         phone_number: '',
         email: '',
     });
+    const pickStore = (value) => {
+        console.log(value);
+    };
+
     const onChange = event => {
         event.preventDefault();
         setUser({ ...user, [event.target.name]: event.target.value })
     }
+    const [deliveryOption, setDeliveryOption] = useState('homeDelivery'); // Default to 'homeDelivery'
+    const [address, setAddress] = useState('');
+    const [storeAddress, setStoreAddress] = useState('');
+
+    const handleRadioChange = (e) => {
+        setDeliveryOption(e.target.value);
+        if (e.target.value === 'homeDelivery') {
+            setStoreAddress('');
+        } else {
+            setAddress('');
+        }
+    };
+    const options = [
+        {
+            value: 'Chi nhánh 1',
+            label: 'st1',
+        },
+        {
+            value: 'Chi nhánh 2',
+            label: 'st2',
+        },
+    ];
+
     return (
         <div>
+            <Header/>
             <br></br>
             <Row>
                 <Col style={{ width: '20%', paddingLeft: '10px', overflow: 'hidden' }}>
@@ -71,23 +99,54 @@ const PaymentInfo = () => {
                                         <MDBInput wrapperClass='mb-4' label='Họ và tên' name="fullName" value={user.fullName} onChange={onChange} type='text' tabIndex="1" />
                                     </MDBCol>
                                     <MDBCol col='6'>
-                                        <MDBInput wrapperClass='mb-4' label='Địa chỉ' name="addRess" value={user.addRess} onChange={onChange} type='text' tabIndex="2" />
+                                        <MDBInput wrapperClass='mb-4' label='Số điện thoại' name="phone_number" value={user.phone_number} onChange={onChange} type='text' tabIndex="3" />
                                     </MDBCol>
                                 </MDBRow>
-                                <MDBInput wrapperClass='mb-4' label='Số điện thoại' name="phone_number" value={user.phone_number} onChange={onChange} type='text' tabIndex="3" />
                                 <MDBInput wrapperClass='mb-4' label='Email' name="email" value={user.email} onChange={onChange} type='email' tabIndex="4" />
                             </div>
-                            <div className="block-payment"></div>
-                            <div className="bottom-bar">
-                                <div className="total-box">
-                                    <span style={{fontWeight: '600'}}>Tổng tiền tạm tính</span>
-                                    <div className="price">
-                                        <span className="total">4000000</span>
+
+                        </div>
+                        <MDBRow style={{height: '100px'}}>
+                            <MDBCol col='6'>
+                                <input
+                                    type="radio"
+                                    name="deliveryOption"
+                                    value="homeDelivery"
+                                    checked={deliveryOption === 'homeDelivery'}
+                                    onChange={handleRadioChange}
+                                />
+                                <label>Giao tận nơi</label>
+                                {deliveryOption === 'homeDelivery' && (
+                                    <MDBInput style={{marginTop:'10px'}} wrapperClass='mb-4' label='Địa chỉ' name="addRess" value={user.addRess} onChange={onChange} type='text' tabIndex="2" />
+                                )}
+                            </MDBCol>
+                            <MDBCol col='6'>
+                                <input
+                                    type="radio"
+                                    name="deliveryOption"
+                                    value="storePickup"
+                                    checked={deliveryOption === 'storePickup'}
+                                    onChange={handleRadioChange}
+                                />
+                                <label>Nhận tại cửa hàng</label>
+                                {deliveryOption === 'storePickup' && (
+                                    <div>
+                                        <Cascader style={{marginTop:'12px', width:'100%'}} options={options} onChange={pickStore} placeholder="Hãy chọn địa chỉ cửa hàng" />
                                     </div>
+                                )}
+                                <br></br>
+
+                            </MDBCol>
+                        </MDBRow>
+                        <div className="bottom-bar">
+                            <div className="total-box">
+                                <span style={{ fontWeight: '600' }}>Tổng tiền tạm tính</span>
+                                <div className="price">
+                                    <span className="total">4000000</span>
                                 </div>
-                                <div className="btn-submit">
-                                    <button className="btn-next">Tiếp tục</button>
-                                </div>
+                            </div>
+                            <div className="btn-submit">
+                                <button className="btn-next">Tiếp tục</button>
                             </div>
                         </div>
                     </WrapperPaymentInfo>
