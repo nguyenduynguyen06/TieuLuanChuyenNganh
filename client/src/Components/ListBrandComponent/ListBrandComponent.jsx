@@ -4,7 +4,7 @@ import axios from "axios";
 import { NavLink, useParams } from "react-router-dom";
 
 const ListBrand = () => {
-    const { nameCategory } = useParams();
+    const { nameCategory,nameBrand } = useParams();
     const [brands, setBrands] = useState([]);
     const [categories, setCategories] = useState(null); 
 
@@ -48,9 +48,13 @@ const ListBrand = () => {
             <div className="brand-content">
                 <div className="list-brand">
                     {brands.filter((brand) => brand.isHide === false).map((brand) => (
-                        <NavLink className="list-brand-item" to={`/type/${nameCategory}/${brand.name}`}>
-                            <img className="brand-img" src={brand.picture} alt={brand.name} />
-                        </NavLink>
+                       <NavLink
+                       key={brand.name}
+                       className={`list-brand-item ${nameBrand === brand.name ? 'bordered' : ''}`}
+                       to={`/type/${nameCategory}/${brand.name}`}
+                     >
+                       <img className="brand-img" src={brand.picture} alt={brand.name} />
+                     </NavLink>
                     ))}
                 </div>
             </div>

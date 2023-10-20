@@ -34,7 +34,6 @@ function SuggestProduct() {
     useEffect(() => {
         getCategoryByName();
     }, []);
-
     const getCategoryByName = async () => {
         try {
             const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
@@ -52,7 +51,6 @@ function SuggestProduct() {
             console.error('Lỗi:', error);
         }
     };
-
     const handleCardClick = (product) => {
         const url = `/product/${product.name}/undefined`;
         window.location.href = url;

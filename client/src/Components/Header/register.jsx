@@ -47,7 +47,7 @@ function Register() {
           })
           .then((res) => {
             setSuccess(true);
-                setMessage(`Đăng ký ${res.data.msg}`);
+              setMessage(`Đăng ký ${res.data.msg}`);
               setUser({
                 fullName: '',
                 addRess: '',

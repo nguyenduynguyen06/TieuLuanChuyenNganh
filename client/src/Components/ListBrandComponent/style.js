@@ -42,4 +42,7 @@ export const WrapperBrandList = styled.div`
         height: auto;
         max-width: 100%;
     }
+    .brand-content .list-brand .list-brand-item.bordered {
+        border: 1px solid #FE3300;
+      }
 `

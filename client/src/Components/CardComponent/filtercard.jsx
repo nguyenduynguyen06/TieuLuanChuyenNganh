@@ -8,7 +8,6 @@ import { InfoCircleFilled } from '@ant-design/icons'
 function FilterCard() {
     const { nameCategory, nameBrand } = useParams();
     const location = useLocation();
-    const searchKeyword = new URLSearchParams(location.search).get('keyword');
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
@@ -18,24 +17,37 @@ function FilterCard() {
         const includeOldPrice = searchParams.get('includeOldPrice');
         const selectedMemory = searchParams.get('selectedMemory');
         if (nameCategory) {
-        if (minPrice !== null && maxPrice !== null || includeOldPrice !== null || selectedMemory !== null  ) {
-            if (location.pathname.startsWith('/lowtoHigh')) {
-                getProductsByCategoryNameWithPrice(nameCategory, minPrice, maxPrice,includeOldPrice,selectedMemory);
-            } else if (location.pathname.startsWith('/hightoLow')) {
-                getProductsByCategoryNameHightoLowWithPrice(nameCategory, minPrice, maxPrice,includeOldPrice,selectedMemory);
-            }
-        } else {
             if (nameBrand) {
-                getProductsByCategoryAndBrand(nameCategory, nameBrand);
-            } else {
+              if (minPrice !== null && maxPrice !== null || includeOldPrice !== null || selectedMemory !== null) {
                 if (location.pathname.startsWith('/lowtoHigh')) {
-                    getProductsByCategoryName(nameCategory);
+                  getProductsByCategoryAndBrandWithPrice(nameCategory, nameBrand, minPrice, maxPrice, includeOldPrice, selectedMemory);
                 } else if (location.pathname.startsWith('/hightoLow')) {
-                    getProductsByCategoryNameHightoLow(nameCategory);
+                  getProductsByCategoryAndBrandHightoLowWithPrice(nameCategory, nameBrand, minPrice, maxPrice, includeOldPrice, selectedMemory);
                 }
+              } else {
+                if (location.pathname.startsWith('/lowtoHigh')) {
+                  getProductsByCategoryAndBrand(nameCategory, nameBrand);
+                } else if (location.pathname.startsWith('/hightoLow')) {
+                  getProductsByCategoryAndBrandHightoLow(nameCategory, nameBrand);
+                }
+              }
+            } else {
+              if (minPrice !== null && maxPrice !== null || includeOldPrice !== null || selectedMemory !== null) {
+                if (location.pathname.startsWith('/lowtoHigh')) {
+                  getProductsByCategoryNameWithPrice(nameCategory, minPrice, maxPrice, includeOldPrice, selectedMemory);
+                } else if (location.pathname.startsWith('/hightoLow')) {
+                  getProductsByCategoryNameHightoLowWithPrice(nameCategory, minPrice, maxPrice, includeOldPrice, selectedMemory);
+                }
+              } else {
+                if (location.pathname.startsWith('/lowtoHigh')) {
+                  getProductsByCategoryName(nameCategory);
+                } else if (location.pathname.startsWith('/hightoLow')) {
+                  getProductsByCategoryNameHightoLow(nameCategory);
+                }
+              }
             }
-        }
-    }
+          }
+          
     }, [nameCategory, nameBrand, location.pathname]);
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -43,30 +55,27 @@ function FilterCard() {
         const maxPrice = searchParams.get('maxPrice');
         const includeOldPrice = searchParams.get('includeOldPrice');
         const selectedMemory = searchParams.get('selectedMemory');
-      
-        if (minPrice !== null && maxPrice !== null || includeOldPrice !== null || selectedMemory !== null) {
-          if (location.pathname.startsWith('/lowtoHigh')) {
-            getProductsByCategoryNameWithPrice(nameCategory, minPrice, maxPrice, includeOldPrice, selectedMemory);
-          } else if (location.pathname.startsWith('/hightoLow')) {
-            getProductsByCategoryNameHightoLowWithPrice(nameCategory, minPrice, maxPrice, includeOldPrice, selectedMemory);
-          }
+    
+        if (
+            (minPrice !== null && maxPrice !== null) ||
+            includeOldPrice !== null ||
+            selectedMemory !== null
+        ) {
+            if (location.pathname.startsWith('/lowtoHigh')) {
+                if (nameBrand) {
+                    getProductsByCategoryAndBrandWithPrice(nameCategory, nameBrand, minPrice, maxPrice, includeOldPrice, selectedMemory);
+                } else {
+                    getProductsByCategoryNameWithPrice(nameCategory, minPrice, maxPrice, includeOldPrice, selectedMemory);
+                }
+            } else if (location.pathname.startsWith('/hightoLow')) {
+                if (nameBrand) {
+                    getProductsByCategoryAndBrandHightoLowWithPrice(nameCategory, nameBrand, minPrice, maxPrice, includeOldPrice, selectedMemory);
+                } else {
+                    getProductsByCategoryNameHightoLowWithPrice(nameCategory, minPrice, maxPrice, includeOldPrice, selectedMemory);
+                }
+            }
         }
-      }, [location.search]);
-    useEffect(() => {
-        if (searchKeyword) {
-            performSearch(searchKeyword);
-        }
-    }, [searchKeyword]);
-    const performSearch = (keyword) => {
-        axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${keyword}`)
-            .then((response) => {
-                const productsData = response.data.data;
-                setProducts(productsData);  
-            })
-            .catch((error) => {
-                console.error('Lỗi khi gọi API tìm kiếm: ', error);
-            });
-    };
+    }, [location.search]);    
     const getProductsByCategoryName = async (categoryName) => {
         try {
             const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
@@ -162,17 +171,95 @@ function FilterCard() {
                 return;
             }
             const response = await axios.get(
-                `${process.env.REACT_APP_API_URL}/product/getProductsByCategoryAndBrand/${category._id}/${brand._id}`
+                `${process.env.REACT_APP_API_URL}/product/filter/${category._id}/${brand._id}`
             );
             const productsData = response.data.data;
             setProducts(productsData);
-          
           
         } catch (error) {
             console.error('Lỗi:', error);
         }
     }
-
+    const getProductsByCategoryAndBrandHightoLow = async (categoryName, brandName) => {
+        try {
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
+            const categories = res.data.data;
+            const category = categories.find((cat) => cat.name === categoryName);
+            if (!category) {
+                console.error('Không tìm thấy danh mục');
+                return;
+            }
+            const brandResponse = await axios.get(`${process.env.REACT_APP_API_URL}/brand/getBrand`);
+            const brandsData = brandResponse.data.data;
+            const brand = brandsData.find((b) => b.name === brandName);
+            if (!brand) {
+                console.error('Không tìm thấy thương hiệu');
+                return;
+            }
+            const response = await axios.get(
+                `${process.env.REACT_APP_API_URL}/product/filter/highToLow/${category._id}/${brand._id}`
+            );
+            const productsData = response.data.data;
+            setProducts(productsData);
+          
+        } catch (error) {
+            console.error('Lỗi:', error);
+        }
+    }
+    const getProductsByCategoryAndBrandWithPrice = async (categoryName,brandName, minPrice, maxPrice, includeOldPrice, selectedMemory) => {
+        try {
+          const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
+          const categories = res.data.data;
+          const category = categories.find((cat) => cat.name === categoryName);
+          if (!category) {
+            console.error('Không tìm thấy danh mục');
+            return;
+          }
+          const brandResponse = await axios.get(`${process.env.REACT_APP_API_URL}/brand/getBrand`);
+          const brandsData = brandResponse.data.data;
+          const brand = brandsData.find((b) => b.name === brandName);
+          if (!brand) {
+              console.error('Không tìm thấy thương hiệu');
+              return;
+          }
+          let queryParams = `minPrice=${minPrice || ''}&maxPrice=${maxPrice || ''}&includeOldPrice=${includeOldPrice || ''}&selectedMemory=${selectedMemory || ''}`;
+      
+          const response = await axios.get(
+            `${process.env.REACT_APP_API_URL}/product/filter/${category._id}/${brand._id}?${queryParams}`
+          );
+          const productsData = response.data.data;
+          setProducts(productsData);
+        } catch (error) {
+          console.error('Lỗi:', error);
+        }
+      };
+      const getProductsByCategoryAndBrandHightoLowWithPrice = async (categoryName,brandName, minPrice, maxPrice, includeOldPrice, selectedMemory) => {
+        try {
+          const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
+          const categories = res.data.data;
+          const category = categories.find((cat) => cat.name === categoryName);
+          if (!category) {
+            console.error('Không tìm thấy danh mục');
+            return;
+          }
+          const brandResponse = await axios.get(`${process.env.REACT_APP_API_URL}/brand/getBrand`);
+          const brandsData = brandResponse.data.data;
+          const brand = brandsData.find((b) => b.name === brandName);
+          if (!brand) {
+              console.error('Không tìm thấy thương hiệu');
+              return;
+          }
+          let queryParams = `minPrice=${minPrice || ''}&maxPrice=${maxPrice || ''}&includeOldPrice=${includeOldPrice || ''}&selectedMemory=${selectedMemory || ''}`;
+      
+          const response = await axios.get(
+            `${process.env.REACT_APP_API_URL}/product/filter/highToLow/${category._id}/${brand._id}?${queryParams}`
+          );
+          const productsData = response.data.data;
+          setProducts(productsData);
+        } catch (error) {
+          console.error('Lỗi:', error);
+        }
+      };
  
 
     const [currentPage, setCurrentPage] = useState(1);

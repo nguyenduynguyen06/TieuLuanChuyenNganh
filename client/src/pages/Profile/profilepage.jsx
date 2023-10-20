@@ -1,4 +1,4 @@
-import React, { useState  } from 'react';
+import React, { useEffect, useState  } from 'react';
 import {
   MDBCol,
   MDBContainer,
@@ -26,6 +26,9 @@ import { useSelector } from "react-redux";
 
 
 const Profilepage = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" })
+}, [])
   const user = useSelector((state)=> state.user)
     const [centredModal1, setCentredModal1] = useState(false);
     const [centredModal2, setCentredModal2] = useState(false);

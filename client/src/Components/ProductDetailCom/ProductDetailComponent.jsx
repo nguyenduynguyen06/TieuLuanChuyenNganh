@@ -19,7 +19,7 @@ import ButtonComponent from "../ButtonComponent/ButtonComponent"
 import ProductDescription from "./productdesscription"
 import CommentBox from "./commentcomponent"
 import axios from "axios"
-import { useParams } from "react-router-dom"
+import { NavLink, useParams } from "react-router-dom"
 import './button.css'
 import Slider from 'react-slick';
 
@@ -264,6 +264,7 @@ const ProductDetailComponents = () => {
                     <div style={{ padding: '0 0 10px' }}>
                         {productDetails?.variant.map((variant) => (
                             variant?.memory && (
+                                <NavLink to={`/product/${productName}/${variant.memory}`}>
                                 <Button
                                     className={` memory-button ${variant?.memory === selectedMemories[productDetails._id] ? 'selected' : ''}`}
                                     onClick={() => {
@@ -271,11 +272,11 @@ const ProductDetailComponents = () => {
                                             ...prevSelected,
                                             [productDetails._id]: variant?.memory,
                                         }));
-                                        handleMemoryClick(variant.memory)
                                     }}
-                                    style={{ padding: '5px 5px', marginInlineEnd: '5px' }}>
+                                    style={{ padding: '5px 5px', marginInlineEnd: '5px' }}>                  
                                     {variant?.memory}
                                 </Button>
+                                </NavLink>
                             )
                         ))}
                     </div>
@@ -398,7 +399,8 @@ const ProductDetailComponents = () => {
                     <div style={{ height: '600px',  textAlign: 'justify'}}>
                         {productDetails &&  productDetails.promotion ? (
                             <div style={{fontSize:'20px'}}> 
-                            <div style={{fontSize:'40px',color:'red'}}> <GiftOutlined /> Khuyến mãi</div> 
+                            <div style={{fontSize:'40px',color:'red'}}> <GiftOutlined /> Khuyến mãi </div>
+                            <div>(chỉ áp dụng tại cửa hàng)</div> 
                             <ProductSale promotion={productDetails.promotion} />
                             </div>
                         ) : (

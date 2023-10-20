@@ -6,8 +6,6 @@ import { Alert } from "antd";
 
 
 const AdminComment = () => {
- 
-
   return (
     <div>
         <Alert

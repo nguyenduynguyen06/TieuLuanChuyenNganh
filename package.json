@@ -5,9 +5,12 @@
   "main": "server/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "nodemon --quiet server/app.js",
-    "client": "npm start --prefix client",
-    "start": "concurrently \"npm run server\" \"npm run client\""
+    "start": "npm install && concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm install && npm start",
+    "client": "cd client && npm install && npm start",
+    "client-install": "cd client && npm install",
+    "client-build": "cd client && npm run build",
+    "heroku-postbuild": "npm run client-install && npm run client-build"
   },
   "repository": {
     "type": "git",
@@ -27,6 +30,7 @@
     "@mui/x-date-pickers": "^6.15.0",
     "@tanstack/react-query": "^4.35.3",
     "cloudinary": "^1.41.0",
+    "concurrently": "^8.2.2",
     "date-fns": "^2.30.0",
     "express-async-handler": "^1.2.0",
     "mongoose": "^7.5.2",

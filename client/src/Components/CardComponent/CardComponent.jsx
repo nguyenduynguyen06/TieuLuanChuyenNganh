@@ -95,10 +95,6 @@ function CardComponent() {
     }
   }
 
-  const handleCardClick = (product) => {
-    const url = `/product/${ product.name}/${selectedMemories[product._id]}`;
-    window.location.href = url;
-  };
 
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(10);
