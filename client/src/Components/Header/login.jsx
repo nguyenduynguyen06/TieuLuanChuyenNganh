@@ -73,7 +73,7 @@ function Login({ onClose }) {
           });
       }
     } catch (error) {
-      setMessage('Có lỗi xảy ra khi kiểm tra tài khoản');
+      setMessage('Hãy kiểm tra lại email');
     }
   };
   
