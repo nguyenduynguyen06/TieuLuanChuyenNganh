@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Button, Col, Image, Row, Table, Rate } from 'antd'
+import { Button, Col, Image, Row, Table, Rate,message } from 'antd'
 import {
     WrapperStyleColImage,
     WrapperStyleImageSmall,
@@ -152,11 +152,13 @@ const ProductDetailComponents = () => {
               const selectedSKUName = selectedSKU[selectedVariant._id]
                 console.log('selectedSKUName',selectedSKUName)
                 await addToCart(user._id, productName, selectedSKUName, quantity);
+                message.success('Thêm vào giỏ hàng thành công')
             }
           } else{
             const selectValues = Object.values(selectedSKU);
             const selectedColorName = selectValues[selectValues.length - 1];
             await addToCart(user._id, productName, selectedColorName, quantity);
+            message.success('Thêm vào giỏ hàng thành công')
           }
         } catch (error) {
           console.error('Lỗi:', error);
@@ -176,7 +178,9 @@ const ProductDetailComponents = () => {
 
     const handleIncreaseQuantity = () => {
 
-        setQuantity(quantity + 1);
+        if (quantity < 3) { 
+            setQuantity(quantity + 1);
+          }
     };
     const handleChange = (value) => {
         setQuantity(value);
@@ -397,6 +401,8 @@ const ProductDetailComponents = () => {
                                 style={{ width: '60px' }}
                                 upHandler={null}
                                 downHandler={null}
+                                min={1}
+                                max={3}
                             />
                             <button
                                 style={{ border: 'none', background: 'transparent' }}
