@@ -162,6 +162,63 @@ export const WrapperPaymentInfo = styled.div`
         color: #fff;
         border: 1px solid transparent;
     }
+    .info-payment{
+        background-color: #fff;
+        border: 1px solid rgba(145,158,171,.239);
+        border-radius: 10px;
+        padding: 15px;
+    }
+    @media screen and (min-width: 600px) .info-payment{
+    padding: 20px;
+    }
+    .block-promotion{
+        display: flex;
+        justify-content: space-between;
+    }
+    .info-quote{
+        margin-top: 5px;
+        width: 100%;
+    }
+    .info-quote__block{
+        border-bottom: 1px solid #e8e8e8;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px 0;
+    }
+    .quote-block__item{
+        align-items: flex-start;
+        display: flex;
+        gap: 20px;
+        justify-content: space-between;
+    }
+    .quote-block__title{
+        color: #7c8691;
+        flex-shrink: 0;
+        font-size: 15px;
+        font-weight: 400;
+    }
+    .quote-block__value {
+        color: #212b36;
+        font-size: 16px;
+    }
+    .info-quote__bottom{
+        align-items: flex-start;
+        display: flex;
+        gap: 20px;
+        justify-content: space-between;
+        padding: 20px 0 0;
+        width: 100%;
+    }
+    .quote-bottom__title {
+        color: #111;
+        font-weight: 600;
+    }
+    .info-quote__bottom .quote-bottom__value{
+        color: #111;
+        font-size: 16px;
+        font-weight: 600;
+    }
 `
 export const WrapperBtnNext = styled.div`
 

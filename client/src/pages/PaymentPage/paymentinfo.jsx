@@ -12,8 +12,7 @@ import {
 }
     from 'mdb-react-ui-kit';
 import { WrapperPaymentInfo } from "./style";
-import { WrapperHomePage } from "../HomePage/styled";
-import { Cascader, Col, Row } from "antd";
+import { Button, Cascader, Col, Row } from "antd";
 import Header from "../../Components/Header/header";
 const PaymentInfo = () => {
     const [user, setUser] = useState({
@@ -24,6 +23,11 @@ const PaymentInfo = () => {
     });
     const pickStore = (value) => {
         console.log(value);
+    };
+    const [selectedPayment, setSelectedPayment] = useState('cashOnDelivery'); // Ban đầu chọn thanh toán khi nhận hàng
+
+    const handlePaymentChange = (event) => {
+        setSelectedPayment(event.target.value);
     };
 
     const onChange = event => {
@@ -55,7 +59,7 @@ const PaymentInfo = () => {
 
     return (
         <div>
-            <Header/>
+            <Header />
             <br></br>
             <Row>
                 <Col style={{ width: '20%', paddingLeft: '10px', overflow: 'hidden' }}>
@@ -106,7 +110,7 @@ const PaymentInfo = () => {
                             </div>
 
                         </div>
-                        <MDBRow style={{height: '100px'}}>
+                        <MDBRow style={{ height: '100px' }}>
                             <MDBCol col='6'>
                                 <input
                                     type="radio"
@@ -117,7 +121,7 @@ const PaymentInfo = () => {
                                 />
                                 <label>Giao tận nơi</label>
                                 {deliveryOption === 'homeDelivery' && (
-                                    <MDBInput style={{marginTop:'10px'}} wrapperClass='mb-4' label='Địa chỉ' name="addRess" value={user.addRess} onChange={onChange} type='text' tabIndex="2" />
+                                    <MDBInput style={{ marginTop: '10px' }} wrapperClass='mb-4' label='Địa chỉ' name="addRess" value={user.addRess} onChange={onChange} type='text' tabIndex="2" />
                                 )}
                             </MDBCol>
                             <MDBCol col='6'>
@@ -131,11 +135,11 @@ const PaymentInfo = () => {
                                 <label>Nhận tại cửa hàng</label>
                                 {deliveryOption === 'storePickup' && (
                                     <div>
-                                        <Cascader 
-                                        style={{marginTop:'12px', width:'100%'}} 
-                                        options={options} onChange={pickStore} 
-                                        placeholder="Hãy chọn địa chỉ cửa hàng" 
-                                        dropdownHeight= {20}
+                                        <Cascader
+                                            style={{ marginTop: '12px', width: '100%' }}
+                                            options={options} onChange={pickStore}
+                                            placeholder="Hãy chọn địa chỉ cửa hàng"
+                                            dropdownHeight={20}
                                         />
                                     </div>
                                 )}
@@ -143,6 +147,69 @@ const PaymentInfo = () => {
 
                             </MDBCol>
                         </MDBRow>
+                        <div className="info-payment">
+                            <div className="block-promotion">
+                                <div className="block-promotion-input" style={{ width: '75%' }}>
+                                    <MDBInput
+                                        wrapperClass='mb-4'
+                                        label='Mã giảm giá'
+                                        placeholder="Hãy điền mã giảm giá"
+                                        name="promotion"
+                                        value={user.promotion}
+                                        onChange={onChange}
+                                        type='text'
+                                        style={{ width: '100%' }} // Đặt chiều rộng 200px
+                                        tabIndex="5"
+                                    />
+                                </div>
+                                <Button size='middle' className="button__voucher" style={{fontSize:'15px', width: "20%"}}>Áp dụng</Button>
+                            </div>
+                            <div className="info-quote">
+                                <div className="info-quote__block">
+                                    <div className="quote-block__item">
+                                        <p className="quote-block__title">Số lượng sản phẩm </p>
+                                        <p className="quote-block__value">1</p>
+                                    </div>
+                                    <div className="quote-block__item">
+                                        <p className="quote-block__title">Tiền hàng (Tạm tính) </p>
+                                        <p className="quote-block__value">20000000</p>
+                                    </div>
+                                    <div className="quote-block__item">
+                                        <p className="quote-block__title">Phí vận chuyển </p>
+                                        <p className="quote-block__value">Miễn phí</p>
+                                    </div>
+                                </div>
+                                <div className="info-quote__bottom">
+                                    <p className="quote-bottom__title">Tổng tiền </p>
+                                    <p className="quote-bottom__value">20000000</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="payment-quote">
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        value="cashOnDelivery"
+                                        checked={selectedPayment === 'cashOnDelivery'}
+                                        onChange={handlePaymentChange}
+                                    />
+                                    Thanh toán khi nhận hàng
+                                </label>
+                            </div>
+
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        value="paypal"
+                                        checked={selectedPayment === 'paypal'}
+                                        onChange={handlePaymentChange}
+                                    />
+                                    Paypal
+                                </label>
+                            </div>
+                        </div>
                         <div className="bottom-bar">
                             <div className="total-box">
                                 <span style={{ fontWeight: '600' }}>Tổng tiền tạm tính</span>
@@ -151,7 +218,7 @@ const PaymentInfo = () => {
                                 </div>
                             </div>
                             <div className="btn-submit">
-                                <button className="btn-next">Tiếp tục</button>
+                                <button className="btn-next">Thanh toán</button>
                             </div>
                         </div>
                     </WrapperPaymentInfo>
@@ -159,7 +226,7 @@ const PaymentInfo = () => {
                 <Col style={{ width: '20%', paddingLeft: '10px', overflow: 'hidden' }}>
                 </Col>
             </Row>
-        </div>
+        </div >
     )
 }
 
