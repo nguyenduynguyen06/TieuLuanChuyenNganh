@@ -131,7 +131,12 @@ const PaymentInfo = () => {
                                 <label>Nhận tại cửa hàng</label>
                                 {deliveryOption === 'storePickup' && (
                                     <div>
-                                        <Cascader style={{marginTop:'12px', width:'100%'}} options={options} onChange={pickStore} placeholder="Hãy chọn địa chỉ cửa hàng" />
+                                        <Cascader 
+                                        style={{marginTop:'12px', width:'100%'}} 
+                                        options={options} onChange={pickStore} 
+                                        placeholder="Hãy chọn địa chỉ cửa hàng" 
+                                        dropdownHeight= {20}
+                                        />
                                     </div>
                                 )}
                                 <br></br>
