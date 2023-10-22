@@ -115,10 +115,16 @@ export const WrapperPaymentInfo = styled.div`
         top: 2px;
     }
     .block-customer{
-        padding: 10px;
+        background-color: #fff;
+        border: 1px solid rgba(145,158,171,.239);
+        border-radius: 10px;
+        padding: 15px;
     }
     .block-customer p{
         text-transform: uppercase;
+    }
+    .picking-address{
+        background-color: #fff;
     }
     .bottom-bar{
         background-color: #fff;
@@ -218,6 +224,12 @@ export const WrapperPaymentInfo = styled.div`
         color: #111;
         font-size: 16px;
         font-weight: 600;
+    }
+    .payment-quote{
+        background-color: #fff;
+        border: 1px solid rgba(145,158,171,.239);
+        border-radius: 10px;
+        padding: 15px;
     }
 `
 export const WrapperBtnNext = styled.div`

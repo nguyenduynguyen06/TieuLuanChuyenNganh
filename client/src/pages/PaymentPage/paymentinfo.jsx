@@ -9,11 +9,11 @@ import {
     MDBCol,
     MDBRow,
     MDBInput,
-}
-    from 'mdb-react-ui-kit';
+} from 'mdb-react-ui-kit';
 import { WrapperPaymentInfo } from "./style";
-import { Button, Cascader, Col, Row } from "antd";
+import { Button, Cascader, Col, Row, Modal } from "antd";
 import Header from "../../Components/Header/header";
+
 const PaymentInfo = () => {
     const [user, setUser] = useState({
         fullName: '',
@@ -24,6 +24,22 @@ const PaymentInfo = () => {
     const pickStore = (value) => {
         console.log(value);
     };
+    const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
+
+    const showConfirmModal = () => {
+        setIsConfirmModalVisible(true);
+    };
+
+    const handleConfirmOk = () => {
+        // Xử lý khi người dùng xác nhận
+        // Để thực hiện thanh toán ở đây
+        setIsConfirmModalVisible(false);
+    };
+
+    const handleConfirmCancel = () => {
+        setIsConfirmModalVisible(false);
+    };
+
     const [selectedPayment, setSelectedPayment] = useState('cashOnDelivery'); // Ban đầu chọn thanh toán khi nhận hàng
 
     const handlePaymentChange = (event) => {
@@ -58,7 +74,7 @@ const PaymentInfo = () => {
     ];
 
     return (
-        <div>
+        <div style={{ background: '#efefef' }}>
             <Header />
             <br></br>
             <Row>
@@ -67,14 +83,14 @@ const PaymentInfo = () => {
                 <Col style={{ width: '60%', paddingLeft: '10px', paddingRight: '10px' }}>
                     <WrapperPaymentInfo>
                         <div className="block-box">
-                            <div className="nav">
+                            {/* <div className="nav">
                                 <div className="nav__item1">
                                     <span>1. Thông tin</span>
                                 </div>
                                 <div className="nav__item2">
                                     <span>2. Thanh toán</span>
                                 </div>
-                            </div>
+                            </div> */}
                             <div className="view-list">
                                 <div className="view-list__wrapper">
                                     <div className="item">
@@ -94,8 +110,26 @@ const PaymentInfo = () => {
                                             </div>
                                         </div>
                                     </div>
+                                    <div className="item">
+                                        <img className='item__img' src="../../image/logo.png"></img>
+                                        <div className="item-info">
+                                            <p className="item-name">iphone 20</p>
+                                            <div className="item-price">
+                                                <div>
+                                                    <div className="box-info__box-price">
+                                                        <p className="product__price--show">20000000</p>
+                                                        <p className="product__price--through">20000000</p>
+                                                    </div>
+                                                </div>
+                                                <p>Số lượng:
+                                                    <span style={{ color: 'red' }}>1</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <hr></hr>
                             <div className="block-customer">
                                 <p>Thông tin khách hàng</p>
                                 <MDBRow>
@@ -107,46 +141,45 @@ const PaymentInfo = () => {
                                     </MDBCol>
                                 </MDBRow>
                                 <MDBInput wrapperClass='mb-4' label='Email' name="email" value={user.email} onChange={onChange} type='email' tabIndex="4" />
-                            </div>
-
-                        </div>
-                        <MDBRow style={{ height: '100px' }}>
-                            <MDBCol col='6'>
-                                <input
-                                    type="radio"
-                                    name="deliveryOption"
-                                    value="homeDelivery"
-                                    checked={deliveryOption === 'homeDelivery'}
-                                    onChange={handleRadioChange}
-                                />
-                                <label>Giao tận nơi</label>
-                                {deliveryOption === 'homeDelivery' && (
-                                    <MDBInput style={{ marginTop: '10px' }} wrapperClass='mb-4' label='Địa chỉ' name="addRess" value={user.addRess} onChange={onChange} type='text' tabIndex="2" />
-                                )}
-                            </MDBCol>
-                            <MDBCol col='6'>
-                                <input
-                                    type="radio"
-                                    name="deliveryOption"
-                                    value="storePickup"
-                                    checked={deliveryOption === 'storePickup'}
-                                    onChange={handleRadioChange}
-                                />
-                                <label>Nhận tại cửa hàng</label>
-                                {deliveryOption === 'storePickup' && (
-                                    <div>
-                                        <Cascader
-                                            style={{ marginTop: '12px', width: '100%' }}
-                                            options={options} onChange={pickStore}
-                                            placeholder="Hãy chọn địa chỉ cửa hàng"
-                                            dropdownHeight={20}
+                                <MDBRow style={{ height: '100px' }} className="picking-address">
+                                    <MDBCol col='6'>
+                                        <input
+                                            type="radio"
+                                            name="deliveryOption"
+                                            value="homeDelivery"
+                                            checked={deliveryOption === 'homeDelivery'}
+                                            onChange={handleRadioChange}
                                         />
-                                    </div>
-                                )}
-                                <br></br>
-
-                            </MDBCol>
-                        </MDBRow>
+                                        <label>&nbsp;Giao tận nơi</label>
+                                        {deliveryOption === 'homeDelivery' && (
+                                            <MDBInput style={{ marginTop: '10px' }} wrapperClass='mb-4' label='Địa chỉ' name="addRess" value={user.addRess} onChange={onChange} type='text' tabIndex="2" />
+                                        )}
+                                    </MDBCol>
+                                    <MDBCol col='6'>
+                                        <input
+                                            type="radio"
+                                            name="deliveryOption"
+                                            value="storePickup"
+                                            checked={deliveryOption === 'storePickup'}
+                                            onChange={handleRadioChange}
+                                        />
+                                        <label>&nbsp;Nhận tại cửa hàng</label>
+                                        {deliveryOption === 'storePickup' && (
+                                            <div>
+                                                <Cascader
+                                                    style={{ marginTop: '12px', width: '100%' }}
+                                                    options={options} onChange={pickStore}
+                                                    placeholder="Hãy chọn địa chỉ cửa hàng"
+                                                    dropdownHeight={20}
+                                                />
+                                            </div>
+                                        )}
+                                        <br></br>
+                                    </MDBCol>
+                                </MDBRow>
+                            </div>
+                        </div>
+                        <hr></hr>
                         <div className="info-payment">
                             <div className="block-promotion">
                                 <div className="block-promotion-input" style={{ width: '75%' }}>
@@ -162,7 +195,7 @@ const PaymentInfo = () => {
                                         tabIndex="5"
                                     />
                                 </div>
-                                <Button size='middle' className="button__voucher" style={{fontSize:'15px', width: "20%"}}>Áp dụng</Button>
+                                <Button size='middle' className="button__voucher" style={{ fontSize: '15px', width: "20%" }}>Áp dụng</Button>
                             </div>
                             <div className="info-quote">
                                 <div className="info-quote__block">
@@ -185,6 +218,7 @@ const PaymentInfo = () => {
                                 </div>
                             </div>
                         </div>
+                        <hr></hr>
                         <div className="payment-quote">
                             <div>
                                 <label>
@@ -197,7 +231,6 @@ const PaymentInfo = () => {
                                     Thanh toán khi nhận hàng
                                 </label>
                             </div>
-
                             <div>
                                 <label>
                                     <input
@@ -210,6 +243,7 @@ const PaymentInfo = () => {
                                 </label>
                             </div>
                         </div>
+                        <hr></hr>
                         <div className="bottom-bar">
                             <div className="total-box">
                                 <span style={{ fontWeight: '600' }}>Tổng tiền tạm tính</span>
@@ -218,14 +252,30 @@ const PaymentInfo = () => {
                                 </div>
                             </div>
                             <div className="btn-submit">
-                                <button className="btn-next">Thanh toán</button>
+                                <button className="btn-next" onClick={showConfirmModal}>Thanh toán</button>
                             </div>
+                            <Modal
+                                title="Xác nhận thanh toán"
+                                visible={isConfirmModalVisible}
+                                onOk={handleConfirmOk}
+                                onCancel={handleConfirmCancel}
+                                footer={[
+                                    <Button key="back" onClick={handleConfirmCancel}>
+                                        Hủy
+                                    </Button>,
+                                    <Button key="submit" type="primary" onClick={handleConfirmOk}>
+                                        Xác nhận
+                                    </Button>,
+                                ]}>
+                                Bạn có chắc chắn muốn thanh toán?
+                            </Modal>
                         </div>
                     </WrapperPaymentInfo>
                 </Col>
                 <Col style={{ width: '20%', paddingLeft: '10px', overflow: 'hidden' }}>
                 </Col>
             </Row>
+            <br></br>
         </div >
     )
 }
