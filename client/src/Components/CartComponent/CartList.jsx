@@ -144,6 +144,7 @@ function CartList() {
       });
   };
 
+  const isCartEmpty = !data || data.length === 0;
 
   const handleIncreaseQuantity = (index) => {
     const updatedQuantities = [...quantities];
@@ -221,7 +222,7 @@ function CartList() {
         scroll={scroll}
         pagination={false}
       />
-      <CartTotal data={data} />
+      <CartTotal data={data} isCartEmpty={isCartEmpty} /> 
 
     </>
   );

@@ -3,9 +3,9 @@ import styled from "styled-components";
 export const WrapperPaymentInfo = styled.div`
     .nav {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
-        background-color: #f4f6f8;
+        background-color: #fff;
         gap: 10px;
         left: 0;
         margin-bottom: 10px;
@@ -17,23 +17,13 @@ export const WrapperPaymentInfo = styled.div`
         flex-wrap: wrap;
         list-style: none;
     }
-    .nav__item1{
-        border-bottom: 3px solid #d70018;
-        color: #d70018;
-        pointer-events: none;
-        cursor: pointer;
-        flex: 1;
-        font-weight: 600;
-        padding: 5px 0;
-        text-transform: uppercase;
-        display: flex;
-        justify-content: center;
-        list-style: none;
+    .btn-back {
+        border: none;
+        background: transparent;
     }
     .nav__item2{
-        border-bottom: 3px solid #919eab;
-        color: #919eab;
-        cursor: pointer;
+        border-bottom: 3px solid #d70018;
+        color: #d70018;
         flex: 1;
         font-weight: 600;
         padding: 5px 0;
@@ -167,6 +157,7 @@ export const WrapperPaymentInfo = styled.div`
         border-color: #dc3545;
         color: #fff;
         border: 1px solid transparent;
+        text-transform: uppercase;
     }
     .info-payment{
         background-color: #fff;
