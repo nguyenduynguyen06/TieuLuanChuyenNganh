@@ -5,10 +5,22 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import CartTotal from './CartTotal';
 import { Hidden } from '@mui/material';
+import { Link } from "react-router-dom"; // Thêm import Link
+
 function CartList() {
   const user = useSelector((state) => state.user)
   const [modalDelete, setModalDelete] = useState(false);
   const [currentCartId, setCurrentCartId] = useState(null);
+  const [total, setTotal] = useState(0);
+  const calculateTotalPrice = (cartData) => {
+    return cartData.reduce((total, item) => {
+      return total + item.price * item.quantity;
+    }, 0);
+  };
+  const updateTotalPrice = (cartData) => {
+    const totalPrice = calculateTotalPrice(cartData);
+    setTotal(totalPrice);
+  };
   const columns = [
     {
       title: 'Tên sản phẩm',
@@ -96,6 +108,7 @@ function CartList() {
             .then((response) => {
               const cartData = response.data.data;
               setData(cartData);
+              updateTotalPrice(cartData);
             })
             .catch((error) => {
               console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
@@ -114,6 +127,8 @@ function CartList() {
           setData(cartData);
           const initialQuantities = cartData.map((item) => item.quantity);
           setQuantities(initialQuantities);
+          const totalPrice = calculateTotalPrice(cartData);
+          setTotal(totalPrice);
         })
         .catch((error) => {
           console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
@@ -122,6 +137,7 @@ function CartList() {
   }, [user]);
   const [data, setData] = useState(null);
   const [quantities, setQuantities] = useState('');
+
   const handleQuantityChange = (index, value) => {
     const updatedQuantities = [...quantities];
     updatedQuantities[index] = value;
@@ -159,6 +175,7 @@ function CartList() {
             .then((response) => {
               const cartData = response.data.data;
               setData(cartData);
+              updateTotalPrice(cartData);
             })
             .catch((error) => {
               console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
@@ -182,6 +199,7 @@ function CartList() {
               .then((response) => {
                 const cartData = response.data.data;
                 setData(cartData);
+                updateTotalPrice(cartData);
               })
               .catch((error) => {
                 console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
@@ -222,7 +240,20 @@ function CartList() {
         scroll={scroll}
         pagination={false}
       />
-      <CartTotal data={data} isCartEmpty={isCartEmpty} /> 
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px', alignItems: 'center' }}>
+          <span style={{ fontWeight: 600 }}>Tổng giá:&nbsp;</span>
+          <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300' }}>
+            {new Intl.NumberFormat('vi-VN', {
+              style: 'currency',
+              currency: 'VND',
+            }).format(total)}
+          </span>
+          <Link to="/payment-infor">
+            <Button size='large' style={{ marginLeft: '100px', background: '#8c52ff', color: '#fff' }} disabled={isCartEmpty} >Mua hàng</Button>
+          </Link>
+        </div>
+      </div>
 
     </>
   );

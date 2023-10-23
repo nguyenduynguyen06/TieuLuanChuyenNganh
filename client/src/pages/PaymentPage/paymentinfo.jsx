@@ -241,10 +241,10 @@ const PaymentInfo = () => {
                                 </div>
                             </div>
                             <div className="btn-submit">
-                                <button className="btn-next" onClick={showConfirmModal}>Thanh toán</button>
+                                <button className="btn-next" onClick={showConfirmModal}>Đặt hàng</button>
                             </div>
                             <Modal
-                                title="Xác nhận thanh toán"
+                                title="Xác nhận đặt hàng"
                                 visible={isConfirmModalVisible}
                                 onOk={handleConfirmOk}
                                 onCancel={handleConfirmCancel}
