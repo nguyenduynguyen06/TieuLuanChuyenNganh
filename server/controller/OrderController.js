@@ -1,9 +1,28 @@
 const Cart = require('../Model/CartModel');
 const ProductVariant = require('../Model/ProductVariantModel');
 const Order = require('../Model/OrderModel');
+const orderSendMail = require('../ultils/oderSendMail');
+const generateRandomOrderCode = async () => {
+  const prefix = 'GGZ';
+  let orderCode;
+  let isCodeUnique = false;
+  let suffix = 0;
+  while (!isCodeUnique) {
+    const randomCode = (10000 + suffix).toString();
+    orderCode = prefix + randomCode;
+    const existingOrder = await Order.findOne({ orderCode });
+    if (!existingOrder) {
+      isCodeUnique = true;
+    } else {
+      suffix++;
+    }
+  }
+  return orderCode;
+};
 
 const addOrder = async (req, res) => {
   try {
+    const orderCode = await generateRandomOrderCode();
     const { userId } = req.params;
     const { userName, userEmail, address,shippingMethod, paymentMethod, subTotal, totalPay, voucher,userPhone } = req.body;
     const cart = await Cart.findOne({ user: userId }).populate('items.productVariant');
@@ -13,6 +32,7 @@ const addOrder = async (req, res) => {
     }
 
     const newOrder = new Order({
+      orderCode,
       user: userId,
       items: cart.items,
       userName,

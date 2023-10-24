@@ -35,6 +35,11 @@ const cartItemSchema  = new mongoose.Schema({
   
 });
 const orderSchema = new mongoose.Schema({
+  orderCode: {
+    type: String,
+    required: true,
+    unique: true
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
