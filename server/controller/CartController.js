@@ -119,6 +119,11 @@ const getCartItemsByUserId = async (req, res) => {
       populate: {
         path: 'product',
       }
+    }).populate({
+      path: 'items',
+      populate: {
+        path: 'productVariant',
+      }
     });
     if (!cart) {
       return res.status(404).json({ success: false, error: 'Giỏ hàng của người dùng không tồn tại' });

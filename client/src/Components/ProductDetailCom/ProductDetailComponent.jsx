@@ -150,7 +150,6 @@ const ProductDetailComponents = () => {
             const selectedVariant = productDetails.variant.find((variant) => variant.memory === memory);
             if (selectedVariant) {
               const selectedSKUName = selectedSKU[selectedVariant._id]
-                console.log('selectedSKUName',selectedSKUName)
                 await addToCart(user._id, productName, selectedSKUName, quantity);
                 message.success('Thêm vào giỏ hàng thành công')
             }
@@ -162,6 +161,7 @@ const ProductDetailComponents = () => {
           }
         } catch (error) {
           console.error('Lỗi:', error);
+          message.error('Vui lòng đăng nhập để tiếp tục')
         }
       };
       

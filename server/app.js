@@ -8,6 +8,7 @@ const routerProduct = require('./Router/ProductRouter')
 const routerBrand = require('./Router/BrandRouter')
 const routerCart = require('./Router/CartRouter')
 const routerComment = require('./Router/CommentRouter')
+const routerOrder = require('./Router/OrderRouter')
 const bodyParser = require('body-parser');
 const path = require('path')
 const routerCategory = require('./Router/CategoryRouter')
@@ -36,6 +37,7 @@ app.use('/api/category',routerCategory);
 app.use('/api/comment',routerComment);
 app.use('/api/brand',routerBrand)
 app.use('/api/cart',routerCart)
+app.use('/api/order',routerOrder)
 app.use(express.static(path.join(__dirname,'../client/build')))
 app.get('*',(req,res) =>{
     res.sendFile(path.join(__dirname,'../client/build/index.html'))

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import {
@@ -14,8 +14,10 @@ import { WrapperPaymentInfo } from "./style";
 import { Button, Cascader, Col, Row, Modal, FloatButton } from "antd";
 import Header from "../../Components/Header/header";
 import { ArrowLeftOutlined } from "@ant-design/icons"
+import { useSelector } from "react-redux";
 
 const PaymentInfo = () => {
+    const user1 = useSelector((state) => state.user)
     const [user, setUser] = useState({
         fullName: '',
         addRess: '',
@@ -78,7 +80,19 @@ const PaymentInfo = () => {
             label: 'st2',
         },
     ];
-
+    useEffect(() => {
+        if (user1 && user1._id) {
+          axios.get(`${process.env.REACT_APP_API_URL}/cart/getToCart/${user1._id}`)
+            .then((response) => {
+              const cartData = response.data.data;
+              setData(cartData);
+            })
+            .catch((error) => {
+              console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
+            });
+        }
+      }, [user1]);
+      const[data,setData] = useState(null);
     return (
         <div style={{ background: '#efefef' }}>
             <Header />
@@ -97,27 +111,32 @@ const PaymentInfo = () => {
                                     <span>Thanh toán</span>
                                 </div>
                             </div>
-                            <div className="view-list">
+                        <div className="view-list">
                                 <div className="view-list__wrapper">
-                                    <div className="item">
-                                        <img className='item__img' src="../../image/logo.png"></img>
+                                    {data && data.map((item) => (
+                                    <div className="item" key={item.product._id}>
+                                        <img className='item__img' src={item.pictures} alt={item.product.name} />
                                         <div className="item-info">
-                                            <p className="item-name">iphone 20</p>
-                                            <div className="item-price">
-                                                <div>
-                                                    <div className="box-info__box-price">
-                                                        <p className="product__price--show">20000000</p>
-                                                        <p className="product__price--through">20000000</p>
-                                                    </div>
-                                                </div>
-                                                <p>Số lượng:
-                                                    <span style={{ color: 'red' }}>1</span>
-                                                </p>
+                                        <p className="item-name">{item.product.name} - {item.memory}</p>
+                                        <div className="item-price">
+                                            <div>
+                                            <div className="box-info__box-price">
+                                                <p className="product__price--show">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', }).format(item.price)}</p>
+                                                {item.productVariant.oldPrice && (
+                                                <p className="product__price--through">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', }).format(item.productVariant.oldPrice)}</p>
+                                                )}
                                             </div>
+                                            </div>
+                                            <p>Số lượng:
+                                            <span style={{ color: 'red' }}>{item.quantity}</span>
+                                            </p>
+                                        </div>
                                         </div>
                                     </div>
+                                    ))}
                                 </div>
-                            </div>
+                                </div>
+
                             <hr></hr>
                             <div className="block-customer">
                                 <p>Thông tin khách hàng</p>
@@ -188,10 +207,7 @@ const PaymentInfo = () => {
                             </div>
                             <div className="info-quote">
                                 <div className="info-quote__block">
-                                    <div className="quote-block__item">
-                                        <p className="quote-block__title">Số lượng sản phẩm </p>
-                                        <p className="quote-block__value">1</p>
-                                    </div>
+
                                     <div className="quote-block__item">
                                         <p className="quote-block__title">Tiền hàng (Tạm tính) </p>
                                         <p className="quote-block__value">20000000</p>
@@ -217,7 +233,7 @@ const PaymentInfo = () => {
                                         checked={selectedPayment === 'cashOnDelivery'}
                                         onChange={handlePaymentChange}
                                     />
-                                    Thanh toán khi nhận hàng
+                                  &nbsp; Thanh toán khi nhận hàng
                                 </label>
                             </div>
                             <div>
