@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Button, Col, Image, Row, Table, Rate,message } from 'antd'
+import { Button, Col, Image, Row, Table, Rate, message } from 'antd'
 import {
     WrapperStyleColImage,
     WrapperStyleImageSmall,
@@ -14,7 +14,7 @@ import {
     WrapperDetail,
     WrapperPolicy,
 } from "./style"
-import { PlusOutlined, MinusOutlined, RetweetOutlined, PropertySafetyOutlined, DropboxOutlined,GiftOutlined } from '@ant-design/icons'
+import { PlusOutlined, MinusOutlined, RetweetOutlined, PropertySafetyOutlined, DropboxOutlined, GiftOutlined } from '@ant-design/icons'
 import ButtonComponent from "../ButtonComponent/ButtonComponent"
 import ProductDescription from "./productdesscription"
 import CommentBox from "./commentcomponent"
@@ -35,7 +35,7 @@ import { CommentsDisabledOutlined } from "@mui/icons-material"
 const { Column, ColumnGroup } = Table;
 
 const ProductDetailComponents = () => {
-    const user = useSelector((state)=> state.user)
+    const user = useSelector((state) => state.user)
     const [productDetails, setProductDetails] = useState(null);
     const { productName, memory } = useParams();
     const [selectedColor, setSelectedColor] = useState('');
@@ -57,12 +57,12 @@ const ProductDetailComponents = () => {
     };
     const addToCart = async (userId, productName, SKU, quantity) => {
         try {
-          const response = await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${userId}&productName=${productName}&SKU=${SKU}&quantity=${quantity}`) 
-          return response.data; 
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${userId}&productName=${productName}&SKU=${SKU}&quantity=${quantity}`)
+            return response.data;
         } catch (error) {
-          throw error;
+            throw error;
         }
-      };
+    };
 
     useEffect(() => {
         if (memory !== `undefined`) {
@@ -146,27 +146,27 @@ const ProductDetailComponents = () => {
     }, [productName, memory]);
     const handleAddToCart = async () => {
         try {
-          if (memory !== 'undefined') {
-            const selectedVariant = productDetails.variant.find((variant) => variant.memory === memory);
-            if (selectedVariant) {
-              const selectedSKUName = selectedSKU[selectedVariant._id]
-                await addToCart(user._id, productName, selectedSKUName, quantity);
+            if (memory !== 'undefined') {
+                const selectedVariant = productDetails.variant.find((variant) => variant.memory === memory);
+                if (selectedVariant) {
+                    const selectedSKUName = selectedSKU[selectedVariant._id]
+                    await addToCart(user._id, productName, selectedSKUName, quantity);
+                    message.success('Thêm vào giỏ hàng thành công')
+                }
+            } else {
+                const selectValues = Object.values(selectedSKU);
+                const selectedColorName = selectValues[selectValues.length - 1];
+                await addToCart(user._id, productName, selectedColorName, quantity);
                 message.success('Thêm vào giỏ hàng thành công')
             }
-          } else{
-            const selectValues = Object.values(selectedSKU);
-            const selectedColorName = selectValues[selectValues.length - 1];
-            await addToCart(user._id, productName, selectedColorName, quantity);
-            message.success('Thêm vào giỏ hàng thành công')
-          }
         } catch (error) {
-          console.error('Lỗi:', error);
-          message.error('Vui lòng đăng nhập để tiếp tục')
+            console.error('Lỗi:', error);
+            message.error('Vui lòng đăng nhập để tiếp tục')
         }
-      };
-      
-      
-  
+    };
+
+
+
 
     const [quantity, setQuantity] = useState(1); // Đặt giá trị ban đầu là 3
 
@@ -178,9 +178,9 @@ const ProductDetailComponents = () => {
 
     const handleIncreaseQuantity = () => {
 
-        if (quantity < 3) { 
+        if (quantity < 3) {
             setQuantity(quantity + 1);
-          }
+        }
     };
     const handleChange = (value) => {
         setQuantity(value);
@@ -293,21 +293,21 @@ const ProductDetailComponents = () => {
                 <Col span={10} style={{ paddingLeft: '10px' }}>
                     <div style={{ padding: '0 0 10px' }}>
                         {productDetails?.variant.map((variant) => (
-                            
+
                             variant?.memory && (
                                 <NavLink to={`/product/${productName}/${variant.memory}`}>
-                                <Button
-                                    className={` memory-button ${variant?.memory === selectedMemories[productDetails._id] ? 'selected' : ''}`}
-                                    
-                                    onClick={() => {
-                                        setSelectedMemories((prevSelected) => ({
-                                            ...prevSelected,
-                                            [productDetails._id]: variant?.memory,
-                                        }));
-                                    }}
-                                    style={{ padding: '5px 5px', marginInlineEnd: '5px' }}>                  
-                                    {variant?.memory}
-                                </Button>
+                                    <Button
+                                        className={` memory-button ${variant?.memory === selectedMemories[productDetails._id] ? 'selected' : ''}`}
+
+                                        onClick={() => {
+                                            setSelectedMemories((prevSelected) => ({
+                                                ...prevSelected,
+                                                [productDetails._id]: variant?.memory,
+                                            }));
+                                        }}
+                                        style={{ padding: '5px 5px', marginInlineEnd: '5px' }}>
+                                        {variant?.memory}
+                                    </Button>
                                 </NavLink>
                             )
                         ))}
@@ -351,7 +351,7 @@ const ProductDetailComponents = () => {
                                                                 ...prevSelected,
                                                                 [variant._id]: 'N/A',
                                                             }));
-                                                        }  
+                                                        }
                                                     }}
                                                     style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
                                                 >
@@ -418,35 +418,22 @@ const ProductDetailComponents = () => {
                             styleButton={{
                                 background: 'rgb(225,57,69)',
                                 height: '48px',
-                                width: '220px',
+                                width: '100%',
                                 border: 'none',
                                 borderRadius: '4px'
                             }}
-                            textButton={'Mua ngay'}
-                            styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}>
-                        </ButtonComponent>
-                        <ButtonComponent
-                            bordered={false}
-                            size={40}
-                            styleButton={{
-                                background: '#fff',
-                                height: '48px',
-                                width: '220px',
-                                border: '1px solid rgb(13,92,182)',
-                                borderRadius: '4px'
-                            }}
                             onClick={handleAddToCart}
-                            textButton={'Thêm vào giỏ'}
-                            styleTextButton={{ color: 'rgb(13,92,182)', fontSize: '15px' }}>
+                            textButton={'Đặt Ngay'}
+                            styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}>
                         </ButtonComponent>
                     </div>
                     <br></br>
-                    <div style={{ height: '600px',  textAlign: 'justify'}}>
-                        {productDetails &&  productDetails.promotion ? (
-                            <div style={{fontSize:'20px'}}> 
-                            <div style={{fontSize:'40px',color:'red'}}> <GiftOutlined /> Khuyến mãi </div>
-                            <div>(chỉ áp dụng tại cửa hàng)</div> 
-                            <ProductSale promotion={productDetails.promotion} />
+                    <div style={{ height: '600px', textAlign: 'justify' }}>
+                        {productDetails && productDetails.promotion ? (
+                            <div style={{ fontSize: '20px' }}>
+                                <div style={{ fontSize: '40px', color: 'red' }}> <GiftOutlined /> Khuyến mãi </div>
+                                <div>(chỉ áp dụng tại cửa hàng)</div>
+                                <ProductSale promotion={productDetails.promotion} />
                             </div>
                         ) : (
                             null
