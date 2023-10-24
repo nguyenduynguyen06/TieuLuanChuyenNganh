@@ -5,11 +5,11 @@ const Order = require('../Model/OrderModel');
 const addOrder = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { userName, userEmail, address,shippingMethod, paymentMethod, subTotal, totalPay, voucher } = req.body;
+    const { userName, userEmail, address,shippingMethod, paymentMethod, subTotal, totalPay, voucher,userPhone } = req.body;
     const cart = await Cart.findOne({ user: userId }).populate('items.productVariant');
     
-    if (!cart) {
-      return res.status(404).json({ success: false, error: 'Giỏ hàng không tồn tại' });
+    if (!cart || !cart.items || cart.items.length === 0) {
+      return res.status(400).json({ success: false, error: 'Giỏ hàng không tồn tại hoặc trống' });
     }
 
     const newOrder = new Order({
@@ -25,6 +25,7 @@ const addOrder = async (req, res) => {
       shippingFee: 0,
       totalPay,
       voucher,
+      userPhone
     });
     
     for (const cartItem of cart.items) {
@@ -46,7 +47,7 @@ const addOrder = async (req, res) => {
       }
     }
     
-    await Cart.findOneAndDelete({ user: userId });
+    await Cart.updateOne({ user: userId }, { $set: { items: [] } });
     const savedOrder = await newOrder.save();
     res.status(201).json({ success: true, data: savedOrder });
   } catch (error) {
@@ -54,5 +55,103 @@ const addOrder = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { newStatus } = req.body; 
 
-module.exports = { addOrder };
+    const updatedOrder = await Order.findByIdAndUpdate(orderId, { status: newStatus }, { new: true });
+
+    if (!updatedOrder) {
+      return res.status(404).json({ success: false, error: 'Đơn hàng không tồn tại' });
+    }
+
+    res.status(200).json({ success: true, data: updatedOrder });
+  } catch (error) {
+    console.error('Lỗi khi cập nhật trạng thái đơn hàng:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const getOrdersWaitingForConfirmation = async (req, res) => {
+  try {
+    const orders = await Order.find({ status: 'Chờ xác nhận' });
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng chờ xác nhận:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const getOrdersHomeDelivery = async (req, res) => {
+  try {
+    const orders = await Order.find({ shippingMethod: 'Giao tận nơi' });
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng giao tận nơi:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const getOrdersStorePickup = async (req, res) => {
+  try {
+    const orders = await Order.find({ shippingMethod: 'Nhận tại cửa hàng' });
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng nhận tại cửa hàng:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const getCompletedOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ status: 'Đã hoàn thành' });
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng đã hoàn thành:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const getOrdersByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const orders = await Order.find({ user: userId });
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng của người dùng:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const cancelOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ success: false, error: 'Đơn hàng không tồn tại' });
+    }
+    for (const cartItem of order.items) {
+      const productVariantId = cartItem.productVariant;
+      const productVariant = await ProductVariant.findById(productVariantId);
+
+      if (productVariant) {
+        const matchedAttribute = productVariant.attributes.find(attribute => attribute.color === cartItem.color);
+
+        if (matchedAttribute) {
+          const quantityInCart = cartItem.quantity;
+          const totalQuantity = matchedAttribute.quantity + quantityInCart;
+          const totalSold = matchedAttribute.sold - quantityInCart;
+
+          matchedAttribute.quantity = totalQuantity;
+          matchedAttribute.sold = totalSold;
+
+          await productVariant.save();
+        }
+      }
+    }
+    await Order.findByIdAndDelete(orderId);
+
+    res.status(200).json({ success: true, message: 'Đã hủy đơn hàng' });
+  } catch (error) {
+    console.error('Lỗi khi hủy đơn hàng:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports = { addOrder,updateOrderStatus,getCompletedOrders,getOrdersByUserId,getOrdersHomeDelivery,getOrdersStorePickup,getOrdersWaitingForConfirmation,cancelOrder };

@@ -11,73 +11,103 @@ import {
     MDBInput,
 } from 'mdb-react-ui-kit';
 import { WrapperPaymentInfo } from "./style";
-import { Button, Cascader, Col, Row, Modal, FloatButton } from "antd";
+import { Button, Cascader, Col, Row, Modal, FloatButton, message } from "antd";
 import Header from "../../Components/Header/header";
 import { ArrowLeftOutlined } from "@ant-design/icons"
 import { useSelector } from "react-redux";
 
 const PaymentInfo = () => {
     const user1 = useSelector((state) => state.user)
-    const [user, setUser] = useState({
-        fullName: '',
-        addRess: '',
-        phone_number: '',
-        email: '',
-    });
+    const [total, setTotal] = useState(0);
+    const calculateTotalPrice = (cartData) => {
+        return cartData.reduce((total, item) => {
+          return total + item.price * item.quantity;
+        }, 0);
+      };
+    const [order, setOrder] = useState(
+        {
+            paymentMethod: 'Thanh toán khi nhận hàng',
+            shippingMethod: 'Giao tận nơi'
+        }
+    );
+    useEffect(() => {
+        setOrder(prevOder => ({
+          ...prevOder,
+          userName: user1.fullName,
+          userEmail: user1.email,
+          address: user1.addRess,
+          userPhone: user1.phone_number,
+          subTotal: total,
+          totalPay: total
+        }));
+      }, [user1]);
 
+      const addOrder = event => {
+        event.preventDefault();
+        axios.post(`${process.env.REACT_APP_API_URL}/order/addOrder/${user1._id}`, order)
+          .then((response) => {
+            console.log('Đơn hàng đã được thêm:', response.data);
+          })
+          .catch((error) => {
+            message.error('Đéo có hàng con đĩ ơi');
+          });
+      };
+      
     const goBack = () => {
         window.history.back();
     };
 
-    const pickStore = (value) => {
-        console.log(value);
-    };
-    const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
 
-    const showConfirmModal = () => {
-        setIsConfirmModalVisible(true);
-    };
 
-    const handleConfirmOk = () => {
-        // Xử lý khi người dùng xác nhận
-        // Để thực hiện thanh toán ở đây
-        setIsConfirmModalVisible(false);
-    };
-
-    const handleConfirmCancel = () => {
-        setIsConfirmModalVisible(false);
-    };
-
-    const [selectedPayment, setSelectedPayment] = useState('cashOnDelivery'); // Ban đầu chọn thanh toán khi nhận hàng
-
-    const handlePaymentChange = (event) => {
-        setSelectedPayment(event.target.value);
+    const [selectedPayment, setSelectedPayment] = useState('atStore');
+    const handlePaymentChange = (e) => {
+        setSelectedPayment(e.target.value);
+        if (e.target.value === 'atStore') {
+            setOrder((prevOrder) => ({
+                ...prevOrder,
+                paymentMethod: 'Thanh toán khi nhận hàng',
+            }));
+        } else if (e.target.value === 'paypal') {
+            setOrder((prevOrder) => ({
+                ...prevOrder,
+                paymentMethod: 'Paypal',
+            }));
+        }
     };
 
     const onChange = event => {
         event.preventDefault();
-        setUser({ ...user, [event.target.name]: event.target.value })
+        setOrder({ ...order, [event.target.name]: event.target.value })
     }
-    const [deliveryOption, setDeliveryOption] = useState('homeDelivery'); // Default to 'homeDelivery'
-    const [address, setAddress] = useState('');
-    const [storeAddress, setStoreAddress] = useState('');
+    const [deliveryOption, setDeliveryOption] = useState('homeDelivery'); 
+
 
     const handleRadioChange = (e) => {
-        setDeliveryOption(e.target.value);
-        if (e.target.value === 'homeDelivery') {
-            setStoreAddress('');
-        } else {
-            setAddress('');
-        }
+      setDeliveryOption(e.target.value);
+      if (e.target.value === 'homeDelivery') {
+        setOrder((prevOrder) => ({
+          ...prevOrder,
+          shippingMethod: 'Giao tận nơi',
+          address: user1.addRess,
+        }));
+      }
+    };
+    
+    const pickStore = (value) => {
+        setOrder((prevOrder) => ({
+            ...prevOrder,
+            shippingMethod: 'Nhận tại cửa hàng',
+            address: value[0],
+          }));
     };
     const options = [
         {
             value: 'Chi nhánh 1',
-            label: 'st1',
+            label: 'Địa chỉ Hồ Chí Minh nè',
         },
         {
             value: 'Chi nhánh 2',
-            label: 'st2',
+            label: 'Hà Nội',
         },
     ];
     useEffect(() => {
@@ -86,6 +116,8 @@ const PaymentInfo = () => {
             .then((response) => {
               const cartData = response.data.data;
               setData(cartData);
+              const totalPrice = calculateTotalPrice(cartData);
+              setTotal(totalPrice);
             })
             .catch((error) => {
               console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
@@ -102,6 +134,7 @@ const PaymentInfo = () => {
                 </Col>
                 <Col style={{ width: '60%', paddingLeft: '10px', paddingRight: '10px' }}>
                     <WrapperPaymentInfo>
+                    <form onSubmit={addOrder}>
                         <div className="block-box">
                             <div className="nav">
                                 <button className="btn-back" onClick={goBack}>
@@ -142,13 +175,13 @@ const PaymentInfo = () => {
                                 <p>Thông tin khách hàng</p>
                                 <MDBRow>
                                     <MDBCol col='6'>
-                                        <MDBInput wrapperClass='mb-4' label='Họ và tên' name="fullName" value={user.fullName} onChange={onChange} type='text' tabIndex="1" />
+                                        <MDBInput wrapperClass='mb-4' label='Họ và tên' name="userName" value={order.userName} onChange={onChange} type='text' tabIndex="1" />
                                     </MDBCol>
                                     <MDBCol col='6'>
-                                        <MDBInput wrapperClass='mb-4' label='Số điện thoại' name="phone_number" value={user.phone_number} onChange={onChange} type='text' tabIndex="3" />
+                                        <MDBInput wrapperClass='mb-4' label='Số điện thoại' name="userPhone" value={order.userPhone} onChange={onChange} type='text' tabIndex="3" />
                                     </MDBCol>
                                 </MDBRow>
-                                <MDBInput wrapperClass='mb-4' label='Email' name="email" value={user.email} onChange={onChange} type='email' tabIndex="4" />
+                                <MDBInput wrapperClass='mb-4' label='Email' name="userEmail" value={order.userEmail} onChange={onChange} type='email' tabIndex="4" />
                                 <MDBRow style={{ height: '100px' }} className="picking-address">
                                     <MDBCol col='6'>
                                         <input
@@ -160,7 +193,7 @@ const PaymentInfo = () => {
                                         />
                                         <label>&nbsp;Giao tận nơi</label>
                                         {deliveryOption === 'homeDelivery' && (
-                                            <MDBInput style={{ marginTop: '10px' }} wrapperClass='mb-4' label='Địa chỉ' name="addRess" value={user.addRess} onChange={onChange} type='text' tabIndex="2" />
+                                            <MDBInput style={{ marginTop: '10px' }} wrapperClass='mb-4' label='Địa chỉ' name="address" value={order.address} onChange={onChange} type='text' tabIndex="2" />
                                         )}
                                     </MDBCol>
                                     <MDBCol col='6'>
@@ -176,7 +209,8 @@ const PaymentInfo = () => {
                                             <div>
                                                 <Cascader
                                                     style={{ marginTop: '12px', width: '100%' }}
-                                                    options={options} onChange={pickStore}
+                                                    options={options}
+                                                    onChange={pickStore}
                                                     placeholder="Hãy chọn địa chỉ cửa hàng"
                                                     dropdownHeight={20}
                                                 />
@@ -196,7 +230,7 @@ const PaymentInfo = () => {
                                         label='Mã giảm giá'
                                         placeholder="Hãy điền mã giảm giá"
                                         name="promotion"
-                                        value={user.promotion}
+                                        value={order.promotion}
                                         onChange={onChange}
                                         type='text'
                                         style={{ width: '100%' }} // Đặt chiều rộng 200px
@@ -207,10 +241,9 @@ const PaymentInfo = () => {
                             </div>
                             <div className="info-quote">
                                 <div className="info-quote__block">
-
                                     <div className="quote-block__item">
                                         <p className="quote-block__title">Tiền hàng (Tạm tính) </p>
-                                        <p className="quote-block__value">20000000</p>
+                                        <p className="quote-block__value"> <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency',currency: 'VND',}).format(total)}</span></p>
                                     </div>
                                     <div className="quote-block__item">
                                         <p className="quote-block__title">Phí vận chuyển </p>
@@ -219,7 +252,7 @@ const PaymentInfo = () => {
                                 </div>
                                 <div className="info-quote__bottom">
                                     <p className="quote-bottom__title">Tổng tiền </p>
-                                    <p className="quote-bottom__value">20000000</p>
+                                    <p className="quote-bottom__value"> <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency',currency: 'VND',}).format(total)}</span></p>
                                 </div>
                             </div>
                         </div>
@@ -229,8 +262,8 @@ const PaymentInfo = () => {
                                 <label>
                                     <input
                                         type="radio"
-                                        value="cashOnDelivery"
-                                        checked={selectedPayment === 'cashOnDelivery'}
+                                        value="atStore"
+                                        checked={selectedPayment === 'atStore'}
                                         onChange={handlePaymentChange}
                                     />
                                   &nbsp; Thanh toán khi nhận hàng
@@ -244,37 +277,19 @@ const PaymentInfo = () => {
                                         checked={selectedPayment === 'paypal'}
                                         onChange={handlePaymentChange}
                                     />
-                                    Paypal
+                                     &nbsp; Paypal
                                 </label>
                             </div>
                         </div>
                         <hr></hr>
                         <div className="bottom-bar">
-                            <div className="total-box">
-                                <span style={{ fontWeight: '600' }}>Tổng tiền tạm tính</span>
-                                <div className="price">
-                                    <span className="total">4000000</span>
-                                </div>
-                            </div>
                             <div className="btn-submit">
-                                <button className="btn-next" onClick={showConfirmModal}>Đặt hàng</button>
+                                <button className="btn-next" type="submit">Đặt hàng</button>
                             </div>
-                            <Modal
-                                title="Xác nhận đặt hàng"
-                                visible={isConfirmModalVisible}
-                                onOk={handleConfirmOk}
-                                onCancel={handleConfirmCancel}
-                                footer={[
-                                    <Button key="back" onClick={handleConfirmCancel}>
-                                        Hủy
-                                    </Button>,
-                                    <Button key="submit" type="primary" onClick={handleConfirmOk}>
-                                        Xác nhận
-                                    </Button>,
-                                ]}>
-                                Bạn có chắc chắn muốn đặt hàng?
-                            </Modal>
+                        
+                          
                         </div>
+                            </form>
                     </WrapperPaymentInfo>
                 </Col>
                 <Col style={{ width: '20%', paddingLeft: '10px', overflow: 'hidden' }}>
