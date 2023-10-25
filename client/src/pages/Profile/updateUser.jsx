@@ -67,7 +67,7 @@ const UpdateUser = () => {
               name="birthDay"
               value={user1.birthDay}
               onChange={(date) => onChange("birthDay", date)}
-              suffixIcon={<span>Ngày sinh</span>}
+              placeholder="Ngày sinh"
             />
             </MDBCol>
           </MDBRow>

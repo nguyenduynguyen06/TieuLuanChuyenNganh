@@ -154,11 +154,13 @@ const FilterBar = () => {
                     Giá <DownOutlined />
                 </a>
             </Dropdown>
-            <Dropdown overlay={menu2} placement="bottomLeft">
-                <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                    Bộ nhớ <DownOutlined />
-                </a>
-            </Dropdown>
+            {nameCategory === `Điện thoại` && (
+                    <Dropdown overlay={menu2} placement="bottomLeft">
+                    <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                        Bộ nhớ <DownOutlined />
+                    </a>
+                    </Dropdown>
+                )}
             <div style={{ display: 'flex', alignItems: 'center' }}>
         <NavLink  to={{
                     pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
