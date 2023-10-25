@@ -49,7 +49,7 @@ const PaymentInfo = () => {
             console.log('Đơn hàng đã được thêm:', response.data);
           })
           .catch((error) => {
-            message.error('Đéo có hàng con đĩ ơi');
+            message.error('Không có sản phẩm nào!');
           });
       };
       

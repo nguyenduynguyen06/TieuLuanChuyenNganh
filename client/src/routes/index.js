@@ -8,6 +8,8 @@ import TypeProductPage from "../pages/ProductTypePage/producttypepage";
 import CartPage from "../pages/CartPage/CartPage";
 import FilterProductPage from "../pages/ProductTypePage/productfilterpage";
 import PaymentInfo from "../pages/PaymentPage/paymentinfo";
+import OrderSuccess from "../pages/ordersuccess";
+
 export const routes = [
     {
         path:'/',
@@ -81,5 +83,9 @@ export const routes = [
     {
         path:'/payment-infor',
         page: PaymentInfo
+    },
+    {
+        path:'/order-success',
+        page: OrderSuccess,
     }
 ]
