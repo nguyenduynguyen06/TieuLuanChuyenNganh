@@ -10,7 +10,6 @@ router.get('/waiting-for-confirmation', orderController.getOrdersWaitingForConfi
 router.get('/home-delivery', orderController.getOrdersHomeDelivery);
 router.get('/store-pickup-getready', orderController.getOrdersStorePickupgetReady);
 router.get('/store-pickup-ready', orderController.getOrdersStorePickupReady);
-router.get('/store-pickup', orderController.getOrdersStorePickup);
 router.get('/completedAtStore', orderController.getCompletedOrdersAtStore);
 router.get('/completedShipping', orderController.getCompletedOrdersShipping);
 router.get('/searchOrder', orderController.searchOrder);

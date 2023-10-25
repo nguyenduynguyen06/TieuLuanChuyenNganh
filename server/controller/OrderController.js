@@ -266,15 +266,6 @@ const getOrdersStorePickupReady = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-const getOrdersStorePickup = async (req, res) => {
-  try {
-    const orders = await Order.find({ shippingMethod: 'Nhận tại cửa hàng'}).populate('items.product');
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng chờ xác nhận:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
 const getCompletedOrdersAtStore = async (req, res) => {
   try {
     const orders = await Order.find({ status: 'Đã hoàn thành', shippingMethod: 'Nhận tại cửa hàng'}).populate('items.product');
@@ -357,4 +348,4 @@ const searchOrder = async (req, res) => {
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
-module.exports = { addOrder, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDelivery, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, cancelOrder,getOrdersShipping,getOrdersStorePickupReady,getOrdersStorePickup,searchOrder };
+module.exports = { addOrder, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDelivery, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, cancelOrder,getOrdersShipping,getOrdersStorePickupReady,searchOrder };
