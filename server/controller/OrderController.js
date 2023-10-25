@@ -75,36 +75,64 @@ const addOrder = async (req, res) => {
     <html>
     <head>
         <style>
-            /* Thêm CSS cho email của bạn ở đây */
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f4f4f4;
+          margin: 0;
+          padding: 0;
+      }
+      h1 {
+          color: #333;
+      }
+      ul {
+          list-style: none;
+          padding: 0;
+      }
+      li {
+          margin: 10px 0;
+      }
         </style>
     </head>
     <body>
+    <table style="background-color: #f4f4f4; font-family: Arial, sans-serif;">
+    <tr>
+    <td>
         <h1>Đơn hàng của bạn</h1>
         <p>Mã đơn hàng: ${orderCode}</p>
         <p>Tên người đặt hàng: ${userName}</p>
         <p>Nơi nhận hàng: ${address}</p>
         <p>Số điện thoại người đặt hàng: ${userPhone}</p>
         <p>Tổng tiền thanh toán: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPay)}</p>
-        <h2>Sản phẩm đã đặt:</h2>
-        <ul>
+        </td>
+        </tr>
+        </table>
 `;
 
-for (const item of populatedOrder.items) {
-  emailHTML += `
-        <li>
-            Tên sản phẩm: ${item.product.name} - ${item.memory}<br>
-            Hình ảnh: <img src="${item.pictures}" alt="Hình ảnh sản phẩm" style="width: 100px; height: 100px;"><br>
-            Số lượng: ${item.quantity}<br>
-            Màu sắc: ${item.color}<br>
-        </li>
-    `;
-}
-
-emailHTML += `
-        </ul>
-    </body>
-    </html>
-`;
+        emailHTML += `
+        <table style="border-collapse: collapse; width: 100%;">
+        <tr>
+          <th style="border: 1px solid #000;">Tên sản phẩm</th>
+          <th style="border: 1px solid #000;">Hình ảnh</th>
+          <th style="border: 1px solid #000;">Số lượng</th>
+          <th style="border: 1px solid #000;">Màu sắc</th>
+          <th style="border: 1px solid #000;">Đơn giá</th>
+          <th style="border: 1px solid #000;">Tổng tiền</th>
+        </tr>
+        <!-- Duyệt qua danh sách sản phẩm đã đặt -->
+        ${populatedOrder.items.map(item => `
+          <tr>
+          <td style="border: 1px solid #000; text-align: center;">
+          ${item.product.name}  ${item.memory !== undefined ? item.memory : ''}
+        </td>        
+            <td style="border: 1px solid #000; text-align: center;"><img src="${item.pictures}" alt="Hình ảnh sản phẩm" style="width: 100px; height: 100px;"></td>
+            <td style="border: 1px solid #000; text-align: center;">${item.quantity}</td>
+            <td style="border: 1px solid #000; text-align: center;">${item.color}</td>
+            <td style="border: 1px solid #000; text-align: center;">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}</td>
+            <td style="border: 1px solid #000; text-align: center;">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.subtotal)}</td>
+          </tr>
+        `).join('')}
+      </table>      
+          `;
 
 const data = {
   email: userEmail,
