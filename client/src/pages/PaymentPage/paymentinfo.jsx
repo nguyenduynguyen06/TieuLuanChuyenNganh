@@ -44,7 +44,7 @@ const PaymentInfo = () => {
         event.preventDefault();
         axios.post(`${process.env.REACT_APP_API_URL}/order/addOrder/${user1._id}`, order)
           .then((response) => {
-            console.log('Đơn hàng đã được thêm:', response.data);
+           window.location.href = `/order-success`
           })
           .catch((error) => {
             message.error('Không có sản phẩm nào!');
