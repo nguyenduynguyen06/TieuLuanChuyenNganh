@@ -42,6 +42,7 @@ const ProductDetailComponents = () => {
     const [selectedSold, setSelectedSold] = useState({});
     const [selectedMemories, setSelectedMemories] = useState({});
     const [selectedSKU, setSelectedSKU] = useState({});
+    const [selectedQuantity, setSelectedQuantity] = useState({});
     const sliderSettings = {
         dots: true,
         infinite: true,
@@ -98,6 +99,10 @@ const ProductDetailComponents = () => {
                                         ...prevSelected,
                                         [variant._id]: selectedAttribute.sku,
                                     }));
+                                    setSelectedQuantity((prevSelected) => ({
+                                        ...prevSelected,
+                                        [variant._id]: selectedAttribute.quantity,
+                                    }));
                                 }
                             }
                         });
@@ -152,12 +157,14 @@ const ProductDetailComponents = () => {
                     const selectedSKUName = selectedSKU[selectedVariant._id]
                     await addToCart(user._id, productName, selectedSKUName, quantity);
                     message.success('Thêm vào giỏ hàng thành công')
+                    window.location.href = `/cart`
                 }
             } else {
                 const selectValues = Object.values(selectedSKU);
                 const selectedColorName = selectValues[selectValues.length - 1];
                 await addToCart(user._id, productName, selectedColorName, quantity);
                 message.success('Thêm vào giỏ hàng thành công')
+                window.location.href = `/cart`
             }
         } catch (error) {
             console.error('Lỗi:', error);
@@ -168,7 +175,7 @@ const ProductDetailComponents = () => {
 
 
 
-    const [quantity, setQuantity] = useState(1); // Đặt giá trị ban đầu là 3
+    const [quantity, setQuantity] = useState(1);
 
     const handleDecreaseQuantity = () => {
         if (quantity > 1) {
@@ -177,9 +184,9 @@ const ProductDetailComponents = () => {
     };
 
     const handleIncreaseQuantity = () => {
-
-        if (quantity < 3) {
-            setQuantity(quantity + 1);
+         if ( quantity < 3) 
+        {
+          setQuantity(quantity + 1);
         }
     };
     const handleChange = (value) => {
@@ -342,6 +349,10 @@ const ProductDetailComponents = () => {
                                                                 ...prevSelected,
                                                                 [variant._id]: selectedAttribute.sku,
                                                             }));
+                                                            setSelectedQuantity((prevSelected) => ({
+                                                                ...prevSelected,
+                                                                [variant._id]: selectedAttribute.quantity,
+                                                            }));
                                                         } else {
                                                             setSelectedSold((prevSelected) => ({
                                                                 ...prevSelected,
@@ -360,9 +371,8 @@ const ProductDetailComponents = () => {
                                             ))}
                                             <WrapperStyleTextSell>
                                                 <p>SKU: {selectedSKU[variant._id]}</p>
-                                            </WrapperStyleTextSell>
-                                            <WrapperStyleTextSell>
                                                 <p>Đã bán: {selectedSold[variant._id]}</p>
+                                                <p>Số lượng còn lại: {selectedQuantity[variant._id]}</p>
                                             </WrapperStyleTextSell>
                                         </div>
                                     );
@@ -404,6 +414,7 @@ const ProductDetailComponents = () => {
                                 min={1}
                                 max={3}
                             />
+
                             <button
                                 style={{ border: 'none', background: 'transparent' }}
                                 onClick={handleIncreaseQuantity}>

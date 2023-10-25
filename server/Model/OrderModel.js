@@ -98,6 +98,9 @@ const orderSchema = new mongoose.Schema({
         .tz("Asia/Ho_Chi_Minh")
         .format("DD/MM/YYYY HH:mm:ss"),
   },
+  completeDate: {
+    type: String,
+  },
 });
 
 const Order = mongoose.model('Order', orderSchema);

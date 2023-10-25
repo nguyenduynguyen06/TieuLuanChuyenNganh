@@ -1,6 +1,7 @@
 const Cart = require('../Model/CartModel');
 const ProductVariant = require('../Model/ProductVariantModel');
 const Order = require('../Model/OrderModel');
+const moment = require("moment-timezone");
 const orderSendMail = require('../ultils/oderSendMail');
 const generateRandomOrderCode = async () => {
   const prefix = 'GGZ';
@@ -133,8 +134,10 @@ const addOrder = async (req, res) => {
           <p><strong>Tên khách hàng:</strong> ${userName}</p>
           <p><strong>Địa chỉ nhận hàng:</strong> ${address}</p>
           <p><strong>Số điện thoại:</strong> ${userPhone}</p>
+          <p><strong>Ngày mua:</strong> ${populatedOrder.createDate}</p>
           <p><strong>Tổng tiền thanh toán:</strong> ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPay)}</p>
         </div>
+      
 `;
 
     emailHTML += `
@@ -146,6 +149,7 @@ const addOrder = async (req, res) => {
           <th style="border: 1px solid #000;">Số lượng</th>
           <th style="border: 1px solid #000;">Màu sắc</th>
           <th style="border: 1px solid #000;">Đơn giá</th>
+          <th style="border: 1px solid #000;">Bảo hành</th>
           <th style="border: 1px solid #000;">Thành tiền</th>
         </tr>
         <!-- Duyệt qua danh sách sản phẩm đã đặt -->
@@ -158,6 +162,7 @@ const addOrder = async (req, res) => {
             <td style="border: 1px solid #000; text-align: center;">${item.quantity}</td>
             <td style="border: 1px solid #000; text-align: center;">${item.color}</td>
             <td style="border: 1px solid #000; text-align: center;">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}</td>
+            <td style="border: 1px solid #000; text-align: center;">${item.product.warrantyPeriod} tháng</td>
             <td style="border: 1px solid #000; text-align: center;">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.subtotal)}</td>
           </tr>
         `).join('')}
@@ -193,12 +198,98 @@ const updateOrderStatus = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+const completeOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+   
+    const vnTime = moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY HH:mm:ss");
+
+
+    const updateData = {
+      status: 'Đã hoàn thành',
+      completeDate: vnTime,
+    };
+
+    const updatedOrder = await Order.findByIdAndUpdate(orderId, updateData, { new: true });
+
+    if (!updatedOrder) {
+      return res.status(404).json({ success: false, error: 'Đơn hàng không tồn tại' });
+    }
+
+    res.status(200).json({ success: true, data: updatedOrder });
+  } catch (error) {
+    console.error('Lỗi khi cập nhật trạng thái đơn hàng:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 const getOrdersWaitingForConfirmation = async (req, res) => {
   try {
-    const orders = await Order.find({ status: 'Chờ xác nhận' });
+    const orders = await Order.find({ shippingMethod: 'Nhận tại cửa hàng',status: 'Chờ xác nhận' }).populate('items.product');
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đơn hàng chờ xác nhận:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const getOrdersShipping = async (req, res) => {
+  try {
+    const orders = await Order.find({ shippingMethod: 'Giao tận nơi',status: 'Chờ xác nhận' }).populate('items.product');
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng giao tận nơi:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const getOrdersStorePickupgetReady = async (req, res) => {
+  try {
+    const orders = await Order.find({
+      shippingMethod: 'Nhận tại cửa hàng',
+      status:  'Đơn hàng đang được chuẩn bị' 
+    }).populate('items.product');
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng nhận tại cửa hàng:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const getOrdersStorePickupReady = async (req, res) => {
+  try {
+    const orders = await Order.find({
+      shippingMethod: 'Nhận tại cửa hàng',
+      status:  'Đơn hàng sẵn sàng' 
+    }).populate('items.product');
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng nhận tại cửa hàng:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const getOrdersStorePickup = async (req, res) => {
+  try {
+    const orders = await Order.find({ shippingMethod: 'Nhận tại cửa hàng'}).populate('items.product');
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng chờ xác nhận:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const getCompletedOrdersAtStore = async (req, res) => {
+  try {
+    const orders = await Order.find({ status: 'Đã hoàn thành', shippingMethod: 'Nhận tại cửa hàng'}).populate('items.product');
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng đã hoàn thành:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const getCompletedOrdersShipping = async (req, res) => {
+  try {
+    const orders = await Order.find({ status: 'Đã hoàn thành', shippingMethod: 'Giao tận nơi'}).populate('items.product');
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng đã hoàn thành:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
@@ -208,24 +299,6 @@ const getOrdersHomeDelivery = async (req, res) => {
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đơn hàng giao tận nơi:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-const getOrdersStorePickup = async (req, res) => {
-  try {
-    const orders = await Order.find({ shippingMethod: 'Nhận tại cửa hàng' });
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng nhận tại cửa hàng:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-const getCompletedOrders = async (req, res) => {
-  try {
-    const orders = await Order.find({ status: 'Đã hoàn thành' });
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng đã hoàn thành:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
@@ -274,5 +347,14 @@ const cancelOrder = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-
-module.exports = { addOrder, updateOrderStatus, getCompletedOrders, getOrdersByUserId, getOrdersHomeDelivery, getOrdersStorePickup, getOrdersWaitingForConfirmation, cancelOrder };
+const searchOrder = async (req, res) => {
+  try {
+    const keyword = req.query.keyword;
+    const order = await Order.find({orderCode: keyword}).populate('items.product')
+    res.status(200).json({ success: true, data: order });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+module.exports = { addOrder, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDelivery, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, cancelOrder,getOrdersShipping,getOrdersStorePickupReady,getOrdersStorePickup,searchOrder };

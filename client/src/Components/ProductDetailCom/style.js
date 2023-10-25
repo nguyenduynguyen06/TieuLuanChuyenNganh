@@ -38,7 +38,7 @@ export const WrapperStyleTextSell = styled.div`
     p {
     padding: 20px 0 0 0;
     font-size: 15px;
-    line-height: 24px;
+    line-height: 0px;
     color: rgb(120, 120, 120);
     }
 `

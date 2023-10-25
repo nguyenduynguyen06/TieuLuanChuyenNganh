@@ -164,8 +164,11 @@ const PaymentInfo = () => {
                                                 )}
                                             </div>
                                             </div>
-                                            <p>Số lượng:
+                                            <p>Số lượng : &nbsp;
                                             <span style={{ color: 'red' }}>{item.quantity}</span>
+                                            </p>
+                                            <p>Bảo hành : &nbsp;
+                                            <span style={{ color: 'red' }}>{item.product.warrantyPeriod} tháng</span>
                                             </p>
                                         </div>
                                         </div>

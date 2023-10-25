@@ -51,7 +51,7 @@ const userLogin = async (req, res) => {
                 
                 
                 const tokenData = refresh_Token
-                res.cookie('refresh_token', tokenData, { httpOnly: true, secure:true, samesite: 'strict',expires: new Date(Date.now() + 8600000000) });
+                res.cookie('refresh_token', tokenData, { httpOnly: true, secure:true, samesite: 'strict',expires: new Date(Date.now() + 24 * 60 * 60 * 1000) });
                 return res.status(200).json({
                    access_Token,
                    refresh_Token

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AppstoreOutlined, UserOutlined,UnorderedListOutlined,QqOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, UserOutlined,UnorderedListOutlined,QqOutlined,PrinterOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { getItem} from './utils';
 import Header from '../../Components/Header/header';
@@ -13,6 +13,9 @@ import AdminBrand from '../../Components/admin/AdminBrand/AdminBrand';
 import NotFoundPage from '../notfoundpage';
 import NewBrand from '../../Components/admin/AdminBrand/NewBrand';
 import AdminComment from '../../Components/admin/AdminComment/AdminComment';
+import Pending from '../../Components/admin/AdminOrder/Pending';
+import AtStore from '../../Components/admin/AdminOrder/AtStore';
+import Complete from '../../Components/admin/AdminOrder/Complete';
 
 const AdminHomePage = () => {
   useEffect(() => {
@@ -53,7 +56,23 @@ const AdminHomePage = () => {
         case 'comments':
               return(
                 <div><AdminComment/></div>
-                )        
+                )     
+        case 'pending':
+                return(
+                  <div><Pending/></div>
+                  )
+        case 'atStore':
+                return(
+                  <div><AtStore/></div>
+                  )   
+        case 'shipping':
+                return(
+                <div><AdminComment/></div>
+                  )   
+        case 'success':
+                return(
+                <div><Complete/></div>
+                  )                                               
       default:
         return <></>
     }
@@ -78,6 +97,12 @@ const AdminHomePage = () => {
       getItem('Thêm thương hiệu', 'addbrand'),
     ]),
     getItem('Bình luận', 'comments', <UserOutlined />),
+    getItem('Đơn hàng', 'order',<PrinterOutlined />, [
+      getItem('Chờ xác nhận', 'pending'),
+      getItem('Nhận tại cửa hàng', 'atStore'),
+      getItem('Giao tận nơi', 'shipping'),
+      getItem('Đã hoàn thành', 'success'),
+    ]),
   ];
 
   const user = useSelector((state)=> state.user)

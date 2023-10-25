@@ -29,6 +29,9 @@ const addToCart = async (req, res) => {
       if (attribute.sku === SKU) {
         color = attribute.color;
         matchingPictures = attribute.pictures;
+        if (attribute.quantity < quantity) {
+          return res.status(400).json({ success: false, error: 'Số lượng vượt quá giới hạn trong kho' });
+        }
         break;
       }
     }
@@ -43,10 +46,18 @@ const addToCart = async (req, res) => {
       break;
     }
   }
-    if (matchingItem) {
-      matchingItem.quantity = Number(matchingItem.quantity) + Number(quantity);
+  if (matchingItem) {
+    const newQuantity = Number(matchingItem.quantity) + Number(quantity);
+    
+    
+    if (newQuantity <= 3) {
+      matchingItem.quantity = newQuantity;
       matchingItem.subtotal = Number(matchingItem.subtotal) + (productVariant.newPrice * quantity);
     } else {
+      return res.status(400).json({ success: false, error: 'Số lượng vượt quá giới hạn (3)' });
+    }
+  } else {
+    if (quantity <= 3) { 
       const price = productVariant.newPrice;
       const subtotal = price * quantity;
       cart.items.push({
@@ -59,8 +70,11 @@ const addToCart = async (req, res) => {
         quantity,
         subtotal,
       });
+    } else {
+      return res.status(400).json({ success: false, error: 'Số lượng vượt quá giới hạn (3)' });
     }
-
+  }
+  
     await cart.save();
     res.status(201).json({ success: true, data: cart });
   } catch (error) {
