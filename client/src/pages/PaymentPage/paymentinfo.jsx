@@ -154,6 +154,7 @@ const PaymentInfo = () => {
                                         <img className='item__img' src={item.pictures} alt={item.product.name} />
                                         <div className="item-info">
                                         <p className="item-name">{item.product.name} - {item.memory}</p>
+                                        <p className="item-name">{item.color}</p>
                                         <div className="item-price">
                                             <div>
                                             <div className="box-info__box-price">

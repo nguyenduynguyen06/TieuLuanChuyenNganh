@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require("moment-timezone");
 const cartItemSchema  = new mongoose.Schema({
   product: {
     type: mongoose.Schema.Types.ObjectId,
@@ -91,8 +92,11 @@ const orderSchema = new mongoose.Schema({
     ref: 'Voucher'
   },
   createDate: {
-    type: Date,
-    default: Date.now,
+    type: String,
+    default: () =>
+      moment()
+        .tz("Asia/Ho_Chi_Minh")
+        .format("DD/MM/YYYY HH:mm:ss"),
   },
 });
 
