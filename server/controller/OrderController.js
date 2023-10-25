@@ -70,6 +70,48 @@ const addOrder = async (req, res) => {
     await Cart.updateOne({ user: userId }, { $set: { items: [] } });
     const savedOrder = await newOrder.save();
     res.status(201).json({ success: true, data: savedOrder });
+    const populatedOrder = await Order.findById(newOrder._id).populate('items.product items.productVariant');
+    let emailHTML = `
+    <html>
+    <head>
+        <style>
+            /* Thêm CSS cho email của bạn ở đây */
+        </style>
+    </head>
+    <body>
+        <h1>Đơn hàng của bạn</h1>
+        <p>Mã đơn hàng: ${orderCode}</p>
+        <p>Tên người đặt hàng: ${userName}</p>
+        <p>Nơi nhận hàng: ${address}</p>
+        <p>Số điện thoại người đặt hàng: ${userPhone}</p>
+        <p>Tổng tiền thanh toán: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPay)}</p>
+        <h2>Sản phẩm đã đặt:</h2>
+        <ul>
+`;
+
+for (const item of populatedOrder.items) {
+  emailHTML += `
+        <li>
+            Tên sản phẩm: ${item.product.name} - ${item.memory}<br>
+            Hình ảnh: <img src="${item.pictures}" alt="Hình ảnh sản phẩm" style="width: 100px; height: 100px;"><br>
+            Số lượng: ${item.quantity}<br>
+            Màu sắc: ${item.color}<br>
+        </li>
+    `;
+}
+
+emailHTML += `
+        </ul>
+    </body>
+    </html>
+`;
+
+const data = {
+  email: userEmail,
+  html: emailHTML,
+};
+
+await orderSendMail(data);
   } catch (error) {
     console.error('Lỗi khi thêm đơn hàng:', error);
     res.status(500).json({ success: false, error: error.message });

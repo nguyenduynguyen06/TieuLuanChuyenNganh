@@ -37,8 +37,6 @@ const PaymentInfo = () => {
           userEmail: user1.email,
           address: user1.addRess,
           userPhone: user1.phone_number,
-          subTotal: total,
-          totalPay: total
         }));
       }, [user1]);
 
@@ -102,8 +100,8 @@ const PaymentInfo = () => {
     };
     const options = [
         {
-            value: 'Chi nhánh 1',
-            label: 'Địa chỉ Hồ Chí Minh nè',
+            value: 'Chi nhánh 1, Số 1 Võ Văn Ngân, Phường Linh Chiểu, Thành phố Thủ Đức, Thành phố Hồ Chí Minh',
+            label: 'Chi nhánh 1, Số 1 Võ Văn Ngân, Phường Linh Chiểu, Thành phố Thủ Đức, Thành phố Hồ Chí Minh',
         },
         {
             value: 'Chi nhánh 2',
@@ -118,6 +116,11 @@ const PaymentInfo = () => {
               setData(cartData);
               const totalPrice = calculateTotalPrice(cartData);
               setTotal(totalPrice);
+              setOrder(prevOder => ({
+                ...prevOder,
+                subTotal: totalPrice,
+                totalPay: totalPrice
+              }));
             })
             .catch((error) => {
               console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
