@@ -16,6 +16,7 @@ router.delete('/deleteVariant/:id', productvariantController.deleteProductVarian
 router.put('/editProductVariant/:id', productvariantController.updateProductVariant);
 router.post('/addAttributes/:id', productvariantController.addAttributes);
 router.delete('/deleteAttributes/:id/:attributeIdToRemove', productvariantController.deleteAttributes);
+router.put('/addQuantity/:variantId/:attributeId',productvariantController.addQuantityToAttribute);
 router.get('/getAll',productController.getAllProduct)
 router.get('/getDetails/:name/:memory', productController.detailsProduct);
 router.get('/filter/:categoryId', productController.filterProductsByCategory);

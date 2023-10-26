@@ -89,6 +89,7 @@ onChange(info) {
   const [form] = Form.useForm();
   const [currentProductId, setCurrentProductId] = useState(null);
   const [currentProductvariantId, setCurrentProducvarianttId] = useState(null);
+  const [currentAttributeId, setCurrentAttributeId] = useState(null);
   const columns = [
     {
       title: 'Tên sản phẩm',
@@ -439,6 +440,7 @@ const [attributeModalVisible, setAttributeModalVisible] = useState(false);
 const [selectedVariant, setSelectedVariant] = useState(null);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [isDeleteVariantVisible, setDeleteVariantVisible] = useState(false);
+  const [isDeleteAttributeVisible, setDeleteAttributeVisible] = useState(false);
   const [isUpdate, setUpdate] = useState(false);
   const [isAddVariant, setAddVariant] = useState(false);
   const [productData, setProductData] = useState([]);
@@ -524,10 +526,6 @@ const [selectedVariant, setSelectedVariant] = useState(null);
         console.error("Lỗi khi cập nhật biến thể: ", error);
       });
   };
-  
-  
-  
-  
   const handleSaveEdit = (id, values) => {
     const productId = id;
     axios.put(`${process.env.REACT_APP_API_URL}/product/editProduct/${productId}`, values)
@@ -596,22 +594,17 @@ const [selectedVariant, setSelectedVariant] = useState(null);
         const updatedProducts = productData.map(product =>
           product._id === productId ? updatedProduct : product
         );
-        console.log('checked',checked)
         setProductData(updatedProducts);
       })
       .catch((error) => {
         console.error('Lỗi khi cập nhật sản phẩm: ', error);
       });
   };
-  
-  const showAttributesModal = (variant) => {
-    setSelectedVariant(variant);
-    setAttributeModalVisible(true);
-  };
   const [isAddAttributes, setAddAttributes] = useState(false);
   const [isUpdateVariant, setUpdateVariant] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [addQuantityAttributes, setaddQuantityAttribute] = useState(false);
   const handleSearch = (query) => {
     setSearchQuery(query);
   };
@@ -628,6 +621,61 @@ const [selectedVariant, setSelectedVariant] = useState(null);
       setSearchResults([]);
     }
   }, [searchQuery]);
+  const handleDeleteAttribute = (variantId, attributeId) => {
+    axios
+      .delete(`${process.env.REACT_APP_API_URL}/product/deleteAttributes/${variantId}/${attributeId}`)
+      .then((response) => {
+        const updatedSelectedVariant = {
+          ...selectedVariant,
+          attributes: selectedVariant.attributes.filter(
+            (attribute) => attribute._id.toString() !== attributeId.toString()
+          ),
+        };
+        setSelectedVariant(updatedSelectedVariant);
+  
+        const updatedSelectedProduct = {
+          ...selectedProduct,
+          variant: selectedProduct.variant.map((variant) => {
+            if (variant._id === variantId) {
+              return {
+                ...variant,
+                attributes: variant.attributes.filter(
+                  (attribute) => attribute._id.toString() !== attributeId.toString()
+                ),
+              };
+            }
+            return variant;
+          }),
+        };
+        setSelectedProduct(updatedSelectedProduct);
+      })
+      .catch((error) => {
+        console.error('Lỗi khi xóa mục giỏ hàng:', error);
+      });
+  };
+  const addQuantityAttribute = async (variantId, attributeId, newData) => {
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}/product/addQuantity/${variantId}/${attributeId}`,
+        newData
+      );
+      axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`)
+      .then((response) => {
+        setProductData(response.data.data);
+      })
+      if (response.status === 200) {
+        
+        form.resetFields();
+        setaddQuantityAttribute(false);
+      } else {
+        console.error('Lỗi khi cập nhật biến thể:', response.data.error);
+      }
+    } catch (error) {
+      console.error('Lỗi khi cập nhật biến thể:', error);
+    }
+  };
+  
+  
   return (
     <div>
          <div>
@@ -699,7 +747,11 @@ const [selectedVariant, setSelectedVariant] = useState(null);
           title: 'Thuộc tính',
           render: (text, record) => (
             <Space size="middle">
-              <a onClick={() => showAttributesModal(record)}><AppstoreOutlined/> </a>
+               <a
+            onClick={() => {
+              setSelectedVariant(record);
+              setAttributeModalVisible(true);
+            }}><AppstoreOutlined/> </a>
             </Space>
           ),
         },
@@ -928,6 +980,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   footer={null}
   width={800}
 >
+  
   {selectedVariant && (
     <Table
       dataSource={selectedVariant.attributes}
@@ -966,6 +1019,70 @@ const [selectedVariant, setSelectedVariant] = useState(null);
             </div>
           ),
         },
+        {
+          title: 'Thao tác',
+          render: (text, record) => (
+            <Space size="middle">
+              <a onClick={() => { setDeleteAttributeVisible(true); setCurrentAttributeId(record._id) }}>
+                <DeleteOutlined />
+              </a>
+              <a onClick={() => { setaddQuantityAttribute(true); setCurrentAttributeId(record._id) }}>
+                <PlusOutlined />
+              </a>
+              <Modal
+                title="Xác nhận xoá thuộc tính"
+                visible={isDeleteAttributeVisible}
+                onOk={() => {
+                 handleDeleteAttribute(selectedVariant._id,currentAttributeId);
+                 setDeleteAttributeVisible(false);
+                }}
+                onCancel={() => setDeleteAttributeVisible(false)}
+              >
+                <p>Bạn có chắc chắn muốn xoá thuộc tính này?</p>
+              </Modal>
+              <Modal
+                  title="Cộng thêm số lượng"
+                  visible={addQuantityAttributes}
+                  onOk={() => {
+                    form
+                      .validateFields()
+                      .then((values) => {
+                        addQuantityAttribute(selectedVariant._id,currentAttributeId, values);
+                        setaddQuantityAttribute(false);
+                      })
+                      .catch((errorInfo) => {
+                        console.error('Validation failed:', errorInfo);
+                      });
+                  }}
+                  onCancel={() => {
+                    setaddQuantityAttribute(false);
+                  }}
+                >
+                    <Alert
+                    message="Lưu ý: Điền số lượng vào sẽ cộng thêm với số lượng đã có trước đó, chỉ cần tắt tất cả form rồi mở lại sẽ được cập nhật lại số lượng"
+                    type="warning"
+                    showIcon
+                    style={{ marginBottom: '16px',background:'#FFFF99' }}
+                  />
+                  <Form
+                    {...formItemLayout}
+                    form={form}
+                    style={{
+                      maxWidth: 600,
+                    }}
+                    scrollToFirstError
+                  >
+                    <Form.Item
+                      name="quantity"
+                      label="Số lượng cộng thêm"
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Form>
+                </Modal>  
+            </Space>
+          )
+        }
       ]}
     />
   )}
