@@ -82,8 +82,8 @@ const Profilepage = () => {
                 </Upload>
                 <div className="text-muted mb-1"></div>
                 <div className="d-flex justify-content-center mb-2">
-                  <MDBBtn onClick={toggleShow1} style={{ backgroundColor: "#FF3300" }}>Cập nhật thông tin</MDBBtn>
-                  <MDBBtn onClick={toggleShow2} className="ms-1" style={{ border: '2px solid #FF3300', color: 'red', backgroundColor: '#F5F5F5' }}>Đổi mật khẩu</MDBBtn>
+                  <MDBBtn onClick={toggleShow1} style={{ backgroundColor: "#8c52ff" }}>Cập nhật thông tin</MDBBtn>
+                  <MDBBtn onClick={toggleShow2} className="ms-1" style={{ border: '2px solid #8c52ff', color: '#8c52ff', backgroundColor: '#F5F5F5' }}>Đổi mật khẩu</MDBBtn>
                 </div>
               </MDBCardBody>
             </MDBCard>
@@ -169,6 +169,9 @@ const Profilepage = () => {
                         <Col>
                           <a onClick={toggleShow3}>Xem thêm</a>
                         </Col>
+                      </Row>
+                      <Row style={{ padding:'10px' }}>
+                        <Button style={{background: '#8c52ff', color:'#fff'}}>Đã nhận được hàng</Button>
                       </Row>
                     </Row>
                   </Row>
