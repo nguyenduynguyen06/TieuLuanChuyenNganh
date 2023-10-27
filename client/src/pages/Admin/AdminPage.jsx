@@ -16,6 +16,7 @@ import AdminComment from '../../Components/admin/AdminComment/AdminComment';
 import Pending from '../../Components/admin/AdminOrder/Pending';
 import AtStore from '../../Components/admin/AdminOrder/AtStore';
 import Complete from '../../Components/admin/AdminOrder/Complete';
+import Shipping from '../../Components/admin/AdminOrder/Shipping';
 
 const AdminHomePage = () => {
   useEffect(() => {
@@ -67,7 +68,7 @@ const AdminHomePage = () => {
                   )   
         case 'shipping':
                 return(
-                <div><AdminComment/></div>
+                <div><Shipping/></div>
                   )   
         case 'success':
                 return(

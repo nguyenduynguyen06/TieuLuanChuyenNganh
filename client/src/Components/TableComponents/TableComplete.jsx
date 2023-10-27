@@ -140,6 +140,38 @@ const TableComplete = () => {
     const [displayOrdersAtStore, setDisplayOrdersAtStore] = useState(true);
     const [orderModalVisible, setOrderModalVisible] = useState(false);
     const [selectProductOrder, setProductOrder] = useState(null);
+    const [searchResultsAtStore, setSearchResultsAtStore] = useState([]);
+    const [searchResultsShipping, setSearchResultsShipping] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const handleSearch = (query) => {
+      setSearchQuery(query);
+    };
+    useEffect(() => {
+      if (searchQuery.trim() !== '') {
+        axios.get(`${process.env.REACT_APP_API_URL}/order/searchOrderAtStoreComplete?keyword=${searchQuery}`)
+          .then((response) => {
+            setSearchResultsAtStore(response.data.data);
+          })
+          .catch((error) => {
+            console.error('Error searching products:', error);
+          });
+      } else {
+        setSearchResultsAtStore([]);
+      }
+    }, [searchQuery]);
+    useEffect(() => {
+      if (searchQuery.trim() !== '') {
+        axios.get(`${process.env.REACT_APP_API_URL}/order/searchOrderShippingComplete?keyword=${searchQuery}`)
+          .then((response) => {
+            setSearchResultsShipping(response.data.data);
+          })
+          .catch((error) => {
+            console.error('Error searching products:', error);
+          });
+      } else {
+        setSearchResultsShipping([]);
+      }
+    }, [searchQuery]);
     useEffect(() => {
       axios
         .get(`${process.env.REACT_APP_API_URL}/order/completedAtStore`)
@@ -169,7 +201,7 @@ const TableComplete = () => {
         <Search
           style={{ width: '50%', marginBottom: '10px'  }}
           placeholder="Tìm kiếm đơn hàng"
-         // onSearch={handleSearch}
+          onSearch={handleSearch}
           enterButton
         />
       </div>
@@ -188,7 +220,10 @@ const TableComplete = () => {
             Giao tận nơi
           </Button>
         </div>
-        <Table columns={columns} dataSource={displayOrdersAtStore ? orderDataAtStore : orderDataAtShipping} />
+        <Table columns={columns} dataSource={searchQuery.trim() === '' ? 
+          (displayOrdersAtStore ? orderDataAtStore : orderDataAtShipping) : 
+          (displayOrdersAtStore ? searchResultsAtStore : searchResultsShipping)
+        } />
       </div>
     );
   };

@@ -284,9 +284,18 @@ const getCompletedOrdersShipping = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-const getOrdersHomeDelivery = async (req, res) => {
+const getOrdersHomeDeliveryReady = async (req, res) => {
   try {
-    const orders = await Order.find({ shippingMethod: 'Giao tận nơi' });
+    const orders = await Order.find({ shippingMethod: 'Giao tận nơi',status:'Đơn hàng đang được chuẩn bị' });
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng giao tận nơi:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const getOrdersHomeDeliveryShipping = async (req, res) => {
+  try {
+    const orders = await Order.find({ shippingMethod: 'Giao tận nơi',status:'Đơn hàng đang được giao' });
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đơn hàng giao tận nơi:', error);
@@ -348,4 +357,64 @@ const searchOrder = async (req, res) => {
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
-module.exports = { addOrder, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDelivery, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, cancelOrder,getOrdersShipping,getOrdersStorePickupReady,searchOrder };
+const searchOrderAtStoreComplete = async (req, res) => {
+  try {
+    const keyword = req.query.keyword;
+    const order = await Order.find({orderCode: keyword,shippingMethod:'Nhận tại cửa hàng'}).populate('items.product')
+    res.status(200).json({ success: true, data: order });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const searchOrderShippingComplete = async (req, res) => {
+  try {
+    const keyword = req.query.keyword;
+    const order = await Order.find({orderCode: keyword,shippingMethod:'Giao tận nơi'}).populate('items.product')
+    res.status(200).json({ success: true, data: order });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const searchOrderGetReady = async (req, res) => {
+  try {
+    const keyword = req.query.keyword;
+    const order = await Order.find({orderCode: keyword,shippingMethod:'Giao tận nơi',status:'Đơn hàng đang được chuẩn bị'}).populate('items.product')
+    res.status(200).json({ success: true, data: order });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const searchOrderShipping = async (req, res) => {
+  try {
+    const keyword = req.query.keyword;
+    const order = await Order.find({orderCode: keyword,shippingMethod:'Giao tận nơi',status:'Đơn hàng đang được giao'}).populate('items.product')
+    res.status(200).json({ success: true, data: order });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const searchOrderGetReadyAtStore = async (req, res) => {
+  try {
+    const keyword = req.query.keyword;
+    const order = await Order.find({orderCode: keyword,shippingMethod:'Nhận tại cửa hàng',status:'Đơn hàng đang được chuẩn bị'}).populate('items.product')
+    res.status(200).json({ success: true, data: order });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const searchOrderReady = async (req, res) => {
+  try {
+    const keyword = req.query.keyword;
+    const order = await Order.find({orderCode: keyword,shippingMethod:'Nhận tại cửa hàng',status:'Đơn hàng sẵn sàng'}).populate('items.product')
+    res.status(200).json({ success: true, data: order });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+module.exports = { addOrder, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDeliveryReady, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, cancelOrder,getOrdersShipping,getOrdersStorePickupReady,searchOrder,getOrdersHomeDeliveryShipping,searchOrderAtStoreComplete,searchOrderShippingComplete,searchOrderGetReady,searchOrderShipping,searchOrderGetReadyAtStore,searchOrderReady };

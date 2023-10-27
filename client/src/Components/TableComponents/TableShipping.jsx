@@ -7,7 +7,7 @@ import './button.css'
 import { useSelector } from "react-redux";
 import Search from "antd/es/input/Search";
 
-const TableAtStore = () => {
+const TableShipping = () => {
   const user = useSelector((state)=> state.user)
   const headers = {
     token: `Bearers ${user.access_token}`,
@@ -142,12 +142,12 @@ const TableAtStore = () => {
               setCurrentOrderId(record._id);
               if (record.status === 'Đơn hàng đang được chuẩn bị') {
                 setAcceptOrder(true);
-              } else if (record.status === 'Đơn hàng sẵn sàng') {
+              } else if (record.status === 'Đơn hàng đang được giao') {
                 setCompleteOrder(true);
               }
             }}
           >
-            {record.status === 'Đơn hàng đang được chuẩn bị' ? 'Xác nhận' : 'Hoàn thành'}
+            {record.status === 'Đơn hàng đang được chuẩn bị' ? 'Giao hàng' : 'Hoàn thành'}
           </Button>
 
            ,<div style={{width:"100px",height:"10px"}}>&nbsp;</div>,
@@ -176,7 +176,7 @@ const TableAtStore = () => {
               }}
               onCancel={() => setAcceptOrder(false)} 
             >
-            <p>Bạn có chắc chắn muốn xác nhận đơn hàng này</p>
+            <p>Bạn có chắc chắn muốn giao hàng đơn hàng này</p>
             </Modal>,
          <Modal
          title="Hoàn thành đơn hàng"
@@ -201,41 +201,9 @@ const TableAtStore = () => {
     const [cancelOrder, setCancelOrder] = useState(false);
     const [acceptOrder, setAcceptOrder] = useState(false);
     const [completeOrder, setCompleteOrder] = useState(false);
-    const [searchResultsAtStore, setSearchResultsAtStore] = useState([]);
-    const [searchResultsShipping, setSearchResultsShipping] = useState([]);
-    const [searchQuery, setSearchQuery] = useState('');
-    const handleSearch = (query) => {
-      setSearchQuery(query);
-    };
-    useEffect(() => {
-      if (searchQuery.trim() !== '') {
-        axios.get(`${process.env.REACT_APP_API_URL}/order/searchOrderGetReadyAtStore?keyword=${searchQuery}`)
-          .then((response) => {
-            setSearchResultsAtStore(response.data.data);
-          })
-          .catch((error) => {
-            console.error('Error searching products:', error);
-          });
-      } else {
-        setSearchResultsAtStore([]);
-      }
-    }, [searchQuery]);
-    useEffect(() => {
-      if (searchQuery.trim() !== '') {
-        axios.get(`${process.env.REACT_APP_API_URL}/order/searchOrderReady?keyword=${searchQuery}`)
-          .then((response) => {
-            setSearchResultsShipping(response.data.data);
-          })
-          .catch((error) => {
-            console.error('Error searching products:', error);
-          });
-      } else {
-        setSearchResultsShipping([]);
-      }
-    }, [searchQuery]);
     useEffect(() => {
       axios
-        .get(`${process.env.REACT_APP_API_URL}/order/store-pickup-getready`)
+        .get(`${process.env.REACT_APP_API_URL}/order/home-delivery`)
         .then((response) => {
             setOrderGetReady(response.data.data); 
         })
@@ -245,7 +213,7 @@ const TableAtStore = () => {
     }, []);
     useEffect(() => {
         axios
-          .get(`${process.env.REACT_APP_API_URL}/order/store-pickup-ready`)
+          .get(`${process.env.REACT_APP_API_URL}/order/home-delivery-shipping`)
           .then((response) => {
             setOrderReady(response.data.data); 
           })
@@ -269,13 +237,13 @@ const TableAtStore = () => {
       };
       const handleConfirmOrder = async (orderId ) => {
         try {
-          const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/updateOrder/${orderId}`, { newStatus: 'Đơn hàng sẵn sàng' },{headers});
+          const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/updateOrder/${orderId}`, { newStatus: 'Đơn hàng đang được giao' },{headers});
           if (response.data.success) {
             const updatedOrderAtStore = orderDataGetReady.filter(order => order._id !== orderId);  
-            message.success('Đơn hàng sẵn sàng thành công');
+            message.success('Đơn hàng đã giao cho shipper');
             setOrderGetReady(updatedOrderAtStore);
             axios
-            .get(`${process.env.REACT_APP_API_URL}/order/store-pickup-ready`)
+            .get(`${process.env.REACT_APP_API_URL}/order/home-delivery-shipping`)
             .then((response) => {
               setOrderReady(response.data.data); 
             })
@@ -306,9 +274,41 @@ const TableAtStore = () => {
       const toggleDisplayOrders = (atStore) => {
         setDisplayOrdersAtStore(atStore);
       };
+      const [searchResultsAtStore, setSearchResultsAtStore] = useState([]);
+      const [searchResultsShipping, setSearchResultsShipping] = useState([]);
+      const [searchQuery, setSearchQuery] = useState('');
+      const handleSearch = (query) => {
+        setSearchQuery(query);
+      };
+      useEffect(() => {
+        if (searchQuery.trim() !== '') {
+          axios.get(`${process.env.REACT_APP_API_URL}/order/searchOrderGetReady?keyword=${searchQuery}`)
+            .then((response) => {
+              setSearchResultsAtStore(response.data.data);
+            })
+            .catch((error) => {
+              console.error('Error searching products:', error);
+            });
+        } else {
+          setSearchResultsAtStore([]);
+        }
+      }, [searchQuery]);
+      useEffect(() => {
+        if (searchQuery.trim() !== '') {
+          axios.get(`${process.env.REACT_APP_API_URL}/order/searchOrderShipping?keyword=${searchQuery}`)
+            .then((response) => {
+              setSearchResultsShipping(response.data.data);
+            })
+            .catch((error) => {
+              console.error('Error searching products:', error);
+            });
+        } else {
+          setSearchResultsShipping([]);
+        }
+      }, [searchQuery]);
     return (
         <div>
-             <div>
+        <div>
         <Search
           style={{ width: '50%', marginBottom: '10px'  }}
           placeholder="Tìm kiếm đơn hàng"
@@ -328,7 +328,7 @@ const TableAtStore = () => {
            className={`memory-button ${displayOrdersAtStore === false ? 'selected' : ''}`}
             onClick={() => toggleDisplayOrders(false)}
           >
-            Đã sẵn sàng
+            Đang giao hàng
           </Button>
         </div>
         <Table columns={columns} dataSource={searchQuery.trim() === '' ? 
@@ -339,4 +339,4 @@ const TableAtStore = () => {
     );
   };
   
-  export default TableAtStore;
+  export default TableShipping;
