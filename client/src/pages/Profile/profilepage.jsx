@@ -150,35 +150,49 @@ const Profilepage = () => {
             <MDBRow>
               <MDBCol sm="20">
                 <MDBCard className="mb-4 mb-md-0">
-                  <Row style={{ display: 'flex', flexDirection: 'column', padding: '10px', gap: '10px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', padding: '10px', gap: '10px' }}>
                     <p style={{ fontSize: '20px', fontWeight: 600 }}>Đơn hàng của tôi</p>
-                    <Row style={{ padding: '20px 20px 0 20px', border: '1px solid #ccc' }} className='pre-order'>
-                      <Row>
-                        <Col span={4}>
+
+                    <div style={{ padding: '10px 10px 0 10px', border: '1px solid #ccc', display: 'flex', flexDirection: 'column' }} className='pre-order'>
+                      <div style={{ background: '#8c52ff', color: '#fff', padding: '10px 10px 0 10px', textAlign: 'right', fontWeight: 600, borderRadius: '4px 4px 0 0' }}>
+                        <p>Đơn hàng&nbsp;<span>đang giao</span></p>
+                      </div>
+                      <div style={{ display: 'flex', height: 'auto', padding: '10px 10px 10px 0', border: '1px solid #ccc', borderRadius: '0 0 4px 4px' }}>
+                        <div style={{ width: "20%", display: 'flex', alignItems: 'center', justifyContent: 'center' }} className='order-img'>
                           <img src='https://vuatao.vn/wp-content/uploads/2022/09/Untitled-4-1.png' style={{ height: 'auto', width: '80%' }}></img>
-                        </Col>
-                        <Col span={11}>
-                          <p><strong>Iphone 14 promaxxx</strong></p>
-                          <p><strong>Phân loại:&nbsp;</strong><span>Màu đen</span></p>
-                        </Col>
-                        <Col span={7}>
-                          <p><strong>Giá:</strong> 100000vnd</p>
-                          <p><strong>Số lượng:</strong> 1</p>
-                          <p><strong>Thành tiền:</strong> 1022200000</p>
-                        </Col>
-                        <Col>
-                          <a onClick={toggleShow3}>Xem thêm</a>
-                        </Col>
-                      </Row>
-                      <Row style={{ padding:'10px' }}>
-                        <Button style={{background: '#8c52ff', color:'#fff'}}>Đã nhận được hàng</Button>
-                      </Row>
-                    </Row>
-                  </Row>
+                        </div>
+                        <div style={{ width: "80%" }}>
+                          <p style={{ fontWeight: 500 }}>Iphone 14 promaxxx</p>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                            <div className='type' style={{ flex: 1 }}>
+                              <p style={{ margin: 0 }}>Phân loại:&nbsp;<span>Đen</span></p>
+                              <p style={{ margin: 0 }}>x1</p>
+                            </div>
+                            <div className='price' style={{ flex: 1, textAlign: 'right' }}>
+                              <span style={{ textDecoration: 'line-through' }}>
+                                20000000
+                              </span>
+                              &nbsp;
+                              <span style={{ color: '#ff3300' }}>
+                                19000000
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ padding: '10px', display: 'flex', justifyContent: 'right', alignItems: 'center', gap: '10px' }}>
+                        <a style={{ cursor: 'default' }}>Thành tiền:&nbsp;
+                          <span style={{ color: '#ff3300' }}>10000000</span></a>
+                        <Button style={{ background: '#8c52ff', color: '#fff' }}>Đã nhận được hàng</Button>
+                        <div>
+                          <Button style={{ border: '1px solid #8c52ff', color: '#8c52ff' }} onClick={toggleShow3}>Xem thêm</Button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
                 </MDBCard>
               </MDBCol>
-
-
             </MDBRow>
           </MDBCol>
         </MDBRow>
