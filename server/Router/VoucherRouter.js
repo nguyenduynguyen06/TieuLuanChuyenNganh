@@ -1,0 +1,10 @@
+require('dotenv').config();
+const express = require('express');
+const router = express.Router();
+const voucherController = require('../controller/VoucherController');
+router.post('/addVoucher', voucherController.addVoucher);
+router.get('/getVoucher', voucherController.getVouchers);
+router.put('/updateVoucher/:id', voucherController.updateVoucher);
+router.delete('/deleteVoucher/:id', voucherController.deleteVoucher);
+router.post('/checkVoucher', voucherController.useVoucher);
+module.exports = router;

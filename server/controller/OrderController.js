@@ -1,6 +1,7 @@
 const Cart = require('../Model/CartModel');
 const ProductVariant = require('../Model/ProductVariantModel');
 const Order = require('../Model/OrderModel');
+const Voucher = require('../Model/VourcherModel');
 const moment = require("moment-timezone");
 const orderSendMail = require('../ultils/oderSendMail');
 const generateRandomOrderCode = async () => {
@@ -25,13 +26,13 @@ const addOrder = async (req, res) => {
   try {
     const orderCode = await generateRandomOrderCode();
     const { userId } = req.params;
-    const { userName, userEmail, address, shippingMethod, paymentMethod, subTotal, totalPay, voucher, userPhone } = req.body;
+    const { userName, userEmail, address, shippingMethod, paymentMethod, subTotal, totalPay, userPhone, vouchercode } = req.body;
     const cart = await Cart.findOne({ user: userId }).populate('items.productVariant');
 
     if (!cart || !cart.items || cart.items.length === 0) {
       return res.status(400).json({ success: false, error: 'Giỏ hàng không tồn tại hoặc trống' });
     }
-
+    const voucher = await Voucher.findOne( { code: vouchercode })
     const newOrder = new Order({
       orderCode,
       user: userId,
@@ -45,7 +46,7 @@ const addOrder = async (req, res) => {
       subTotal,
       shippingFee: 0,
       totalPay,
-      voucher,
+      voucher: voucher?._id,
       userPhone
     });
 
@@ -166,7 +167,8 @@ const addOrder = async (req, res) => {
             <td style="border: 1px solid #000; text-align: center;">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.subtotal)}</td>
           </tr>
         `).join('')}
-      </table>   
+      </table>
+      <p>Lưu ý: Đây là email tự động, vui lòng không trả lời email này.</p>   
       </div>   
           `;
 
