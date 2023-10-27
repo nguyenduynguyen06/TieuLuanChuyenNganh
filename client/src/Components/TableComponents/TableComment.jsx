@@ -9,6 +9,9 @@ import { useSelector } from "react-redux";
 
 const TableComment = () => {
     const user = useSelector((state)=> state.user)
+    const headers = {
+      token: `Bearers ${user.access_token}`,
+  };
     const [form] = Form.useForm();
     const [commentData, setcommentData] = useState([]); 
     const [currentCommentId, setCurrentCommentId] = useState(null);
@@ -144,7 +147,7 @@ const TableComment = () => {
       };
       const handleCheckcomment = (commentId) => {
         axios
-          .put(`${process.env.REACT_APP_API_URL}/comment/check/${commentId}` )
+          .put(`${process.env.REACT_APP_API_URL}/comment/check/${commentId}` ,{headers})
           .then((response) => {
             if (response.data.success) {
                 axios.get(`${process.env.REACT_APP_API_URL}/comment/getAll`)

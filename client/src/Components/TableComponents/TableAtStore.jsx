@@ -4,8 +4,13 @@ import axios from "axios";
 import 'react-quill/dist/quill.snow.css';
 import { AppstoreOutlined,DeleteOutlined } from '@ant-design/icons';
 import './button.css'
+import { useSelector } from "react-redux";
 
 const TableAtStore = () => {
+  const user = useSelector((state)=> state.user)
+  const headers = {
+    token: `Bearers ${user.access_token}`,
+};
     const columns = [
       {
         title: 'Mã đơn hàng',
@@ -231,7 +236,7 @@ const TableAtStore = () => {
       };
       const handleConfirmOrder = async (orderId ) => {
         try {
-          const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/updateOrder/${orderId}`, { newStatus: 'Đơn hàng sẵn sàng' });
+          const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/updateOrder/${orderId}`, { newStatus: 'Đơn hàng sẵn sàng' },{headers});
           if (response.data.success) {
             const updatedOrderAtStore = orderDataGetReady.filter(order => order._id !== orderId);  
             message.success('Đơn hàng sẵn sàng thành công');
@@ -254,7 +259,7 @@ const TableAtStore = () => {
       }; 
       const handleCompleteOrder = async (orderId ) => {
         try {
-          const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/completeOrder/${orderId}`, { newStatus: 'Đơn hàng hoàn thành' });
+          const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/completeOrder/${orderId}`, { newStatus: 'Đơn hàng hoàn thành' },{headers});
           if (response.data.success) {
             const updatedOrderAtStore = orderDataReady.filter(order => order._id !== orderId);  
             message.success('Đơn hàng đã hoàn thành');

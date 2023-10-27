@@ -4,8 +4,13 @@ import axios from "axios";
 import 'react-quill/dist/quill.snow.css';
 import { AppstoreOutlined,DeleteOutlined } from '@ant-design/icons';
 import './button.css'
+import { useSelector } from "react-redux";
 
 const TablePending = () => {
+  const user = useSelector((state)=> state.user)
+  const headers = {
+    token: `Bearers ${user.access_token}`,
+};
     const columns = [
       {
         title: 'Mã đơn hàng',
@@ -208,7 +213,7 @@ const TablePending = () => {
       };
       const handleConfirmOrder = async (orderId ) => {
         try {
-          const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/updateOrder/${orderId}`, { newStatus: 'Đơn hàng đang được chuẩn bị' });
+          const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/updateOrder/${orderId}`, { newStatus: 'Đơn hàng đang được chuẩn bị' },{headers});
           
           if (response.data.success) {
             const updatedOrderAtStore = orderDataAtStore.filter(order => order._id !== orderId);

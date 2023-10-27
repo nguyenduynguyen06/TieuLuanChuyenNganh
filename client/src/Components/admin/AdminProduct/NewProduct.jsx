@@ -13,6 +13,7 @@ import {
   Alert
 } from 'antd';
 import { useParams } from "react-router-dom";
+import { useSelector } from 'react-redux';
 
 const { Option } = Select;
 const formItemLayout = {
@@ -45,7 +46,9 @@ const tailFormItemLayout = {
     },
   },
 };
+
 const NewProduct = () => {
+  const user = useSelector((state)=> state.user)
   const [form] = Form.useForm();
   const [categories, setCategories] = useState([])
   const [brands, setBrands] = useState([]);
@@ -334,12 +337,14 @@ const NewProduct = () => {
   };
 
   const onFinish = async (values) => {
-
+    const headers = {
+      token: `Bearers ${user.access_token}`,
+  };
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/product/addProduct`, {
+        `${process.env.REACT_APP_API_URL}/product/addProduct`,{
         ...values, properties: formProperties
-      }
+      } ,{headers}
       );
       message.success('Thêm sản phẩm thành công')
       form.resetFields();

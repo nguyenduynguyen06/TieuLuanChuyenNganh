@@ -18,9 +18,14 @@ import {
   Image,
   List 
 } from 'antd';
+import { useSelector } from "react-redux";
 
 
 const TableProduct = () => {
+  const user = useSelector((state)=> state.user)
+  const headers = {
+    token: `Bearers ${user.access_token}`,
+};
   const props = (fieldKey) => ({
     name: 'image',
     action: `${process.env.REACT_APP_API_URL}/upload`,
@@ -458,7 +463,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/product/addProductvariant/${parentId}`,
-        variantData
+        variantData, { headers }
       );
       
       const updatedProductData = productData.map((product) => {
@@ -478,7 +483,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/product/addAttributes/${variantId}`,
-        { attributes: attributesData }
+        { attributes: attributesData },{ headers }
       );
       const updatedProductData = productData.map((product) => {
         if (product.variant.some((variant) => variant._id === variantId)) {
@@ -512,7 +517,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   };
   const updateProductVariant = async (variantId, newData) => {
     axios.put( `${process.env.REACT_APP_API_URL}/product/editProductVariant/${variantId}`,
-    newData)
+    newData,{ headers })
       .then((response) => {
         axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`)
       .then((response) => {
@@ -528,7 +533,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   };
   const handleSaveEdit = (id, values) => {
     const productId = id;
-    axios.put(`${process.env.REACT_APP_API_URL}/product/editProduct/${productId}`, values)
+    axios.put(`${process.env.REACT_APP_API_URL}/product/editProduct/${productId}`, values,{ headers })
       .then((response) => {
         axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`)
       .then((response) => {
@@ -545,7 +550,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   
   const handleDeleteProduct = (productId) => {
     axios
-      .delete(`${process.env.REACT_APP_API_URL}/product/delete/${productId}`)
+      .delete(`${process.env.REACT_APP_API_URL}/product/delete/${productId}`,{ headers })
       .then((response) => {
         const updatedProducts = productData.filter(product => product._id !== productId);
         message.success('Xoá sản phẩm thành công')
@@ -557,7 +562,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   };
   const handleDeleteProductvariant = (variantId) => {
     axios
-      .delete(`${process.env.REACT_APP_API_URL}/product/deleteVariant/${variantId}`)
+      .delete(`${process.env.REACT_APP_API_URL}/product/deleteVariant/${variantId}`,{ headers })
       .then((response) => {
         const updatedProductData = productData.map((product) => {
           const updatedVariants = product.variant.filter(
@@ -585,7 +590,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   const handleToggleHide = (productId, checked) => {
     axios.put(`${process.env.REACT_APP_API_URL}/product/editProduct/${productId}`, {
         isHide: checked, 
-      })
+      },{ headers })
       .then((response) => {     
         const updatedProduct = {
           ...productData.find(product => product._id === productId),
@@ -623,7 +628,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   }, [searchQuery]);
   const handleDeleteAttribute = (variantId, attributeId) => {
     axios
-      .delete(`${process.env.REACT_APP_API_URL}/product/deleteAttributes/${variantId}/${attributeId}`)
+      .delete(`${process.env.REACT_APP_API_URL}/product/deleteAttributes/${variantId}/${attributeId}`,{ headers })
       .then((response) => {
         const updatedSelectedVariant = {
           ...selectedVariant,
@@ -648,6 +653,11 @@ const [selectedVariant, setSelectedVariant] = useState(null);
           }),
         };
         setSelectedProduct(updatedSelectedProduct);
+        axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`)
+      .then((response) => {
+        setProductData(response.data.data);
+      })
+        message.success('Xoá thuộc tính thành công')
       })
       .catch((error) => {
         console.error('Lỗi khi xóa mục giỏ hàng:', error);
@@ -657,14 +667,14 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     try {
       const response = await axios.put(
         `${process.env.REACT_APP_API_URL}/product/addQuantity/${variantId}/${attributeId}`,
-        newData
+        newData,{ headers }
       );
       axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`)
       .then((response) => {
         setProductData(response.data.data);
       })
       if (response.status === 200) {
-        
+        message.success('Cộng thêm số lượng thành công')
         form.resetFields();
         setaddQuantityAttribute(false);
       } else {

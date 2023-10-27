@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const orderController = require('../controller/OrderController');
+const { authMiddleware } = require('../middleware/authMiddleware');
 
 
 router.post('/addOrder/:userId', orderController.addOrder);
-router.put('/updateOrder/:orderId', orderController.updateOrderStatus);
-router.put('/completeOrder/:orderId', orderController.completeOrder);
+router.put('/updateOrder/:orderId',authMiddleware, orderController.updateOrderStatus);
+router.put('/completeOrder/:orderId',authMiddleware, orderController.completeOrder);
 router.get('/waiting-for-confirmation', orderController.getOrdersWaitingForConfirmation);
 router.get('/home-delivery', orderController.getOrdersHomeDelivery);
 router.get('/store-pickup-getready', orderController.getOrdersStorePickupgetReady);

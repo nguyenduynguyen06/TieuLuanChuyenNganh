@@ -3,10 +3,15 @@ import {  Switch, Table, Image, Upload, Button, message, Modal, Alert} from 'ant
 import axios from "axios";
 import 'react-quill/dist/quill.snow.css';
 import { UploadOutlined,DeleteOutlined } from '@ant-design/icons';
+import { useSelector } from "react-redux";
 
 
 
 const TableBrand = () => {
+  const user = useSelector((state)=> state.user)
+  const headers = {
+    token: `Bearers ${user.access_token}`,
+};
     const [brandData, setbrandData] = useState([]); 
     const [isDeleteBrand, setDeleteBrand] = useState(false); 
     const [currentBrandId, setCurrentBrandId] = useState(null);
@@ -117,7 +122,7 @@ const TableBrand = () => {
     const handleSwitchChange = (checked, brandId) => {
         const newIsHide = !checked; 
         axios
-          .put(`${process.env.REACT_APP_API_URL}/brand/updateBrand/${brandId}`, { isHide: newIsHide })
+          .put(`${process.env.REACT_APP_API_URL}/brand/updateBrand/${brandId}`, { isHide: newIsHide },{headers})
           .then((response) => {
             const updatedData = brandData.map((item) =>
               item._id === brandId ? { ...item, isHide: newIsHide } : item
@@ -130,7 +135,7 @@ const TableBrand = () => {
       };
       const handleDeleteBrand = (brandId) => {
         axios
-          .delete(`${process.env.REACT_APP_API_URL}/brand/delete/${brandId}`)
+          .delete(`${process.env.REACT_APP_API_URL}/brand/delete/${brandId}`,{headers})
           .then((response) => {
             if (response.data.success) {
               const updatedData = brandData.filter((item) => item._id !== brandId);
