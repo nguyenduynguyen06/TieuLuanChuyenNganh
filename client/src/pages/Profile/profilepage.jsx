@@ -181,6 +181,8 @@ const Profilepage = () => {
                         </div>
                       </div>
                       <div style={{ padding: '10px', display: 'flex', justifyContent: 'right', alignItems: 'center', gap: '10px' }}>
+                        <a style={{ cursor: 'default' }}>Số lượng hàng:&nbsp;
+                          <span style={{ color: '#ff3300' }}>1</span></a>
                         <a style={{ cursor: 'default' }}>Thành tiền:&nbsp;
                           <span style={{ color: '#ff3300' }}>10000000</span></a>
                         <Button style={{ background: '#8c52ff', color: '#fff' }}>Đã nhận được hàng</Button>
@@ -189,7 +191,6 @@ const Profilepage = () => {
                         </div>
                       </div>
                     </div>
-                    
                   </div>
                 </MDBCard>
               </MDBCol>
