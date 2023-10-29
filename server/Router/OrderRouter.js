@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const orderController = require('../controller/OrderController');
-const { authMiddleware } = require('../middleware/authMiddleware');
+const { authMiddleware, authUserMiddleware } = require('../middleware/authMiddleware');
 
 
-router.post('/addOrder/:userId', orderController.addOrder);
+router.post('/addOrder/:userId',authUserMiddleware, orderController.addOrder);
 router.put('/updateOrder/:orderId',authMiddleware, orderController.updateOrderStatus);
 router.put('/completeOrder/:orderId',authMiddleware, orderController.completeOrder);
 router.get('/waiting-for-confirmation', orderController.getOrdersWaitingForConfirmation);

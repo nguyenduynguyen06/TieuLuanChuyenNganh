@@ -157,14 +157,14 @@ const ProductDetailComponents = () => {
                     const selectedSKUName = selectedSKU[selectedVariant._id]
                     await addToCart(user._id, productName, selectedSKUName, quantity);
                     message.success('Thêm vào giỏ hàng thành công')
-                    window.location.href = `/cart`
+                 
                 }
             } else {
                 const selectValues = Object.values(selectedSKU);
                 const selectedColorName = selectValues[selectValues.length - 1];
                 await addToCart(user._id, productName, selectedColorName, quantity);
                 message.success('Thêm vào giỏ hàng thành công')
-                window.location.href = `/cart`
+        
             }
         } catch (error) {
             console.error('Lỗi:', error);

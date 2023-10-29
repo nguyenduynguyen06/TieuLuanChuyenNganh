@@ -42,7 +42,7 @@ const PaymentInfo = () => {
 
       const addOrder = event => {
         event.preventDefault();
-        axios.post(`${process.env.REACT_APP_API_URL}/order/addOrder/${user1._id}`, order)
+        axios.post(`${process.env.REACT_APP_API_URL}/order/addOrder/${user1._id}`, order,{headers})
           .then((response) => {
            window.location.href = `/order-success`
           })
@@ -130,8 +130,12 @@ const PaymentInfo = () => {
       const[data,setData] = useState(null);
       const [vouchercode, setVoucherCode] = useState('');
       const [totalVoucher,settotalVoucher] = useState(null);
+      const user = useSelector((state)=> state.user)
+        const headers = {
+            token: `Bearers ${user.access_token}`,
+        };
       const checkVoucher = (data) => {
-        axios.post(`${process.env.REACT_APP_API_URL}/voucher/useVoucher`, data)
+        axios.post(`${process.env.REACT_APP_API_URL}/voucher/useVoucher`, data,{headers})
           .then((response) => {
             if (response.data.success) {
               const voucher = response.data.data

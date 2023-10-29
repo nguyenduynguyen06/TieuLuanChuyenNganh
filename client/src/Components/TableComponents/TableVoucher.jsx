@@ -66,7 +66,7 @@ const TableVoucher = () => {
   
     useEffect(() => {
       axios
-        .get(`${process.env.REACT_APP_API_URL}/voucher/getVoucher`)
+        .get(`${process.env.REACT_APP_API_URL}/voucher/getVoucher`,{headers})
         .then((response) => {
             setvoucherData(response.data.data); 
         })
