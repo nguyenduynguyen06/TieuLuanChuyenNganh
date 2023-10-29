@@ -128,6 +128,29 @@ const PaymentInfo = () => {
         }
       }, [user1]);
       const[data,setData] = useState(null);
+      const [vouchercode, setVoucherCode] = useState('');
+      const [totalVoucher,settotalVoucher] = useState(null);
+      const checkVoucher = (data) => {
+        axios.post(`${process.env.REACT_APP_API_URL}/voucher/useVoucher`, data)
+          .then((response) => {
+            if (response.data.success) {
+              const voucher = response.data.data
+              setOrder(prevOder => ({
+                ...prevOder,
+                totalPay: total - (total * voucher.discount),
+                vouchercode: voucher.code
+              }));
+              settotalVoucher(total - (total * voucher.discount))
+              message.success('Áp dụng voucher thành công')
+            } else {
+              message.error(response.data.error);
+            }
+          })
+          .catch((error) => {
+            message.error('Mã voucher sai');
+          });
+      };
+      
     return (
         <div style={{ background: '#efefef' }}>
             <Header />
@@ -231,20 +254,27 @@ const PaymentInfo = () => {
                         <hr></hr>
                         <div className="info-payment">
                             <div className="block-promotion">
-                                <div className="block-promotion-input" style={{ width: '75%' }}>
-                                    <MDBInput
-                                        wrapperClass='mb-4'
-                                        label='Mã giảm giá'
-                                        placeholder="Hãy điền mã giảm giá"
-                                        name="promotion"
-                                        value={order.promotion}
-                                        onChange={onChange}
-                                        type='text'
-                                        style={{ width: '100%' }} // Đặt chiều rộng 200px
-                                        tabIndex="5"
-                                    />
+                            <div className="block-promotion-input" style={{ width: '75%' }}>
+                                <MDBInput
+                                    wrapperClass='mb-4'
+                                    label='Mã giảm giá'
+                                    placeholder="Hãy điền mã giảm giá"
+                                    name="vouchercode"
+                                    value={vouchercode}
+                                    onChange={(e) => setVoucherCode(e.target.value)} 
+                                    type='text'
+                                    style={{ width: '100%' }}
+                                    tabIndex="5"
+                                />
                                 </div>
-                                <Button size='middle' className="button__voucher" style={{ fontSize: '15px', width: "20%" }}>Áp dụng</Button>
+                                <Button
+                                size='middle'
+                                className="button__voucher"
+                                style={{ fontSize: '15px', width: "20%" }}
+                                onClick={() => checkVoucher({ code: vouchercode })} 
+                                >
+                                Áp dụng
+                                </Button>
                             </div>
                             <div className="info-quote">
                                 <div className="info-quote__block">
@@ -259,7 +289,22 @@ const PaymentInfo = () => {
                                 </div>
                                 <div className="info-quote__bottom">
                                     <p className="quote-bottom__title">Tổng tiền </p>
-                                    <p className="quote-bottom__value"> <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency',currency: 'VND',}).format(total)}</span></p>
+                                    <p className="quote-bottom__value">
+                                    {totalVoucher ? (
+                                        <del style={{ fontSize: '17px'}}>
+                                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total)} <br/>
+                                        </del>
+                                    ) : (
+                                        <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300' }}>
+                                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total)}
+                                        </span>
+                                    )}
+                                    {totalVoucher && (
+                                        <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300' }}>
+                                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalVoucher)}
+                                        </span>
+                                    )}
+                                    </p>
                                 </div>
                             </div>
                         </div>

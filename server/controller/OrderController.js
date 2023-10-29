@@ -32,7 +32,14 @@ const addOrder = async (req, res) => {
     if (!cart || !cart.items || cart.items.length === 0) {
       return res.status(400).json({ success: false, error: 'Giỏ hàng không tồn tại hoặc trống' });
     }
-    const voucher = await Voucher.findOne( { code: vouchercode })
+    let voucher = await Voucher.findOne( { code: vouchercode })
+    if (voucher && voucher.quantity > 0) {
+      voucher.quantity--; 
+      await voucher.save(); 
+    } else {
+      voucher = null;
+    }    
+    
     const newOrder = new Order({
       orderCode,
       user: userId,
@@ -46,7 +53,7 @@ const addOrder = async (req, res) => {
       subTotal,
       shippingFee: 0,
       totalPay,
-      voucher: voucher?._id,
+      voucher: voucher ? voucher._id : null,
       userPhone
     });
 
@@ -228,7 +235,7 @@ const completeOrder = async (req, res) => {
 
 const getOrdersWaitingForConfirmation = async (req, res) => {
   try {
-    const orders = await Order.find({ shippingMethod: 'Nhận tại cửa hàng',status: 'Chờ xác nhận' }).populate('items.product');
+    const orders = await Order.find({ shippingMethod: 'Nhận tại cửa hàng',status: 'Chờ xác nhận' }).populate('items.product').populate('voucher');
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đơn hàng chờ xác nhận:', error);
@@ -237,7 +244,7 @@ const getOrdersWaitingForConfirmation = async (req, res) => {
 };
 const getOrdersShipping = async (req, res) => {
   try {
-    const orders = await Order.find({ shippingMethod: 'Giao tận nơi',status: 'Chờ xác nhận' }).populate('items.product');
+    const orders = await Order.find({ shippingMethod: 'Giao tận nơi',status: 'Chờ xác nhận' }).populate('items.product').populate('voucher');
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đơn hàng giao tận nơi:', error);
@@ -249,7 +256,7 @@ const getOrdersStorePickupgetReady = async (req, res) => {
     const orders = await Order.find({
       shippingMethod: 'Nhận tại cửa hàng',
       status:  'Đơn hàng đang được chuẩn bị' 
-    }).populate('items.product');
+    }).populate('items.product').populate('voucher');
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đơn hàng nhận tại cửa hàng:', error);
@@ -261,7 +268,7 @@ const getOrdersStorePickupReady = async (req, res) => {
     const orders = await Order.find({
       shippingMethod: 'Nhận tại cửa hàng',
       status:  'Đơn hàng sẵn sàng' 
-    }).populate('items.product');
+    }).populate('items.product').populate('voucher');
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đơn hàng nhận tại cửa hàng:', error);
@@ -270,7 +277,7 @@ const getOrdersStorePickupReady = async (req, res) => {
 };
 const getCompletedOrdersAtStore = async (req, res) => {
   try {
-    const orders = await Order.find({ status: 'Đã hoàn thành', shippingMethod: 'Nhận tại cửa hàng'}).populate('items.product');
+    const orders = await Order.find({ status: 'Đã hoàn thành', shippingMethod: 'Nhận tại cửa hàng'}).populate('items.product').populate('voucher');
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đơn hàng đã hoàn thành:', error);
@@ -279,7 +286,7 @@ const getCompletedOrdersAtStore = async (req, res) => {
 };
 const getCompletedOrdersShipping = async (req, res) => {
   try {
-    const orders = await Order.find({ status: 'Đã hoàn thành', shippingMethod: 'Giao tận nơi'}).populate('items.product');
+    const orders = await Order.find({ status: 'Đã hoàn thành', shippingMethod: 'Giao tận nơi'}).populate('items.product').populate('voucher');
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đơn hàng đã hoàn thành:', error);
@@ -288,7 +295,7 @@ const getCompletedOrdersShipping = async (req, res) => {
 };
 const getOrdersHomeDeliveryReady = async (req, res) => {
   try {
-    const orders = await Order.find({ shippingMethod: 'Giao tận nơi',status:'Đơn hàng đang được chuẩn bị' });
+    const orders = await Order.find({ shippingMethod: 'Giao tận nơi',status:'Đơn hàng đang được chuẩn bị' }).populate('items.product').populate('voucher');
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đơn hàng giao tận nơi:', error);
@@ -297,7 +304,7 @@ const getOrdersHomeDeliveryReady = async (req, res) => {
 };
 const getOrdersHomeDeliveryShipping = async (req, res) => {
   try {
-    const orders = await Order.find({ shippingMethod: 'Giao tận nơi',status:'Đơn hàng đang được giao' });
+    const orders = await Order.find({ shippingMethod: 'Giao tận nơi',status:'Đơn hàng đang được giao' }).populate('items.product').populate('voucher');
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đơn hàng giao tận nơi:', error);
@@ -307,7 +314,7 @@ const getOrdersHomeDeliveryShipping = async (req, res) => {
 const getOrdersByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
-    const orders = await Order.find({ user: userId });
+    const orders = await Order.find({ user: userId }).populate('items.product').populate('voucher');
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đơn hàng của người dùng:', error);

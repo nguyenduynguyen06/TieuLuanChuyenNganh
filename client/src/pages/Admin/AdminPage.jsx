@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AppstoreOutlined, UserOutlined,UnorderedListOutlined,QqOutlined,PrinterOutlined } from '@ant-design/icons';
+import { AppstoreFilled, UserOutlined,ProfileFilled,QqOutlined,PrinterFilled,StarFilled,MessageFilled ,SignalFilled} from '@ant-design/icons';
 import { Menu } from 'antd';
 import { getItem} from './utils';
 import Header from '../../Components/Header/header';
@@ -17,6 +17,8 @@ import Pending from '../../Components/admin/AdminOrder/Pending';
 import AtStore from '../../Components/admin/AdminOrder/AtStore';
 import Complete from '../../Components/admin/AdminOrder/Complete';
 import Shipping from '../../Components/admin/AdminOrder/Shipping';
+import NewVoucher from '../../Components/admin/AdminVoucher/NewVoucher';
+import AdminVoucher from '../../Components/admin/AdminVoucher/AdminVoucher';
 
 const AdminHomePage = () => {
   useEffect(() => {
@@ -73,7 +75,15 @@ const AdminHomePage = () => {
         case 'success':
                 return(
                 <div><Complete/></div>
-                  )                                               
+                  )
+        case 'addVoucher':
+                return(
+                <div><NewVoucher/></div>
+                  )   
+        case 'vouchers':
+                return(
+                  <div><AdminVoucher/></div>
+                      )                                               
       default:
         return <></>
     }
@@ -83,13 +93,13 @@ const AdminHomePage = () => {
   
   const items = [
 
-    getItem('Dashboard', 'dashboard', <UserOutlined />),
+    getItem('Dashboard', 'dashboard', <SignalFilled />),
     getItem('Người dùng', 'users', <UserOutlined />),
-    getItem('Sản phẩm', 'sub1',<AppstoreOutlined />, [
+    getItem('Sản phẩm', 'sub1',<AppstoreFilled />, [
       getItem('Danh sách sản phẩm', 'products'),
       getItem('Thêm sản phẩm', 'addProduct'),
     ]),
-    getItem('Danh mục', 'category',<UnorderedListOutlined />, [
+    getItem('Danh mục', 'category',<ProfileFilled />, [
       getItem('Danh sách danh mục', 'categorys'),
       getItem('Thêm danh mục', 'addcategory'),
     ]),
@@ -97,12 +107,16 @@ const AdminHomePage = () => {
       getItem('Danh sách thương hiệu', 'brands'),
       getItem('Thêm thương hiệu', 'addbrand'),
     ]),
-    getItem('Bình luận', 'comments', <UserOutlined />),
-    getItem('Đơn hàng', 'order',<PrinterOutlined />, [
+    getItem('Bình luận', 'comments', <MessageFilled />),
+    getItem('Đơn hàng', 'order',<PrinterFilled />, [
       getItem('Chờ xác nhận', 'pending'),
       getItem('Nhận tại cửa hàng', 'atStore'),
       getItem('Giao tận nơi', 'shipping'),
       getItem('Đã hoàn thành', 'success'),
+    ]),
+    getItem('Voucher', 'voucher',<StarFilled />, [
+      getItem('Danh sách Voucher', 'vouchers'),
+      getItem('Thêm Voucher', 'addVoucher'),
     ]),
   ];
 

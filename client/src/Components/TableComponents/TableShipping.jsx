@@ -48,6 +48,7 @@ const TableShipping = () => {
       {
         title: 'Voucher áp dụng',
         dataIndex: 'voucher',
+        render: voucher => voucher?.code
       },
       {
         title: 'Ngày và giờ đặt',
