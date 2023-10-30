@@ -8,6 +8,7 @@ import CartPage from "../pages/CartPage/CartPage";
 import FilterProductPage from "../pages/ProductTypePage/productfilterpage";
 import PaymentInfo from "../pages/PaymentPage/paymentinfo";
 import OrderSuccess from "../pages/ordersuccess";
+import Orders from "../pages/Profile/order/orders";
 
 export const routes = [
     {
@@ -81,5 +82,9 @@ export const routes = [
     {
         path:'/order-success',
         page: OrderSuccess,
+    },
+    {
+        path:'/orders',
+        page: Orders    
     }
 ]

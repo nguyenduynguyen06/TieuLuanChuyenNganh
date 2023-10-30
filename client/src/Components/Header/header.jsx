@@ -92,6 +92,9 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
       <Menu.Item key="2">
         <NavLink to="/profile">Thông tin cá nhân</NavLink>
       </Menu.Item>
+      <Menu.Item key="4">
+        <NavLink  to="/orders">Đơn hàng của bạn</NavLink>
+      </Menu.Item>
       <Menu.Item key="3">
         <NavLink  onClick={handleLogout}>Đăng xuất</NavLink>
       </Menu.Item>
