@@ -10,6 +10,7 @@ const routerCart = require('./Router/CartRouter')
 const routerComment = require('./Router/CommentRouter')
 const routerOrder = require('./Router/OrderRouter')
 const routerVoucher = require('./Router/VoucherRouter')
+const routerVNPAY = require('./Router/RouterVNPAY');
 const bodyParser = require('body-parser');
 const path = require('path')
 const routerCategory = require('./Router/CategoryRouter')
@@ -39,6 +40,7 @@ app.use('/api/comment',routerComment);
 app.use('/api/brand',routerBrand)
 app.use('/api/cart',routerCart)
 app.use('/api/order',routerOrder)
+app.use('/api/VNPAY', routerVNPAY)
 app.use('/api/voucher',routerVoucher)
 app.use(express.static(path.join(__dirname,'../client/build')))
 app.get('*',(req,res) =>{
