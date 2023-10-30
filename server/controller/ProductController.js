@@ -41,9 +41,9 @@ const getProductByBrandId = async (req, res) => {
   try {
     const brandId = req.params.brandId; 
     const products = await Product.find({ brand: brandId }).populate('variant');
-    return res.status(200).json({
-      data: products
-    });
+    shuffleArray(products);
+
+    res.status(200).json({ success: true, data: products });
   } catch (error) {
     console.error('Lỗi:', error);
     return res.status(500).json({ msg: 'Lỗi Server' });
@@ -54,9 +54,10 @@ const getProductsByCategoryAndBrand = async (req, res) => {
     const categoryId = req.params.categoryId; 
     const brandId = req.params.brandId; 
     const products = await Product.find({ category: categoryId, brand: brandId }).populate('variant');
-    return res.status(200).json({
-      data: products
-    });
+ 
+    shuffleArray(products);
+
+    res.status(200).json({ success: true, data: products });
   } catch (error) {
     console.error('Lỗi:', error);
     return res.status(500).json({ msg: 'Lỗi Server' });
@@ -69,13 +70,20 @@ const getProductsByCategory = async (req, res) => {
     
     const products = await Product.find({ category: categoryId }).populate('variant');
 
+    shuffleArray(products);
+
     res.status(200).json({ success: true, data: products });
   } catch (error) {
     console.error('Lỗi:', error);
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
-
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
 
 const editProduct = async (req, res) => {
   try {

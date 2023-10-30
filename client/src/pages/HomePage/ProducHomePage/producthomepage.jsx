@@ -10,33 +10,34 @@ function ProductHomePage() {
   const [visibleProducts, setVisibleProducts] = useState(7);
 
   useEffect(() => {
-    getCategoryByName();
-  }, []);
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
+        const categories = res.data.data;
+        const categoryName = 'Điện thoại';
+        const category = categories.find((cat) => cat.name === categoryName);
+        if (!category) {
+          console.error('Không tìm thấy danh mục');
+          return;
+        }
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/product/getIdByCategory/${category._id}`
+        );
+        const productsData = response.data.data;
+        setProducts(productsData);
 
-  const getCategoryByName = async () => {
-    try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
-      const categories = res.data.data;
-      const categoryName = 'Điện thoại';
-      const category = categories.find((cat) => cat.name === categoryName);
-      if (!category) {
-        console.error('Không tìm thấy danh mục');
-        return;
+        const initialMemories = {};
+        productsData.forEach((product) => {
+          initialMemories[product._id] = product.variant[0]?.memory;
+        });
+
+        setSelectedMemories(initialMemories);
+      } catch (error) {
+        console.error('Lỗi:', error);
       }
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/product/getIdByCategory/${category._id}`
-      );
-      const productsData = response.data.data;
-      setProducts(productsData);
-      const initialMemories = {};
-      productsData.forEach((product) => {
-        initialMemories[product._id] = product.variant[0]?.memory;
-      });
-      setSelectedMemories(initialMemories);
-    } catch (error) {
-      console.error('Lỗi:', error);
-    }
-  };
+    };
+    fetchData();
+  }, []);
   const handleShowMoreClick = () => {
     setVisibleProducts(visibleProducts + 5);
   };

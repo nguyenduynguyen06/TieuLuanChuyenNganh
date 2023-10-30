@@ -295,14 +295,17 @@ function FilterCard() {
                                                     </p>
                                                 </div>
                                                 <div>
-                                                    {[product.properties[Object.keys(product.properties)[0]], product.properties[Object.keys(product.properties)[4]],product.properties[Object.keys(product.properties)[5]]]
-                                                        .map((value, index) => (
-                                                            <p key={index} style={{ fontSize: '13px', color: 'black', textAlign: 'left', paddingLeft: '10px', margin: '0', lineHeight: '19px' }}>
-                                                                <span style={{ marginRight: '5px', alignItems: 'center' }}>
-                                                                    <InfoCircleFilled style={{fontSize: '8px'}}/>
-                                                                </span>{value}
-                                                            </p>
-                                                        ))}
+                                                {[
+                                                      product?.properties?.[Object.keys(product?.properties)[0]],
+                                                      product?.properties?.[Object.keys(product?.properties)[4]],
+                                                      product?.properties?.[Object.keys(product?.properties)[5]]
+                                                  ].filter(value => value !== undefined).map((value, index) => (
+                                                      <p key={index} style={{ fontSize: '13px', color: 'black', textAlign: 'left', paddingLeft: '10px', margin: '0', lineHeight: '19px' }}>
+                                                          <span style={{ marginRight: '5px', alignItems: 'center' }}>
+                                                              <InfoCircleFilled style={{ fontSize: '8px' }} />
+                                                          </span>{value}
+                                                      </p>
+                                                ))}
                                                 </div>
                                             </div>
                                         </div>
