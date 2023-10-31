@@ -124,10 +124,14 @@ const TableAtStore = () => {
                     ]}
                     />
                 )}
+                   {selectProductOrder?.voucher && selectProductOrder?.voucher.discount && (
+                         <div style={{ display: 'flex', justifyContent: 'right' }}>
+                        <span>Có áp dụng giảm giá: {selectProductOrder?.voucher.discount * 100} %</span>
+                        <br />
+                        
+                      </div>
+                    )}
                 <div style={{ display: 'flex', justifyContent: 'right' }}>
-                      {selectProductOrder.voucher && (
-                  <span>Có áp dụng giảm giá : {selectProductOrder.voucher}</span>
-                )}
                     <span>Số tiền phải trả: &nbsp; </span>
                     <span style={{ fontSize: '15px', fontWeight: 'bold', color: '#FF3300' }}>
                         {selectProductOrder &&

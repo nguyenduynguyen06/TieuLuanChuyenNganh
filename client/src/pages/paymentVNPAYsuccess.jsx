@@ -8,7 +8,6 @@ const PaymentSuccess = () => {
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const [transactionData, setTransactionData] = useState(null);
-    console.log("params",params)
     useEffect(() => {
         fetch(`/api/VNPAY/vnpay_return?${params}`) 
             .then(response => response.json())

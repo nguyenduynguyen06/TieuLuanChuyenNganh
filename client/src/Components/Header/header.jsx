@@ -25,24 +25,28 @@ import { useSelector } from "react-redux";
 import { useDispatch } from 'react-redux'
 import { resetUser } from "../../redux/Slide/userSlice";
 import { NavLink } from "react-router-dom";
+import SuggestCard from "../CardComponent/suggestcard";
 
 
 
 const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const dispatch = useDispatch();
   const [searchKeyword, setSearchKeyword] = useState('');
-  
+  const [suggestedProducts, setSuggestedProducts] = useState([]);
   const handleSearch = () => {
     if (searchKeyword) {
-      axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${searchKeyword}`)
-        .then((response) => {
-          window.location.href = `/type?keyword=${searchKeyword}`;
-        })
-        .catch((error) => {
-          console.error('Lỗi khi gọi API tìm kiếm: ', error);
-        });
+        axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${searchKeyword}`)
+            .then((response) => {
+                const productsData = response.data.data;
+                setSuggestedProducts(productsData); 
+                window.location.href = `/type?keyword=${searchKeyword}`;
+            })
+            .catch((error) => {
+                console.error('Lỗi khi gọi API tìm kiếm: ', error);
+            });
     }
-  }
+}
+
   const handleLogout = async () => {
     try {
       await axios.post(`${process.env.REACT_APP_API_URL}/user/Logout`, {}, { withCredentials: true });
@@ -119,12 +123,21 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         <WrapperHeaderImage className="ant-image" >
           <NavLink to={`/`} className="logo">  <img src="../../image/didong1.png" alt="blink" /> </NavLink>
         </WrapperHeaderImage>
-        <WrapperSearch className="search-box">
+        <WrapperSearch className="search-box"></WrapperSearch>
+        <WrapperSearch className="search-box" style={{
+        position: 'fixed', 
+        left: '500px',
+        zIndex: 1, 
+        }} >
           {!isHiddenSearch && (
+           <div  style={{width:`200%`}}>
         <Search
         placeholder="Tìm Kiếm"
-        allowClear
-        onSearch={handleSearch}
+        onSearch={(value) => {
+          if (value) {
+            handleSearch();
+          }
+        }}
         enterButton={
           <Button style={{
             backgroundImage: 'linear-gradient(to bottom, #ff914d, #ffde59)',
@@ -138,7 +151,12 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
           const newSearchKeyword = e.target.value;
           setSearchKeyword(newSearchKeyword);
         }}
+        allowClear
       />
+    <SuggestCard
+    searchKeyword={searchKeyword}
+  />
+      </div>
         )}
         </WrapperSearch>
         <NavLink to={`/cart`}>
