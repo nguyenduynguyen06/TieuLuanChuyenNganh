@@ -10,6 +10,7 @@ import PaymentInfo from "../pages/PaymentPage/paymentinfo";
 import OrderSuccess from "../pages/ordersuccess";
 import PaymentSuccess from "../pages/paymentVNPAYsuccess";
 import Orders from "../pages/Profile/order/orders";
+import OrderDetail from "../pages/Profile/orderdetail";
 
 
 export const routes = [
@@ -92,5 +93,9 @@ export const routes = [
     {
         path:'/orders',
         page: Orders    
+    },
+    {
+        path:'/order-detail',
+        page: OrderDetail
     }
 ]

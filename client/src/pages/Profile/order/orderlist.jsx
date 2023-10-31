@@ -5,8 +5,6 @@ import OrderDetail from '../orderdetail';
 
 
 const OrderList = () => {
-    const [centredModal3, setCentredModal3] = useState(false);
-    const toggleShow3 = () => setCentredModal3(!centredModal3);
     const [currentPage, setCurrentPage] = useState(1);
 
     const itemsPerPage = 5;
@@ -55,7 +53,7 @@ const OrderList = () => {
                             <span style={{ color: '#ff3300' }}>10000000</span></a>
                         <Button style={{ background: '#8c52ff', color: '#fff' }}>Đã nhận được hàng</Button>
                         <div>
-                            <Button style={{ border: '1px solid #8c52ff', color: '#8c52ff' }} onClick={toggleShow3}>Xem thêm</Button>
+                            <Button style={{ border: '1px solid #8c52ff', color: '#8c52ff' }} href='/order-detail'>Xem thêm</Button>
                         </div>
                     </div>
                 </div>
@@ -68,17 +66,6 @@ const OrderList = () => {
                     onChange={handlePageChange}
                 />
             </div>
-
-            <Modal
-                visible={centredModal3}
-                onCancel={toggleShow3}
-                footer={null}>
-                <MDBModalDialog size='xl'>
-                    <MDBModalContent>
-                        <OrderDetail></OrderDetail>
-                    </MDBModalContent>
-                </MDBModalDialog>
-            </Modal>
         </div>
 
     )
