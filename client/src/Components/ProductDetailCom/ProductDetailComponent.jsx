@@ -20,7 +20,6 @@ import ProductDescription from "./productdesscription"
 import CommentBox from "./commentcomponent"
 import axios from "axios"
 import { NavLink, useParams } from "react-router-dom"
-import './button.css'
 import Slider from 'react-slick';
 
 import 'slick-carousel/slick/slick.css';
