@@ -68,7 +68,12 @@ const getProductsByCategory = async (req, res) => {
   try {
     const categoryId = req.params.categoryId; 
     
-    const products = await Product.find({ category: categoryId }).populate('variant');
+    const products = await Product.find({ category: categoryId }).populate('variant').populate('brand').populate({
+      path: 'variant',
+      populate: {
+        path: 'attributes',
+      },
+    });;
 
     shuffleArray(products);
 
