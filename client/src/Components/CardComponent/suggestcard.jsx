@@ -31,7 +31,7 @@ function SuggestCard({ searchKeyword }) {
 
   return (
     <WrapperSuggestCard>
-    <div className='view-list' style={{ height: '400px', overflowY: 'scroll', textAlign: 'justify' }}>
+    <div className='view-list' style={{ height: '400px', overflowY: 'scroll', textAlign: 'justify', position: 'absolute', zIndex:1, maxWidth: '440px'}}>
       {searchedProducts.map((product) => (
         product.variant.map((variant) => (
           <NavLink className='view-list__wrapper' to={`/product/${product.name}/${variant.memory}`} key={product._id + variant.memory}>

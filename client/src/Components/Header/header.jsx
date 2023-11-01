@@ -123,12 +123,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         <WrapperHeaderImage className="ant-image" >
           <NavLink to={`/`} className="logo">  <img src="../../image/didong1.png" alt="blink" /> </NavLink>
         </WrapperHeaderImage>
-        <WrapperSearch className="search-box"></WrapperSearch>
-        <WrapperSearch className="search-box" style={{
-        position: 'fixed', 
-        left: '500px',
-        zIndex: 1, 
-        }} >
+        <WrapperSearch className="search-box" >
           {!isHiddenSearch && (
            <div  style={{width:`200%`}}>
         <Search
