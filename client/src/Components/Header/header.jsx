@@ -32,13 +32,10 @@ import SuggestCard from "../CardComponent/suggestcard";
 const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const dispatch = useDispatch();
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [suggestedProducts, setSuggestedProducts] = useState([]);
   const handleSearch = () => {
     if (searchKeyword) {
         axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${searchKeyword}`)
             .then((response) => {
-                const productsData = response.data.data;
-                setSuggestedProducts(productsData); 
                 window.location.href = `/type?keyword=${searchKeyword}`;
             })
             .catch((error) => {

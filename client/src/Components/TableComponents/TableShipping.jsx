@@ -162,10 +162,10 @@ const TableShipping = () => {
           <Button style={{color:'#FF3300'}} onClick={() => {
             setCurrentOrderId(record._id);
             setCancelOrder(true);
-          }}>Huỷ</Button>
+          }}>Xoá</Button>
           ,  
           <Modal
-          title="Xác nhận huỷ đơn hàng"
+          title="Xác nhận xoá đơn hàng"
           visible={cancelOrder}
           onOk={() => {
             handleCancelOrder(currentOrderId)
@@ -173,7 +173,7 @@ const TableShipping = () => {
           }}
           onCancel={() => setCancelOrder(false)} 
         >
-        <p>Bạn có chắc chắn muốn huỷ đơn hàng này?</p>
+        <p>Bạn có chắc chắn muốn xoá đơn hàng này?</p>
         </Modal>,
         <Modal
               title="Xác nhận đơn hàng"
@@ -231,16 +231,16 @@ const TableShipping = () => {
       }, []);
     const handleCancelOrder = (orderId) => {
         axios
-          .delete(`${process.env.REACT_APP_API_URL}/order/cancel/${orderId}`)
+          .delete(`${process.env.REACT_APP_API_URL}/order/delete/${orderId}`)
           .then((response) => {
             const updatedOrderAtStore = orderDataGetReady.filter(order => order._id !== orderId);
             const updatedOrderShipping = orderDataReady.filter(order => order._id !== orderId);
-            message.success('Huỷ đơn hàng thành công')
+            message.success('Xoá đơn hàng thành công')
             setOrderGetReady(updatedOrderAtStore);
             setOrderReady(updatedOrderShipping);
           })
           .catch((error) => {
-            console.error('Lỗi khi huỷ đơn hàng: ', error);
+            console.error('Lỗi khi Xoá đơn hàng: ', error);
           });
       };
       const handleConfirmOrder = async (orderId ) => {

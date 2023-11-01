@@ -41,7 +41,17 @@ const productSchema = new mongoose.Schema({
       rating: {
         type: Number,
       },
-      comment: String, 
+      comment: {
+        type: String
+      }, 
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', 
+      },
+      pictures: [
+        {
+          type: String
+        }]
     },
   ],
   include: {

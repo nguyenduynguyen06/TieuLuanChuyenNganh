@@ -42,7 +42,7 @@ const PaymentInfo = () => {
 
       const addOrder = event => {
         event.preventDefault();
-        axios.post(`${process.env.REACT_APP_API_URL}/order/addOrder/${user1._id}`, order,{headers})
+        axios.post(`${process.env.REACT_APP_API_URL}/order/addOrder/${user1._id}`, order)
           .then((response) => {
            window.location.href = `/order-success`
           })
@@ -74,7 +74,7 @@ const PaymentInfo = () => {
                 amount: totalVoucher || total,
                 language: '',
                 bankCode: '',
-                orderinfo: `${user1.fullName} thanh toán, mã hoá đơn là: `
+                orderinfo: `${user1.email} thanh toán, mã hoá đơn là: `
             };
             axios.post('/api/VNPAY/create_payment_url', paymentData)
             .then(response => {
@@ -144,11 +144,8 @@ const PaymentInfo = () => {
       const [vouchercode, setVoucherCode] = useState('');
       const [totalVoucher,settotalVoucher] = useState(null);
       const user = useSelector((state)=> state.user)
-        const headers = {
-            token: `Bearers ${user.access_token}`,
-        };
       const checkVoucher = (data) => {
-        axios.post(`${process.env.REACT_APP_API_URL}/voucher/useVoucher`, data,{headers})
+        axios.post(`${process.env.REACT_APP_API_URL}/voucher/useVoucher`, data)
           .then((response) => {
             if (response.data.success) {
               const voucher = response.data.data

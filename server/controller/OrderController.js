@@ -293,6 +293,24 @@ const getCompletedOrdersShipping = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+const getCanceldOrdersAtStore = async (req, res) => {
+  try {
+    const orders = await Order.find({ status: 'Đã hủy', shippingMethod: 'Nhận tại cửa hàng'}).populate('items.product').populate('voucher');
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng đã hoàn thành:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const getCanceldOrdersShipping = async (req, res) => {
+  try {
+    const orders = await Order.find({ status: 'Đã hủy', shippingMethod: 'Giao tận nơi'}).populate('items.product').populate('voucher');
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng đã hoàn thành:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
 const getOrdersHomeDeliveryReady = async (req, res) => {
   try {
     const orders = await Order.find({ shippingMethod: 'Giao tận nơi',status:'Đơn hàng đang được chuẩn bị' }).populate('items.product').populate('voucher');
@@ -311,17 +329,7 @@ const getOrdersHomeDeliveryShipping = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-const getOrdersByUserId = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const orders = await Order.find({ user: userId }).populate('items.product').populate('voucher');
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng của người dùng:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-const cancelOrder = async (req, res) => {
+const deleteOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
     const order = await Order.findById(orderId);
@@ -426,4 +434,100 @@ const searchOrderReady = async (req, res) => {
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
-module.exports = { addOrder, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDeliveryReady, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, cancelOrder,getOrdersShipping,getOrdersStorePickupReady,searchOrder,getOrdersHomeDeliveryShipping,searchOrderAtStoreComplete,searchOrderShippingComplete,searchOrderGetReady,searchOrderShipping,searchOrderGetReadyAtStore,searchOrderReady };
+const getOrdersByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const  status  = req.query.status;
+    const orders = await Order.find({ user: userId, status: status}).populate('items.product items.productVariant').populate('voucher');
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng của người dùng:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const getOrdersDetails = async (req, res) => {
+  try {
+    const { orderCode } = req.params;
+    const { userId } = req.query;
+    const order = await Order.findOne({ orderCode: orderCode });
+    if (order && order.user.toString() !== userId) {
+      return res.status(403).json({ success: false, error: 'Không có quyền truy cập đơn hàng này' });
+    }
+    const orders = await Order.findOne({ orderCode: orderCode })
+      .populate('items.product')
+      .populate('items.productVariant')
+      .populate('voucher');
+
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng của người dùng:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+const cancelOrder = async (req, res) => {
+  try {
+    const { orderCode } = req.params;
+    const { userId } = req.query;
+    const order = await Order.findOne({ orderCode: orderCode });
+    if (order && order.user.toString() !== userId) {
+      return res.status(403).json({ success: false, error: 'Không có quyền truy cập đơn hàng này' });
+    }
+    for (const cartItem of order.items) {
+      const productVariantId = cartItem.productVariant;
+      const productVariant = await ProductVariant.findById(productVariantId);
+
+      if (productVariant) {
+        const matchedAttribute = productVariant.attributes.find(attribute => attribute.color === cartItem.color);
+
+        if (matchedAttribute) {
+          const quantityInCart = cartItem.quantity;
+          const totalQuantity = matchedAttribute.quantity + quantityInCart;
+          const totalSold = matchedAttribute.sold - quantityInCart;
+
+          matchedAttribute.quantity = totalQuantity;
+          matchedAttribute.sold = totalSold;
+
+          await productVariant.save();
+        }
+      }
+    }
+    order.status = 'Đã hủy';
+    await order.save();
+    res.status(200).json({ success: true, message: 'Đã hủy đơn hàng' });
+  } catch (error) {
+    console.error('Lỗi khi hủy đơn hàng:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const completeOrderUser = async (req, res) => {
+  try {
+    const { orderCode } = req.params;
+    const { userId } = req.query;
+    const vnTime = moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY HH:mm:ss");
+
+    const order = await Order.findOne({ orderCode });
+
+    if (!order) {
+      return res.status(404).json({ success: false, error: 'Đơn hàng không tồn tại' });
+    }
+    if (order.user.toString() !== userId) {
+      return res.status(403).json({ success: false, error: 'Không có quyền hoàn thành đơn hàng này' });
+    }
+
+    const updateData = {
+      status: 'Đã hoàn thành',
+      completeDate: vnTime,
+    };
+
+    const updatedOrder = await Order.findOneAndUpdate({ orderCode }, updateData, { new: true });
+
+    res.status(200).json({ success: true, data: updatedOrder });
+  } catch (error) {
+    console.error('Lỗi khi cập nhật trạng thái đơn hàng:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+
+module.exports = { getCanceldOrdersAtStore,getCanceldOrdersShipping,addOrder,cancelOrder,completeOrderUser,getOrdersDetails, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDeliveryReady, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, deleteOrder,getOrdersShipping,getOrdersStorePickupReady,searchOrder,getOrdersHomeDeliveryShipping,searchOrderAtStoreComplete,searchOrderShippingComplete,searchOrderGetReady,searchOrderShipping,searchOrderGetReadyAtStore,searchOrderReady };

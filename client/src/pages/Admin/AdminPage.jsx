@@ -19,6 +19,7 @@ import Complete from '../../Components/admin/AdminOrder/Complete';
 import Shipping from '../../Components/admin/AdminOrder/Shipping';
 import NewVoucher from '../../Components/admin/AdminVoucher/NewVoucher';
 import AdminVoucher from '../../Components/admin/AdminVoucher/AdminVoucher';
+import Cancel from '../../Components/admin/AdminOrder/Cancel';
 
 const AdminHomePage = () => {
   useEffect(() => {
@@ -76,6 +77,10 @@ const AdminHomePage = () => {
                 return(
                 <div><Complete/></div>
                   )
+          case 'cancel':
+                return(
+                <div><Cancel/></div>
+                  )
         case 'addVoucher':
                 return(
                 <div><NewVoucher/></div>
@@ -113,6 +118,7 @@ const AdminHomePage = () => {
       getItem('Nhận tại cửa hàng', 'atStore'),
       getItem('Giao tận nơi', 'shipping'),
       getItem('Đã hoàn thành', 'success'),
+      getItem('Đã huỷ', 'cancel'),
     ]),
     getItem('Voucher', 'voucher',<StarFilled />, [
       getItem('Danh sách Voucher', 'vouchers'),

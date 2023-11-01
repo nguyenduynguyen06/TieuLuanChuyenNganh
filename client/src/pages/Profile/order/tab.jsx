@@ -4,47 +4,53 @@ import { WrapperBtn, WrapperTab } from './style';
 import OrderList from './orderlist';
 
 const Tab = () => {
-  const [activeTab, setActiveTab] = useState(1);
+  const [activeTab, setActiveTab] = useState('Chờ xác nhận');
 
-  const changeTab = (tabNumber) => {
-    setActiveTab(tabNumber);
+  const changeTab = (tabName) => {
+    setActiveTab(tabName);
   };
-
   return (
     <WrapperTab>
       <div className="tab-buttons">
         <WrapperBtn size='large'
-          className={activeTab === 2 ? 'active' : ''}
-          onClick={() => changeTab(2)}
+          className={activeTab === 'Chờ xác nhận' ? 'active' : ''}
+          onClick={() => changeTab('Chờ xác nhận')}
         >
           <i class="fas fa-check-to-slot"></i>&nbsp;Chờ xác nhận
         </WrapperBtn>
         <WrapperBtn size='large'
-          className={activeTab === 3 ? 'active' : ''}
-          onClick={() => changeTab(3)}
+          className={activeTab === 'Đơn hàng đang được chuẩn bị' ? 'active' : ''}
+          onClick={() => changeTab('Đơn hàng đang được chuẩn bị')}
         >
-          <i class="fas fa-box"></i>&nbsp;Chờ lấy hàng
+          <i class="fas fa-box"></i>&nbsp;Chờ chuẩn bị hàng
         </WrapperBtn>
         <WrapperBtn size='large'
-          className={activeTab === 4 ? 'active' : ''}
-          onClick={() => changeTab(4)}
+          className={activeTab === 'Đơn hàng đang được giao' ? 'active' : ''}
+          onClick={() => changeTab('Đơn hàng đang được giao')}
         >
           <i class="fas fa-truck"></i>&nbsp;Chờ giao hàng
         </WrapperBtn>
         <WrapperBtn size='large'
-          className={activeTab === 5 ? 'active' : ''}
-          onClick={() => changeTab(5)}
+          className={activeTab === 'Đơn hàng sẵn sàng' ? 'active' : ''}
+          onClick={() => changeTab('Đơn hàng sẵn sàng')}
         >
-          <i class="far fa-star-half-stroke"></i>&nbsp;Đánh giá
+          <i class="fas fa-box-open"></i>&nbsp;Nhận tại cửa hàng
+        </WrapperBtn>
+        <WrapperBtn size='large'
+          className={activeTab === 'Đã hoàn thành' ? 'active' : ''}
+          onClick={() => changeTab('Đã hoàn thành')}
+        >
+          <i class="far fa-square-check"></i>&nbsp;Đã hoàn thành
+        </WrapperBtn>
+        <WrapperBtn size='large'
+          className={activeTab === 'Đã hủy' ? 'active' : ''}
+          onClick={() => changeTab('Đã hủy')}
+        >
+          <i class="far fa-square-check"></i>&nbsp;Đã huỷ
         </WrapperBtn>
       </div>
       <div className="tab-content">
-        {activeTab === 1 && <div><OrderList/></div>}
-        {activeTab === 2 && <div><OrderList/></div>}
-        {activeTab === 3 && <div><OrderList/></div>}
-        {activeTab === 4 && <div><OrderList/></div>}
-        {activeTab === 5 && <div><OrderList/></div>}
-
+      <OrderList status={activeTab} />
       </div>
     </WrapperTab>
   );

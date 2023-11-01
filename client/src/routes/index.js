@@ -95,7 +95,7 @@ export const routes = [
         page: Orders    
     },
     {
-        path:'/order-detail',
+        path:'/order-detail/:orderCode',
         page: OrderDetail
     }
 ]
