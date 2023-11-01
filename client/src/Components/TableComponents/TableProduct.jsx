@@ -110,11 +110,6 @@ onChange(info) {
       render: brand => brand.name,
     },
     {
-      title: 'Danh mục',
-      dataIndex: 'category',
-      render: category => category.name,
-    },
-    {
       title: "Hình ảnh hiển thị",
       dataIndex: "thumnails",
       render: thumbnails => (
@@ -449,16 +444,19 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   const [isUpdate, setUpdate] = useState(false);
   const [isAddVariant, setAddVariant] = useState(false);
   const [productData, setProductData] = useState([]);
-  useEffect(() => {
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const handleCategoryClick = (categoryId) => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/product/getAll`)
-      .then((response) => {
-        setProductData(response.data.data);
-      })
-      .catch((error) => {
-        console.error('Lỗi khi gọi API: ', error);
-      });
-  }, []);
+    .get(`${process.env.REACT_APP_API_URL}/product/getIdByCategory/${categoryId}`)
+            .then((response) => {
+              setSelectedCategory(categoryId);
+              setProductData(response.data.data);
+            })
+            .catch((error) => {
+              console.error('Lỗi khi gọi API: ', error);
+            });
+        };
   const addProductVariant = async (parentId, variantData) => {
     try {
       const response = await axios.post(
@@ -684,10 +682,29 @@ const [selectedVariant, setSelectedVariant] = useState(null);
       console.error('Lỗi khi cập nhật biến thể:', error);
     }
   };
-  
-  
+  const [category, setCategory] = useState([]);
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/category/getAll`)
+      .then((response) => {
+          setCategory(response.data.data); 
+          if (isFirstLoad && response.data.data.length > 0) {
+            handleCategoryClick(response.data.data[0]._id);
+            setIsFirstLoad(false);
+          }
+      })
+      .catch((error) => {
+        console.error('Lỗi khi gọi API: ', error);
+      });
+  }, []);
   return (
     <div>
+      <Alert
+        message="Tìm kiếm từ tất cả sản phẩm"
+        type="info"
+        showIcon
+      />
+      <br/>
          <div>
         <Search
           style={{ width: '50%' }}
@@ -695,6 +712,19 @@ const [selectedVariant, setSelectedVariant] = useState(null);
           onSearch={handleSearch}
           enterButton
         />
+      </div>
+      <br/>
+      <div>
+        {category.map((category) => (
+          <Button
+            key={category._id}
+            style={{ marginRight: '10px' }}
+            onClick={() => handleCategoryClick(category._id)}
+            className={`memory-button ${selectedCategory === category._id ? 'selected' : ''}`}
+          >
+            {category.name}
+          </Button>
+        ))}
       </div>
       <div
         style={{
