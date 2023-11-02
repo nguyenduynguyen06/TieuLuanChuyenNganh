@@ -15,7 +15,7 @@ export const WrapperTab = styled.div`
 export const WrapperBtn = styled(Button)`
     display: flex;
     flex-direction: column;
-    width: 220px;
+    width: 16.66%;
     align-items: center;
     justify-content: center;
     white-space: wrap;
