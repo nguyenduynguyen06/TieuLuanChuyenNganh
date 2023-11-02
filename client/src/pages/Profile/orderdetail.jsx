@@ -94,12 +94,11 @@ const OrderDetail = () => {
                                     <p style={{ margin: 0 }}>{orderDetails.address}</p>
                                 </div>
                                 {orderDetails.items.map((item, index) => (
-                                <Row style={{ display: 'flex', flexDirection: 'column', padding: '10px', gap: '10px', border: '1px solid #efefef', borderRadius: '4px' }}>
-            
-                                        <Row key={index} style={{ padding: '10px', border: '1px solid #ccc' }} className='pre-order'>
+                                <div style={{ display: 'flex', flexDirection: 'column', padding: '10px', gap: '10px', border: '1px solid #efefef', borderRadius: '4px' }}>
+                                        <div key={index} style={{ padding: '10px', border: '1px solid #ccc' }} className='pre-order'>
                                             <Row style={{ height: 'auto' }}>
                                                 <Col span={3} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                    <img src={item.pictures} style={{ height: 'auto', width: '100%' }} alt={`Product ${index + 1}`} />
+                                                    <img  className='img-product' src={item.pictures} style={{ height: 'auto', width: '100%' }} alt={`Product ${index + 1}`} />
                                                 </Col>
                                                 <Col span={21} style={{ padding: '0 0 0 10px' }}>
                                                     <div style={{ width: '100%' }}>
@@ -130,8 +129,8 @@ const OrderDetail = () => {
                                                     </div>
                                                 </Col>
                                             </Row>
-                                        </Row>
-                                </Row>
+                                        </div>
+                                </div>
                                      ))}
                                 <p style={{ textAlign: 'right', padding: '10px', background: '#fff', border: '1px solid #ff3300', borderRadius: '4px', fontWeight: 600 }}>
                                     Thành tiền:&nbsp;<span style={{ color: "#ff3300" }}>{new Intl.NumberFormat('vi-VN', {style: 'currency',currency: 'VND'}).format(orderDetails.totalPay)}</span>

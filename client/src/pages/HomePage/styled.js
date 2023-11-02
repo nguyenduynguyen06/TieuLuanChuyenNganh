@@ -61,13 +61,12 @@ export const WrapperCard = styled.div`
     width:100%;
     background-image: linear-gradient(to left, #FE9100,  #F29600);
     display: grid;
-    grid-template-columns: repeat(7, minmax(200px, 1rem));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1rem));
     align-items: center;
-    row-gap: 20px;
     overflow: hidden;
     padding: 20px;
-    column-gap: 20px;
     border-radius: 0 0 8px 8px;
+    gap: 2px;
   }
   .mainContainerAcc {
     width:100%;
@@ -87,17 +86,17 @@ export const WrapperCard = styled.div`
     background: #fff;
     text-align: center;
     transition: .3s ease-in-out;
-    max-width: 100%;
+    max-width: 200px;
     width: auto;
+    border: 1px solid #efefef;
+    border-radius: 4px;
   }
 
    .box:hover {
-    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-    transform: scale(1.05);
+    box-shadow: rgba(17, 12, 46, 0.15) 0px 0px 100px 0px;
   }
 
    .card {
-    // padding: 15px 15px 0;
     width: 100%;
   }
 
@@ -107,17 +106,6 @@ export const WrapperCard = styled.div`
     margin: 20px auto;
     position: relative;
   }
-
-  // .card .image::before {
-  //   content: "";
-  //   position: absolute;
-  //   width: 10px;
-  //   height: 10px;
-  //   botton: 8px;
-  //   left: 10px;
-  //   border-radius: 50%;
-  //   background-color: red;
-  // }
 
   .card .image:hover img {
     transform: scale(1.1);
@@ -200,9 +188,6 @@ export const WrapperCard = styled.div`
     .mainContainer .box:hover {
       box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
       transform: scale(1);
-    }
-    .card .image:hover img {
-      transform: scale(1.3);
     }
   }
 

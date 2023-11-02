@@ -87,15 +87,6 @@ const Profilepage = () => {
                 </div>
               </MDBCardBody>
             </MDBCard>
-            <Card title="Voucher hiện có">
-              <MDBCard style={{ maxWidth: '540px' }}>
-                <MDBCardTitle className="ms-1"> Khuyến mãi 30%</MDBCardTitle>
-                <MDBListGroupItem className="ms-1">Mô tả: Sử dụng cho việc giảm giá 30% sản phẩm </MDBListGroupItem>
-                <MDBListGroupItem className="ms-1">Ngày áp dụng: 20/10/2023</MDBListGroupItem>
-                <MDBListGroupItem className="ms-1">Ngày hết hạn: 21/10/2023</MDBListGroupItem>
-                <MDBListGroupItem className="ms-1">Trạng thái: Còn hạn</MDBListGroupItem>
-              </MDBCard>
-            </Card>
           </MDBCol>
           <MDBCol lg="8">
             <MDBCard className="mb-4">

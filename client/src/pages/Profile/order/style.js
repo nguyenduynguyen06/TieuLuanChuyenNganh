@@ -4,6 +4,8 @@ import { Button, Row } from "antd";
 export const WrapperTab = styled.div`
     .tab-buttons {
         width:100%;
+        display: flex;
+        flex-direction: row;
     }
     .active{
         background: #8c52ff;
@@ -11,7 +13,14 @@ export const WrapperTab = styled.div`
     }
 `
 export const WrapperBtn = styled(Button)`
-    width: 20%;
+    display: flex;
+    flex-direction: column;
+    width: 220px;
+    align-items: center;
+    justify-content: center;
+    white-space: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 `
 
 export const WrapperDetailOrder = styled(Row)`
@@ -34,5 +43,9 @@ export const WrapperDetailOrder = styled(Row)`
     .btn-back {
         border: none;
         background: transparent;
+    }
+    .img-product img{
+        width: 100px;
+        height: 100px;
     }
 `
