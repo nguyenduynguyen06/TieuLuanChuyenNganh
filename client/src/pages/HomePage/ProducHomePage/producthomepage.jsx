@@ -9,7 +9,7 @@ import { FitScreen } from '@mui/icons-material';
 function ProductHomePage() {
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
-  const [cardsToShow, setCardsToShow] = useState(); // Initial number of cards to show, you can change this value
+  const [cardsToShow, setCardsToShow] = useState();
   const mainContainerRef = useRef(null);
 
   useEffect(() => {
@@ -93,7 +93,6 @@ function ProductHomePage() {
           .filter((product) => product.isHide === false)
           .slice(0, cardsToShow)
           .map((product) => (
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
             <div className='box' key={product._id} style={{display: 'flex'}}>
               <div className='card'>
                 <NavLink className="image" to={`/product/${product.name}/${selectedMemories[product._id]}`}>
@@ -126,7 +125,6 @@ function ProductHomePage() {
                   </div>
                 </div>
               </div>
-            </div>
             </div>
           ))}
       </div>

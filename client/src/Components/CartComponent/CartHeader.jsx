@@ -35,14 +35,6 @@ function CartHeader({ product, removeFromCart }) {
               <div className='cart-page-name'>Giỏ hàng</div>
             </a>
           </div>
-          <div className='cart-page-searchbar'>
-            <Search className='search-bar'
-              style={{ width: '50%' }}
-              placeholder="Tìm kiếm sản phẩm"
-              onSearch={handleSearch}
-              enterButton
-            />
-          </div>
         </div>
       </div>
     </HeaderWrapper>

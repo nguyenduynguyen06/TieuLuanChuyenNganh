@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { WrapperButtonMore, WrapperCard } from '../styled';
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
 
 function AccessoryHomePage() {
   const [products, setProducts] = useState([]);
-  const [visibleProducts, setVisibleProducts] = useState(7);
+  const [cardsToShow, setCardsToShow] = useState();
+  const mainContainerRef = useRef(null);
 
   useEffect(() => {
     getCategoryByName();
@@ -31,13 +32,26 @@ function AccessoryHomePage() {
   
 
 
-  const handleShowMoreClick = () => {
-    setVisibleProducts(visibleProducts + 5);
-  };
+  const calculateCardsPerRow = () => {
+    const mainContainer = mainContainerRef.current;
+    if (!mainContainer) return;
 
-  const containerStyle = {
-    maxHeight: 'none'
+    const containerWidth = mainContainer.offsetWidth;
+    const cardWidth = 200; // Width of each card
+
+    return Math.floor(containerWidth / cardWidth); // Calculate the number of cards per row
   };
+  useEffect(() => {
+    const mainContainer = mainContainerRef.current;
+    if (!mainContainer) return;
+
+    const containerWidth = mainContainer.offsetWidth;
+    const cardWidth = 200; // Width of each card
+
+    const cardsPerRow = Math.floor(containerWidth / cardWidth); // Calculate the number of cards per row
+    setCardsToShow(cardsPerRow); // Set the number of cards to show initially
+  }, [mainContainerRef]);
+
 
   const buttonStyle = {
     border: '1px solid #ff3300',
@@ -58,12 +72,15 @@ function AccessoryHomePage() {
   };
 
   const [isButtonHovered, setIsButtonHovered] = useState(false);
+  const cardsPerRow = calculateCardsPerRow(); // Calculate the number of cards per row
+
+  const hasMoreProducts = products.length > cardsToShow;
 
   return (
     <WrapperCard>
       <img className='imgtt' src="..\..\image\banneracc.png" style={{ width: '100%' }} alt='title'></img>
-      <div className='mainContainerAcc' style={containerStyle}>
-        {products.filter((product) => product.isHide === false).slice(0, visibleProducts).map((product) => (
+      <div className='mainContainerAcc' ref={mainContainerRef} style={{alignItems: 'center', justifyContent: 'center'}}>
+        {products.filter((product) => product.isHide === false).slice(0, cardsToShow).map((product) => (
           <div className='box' key={product._id}>
             <div className='card' >
             <NavLink className="image" to={`/product/${product.name}/undefined`}>
@@ -85,7 +102,7 @@ function AccessoryHomePage() {
           </div>
         ))}
       </div>
-      {visibleProducts < products.length && (
+      {hasMoreProducts && (
         <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
           <WrapperButtonMore
             textButton="Xem thêm"
@@ -93,8 +110,9 @@ function AccessoryHomePage() {
             styleButton={isButtonHovered ? buttonHoverStyle : buttonStyle}
             onMouseEnter={() => setIsButtonHovered(true)}
             onMouseLeave={() => setIsButtonHovered(false)}
-            onClick={handleShowMoreClick}
-          >
+            onClick={() => {
+              setCardsToShow(cardsToShow + cardsPerRow); // Increase the number of cards to show
+            }}          >
           </WrapperButtonMore>
         </div>)}
     </WrapperCard>
