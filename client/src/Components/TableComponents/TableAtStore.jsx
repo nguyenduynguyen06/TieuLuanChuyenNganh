@@ -263,7 +263,7 @@ const TableAtStore = () => {
       }, []);
     const handleCancelOrder = (orderId) => {
         axios
-          .delete(`${process.env.REACT_APP_API_URL}/order/delete/${orderId}`)
+          .delete(`${process.env.REACT_APP_API_URL}/order/delete/${orderId}`,{ headers })
           .then((response) => {
             const updatedOrderAtStore = orderDataGetReady.filter(order => order._id !== orderId);
             const updatedOrderShipping = orderDataReady.filter(order => order._id !== orderId);
@@ -300,7 +300,7 @@ const TableAtStore = () => {
       }; 
       const handleCompleteOrder = async (orderId ) => {
         try {
-          const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/completeOrder/${orderId}`,{headers});
+          const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/completeOrder/${orderId}`,null, { headers });
           if (response.data.success) {
             const updatedOrderAtStore = orderDataReady.filter(order => order._id !== orderId);  
             message.success('Đơn hàng đã hoàn thành');

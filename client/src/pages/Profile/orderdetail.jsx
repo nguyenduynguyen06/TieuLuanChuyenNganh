@@ -13,9 +13,6 @@ import { useSelector } from "react-redux";
 const OrderDetail = () => {
     const { orderCode } = useParams();
     const user = useSelector((state)=> state.user)
-    const headers = {
-        token: `Bearers ${user.access_token}`,
-    };
     const [completeOrder, setCompleteOrder] = useState(false); 
     const [cancelOrder, setCancelOrder] = useState(false); 
     const [centredModal1, setCentredModal1] = useState(false);
@@ -35,7 +32,16 @@ const OrderDetail = () => {
             console.error('Lỗi khi gọi API: ', error);
           });
       }, [orderCode]);
-
+      const updateOrderDetails = () => {
+        axios.get(`${process.env.REACT_APP_API_URL}/order/oderDetails/${orderCode}?userId=${user._id}`)
+          .then((response) => {
+            setOrderDetails(response.data.data)
+          })
+          .catch((error) => {
+            console.error('Lỗi khi gọi API: ', error);
+          });
+      };
+      
     const goBack = () => {
         window.history.back();
     };
@@ -123,9 +129,13 @@ const OrderDetail = () => {
                                                                 </p>
                                                             </div>
                                                             )}
-                                                            {orderDetails && orderDetails.status === "Đã hoàn thành" && (
-                                                            <a style={{ color: "#ff3300" }} onClick={() => handleReviewClick(item.product._id)} > Đánh giá</a>
-                                                            )}
+                                                        {orderDetails && orderDetails.status === "Đã hoàn thành" ? (
+                                                            item.rated ? (
+                                                                <span style={{ color: "#ff3300" }}>Đã đánh giá</span>
+                                                            ) : (
+                                                                <a style={{ color: "#ff3300" }} onClick={() => handleReviewClick(item.product._id)}> Đánh giá</a>
+                                                            )
+                                                        ) : null}
                                                         </div>
                                                     </div>
                                                 </Col>
@@ -143,6 +153,7 @@ const OrderDetail = () => {
                                 <div style={{ padding: '10px', background: '#fff', border: '1px solid #efefef', borderRadius: '4px' }}>
                                     <p>Mã đơn hàng:&nbsp;<span>{orderDetails.orderCode}</span></p>
                                     <p>Thời gian đặt hàng:&nbsp; <span>{orderDetails.createDate}</span></p>
+                                    <p>Thời gian hoàn thành đơn hàng:&nbsp; <span>{orderDetails?.completeDate}</span></p>
                                 </div>
                             </div>
                         )}
@@ -183,7 +194,7 @@ const OrderDetail = () => {
                         footer={null}>
                         <MDBModalDialog size='xl'>
                         <MDBModalContent>
-                         <ReviewModal productId={currentProductId} onClose={toggleShow1}></ReviewModal>
+                         <ReviewModal productId={currentProductId} onClose={() => {toggleShow1();updateOrderDetails();}}orderCode={orderCode}></ReviewModal>
                         </MDBModalContent>
                         </MDBModalDialog>
                         </Modal>

@@ -144,20 +144,19 @@ const TableShipping = () => {
       },
       {
         render: (text, record) => [
+          <>
+          {record.status === 'Đơn hàng đang được chuẩn bị' && (
             <Button
-            style={{ color: 'blue' }}
-            onClick={() => {
-              setCurrentOrderId(record._id);
-              if (record.status === 'Đơn hàng đang được chuẩn bị') {
+              style={{ color: 'blue' }}
+              onClick={() => {
+                setCurrentOrderId(record._id);
                 setAcceptOrder(true);
-              } else if (record.status === 'Đơn hàng đang được giao') {
-                setCompleteOrder(true);
-              }
-            }}
-          >
-            {record.status === 'Đơn hàng đang được chuẩn bị' ? 'Giao hàng' : 'Hoàn thành'}
-          </Button>
-
+              }}
+            >
+              Giao hàng
+            </Button>
+          )}
+        </>
            ,<div style={{width:"100px",height:"10px"}}>&nbsp;</div>,
           <Button style={{color:'#FF3300'}} onClick={() => {
             setCurrentOrderId(record._id);
@@ -185,18 +184,7 @@ const TableShipping = () => {
               onCancel={() => setAcceptOrder(false)} 
             >
             <p>Bạn có chắc chắn muốn giao hàng đơn hàng này</p>
-            </Modal>,
-         <Modal
-         title="Hoàn thành đơn hàng"
-         visible={completeOrder}
-         onOk={() => {
-           handleCompleteOrder(currentOrderId)
-           setCompleteOrder(false); 
-         }}
-         onCancel={() => setCompleteOrder(false)} 
-       >
-       <p>Bạn có chắc chắn muốn hoàn thành đơn hàng này</p>
-       </Modal>,   
+            </Modal>,  
         ]
       }      
     ];
@@ -208,7 +196,6 @@ const TableShipping = () => {
     const [currentOrderId, setCurrentOrderId] = useState(null);
     const [cancelOrder, setCancelOrder] = useState(false);
     const [acceptOrder, setAcceptOrder] = useState(false);
-    const [completeOrder, setCompleteOrder] = useState(false);
     useEffect(() => {
       axios
         .get(`${process.env.REACT_APP_API_URL}/order/home-delivery`)
@@ -231,7 +218,7 @@ const TableShipping = () => {
       }, []);
     const handleCancelOrder = (orderId) => {
         axios
-          .delete(`${process.env.REACT_APP_API_URL}/order/delete/${orderId}`)
+          .delete(`${process.env.REACT_APP_API_URL}/order/delete/${orderId}`, {headers})
           .then((response) => {
             const updatedOrderAtStore = orderDataGetReady.filter(order => order._id !== orderId);
             const updatedOrderShipping = orderDataReady.filter(order => order._id !== orderId);
@@ -260,19 +247,6 @@ const TableShipping = () => {
             });
           } else {
             message.error('Xác nhận đơn hàng không thành công');
-          }
-        } catch (error) {
-          console.error('Lỗi khi xác nhận đơn hàng:', error);
-          message.error('Đã xảy ra lỗi khi xác nhận đơn hàng');
-        }
-      }; 
-      const handleCompleteOrder = async (orderId ) => {
-        try {
-          const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/completeOrder/${orderId}`, { newStatus: 'Đơn hàng hoàn thành' },{headers});
-          if (response.data.success) {
-            const updatedOrderAtStore = orderDataReady.filter(order => order._id !== orderId);  
-            message.success('Đơn hàng đã hoàn thành');
-            setOrderReady(updatedOrderAtStore); 
           }
         } catch (error) {
           console.error('Lỗi khi xác nhận đơn hàng:', error);

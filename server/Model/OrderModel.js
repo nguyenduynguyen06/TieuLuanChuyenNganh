@@ -33,7 +33,10 @@ const cartItemSchema  = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  
+  rated:{
+    type: Boolean,
+    default: false
+  }
 });
 const orderSchema = new mongoose.Schema({
   orderCode: {

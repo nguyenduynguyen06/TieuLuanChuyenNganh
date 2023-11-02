@@ -11,7 +11,7 @@ export const WrapperTab = styled.div`
     }
 `
 export const WrapperBtn = styled(Button)`
-    width: 20%;
+    width: 16.5%;
 `
 
 export const WrapperDetailOrder = styled(Row)`

@@ -2,6 +2,7 @@ const Cart = require('../Model/CartModel');
 const ProductVariant = require('../Model/ProductVariantModel');
 const Order = require('../Model/OrderModel');
 const Voucher = require('../Model/VourcherModel');
+const Product = require('../Model/ProductModel')
 const moment = require("moment-timezone");
 const orderSendMail = require('../ultils/oderSendMail');
 const generateRandomOrderCode = async () => {
@@ -528,6 +529,47 @@ const completeOrderUser = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+const addProductRating = async (req, res) => {
+  try {
+    const {productId, userId, orderCode } = req.query; 
+    const { rating, comment, pictures } = req.body;
+
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ success: false, error: 'Sản phẩm không tồn tại' });
+    }
+    const order = await Order.findOne({
+      user: userId,
+      orderCode, 
+      items: {
+        $elemMatch: { product: productId, rated: false }
+      }
+    });
+    if (!order) {
+      return res.status(403).json({ success: false, error: 'Bạn không có quyền đánh giá sản phẩm này' });
+    }
+    order.items.forEach((item) => {
+      if (item.product.toString() === productId && !item.rated) {
+        item.rated = true;
+      }
+    });
+    await order.save();
+    const newRating = {
+      user: userId,
+      rating,
+      comment,
+      pictures,
+    };
+    product.ratings.push(newRating);
+    const updatedProduct = await product.save();
+
+    res.status(201).json({ success: true, data: updatedProduct });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
 
 
-module.exports = { getCanceldOrdersAtStore,getCanceldOrdersShipping,addOrder,cancelOrder,completeOrderUser,getOrdersDetails, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDeliveryReady, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, deleteOrder,getOrdersShipping,getOrdersStorePickupReady,searchOrder,getOrdersHomeDeliveryShipping,searchOrderAtStoreComplete,searchOrderShippingComplete,searchOrderGetReady,searchOrderShipping,searchOrderGetReadyAtStore,searchOrderReady };
+
+module.exports = { getCanceldOrdersAtStore,addProductRating,getCanceldOrdersShipping,addOrder,cancelOrder,completeOrderUser,getOrdersDetails, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDeliveryReady, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, deleteOrder,getOrdersShipping,getOrdersStorePickupReady,searchOrder,getOrdersHomeDeliveryShipping,searchOrderAtStoreComplete,searchOrderShippingComplete,searchOrderGetReady,searchOrderShipping,searchOrderGetReadyAtStore,searchOrderReady };

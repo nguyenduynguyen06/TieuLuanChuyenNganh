@@ -207,7 +207,7 @@ const TablePending = () => {
       }, []);
     const handleCancelOrder = (orderId) => {
         axios
-          .delete(`${process.env.REACT_APP_API_URL}/order/delete/${orderId}`)
+          .delete(`${process.env.REACT_APP_API_URL}/order/delete/${orderId}`,{headers})
           .then((response) => {
             const updatedOrderAtStore = orderDataAtStore.filter(order => order._id !== orderId);
             const updatedOrderShipping = orderDataAtShipping.filter(order => order._id !== orderId);

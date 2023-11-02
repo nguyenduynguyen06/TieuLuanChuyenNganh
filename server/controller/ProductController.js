@@ -358,35 +358,8 @@ const filterProductsByCategoryandBrand = async (req, res) => {
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
-const addProductRating = async (req, res) => {
-  try {
-    const { productId } = req.params;
-    const { userId } = req.query;
-    const { rating, comment, pictures } = req.body;
-
-    const product = await Product.findById(productId);
-
-    if (!product) {
-      return res.status(404).json({ success: false, error: 'Sản phẩm không tồn tại' });
-    }
-
-    const newRating = {
-      user: userId,
-      rating,
-      comment,
-      pictures,
-    };
-
-    product.ratings.push(newRating);
-
-    const updatedProduct = await product.save();
-
-    res.status(201).json({ success: true, data: updatedProduct });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
 
 
 
-module.exports = { addProduct,addProductRating,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts,getAllProduct,getProductsByCategoryAndBrand ,detailsProduct,filterProductsByCategory,filterProductsByCategoryandBrand};
+
+module.exports = { addProduct,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts,getAllProduct,getProductsByCategoryAndBrand ,detailsProduct,filterProductsByCategory,filterProductsByCategoryandBrand};

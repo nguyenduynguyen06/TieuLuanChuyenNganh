@@ -21,7 +21,6 @@ router.put('/addQuantity/:variantId/:attributeId',authMiddleware,productvariantC
 router.get('/getAll',productController.getAllProduct)
 router.get('/getDetails/:name/:memory', productController.detailsProduct);
 router.get('/filter/:categoryId', productController.filterProductsByCategory);
-router.put('/ratings/:productId',productController.addProductRating);
 router.get('/filter/highToLow/:categoryId', (req, res) => {
   req.query.sort = 'highToLow';
   productController.filterProductsByCategory(req, res);

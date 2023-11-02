@@ -4,7 +4,7 @@ import { Upload, message, Rate, Button } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 
-const ReviewModal = ({  onClose, productId }) => {
+const ReviewModal = ({  onClose, productId,orderCode }) => {
     const [rating, setRating] = useState(0);
     const [content, setContent] = useState('');
     const [thumbnails, setThumbnails] = useState([]);
@@ -51,7 +51,7 @@ const ReviewModal = ({  onClose, productId }) => {
 
     const submitReview = async () => {
         try {
-            const response = await axios.put(`${process.env.REACT_APP_API_URL}/product/ratings/${productId}?userId=${user._id}`, {
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/rating?productId=${productId}&userId=${user._id}&orderCode=${orderCode}`, {
                 rating: rating,
                 comment: content,
                 pictures: thumbnails,

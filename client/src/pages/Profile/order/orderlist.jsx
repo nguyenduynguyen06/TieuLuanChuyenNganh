@@ -35,7 +35,7 @@ const OrderList = ({ status }) => {
     }, [status]);
     const handleCompleteOrder = async (orderId ) => {
         try {
-          const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/completeOrder/${orderId}`, { newStatus: 'Đơn hàng hoàn thành' },{headers});
+          const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/completeOrderUser/${orderId}?userId=${user._id}`);
           if (response.data.success) {
             const updatedOrderAtStore = orders.filter(order => order._id !== orderId);  
             message.success('Đơn hàng đã hoàn thành');
@@ -98,16 +98,20 @@ const OrderList = ({ status }) => {
                         Đã nhận được hàng
                       </Button>
                         )}
-                    <div>
-                        <NavLink to={`/order-detail/${order.orderCode}`}><Button style={{ border: '1px solid #8c52ff', color: '#8c52ff' }}>Xem thêm</Button></NavLink>
-                    </div>
+                        <div>
+                      <NavLink to={`/order-detail/${order.orderCode}`}>
+                        <Button style={{ border: '1px solid #8c52ff', color: '#8c52ff' }}>
+                          {order.status === 'Đã hoàn thành' ? 'Xem chi tiết/Đánh giá' : 'Xem chi tiết'}
+                        </Button>
+                      </NavLink>
+                    </div>           
                     </div>
                 </div>
                 <Modal
          title="Hoàn thành đơn hàng"
          visible={completeOrder}
          onOk={() => {
-           handleCompleteOrder(order._id)
+           handleCompleteOrder(order.orderCode)
            setCompleteOrder(false); 
          }}
          onCancel={() => setCompleteOrder(false)} 
