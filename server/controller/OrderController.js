@@ -554,11 +554,13 @@ const addProductRating = async (req, res) => {
       }
     });
     await order.save();
+    const vnTime = moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY HH:mm:ss");
     const newRating = {
       user: userId,
       rating,
       comment,
       pictures,
+      createDate: vnTime
     };
     product.ratings.push(newRating);
     const updatedProduct = await product.save();

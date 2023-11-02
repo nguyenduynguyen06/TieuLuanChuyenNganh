@@ -66,7 +66,7 @@ const ProductDetailComponents = () => {
 
     useEffect(() => {
         if (memory !== `undefined`) {
-            axios.get(`${process.env.REACT_APP_API_URL}/product/getDetails/${productName}/${memory}`)
+            axios.get(`${process.env.REACT_APP_API_URL}/product/getDetails/${productName}`)
                 .then((response) => {
                     const productDetails = response.data.data;
                     setProductDetails(productDetails);
@@ -111,7 +111,7 @@ const ProductDetailComponents = () => {
                     console.error('Error fetching product details:', error);
                 });
         } else {
-            axios.get(`${process.env.REACT_APP_API_URL}/product/getDetails/${productName}/${memory}`)
+            axios.get(`${process.env.REACT_APP_API_URL}/product/getDetails/${productName}`)
                 .then((response) => {
                     const productDetails = response.data.data;
                     setProductDetails(productDetails);
@@ -207,6 +207,13 @@ const ProductDetailComponents = () => {
             info: memory,
         });
     }
+        let totalRating = 0;
+        let averageRating = 0;
+
+        if (productDetails?.ratings.length > 0) {
+        totalRating = productDetails.ratings.reduce((total, review) => total + review.rating, 0);
+        averageRating = totalRating / productDetails.ratings.length;
+        }
     return (
         <WrapperDetail>
             <Row style={{ padding: '15px 12px' }}>
@@ -216,8 +223,8 @@ const ProductDetailComponents = () => {
                             <WrapperStyleNameProduct style={{ fontWeight: 'bold' }}>
                                 {productDetails.name} {memory}
                             </WrapperStyleNameProduct>
-                            <Rate disabled allowHalf defaultValue={4} />
-                            <span style={{ fontSize: 16, paddingTop: 6 }}>{4}</span>
+                            <Rate disabled allowHalf value={averageRating} />
+                            <span style={{ fontSize: 16, paddingTop: 6 }}>{averageRating.toFixed(1)}</span>
                         </div>
 
                     ) : (
@@ -481,7 +488,7 @@ const ProductDetailComponents = () => {
             )}
             <hr className="my-4" />
             <Row>
-                <Rating></Rating>
+                <Rating productName={productName}></Rating>
             </Row>
             <hr className="my-4" />
             <Row >

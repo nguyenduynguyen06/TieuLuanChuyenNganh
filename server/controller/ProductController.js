@@ -188,7 +188,7 @@ const searchProducts = async (req, res) => {
 };
 const detailsProduct = async (req, res) => {
   try {
-    const { name, memory } = req.params; 
+    const { name } = req.params; 
     const products = await Product.findOne({ name })
       .populate('brand')
       .populate('category')
@@ -358,8 +358,45 @@ const filterProductsByCategoryandBrand = async (req, res) => {
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
+const getProductRating = async (req, res) => {
+  try {
+    const productName = req.params.productName;
+    const product = await Product.findOne({ name: productName }).populate({
+      path: 'ratings',
+      populate: { path: 'user' } 
+    });
 
+    if (!product) {
+      return res.status(404).json({ success: false, error: 'Sản phẩm không tồn tại' });
+    }
 
+    const rating = product.ratings;
 
+    const starFilter = parseInt(req.query.star);
+    const hasPicturesFilter = req.query.hasPictures;
 
-module.exports = { addProduct,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts,getAllProduct,getProductsByCategoryAndBrand ,detailsProduct,filterProductsByCategory,filterProductsByCategoryandBrand};
+    if (!isNaN(starFilter) && starFilter >= 1 && starFilter <= 5) {
+      const rating1 = rating.filter((review) => review.rating === starFilter);
+      if (hasPicturesFilter === 'true') {
+        const rating2 = rating1.filter((review) => review.pictures.length > 0);
+        return res.status(200).json({ success: true, data: rating2 });
+      } else{
+      return res.status(200).json({ success: true, data: rating1 });
+      }
+    }
+
+    if (hasPicturesFilter === 'true') {
+      const rating1 = rating.filter((review) => review.pictures.length > 0);
+      return res.status(200).json({ success: true, data: rating1 });
+    }
+
+    if (!starFilter && hasPicturesFilter === 'false') {
+      return res.status(200).json({ success: true, data: rating });
+    }
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+
+module.exports = { addProduct,getProductRating,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts,getAllProduct,getProductsByCategoryAndBrand ,detailsProduct,filterProductsByCategory,filterProductsByCategoryandBrand};

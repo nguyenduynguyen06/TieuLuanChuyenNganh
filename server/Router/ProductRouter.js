@@ -19,7 +19,8 @@ router.post('/addAttributes/:id',authMiddleware, productvariantController.addAtt
 router.delete('/deleteAttributes/:id/:attributeIdToRemove',authMiddleware, productvariantController.deleteAttributes);
 router.put('/addQuantity/:variantId/:attributeId',authMiddleware,productvariantController.addQuantityToAttribute);
 router.get('/getAll',productController.getAllProduct)
-router.get('/getDetails/:name/:memory', productController.detailsProduct);
+router.get('/getRating/:productName',productController.getProductRating)
+router.get('/getDetails/:name', productController.detailsProduct);
 router.get('/filter/:categoryId', productController.filterProductsByCategory);
 router.get('/filter/highToLow/:categoryId', (req, res) => {
   req.query.sort = 'highToLow';
