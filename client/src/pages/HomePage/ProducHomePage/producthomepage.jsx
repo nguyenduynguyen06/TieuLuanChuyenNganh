@@ -61,9 +61,6 @@ function ProductHomePage() {
   }, [mainContainerRef]);
 
 
-  const containerStyle = {
-    maxHeight: 'none'
-  };
   const buttonStyle = {
     border: '1px solid #ff3300',
     color: '#ff3300',
@@ -86,15 +83,18 @@ function ProductHomePage() {
 
   const cardsPerRow = calculateCardsPerRow(); // Calculate the number of cards per row
 
+  const hasMoreProducts = products.length > cardsToShow;
+
   return (
     <WrapperCard>
       <img className='imgtt' src="..\..\image\bannerpd.jpg" style={{ width: '100%' }} alt='title'></img>
-      <div className='mainContainer' ref={mainContainerRef} style={containerStyle}>
+      <div className='mainContainer' ref={mainContainerRef} style={{alignItems: 'center', paddingLeft: '3%'}}>
         {products
           .filter((product) => product.isHide === false)
           .slice(0, cardsToShow)
           .map((product) => (
-            <div className='box' key={product._id}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+            <div className='box' key={product._id} style={{display: 'flex'}}>
               <div className='card'>
                 <NavLink className="image" to={`/product/${product.name}/${selectedMemories[product._id]}`}>
                   <img src={product.thumnails[0]} />
@@ -127,8 +127,11 @@ function ProductHomePage() {
                 </div>
               </div>
             </div>
+            </div>
           ))}
       </div>
+      {hasMoreProducts && (
+
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
         <WrapperButtonMore
           textButton="Xem thêm"
@@ -143,6 +146,7 @@ function ProductHomePage() {
           Xem thêm
         </WrapperButtonMore>
       </div>
+      )}
     </WrapperCard>
   );
 }

@@ -62,7 +62,6 @@ export const WrapperCard = styled.div`
     background-image: linear-gradient(to left, #FE9100,  #F29600);
     display: flex;
     flex-wrap: wrap;
-    //grid-template-columns: repeat(auto-fit, minmax(200px, 1rem));
     align-items: center;
     overflow: hidden;
     padding: 20px;
@@ -164,33 +163,33 @@ export const WrapperCard = styled.div`
     font-size: 15px;
   }
 
-  @media screen and (max-width: 998px) {
-    .mainContainer{
-      padding: 0 3rem;
-      justify-content: center;
-    }
+  // @media screen and (max-width: 998px) {
+  //   .mainContainer{
+  //     padding: 0 3rem;
+  //     justify-content: center;
+  //   }
 
-    .card .image {
-      width: 50%
-    }
-  }
+  //   .card .image {
+  //     width: 50%
+  //   }
+  // }
 
-  @media screen and (max-width: 1000px) {
-    .mainContainer {
-      grid-template-columns: repeat(auto-fit, minmax(100px, 200px));
-      padding: 5rem 3rem;
-      column-gap: 6px;
-    }
-    .card .image img {
-      width:90px;
-      transition: .3s ease-in-out;
-      cursor: pointer;
-    }
-    .mainContainer .box:hover {
-      box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-      transform: scale(1);
-    }
-  }
+  // @media screen and (max-width: 1000px) {
+  //   .mainContainer {
+  //     grid-template-columns: repeat(auto-fit, minmax(100px, 200px));
+  //     padding: 5rem 3rem;
+  //     column-gap: 6px;
+  //   }
+  //   .card .image img {
+  //     width:90px;
+  //     transition: .3s ease-in-out;
+  //     cursor: pointer;
+  //   }
+  //   .mainContainer .box:hover {
+  //     box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+  //     transform: scale(1);
+  //   }
+  // }
 
   button#show-more {
     background: #fff;
