@@ -9,9 +9,6 @@ import { NavLink } from 'react-router-dom';
 const OrderList = ({ status }) => {
   const user = useSelector((state) => state.user)
   const [currentPage, setCurrentPage] = useState(1);
-  const headers = {
-    token: `Bearers ${user.access_token}`,
-  };
   const itemsPerPage = 5;
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -23,6 +20,7 @@ const OrderList = ({ status }) => {
 
   const [orders, setOrders] = useState([]);
   const [completeOrder, setCompleteOrder] = useState(false);
+  const [currentComplete, setCurrentComplete] = useState(null);
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/order/user/${user._id}?status=${status}`)
@@ -37,9 +35,16 @@ const OrderList = ({ status }) => {
     try {
       const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/completeOrderUser/${orderId}?userId=${user._id}`);
       if (response.data.success) {
-        const updatedOrderAtStore = orders.filter(order => order._id !== orderId);
+        axios
+          .get(`${process.env.REACT_APP_API_URL}/order/user/${user._id}?status=${status}`)
+          .then((response) => {
+            setOrders(response.data.data);
+          })
+          .catch((error) => {
+            console.error('Lỗi khi gọi API: ', error);
+          });
+  
         message.success('Đơn hàng đã hoàn thành');
-        setOrders(updatedOrderAtStore);
       }
     } catch (error) {
       console.error('Lỗi khi xác nhận đơn hàng:', error);
@@ -98,7 +103,10 @@ const OrderList = ({ status }) => {
                 {order.status === 'Đơn hàng đang được giao' && (
                   <Button
                     style={{ background: '#8c52ff', color: '#fff' }}
-                    onClick={() => setCompleteOrder(true)}
+                    onClick={() => {
+                      setCompleteOrder(true);
+                      setCurrentComplete(order.orderCode);
+                    }}
                   >
                     Đã nhận được hàng
                   </Button>
@@ -116,7 +124,7 @@ const OrderList = ({ status }) => {
               title="Hoàn thành đơn hàng"
               visible={completeOrder}
               onOk={() => {
-                handleCompleteOrder(order.orderCode)
+                handleCompleteOrder(currentComplete)
                 setCompleteOrder(false);
               }}
               onCancel={() => setCompleteOrder(false)}

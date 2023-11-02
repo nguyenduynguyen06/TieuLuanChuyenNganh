@@ -451,7 +451,7 @@ const getOrdersDetails = async (req, res) => {
     const { orderCode } = req.params;
     const { userId } = req.query;
     const order = await Order.findOne({ orderCode: orderCode });
-    if (order && order.user.toString() !== userId) {
+    if (order && order.user && order.user.toString() !== userId) {
       return res.status(403).json({ success: false, error: 'Không có quyền truy cập đơn hàng này' });
     }
     const orders = await Order.findOne({ orderCode: orderCode })
@@ -465,7 +465,6 @@ const getOrdersDetails = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-
 const cancelOrder = async (req, res) => {
   try {
     const { orderCode } = req.params;
