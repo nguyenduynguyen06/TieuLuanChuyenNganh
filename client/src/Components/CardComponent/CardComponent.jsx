@@ -107,7 +107,7 @@ function CardComponent() {
   return (
     <div>
       <WrapperCard>
-        <div className='mainContainer'>
+        <div className='mainContainer' style={{alignItems:'center', justifyContent: 'center'}}>
           {currentProducts.filter((product) => product.isHide === false).map((product) => (
             <div className='box' key={product._id} style={{ padding: '0' }}>
               <div className='card' >

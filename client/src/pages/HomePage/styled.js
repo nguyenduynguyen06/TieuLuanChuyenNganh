@@ -71,15 +71,13 @@ export const WrapperCard = styled.div`
   .mainContainerAcc {
     width:100%;
     background-image: linear-gradient(to left, #5f2b89,  #5f2b89);
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1rem));
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between; 
-    row-gap: 20px;
     overflow: hidden;
     padding: 20px;
-    column-gap: 12px;
     border-radius: 0 0 8px 8px;
+    gap: 2px;
   }
 
   .box {
