@@ -60,8 +60,9 @@ export const WrapperCard = styled.div`
   .mainContainer {
     width:100%;
     background-image: linear-gradient(to left, #FE9100,  #F29600);
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1rem));
+    display: flex;
+    flex-wrap: wrap;
+    //grid-template-columns: repeat(auto-fit, minmax(200px, 1rem));
     align-items: center;
     overflow: hidden;
     padding: 20px;
@@ -87,7 +88,7 @@ export const WrapperCard = styled.div`
     text-align: center;
     transition: .3s ease-in-out;
     max-width: 200px;
-    width: auto;
+    width: 200px;
     border: 1px solid #efefef;
     border-radius: 4px;
   }
