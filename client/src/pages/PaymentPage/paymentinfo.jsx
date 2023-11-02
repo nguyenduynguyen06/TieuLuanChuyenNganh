@@ -174,9 +174,7 @@ const PaymentInfo = () => {
                 </Col>
                 <Col style={{ width: '60%', paddingLeft: '10px', paddingRight: '10px' }}>
                     <WrapperPaymentInfo>
-                    <form onSubmit={addOrder}>
-                        <div className="block-box">
-                            <div className="nav">
+                    <div className="nav">
                                 <button className="btn-back" onClick={goBack}>
                                     <ArrowLeftOutlined /> Quay lại
                                 </button>
@@ -184,6 +182,9 @@ const PaymentInfo = () => {
                                     <span>Thanh toán</span>
                                 </div>
                             </div>
+                    <form onSubmit={addOrder}>
+                        <div className="block-box">
+                           
                         <div className="view-list">
                                 <div className="view-list__wrapper">
                                     {data && data.map((item) => (
