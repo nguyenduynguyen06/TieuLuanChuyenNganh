@@ -4,10 +4,11 @@ import axios from 'axios';
 import { Button } from 'antd';
 import ButtonComponent from '../../../Components/ButtonComponent/ButtonComponent';
 import { Link, NavLink } from 'react-router-dom';
+import { FitScreen } from '@mui/icons-material';
 function ProductHomePage() {
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
-  const [visibleProducts, setVisibleProducts] = useState(7);
+  const [visibleProducts, setVisibleProducts] = useState(6);
 
   useEffect(() => {
     const fetchData = async () => {
