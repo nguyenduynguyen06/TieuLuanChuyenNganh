@@ -16,20 +16,23 @@ export const WrapperFilterCard = styled.div`
 .mainContainer {
   width:100%;
   background: #fff;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1rem));
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-around; 
-  row-gap: 20px;
+  overflow: hidden;
   padding: 20px;
+  border-radius: 0 0 8px 8px;
+  gap: 2px;
 }
 
-.mainContainer .box {
+.box {
   background: #fff;
   text-align: center;
   transition: .3s ease-in-out;
-  max-width: 100%;
-  width: auto;
+  max-width: 200px;
+  width: 200px;
+  border: 1px solid #efefef;
+  border-radius: 4px;
 }
 
 .mainContainer .box:hover {
@@ -183,20 +186,19 @@ export const WrapperCard = styled.div`
   .mainContainer {
     width:100%;
     background: #fff;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1rem));
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-around; 
-    row-gap: 20px;
+    overflow: hidden;
     padding: 20px;
+    gap: 2px;
   }
 
   .mainContainer .box {
     background: #fff;
     text-align: center;
     transition: .3s ease-in-out;
-    max-width: 100%;
-    width: auto;
+    width: 200px;
   }
 
   .mainContainer .box:hover {

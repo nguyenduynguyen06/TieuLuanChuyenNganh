@@ -273,7 +273,7 @@ function FilterCard() {
     return (
         <div>
             <WrapperFilterCard>
-                <div className='mainContainer'>
+                <div className='mainContainer' style={{alignItems:'center', justifyContent:'center'}}>
                     {currentProducts
                         .filter((product) => product.isHide === false)
                         .map((product) => (
