@@ -88,7 +88,7 @@ function ProductHomePage() {
   return (
     <WrapperCard>
       <img className='imgtt' src="..\..\image\bannerpd.jpg" style={{ width: '100%' }} alt='title'></img>
-      <div className='mainContainer' ref={mainContainerRef} style={{alignItems: 'center', justifyContent: 'center'}}>
+      <div className='mainContainer' ref={mainContainerRef} style={{alignItems: 'center',paddingLeft:'3%'}}>
         {products
           .filter((product) => product.isHide === false)
           .slice(0, cardsToShow)
