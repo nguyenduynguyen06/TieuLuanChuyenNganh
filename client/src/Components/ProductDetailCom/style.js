@@ -296,6 +296,7 @@ export const WrapperCommentNew = styled.div`
         text-transform: capitalize;
         width: 25px;
     }
+
     .box-inf .box-inf-name {
         font-size: 14px;
         font-weight: 700;
@@ -487,12 +488,16 @@ width: 100%;
     }
     .boxReview-comment {
         margin: 30px 0 15px;
-    width: 100%;
+        width: 100%;
     }
     .boxReview-comment-item {
         border-bottom: 1px solid rgba(145,158,171,.239);
         margin-bottom: 15px;
         padding-bottom: 15px;
+    }
+    .avt img{
+        width: 60px;
+        height: 60px;
     }
     .block-info__name{
         align-items: center;

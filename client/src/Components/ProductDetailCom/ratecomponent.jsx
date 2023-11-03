@@ -114,7 +114,7 @@ const Rating = ({productName}) => {
                                 <div className='boxReview-comment-item-title' style={{ display: 'flex' }}>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
                                     <div>
-                                    <img className='avt' src={rating.user?.avatar} alt="Avatar" />
+                                    <img className='avt' width={40} height={40} src={rating.user?.avatar} alt="Avatar" />&nbsp;
                                     </div>
                                     <div className='block-info' style={{ display: 'flex', columnGap: '50px' }}>
                                     <div className='block-info__name'>
