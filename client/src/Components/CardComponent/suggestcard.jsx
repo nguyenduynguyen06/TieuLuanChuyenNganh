@@ -58,7 +58,7 @@ function SuggestCard({ searchKeyword }) {
                       {variant.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                     </p>
                     {product?.ratings.length > 0 ? (
-              <div style={{ display: "flex", gap: '20px' }}>
+              <div style={{ display: "flex", gap: '20px',alignItems: 'center' }}>
               <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
               <span style={{ fontSize: 16, paddingTop: 6 }}>{calculateAverageRating(product.ratings).toFixed(1)}</span>
                </div>

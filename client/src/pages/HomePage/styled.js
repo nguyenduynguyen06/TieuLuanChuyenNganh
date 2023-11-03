@@ -121,10 +121,10 @@ export const WrapperCard = styled.div`
     width: 100%;
     margin: auto;
     line-height: 3;
-    height: 11em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: normal
+    height: 15em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal
   }
 
   .card .desc h1 {
