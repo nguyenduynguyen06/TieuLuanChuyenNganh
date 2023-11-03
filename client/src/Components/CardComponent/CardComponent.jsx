@@ -8,11 +8,9 @@ import { WrapperCard } from './styled';
 function CardComponent() {
   const { nameCategory, nameBrand } = useParams();
   const location = useLocation();
-  const { productName, memory } = useParams();
   const searchKeyword = new URLSearchParams(location.search).get('keyword');
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
-  const [productDetails, setProductDetails] = useState(null)
 
   useEffect(() => {
     if (nameCategory) {
@@ -43,27 +41,6 @@ function CardComponent() {
         console.error('Lỗi khi gọi API tìm kiếm: ', error);
       });
   };
-  const dataSource = productDetails && productDetails.properties
-    ? Object.keys(productDetails.properties).map((propertyKey) => ({
-      key: propertyKey,
-      prop: propertyKey,
-      info: productDetails.properties[propertyKey] || 'N/A',
-    }))
-    : [];
-  if (memory !== `undefined`) {
-    dataSource.unshift({
-      key: '0',
-      prop: 'Dung lượng lưu trữ',
-      info: memory,
-    });
-  }
-  let totalRating = 0;
-  let averageRating = 0;
-
-  if (productDetails?.ratings.length > 0) {
-    totalRating = productDetails.ratings.reduce((total, review) => total + review.rating, 0);
-    averageRating = totalRating / productDetails.ratings.length;
-  }
   const getProductsByCategoryName = async (categoryName) => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
@@ -124,7 +101,14 @@ function CardComponent() {
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
-
+  const calculateAverageRating = (product) => {
+    if (product.length === 0) {
+      return 0;
+    }
+  
+    const totalRating = product.reduce((total, item) => total + item.rating, 0);
+    return totalRating / product.length;
+  }
 
 
   return (
@@ -160,21 +144,13 @@ function CardComponent() {
                       <p style={{ fontWeight: 700, height: '20px' }}>
                         {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
                       <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
-                      {productDetails ? (
-                        memory !== `undefined` ? (
-                          <div style={{ display: "flex", gap: '20px' }}>
-                              {productDetails.name} {memory}
-                            <Rate disabled allowHalf value={averageRating} />
-                            <span style={{ fontSize: 16, paddingTop: 6 }}>{averageRating.toFixed(1)}</span>
-                          </div>
-
-                        ) : (
-                          <div>
-                            <div style={{ fontWeight: 'bold' }}>{productDetails.name}</div>
-                          </div>
-                        )
+                      {product?.ratings.length > 0 ? (
+                        <div style={{ display: "flex", gap: '20px' }}>
+                        <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
+                        <span style={{ fontSize: 16, paddingTop: 6 }}>{calculateAverageRating(product.ratings).toFixed(1)}</span>
+                    </div>
                       ) : (
-                        <p>Loading...</p>
+                        null
                       )}
                     </div>
                   </div>
