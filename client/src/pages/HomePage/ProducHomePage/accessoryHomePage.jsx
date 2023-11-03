@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { WrapperButtonMore, WrapperCard } from '../styled';
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
+import { Rate } from 'antd';
 
 function AccessoryHomePage() {
   const [products, setProducts] = useState([]);
@@ -75,7 +76,14 @@ function AccessoryHomePage() {
   const cardsPerRow = calculateCardsPerRow(); // Calculate the number of cards per row
 
   const hasMoreProducts = products.length > cardsToShow;
-
+  const calculateAverageRating = (product) => {
+    if (product.length === 0) {
+      return 0;
+    }
+  
+    const totalRating = product.reduce((total, item) => total + item.rating, 0);
+    return totalRating / product.length;
+  }
   return (
     <WrapperCard>
       <img className='imgtt' src="..\..\image\banneracc.png" style={{ width: '100%' }} alt='title'></img>
@@ -96,6 +104,14 @@ function AccessoryHomePage() {
                   <div style={{}}>
                     <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant[0]?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
                   </div>
+                  {product?.ratings.length > 0 ? (
+              <div style={{ display: "flex", gap: '20px' }}>
+              <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
+              <span style={{ fontSize: 16, paddingTop: 6 }}>{calculateAverageRating(product.ratings).toFixed(1)}</span>
+               </div>
+              ) : (
+              null
+              )}
                 </div>
               </div>
             </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 import { WrapperSuggestCard } from './styled';
+import { Rate } from 'antd';
 
 function SuggestCard({ searchKeyword }) {
   const [searchedProducts, setSearchedProducts] = useState([]);
@@ -28,7 +29,14 @@ function SuggestCard({ searchKeyword }) {
   if (!searchKeyword || searchedProducts.length === 0) {
     return null; 
   }
-
+  const calculateAverageRating = (product) => {
+    if (product.length === 0) {
+      return 0;
+    }
+  
+    const totalRating = product.reduce((total, item) => total + item.rating, 0);
+    return totalRating / product.length;
+  }
   return (
     <WrapperSuggestCard>
     <div className='view-list' style={{ height: '400px', overflowY: 'scroll', textAlign: 'justify', position: 'absolute', zIndex:1, maxWidth: '440px'}}>
@@ -49,10 +57,19 @@ function SuggestCard({ searchKeyword }) {
                     <p className='product__price--through' style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>
                       {variant.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                     </p>
+                    {product?.ratings.length > 0 ? (
+              <div style={{ display: "flex", gap: '20px' }}>
+              <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
+              <span style={{ fontSize: 16, paddingTop: 6 }}>{calculateAverageRating(product.ratings).toFixed(1)}</span>
+               </div>
+              ) : (
+              null
+              )}
                   </div>
                 </div>
               </div>
             </div>
+            
           </NavLink>
         ))
       ))}

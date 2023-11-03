@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Button, Pagination } from 'antd';
+import { Button, Pagination, Rate } from 'antd';
 import { WrapperCard, WrapperFilterCard } from './styled';
 import { InfoCircleFilled } from '@ant-design/icons'
 
@@ -268,7 +268,14 @@ function FilterCard() {
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
     const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
-
+    const calculateAverageRating = (product) => {
+      if (product.length === 0) {
+        return 0;
+      }
+    
+      const totalRating = product.reduce((total, item) => total + item.rating, 0);
+      return totalRating / product.length;
+    }
 
     return (
         <div>
@@ -306,7 +313,16 @@ function FilterCard() {
                                                           </span>{value}
                                                       </p>
                                                 ))}
+                                                
                                                 </div>
+                                                {product?.ratings.length > 0 ? (
+                                                <div style={{ display: "flex", gap: '20px' }}>
+                                                <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
+                                                <span style={{ fontSize: 16, paddingTop: 6 }}>{calculateAverageRating(product.ratings).toFixed(1)}</span>
+                                            </div>
+                                              ) : (
+                                                null
+                                              )}
                                             </div>
                                         </div>
                                     </div>
