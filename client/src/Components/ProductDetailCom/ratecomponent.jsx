@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Rate } from 'antd';
+import { Rate, Image } from 'antd';
 import { WrapperRate } from './style';
 import axios from 'axios';
 const Rating = ({productName}) => {
@@ -135,12 +135,12 @@ const Rating = ({productName}) => {
                                 </div>
                                 <div className='item-review-comment'>
                                     <div className='comment-content'>
-                                    <p style={{ maxWidth: '100%' }}>
+                                    <p style={{ maxWidth: '100%', fontSize:'15px' }}>
                                         {rating.comment}
                                     </p>
                                     <div style={{ display: 'flex', gap: '10px' }} className='img-rate'>
                                         {rating.pictures.map((picture, index) => (
-                                        <img src={picture} alt={`Hình ảnh ${index + 1}`} key={index} />
+                                        <Image src={picture} alt={`Hình ảnh ${index + 1}`} key={index}/>
                                         ))}
                                     </div>
                                     </div>
