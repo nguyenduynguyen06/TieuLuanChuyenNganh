@@ -78,7 +78,7 @@ export const WrapperFilterCard = styled.div`
   width: 100%;
   margin: auto;
   line-height: 3;
-  height: 14em;
+  height: 20em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal
@@ -244,7 +244,7 @@ export const WrapperCard = styled.div`
     width: 100%;
     margin: auto;
     line-height: 3;
-    height: 11em;
+    height: 15em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: normal
