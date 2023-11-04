@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Pagination, Rate } from 'antd';
@@ -11,6 +11,8 @@ function CardComponent() {
   const searchKeyword = new URLSearchParams(location.search).get('keyword');
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
+  const [cardsToShow, setCardsToShow] = useState();
+  const mainContainerRef = useRef(null);
 
   useEffect(() => {
     if (nameCategory) {
@@ -41,6 +43,32 @@ function CardComponent() {
         console.error('Lỗi khi gọi API tìm kiếm: ', error);
       });
   };
+  const calculateCardsPerRow = () => {
+    const mainContainer = mainContainerRef.current;
+    if (!mainContainer) return;
+
+    const containerWidth = mainContainer.offsetWidth;
+    const cardWidth = 200; // Width of each card
+
+    return Math.floor(containerWidth / cardWidth); // Calculate the number of cards per row
+  };
+  useEffect(() => {
+    const mainContainer = mainContainerRef.current;
+    if (!mainContainer) return;
+  
+    const containerWidth = mainContainer.offsetWidth;
+    const cardWidth = 200; // Độ rộng của mỗi thẻ
+  
+    const cardsPerRow = Math.floor(containerWidth / cardWidth); // Tính số lượng thẻ trên mỗi hàng
+    const calculatedProductsPerPage = cardsPerRow * 2; // Tính toán số lượng sản phẩm trên mỗi trang
+    setCardsToShow(cardsPerRow); // Cập nhật giá trị cardsToShow
+  
+    // Cập nhật giá trị productsPerPage
+    setProductsPerPage(calculatedProductsPerPage);
+  }, [mainContainerRef]);
+  
+
+
   const getProductsByCategoryName = async (categoryName) => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
@@ -105,7 +133,7 @@ function CardComponent() {
 
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(12);
+  const [productsPerPage, setProductsPerPage] = useState(12);
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -122,7 +150,7 @@ function CardComponent() {
   return (
     <div>
       <WrapperCard>
-        <div className='mainContainer' style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <div className='mainContainer' ref={mainContainerRef} style={{ alignItems: 'center', justifyContent: 'center' }}>
           {currentProducts.filter((product) => product.isHide === false).map((product) => (
             <div className='box' key={product._id} style={{ padding: '0' }}>
               <div className='card' >
