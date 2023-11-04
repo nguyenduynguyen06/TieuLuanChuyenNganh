@@ -22,7 +22,7 @@ const TableComment = () => {
         title: 'Tên người bình luận',
         dataIndex: 'author',
         render: (text, record) => {
-          if (record.user.role_id === 1) {
+          if (record?.user?.role_id === 1) {
             return text + ' (QTV)';
           } else {
             return text;
@@ -133,7 +133,7 @@ const TableComment = () => {
       const Reply = (commentId,productName,values) => {
         const updatedValues = { ...values, author: user.fullName };
         axios
-          .post(`${process.env.REACT_APP_API_URL}/comment/addReplytoReply/${commentId}/${user._id}/${productName}`,updatedValues)
+          .post(`${process.env.REACT_APP_API_URL}/comment/addReplytoReply/${commentId}/${productName}?userId=${user._id || ''}`,updatedValues)
           .then((response) => {
             if (response.data.success) {
               message.success('Trả lời thành công');
@@ -147,7 +147,7 @@ const TableComment = () => {
       };
       const handleCheckcomment = (commentId) => {
         axios
-          .put(`${process.env.REACT_APP_API_URL}/comment/check/${commentId}` ,{headers})
+          .put(`${process.env.REACT_APP_API_URL}/comment/check/${commentId}` , null ,{ headers })
           .then((response) => {
             if (response.data.success) {
                 axios.get(`${process.env.REACT_APP_API_URL}/comment/getAll`)
