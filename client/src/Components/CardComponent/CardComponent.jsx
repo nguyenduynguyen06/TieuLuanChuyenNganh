@@ -94,6 +94,14 @@ function CardComponent() {
       console.error('Lỗi:', error);
     }
   }
+  const calculateTotalRatings = (product) => {
+    if (!product || !product.ratings) {
+      return 0;
+    }
+
+    return product.ratings.length;
+  }
+
 
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -122,7 +130,9 @@ function CardComponent() {
                   <img src={product.thumnails[0]} />
                 </NavLink>
                 <div className='desc'>
-                  <h1>{product?.name}</h1>
+                  <div style={{height:'3em'}}>
+                    <h1 style={{padding: 3}}>{product?.name}</h1>
+                  </div>
                   <div>
                     {product?.variant.map((variant) => (
                       variant?.memory && (
@@ -140,18 +150,18 @@ function CardComponent() {
                         </Button>
                       )
                     ))}
+                    {product?.ratings.length > 0 ? (
+                      <div style={{ display: "flex", alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                        <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
+                        <span style={{ margin: 0, height: '25px', fontSize: '13px' }}>Lượt đánh giá: {calculateTotalRatings(product)}</span>
+                      </div>
+                    ) : (
+                      null
+                    )}
                     <div style={{ padding: '0 0 30px 0' }}>
                       <p style={{ fontWeight: 700, height: '20px' }}>
                         {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
                       <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
-                      {product?.ratings.length > 0 ? (
-                        <div style={{ display: "flex", gap: '20px' , alignItems: 'center', justifyContent:'center'}}>
-                          <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
-                          <span style={{ fontSize: 16, paddingTop: 6 }}>{calculateAverageRating(product.ratings).toFixed(1)}</span>
-                        </div>
-                      ) : (
-                        null
-                      )}
                     </div>
                   </div>
                 </div>

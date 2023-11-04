@@ -11,7 +11,7 @@ justify-contents: center;
         display: block;
         object-fit: contain;
         max-width: 100%;
-        max-height: 400px;
+        height: 400px;
     }
     .slider-image img{
         width: auto;

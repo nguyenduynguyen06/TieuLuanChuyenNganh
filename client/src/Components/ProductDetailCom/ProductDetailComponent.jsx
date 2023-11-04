@@ -45,11 +45,11 @@ const ProductDetailComponents = () => {
     const sliderSettings = {
         dots: true,
         infinite: true,
-        speed: 500,
+        speed: 400,
         slidesToShow: 1,
         slidesToScroll: 1,
         autoplay: true,
-        autoplaySpeed: 2000,
+        autoplaySpeed: 1200,
         appendDots: (dots) => (
             <ul style={{ position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)', listStyle: 'none', padding: '0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 {dots}
@@ -239,9 +239,9 @@ const ProductDetailComponents = () => {
             <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
                 <Col span={14} style={{ border: '1px solid #e5e5e5', padding: '8px' }}>
                     <Slider {...sliderSettings} className="slider" style={{ border: '1px solid #ccc', borderRadius: '4px' }}>
-                        {productDetails && productDetails.thumnails.map((thumbnail, index) => (
+                        {productDetails && productDetails.thumnails.slice(1).map((thumbnail, index) => (
                             <WrapperStyleImageBig key={index}>
-                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems:'center'}}>
                                     <Image src={thumbnail} alt={`Thumbnail ${index}`} className="slider-image" />
                                 </div>
                             </WrapperStyleImageBig>

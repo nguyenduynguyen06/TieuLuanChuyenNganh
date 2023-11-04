@@ -9,7 +9,7 @@ function FilterCard() {
   const { nameCategory, nameBrand } = useParams();
   const location = useLocation();
   const [products, setProducts] = useState([]);
-
+  const propertyNames = ["RAM", "Dung lượng pin", "Chip xử lý (CPU)"];
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const minPrice = searchParams.get('minPrice');
@@ -180,6 +180,7 @@ function FilterCard() {
       console.error('Lỗi:', error);
     }
   }
+
   const getProductsByCategoryAndBrandHightoLow = async (categoryName, brandName) => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
@@ -276,6 +277,13 @@ function FilterCard() {
     const totalRating = product.reduce((total, item) => total + item.rating, 0);
     return totalRating / product.length;
   }
+  const calculateTotalRatings = (product) => {
+    if (!product || !product.ratings) {
+      return 0;
+    }
+
+    return product.ratings.length;
+  }
 
 
   return (
@@ -292,8 +300,18 @@ function FilterCard() {
                       <img src={product.thumnails[0]} />
                     </NavLink>
                     <div className='desc'>
-                      <h1>{product.name} - {variant.memory}</h1>
+                      <div style={{ height: '3em' }}>
+                        <h1 style={{ padding: 3 }}>{product.name} - {variant.memory}</h1>
+                      </div>
                       <div>
+                        {product?.ratings.length > 0 ? (
+                          <div style={{ display: "flex", alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                            <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
+                            <span style={{ margin: 0, height: '25px', fontSize: '13px' }}>Lượt đánh giá: {calculateTotalRatings(product)}</span>
+                          </div>
+                        ) : (
+                          null
+                        )}
                         <div style={{ padding: '0 0 30px 0' }}>
                           <p style={{ fontWeight: 700, height: '20px' }}>
                             {variant.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
@@ -303,25 +321,20 @@ function FilterCard() {
                           </p>
                         </div>
                         <div>
-                          {[
-                            product?.properties?.[Object.keys(product?.properties)[0]],
-                            product?.properties?.[Object.keys(product?.properties)[4]],
-                            product?.properties?.[Object.keys(product?.properties)[5]]
-                          ].filter(value => value !== undefined).map((value, index) => (
-                            <p key={index} style={{ fontSize: '13px', color: 'black', textAlign: 'left', paddingLeft: '10px', margin: '0', lineHeight: '19px' }}>
-                              <span style={{ marginRight: '5px', alignItems: 'center' }}>
-                                <InfoCircleFilled style={{ fontSize: '8px' }} />
-                              </span>{value}
-                            </p>
-                          ))}
-                          {product?.ratings.length > 0 ? (
-                            <div style={{ display: "flex", gap: '20px', alignItems: 'center', justifyContent: 'center' }}>
-                              <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
-                              <span style={{ fontSize: 16, paddingTop: 6 }}>{calculateAverageRating(product.ratings).toFixed(1)}</span>
-                            </div>
-                          ) : (
-                            null
-                          )}
+                          {propertyNames.map((propertyName, index) => {
+                            const propertyValue = product?.properties?.[propertyName];
+                            if (propertyValue !== undefined) {
+                              return (
+                                <div style={{padding:'0 7px', display: 'flex', alignItems: 'center' }}>
+                                  <i class="fas fa-circle" style={{ fontSize: 3 }}></i>
+                                  <p key={index} style={{ fontSize: '13px', color: 'black', textAlign: 'left', paddingLeft: '10px', margin: '0', lineHeight: '19px' }}>
+                                    {propertyName}: {propertyValue}
+                                  </p>
+                                </div>
+                              );
+                            }
+                            return null; // To skip properties that don't exist in the product data
+                          })}
                         </div>
                       </div>
                     </div>

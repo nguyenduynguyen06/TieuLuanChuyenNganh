@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { WrapperButtonMore, WrapperCard } from '../styled';
 import axios from 'axios';
-import { Button, Rate } from 'antd';
-import ButtonComponent from '../../../Components/ButtonComponent/ButtonComponent';
+import { Button, FloatButton, Rate } from 'antd';
 import { Link, NavLink } from 'react-router-dom';
-import { FitScreen } from '@mui/icons-material';
+import { CustomerServiceOutlined } from '@ant-design/icons';
 
 function ProductHomePage() {
   const [products, setProducts] = useState([]);
@@ -60,6 +59,13 @@ function ProductHomePage() {
     setCardsToShow(cardsPerRow); // Set the number of cards to show initially
   }, [mainContainerRef]);
 
+  const calculateTotalRatings = (product) => {
+    if (!product || !product.ratings) {
+      return 0;
+    }
+
+    return product.ratings.length;
+  }
 
   const buttonStyle = {
     border: '1px solid #ff3300',
@@ -106,7 +112,9 @@ function ProductHomePage() {
                   <img src={product.thumnails[0]} />
                 </NavLink>
                 <div className='desc'>
-                  <h1>{product?.name}</h1>
+                  <div style={{ height: '3em' }}>
+                    <h1 style={{ padding: 3 }}>{product?.name}</h1>
+                  </div>
                   <div>
                     {product?.variant.map((variant) => (
                       <Button
@@ -122,22 +130,21 @@ function ProductHomePage() {
                         {variant.memory}
                       </Button>
                     ))}
-                    <div style={{ margin: 0 }}>
-                      <p style={{ fontWeight: 700, height: '20px' }}>
-                        {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
-                    </div>
-                    <div style={{}}>
-                      <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
-
-                    </div>
                     {product?.ratings.length > 0 ? (
-                      <div style={{ display: "flex", gap: '20px', alignItems: 'center', justifyContent:'center' }}>
-                        <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
-                        <span style={{ fontSize: 16, paddingTop: 6 }}>{calculateAverageRating(product.ratings).toFixed(1)}</span>
+                      <div style={{ display: "flex", gap: '0', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', margin: 0 }}>
+                        <Rate style={{ margin: 0 }} disabled allowHalf value={calculateAverageRating(product.ratings)} />
+                        <span style={{ margin: 0, height: '25px', fontSize: '13px' }}>Lượt đánh giá: {calculateTotalRatings(product)}</span>
                       </div>
                     ) : (
                       null
                     )}
+                    <div style={{ margin: 0 }}>
+                      <p style={{ fontWeight: 700, height: '20px', margin: 0 }}>
+                        {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+                    </div>
+                    <div style={{}}>
+                      <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -161,6 +168,17 @@ function ProductHomePage() {
           </WrapperButtonMore>
         </div>
       )}
+      <FloatButton.Group shape="circle" style={{ right: 24 }}>
+        <FloatButton
+          shape="circle"
+          type="primary"
+          style={{
+            right: 94,
+          }}
+          icon={<CustomerServiceOutlined />}
+        />
+        <FloatButton.BackTop />
+      </FloatButton.Group>
     </WrapperCard>
   );
 }
