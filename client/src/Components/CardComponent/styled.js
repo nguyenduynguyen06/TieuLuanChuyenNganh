@@ -1,5 +1,6 @@
 import { Row } from "antd";
 import styled from "styled-components";
+import ButtonComponent from "../ButtonComponent/ButtonComponent";
 
 export const WrapperFilterCard = styled.div`
 *{
@@ -16,10 +17,13 @@ export const WrapperFilterCard = styled.div`
 .mainContainer {
   width:100%;
   background: #fff;
-  display: flex;
-  flex-wrap: wrap;
+  // display: flex;
+  // flex-wrap: wrap;
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 200px));
   align-items: center;
   overflow: hidden;
+  justify-content: start;
   padding: 20px;
   border-radius: 0 0 8px 8px;
   gap: 2px;
@@ -411,4 +415,15 @@ img {
   text-decoration: line-through;
   top: 2px;
 }
+`
+export const WrapperButtonMore = styled(ButtonComponent)`
+  &:hover {
+    color:#fff;
+    background: #ff3300
+    span {
+      color: #fff;
+    }
+  }
+  width: 100%;
+  text-align: center;
 `
