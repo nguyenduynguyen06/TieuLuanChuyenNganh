@@ -11,7 +11,7 @@ function FilterCard({minPrice,maxPrice,includeOldPrice,selectedMemory}) {
   const searchKeyword = new URLSearchParams(location.search).get('keyword');
   const [products, setProducts] = useState([]);
   const propertyNames = ["RAM", "Dung lượng pin", "Chip xử lý (CPU)"];
-  const [cardsToShow, setCardsToShow] = useState();
+  const [cardsToShow, setCardsToShow] = useState(null);
   const mainContainerRef = useRef(null);
   useEffect(() => {
     if (searchKeyword) {
@@ -67,13 +67,10 @@ function FilterCard({minPrice,maxPrice,includeOldPrice,selectedMemory}) {
     if (!mainContainer) return;
 
     const containerWidth = mainContainer.offsetWidth;
-    const cardWidth = 200; // Độ rộng của mỗi thẻ
+    const cardWidth = 202; // Độ rộng của mỗi thẻ
 
     const cardsPerRow = Math.floor(containerWidth / cardWidth); // Tính số lượng thẻ trên mỗi hàng
     const calculatedProductsPerPage = cardsPerRow * 2; // Tính toán số lượng sản phẩm trên mỗi trang (2 hàng)
-    setCardsToShow(cardsPerRow); // Cập nhật giá trị cardsToShow
-
-    // Cập nhật giá trị productsPerPage
     setProductsPerPage(calculatedProductsPerPage);
   }, [mainContainerRef]);
   useEffect(() => {
