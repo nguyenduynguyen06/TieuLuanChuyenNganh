@@ -20,6 +20,7 @@ import ProductDescription from "./productdesscription"
 import CommentBox from "./commentcomponent"
 import axios from "axios"
 import { NavLink, useParams } from "react-router-dom"
+
 import Slider from 'react-slick';
 
 import 'slick-carousel/slick/slick.css';
@@ -156,18 +157,46 @@ const ProductDetailComponents = () => {
                     const selectedSKUName = selectedSKU[selectedVariant._id]
                     await addToCart(user._id, productName, selectedSKUName, quantity);
                     message.success('Thêm vào giỏ hàng thành công')
-                 
+
                 }
             } else {
                 const selectValues = Object.values(selectedSKU);
                 const selectedColorName = selectValues[selectValues.length - 1];
                 await addToCart(user._id, productName, selectedColorName, quantity);
                 message.success('Thêm vào giỏ hàng thành công')
-        
+
             }
         } catch (error) {
             console.error('Lỗi:', error);
             message.error('Vui lòng đăng nhập để tiếp tục')
+        }
+    };
+    const handleBuyNow = async () => {
+        try {
+            if (memory !== 'undefined') {
+                const selectedVariant = productDetails.variant.find((variant) => variant.memory === memory);
+                if (selectedVariant) {
+                    const selectedSKUName = selectedSKU[selectedVariant._id];
+                    await addToCart(user._id, productName, selectedSKUName, quantity);
+                    message.success('Thêm vào giỏ hàng thành công', 1); // Thông báo sẽ tự đóng sau 2 giây
+                    // Chuyển đến trang giỏ hàng sau khi thông báo đóng
+                    setTimeout(() => {
+                        window.location.href = '/cart'; 
+                    }, 1000); // Chờ 2 giây trước khi chuyển trang
+                }
+            } else {
+                const selectValues = Object.values(selectedSKU);
+                const selectedColorName = selectValues[selectValues.length - 1];
+                await addToCart(user._id, productName, selectedColorName, quantity);
+                message.success('Thêm vào giỏ hàng thành công', 1); // Thông báo sẽ tự đóng sau 2 giây
+                // Chuyển đến trang giỏ hàng sau khi thông báo đóng
+                setTimeout(() => {
+                    window.location.href = '/cart'; 
+                }, 1000); // Chờ 2 giây trước khi chuyển trang
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            message.error('Vui lòng đăng nhập để tiếp tục');
         }
     };
 
@@ -183,9 +212,8 @@ const ProductDetailComponents = () => {
     };
 
     const handleIncreaseQuantity = () => {
-         if ( quantity < 3) 
-        {
-          setQuantity(quantity + 1);
+        if (quantity < 3) {
+            setQuantity(quantity + 1);
         }
     };
     const handleChange = (value) => {
@@ -207,13 +235,13 @@ const ProductDetailComponents = () => {
             info: memory,
         });
     }
-        let totalRating = 0;
-        let averageRating = 0;
+    let totalRating = 0;
+    let averageRating = 0;
 
-        if (productDetails?.ratings.length > 0) {
+    if (productDetails?.ratings.length > 0) {
         totalRating = productDetails.ratings.reduce((total, review) => total + review.rating, 0);
         averageRating = totalRating / productDetails.ratings.length;
-        }
+    }
     return (
         <WrapperDetail>
             <Row style={{ padding: '15px 12px' }}>
@@ -241,7 +269,7 @@ const ProductDetailComponents = () => {
                     <Slider {...sliderSettings} className="slider" style={{ border: '1px solid #ccc', borderRadius: '4px' }}>
                         {productDetails && productDetails.thumnails.slice(1).map((thumbnail, index) => (
                             <WrapperStyleImageBig key={index}>
-                                <div style={{ display: 'flex', justifyContent: 'center', alignItems:'center'}}>
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <Image src={thumbnail} alt={`Thumbnail ${index}`} className="slider-image" />
                                 </div>
                             </WrapperStyleImageBig>
@@ -439,8 +467,22 @@ const ProductDetailComponents = () => {
                                 border: 'none',
                                 borderRadius: '4px'
                             }}
+                            onClick={handleBuyNow}
+                            textButton={'Mua Ngay'}
+                            styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}>
+                        </ButtonComponent>
+                        <ButtonComponent
+                            bordered={false}
+                            size={40}
+                            styleButton={{
+                                background: 'rgb(225,57,69)',
+                                height: '48px',
+                                width: '100%',
+                                border: 'none',
+                                borderRadius: '4px'
+                            }}
                             onClick={handleAddToCart}
-                            textButton={'Đặt Ngay'}
+                            textButton={'Thêm Vào Giỏ'}
                             styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}>
                         </ButtonComponent>
                     </div>

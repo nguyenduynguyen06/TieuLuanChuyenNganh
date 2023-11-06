@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Pagination, Rate } from 'antd';
@@ -11,6 +11,8 @@ function FilterCard({minPrice,maxPrice,includeOldPrice,selectedMemory}) {
   const searchKeyword = new URLSearchParams(location.search).get('keyword');
   const [products, setProducts] = useState([]);
   const propertyNames = ["RAM", "Dung lượng pin", "Chip xử lý (CPU)"];
+  const [cardsToShow, setCardsToShow] = useState();
+  const mainContainerRef = useRef(null);
   useEffect(() => {
     if (searchKeyword) {
       performSearch(searchKeyword);
@@ -60,6 +62,20 @@ function FilterCard({minPrice,maxPrice,includeOldPrice,selectedMemory}) {
     }
 
   }, [nameCategory, nameBrand, location.pathname,minPrice,maxPrice,includeOldPrice,selectedMemory]);
+  useEffect(() => {
+    const mainContainer = mainContainerRef.current;
+    if (!mainContainer) return;
+
+    const containerWidth = mainContainer.offsetWidth;
+    const cardWidth = 200; // Độ rộng của mỗi thẻ
+
+    const cardsPerRow = Math.floor(containerWidth / cardWidth); // Tính số lượng thẻ trên mỗi hàng
+    const calculatedProductsPerPage = cardsPerRow * 2; // Tính toán số lượng sản phẩm trên mỗi trang (2 hàng)
+    setCardsToShow(cardsPerRow); // Cập nhật giá trị cardsToShow
+
+    // Cập nhật giá trị productsPerPage
+    setProductsPerPage(calculatedProductsPerPage);
+  }, [mainContainerRef]);
   useEffect(() => {
     if (
       (minPrice !== null && maxPrice !== null) ||
@@ -269,7 +285,7 @@ function FilterCard({minPrice,maxPrice,includeOldPrice,selectedMemory}) {
 
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(10);
+  const [productsPerPage, setProductsPerPage] = useState(12);
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -294,7 +310,7 @@ function FilterCard({minPrice,maxPrice,includeOldPrice,selectedMemory}) {
   return (
     <div>
       <WrapperFilterCard>
-        <div className='mainContainer' style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <div className='mainContainer' ref={mainContainerRef} style={{ alignItems: 'center', justifyContent: 'center' }}>
           {currentProducts
             .filter((product) => product.isHide === false)
             .map((product) => (

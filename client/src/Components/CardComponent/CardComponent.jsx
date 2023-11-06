@@ -43,26 +43,18 @@ function CardComponent() {
         console.error('Lỗi khi gọi API tìm kiếm: ', error);
       });
   };
-  const calculateCardsPerRow = () => {
-    const mainContainer = mainContainerRef.current;
-    if (!mainContainer) return;
 
-    const containerWidth = mainContainer.offsetWidth;
-    const cardWidth = 200; // Width of each card
-
-    return Math.floor(containerWidth / cardWidth); // Calculate the number of cards per row
-  };
   useEffect(() => {
     const mainContainer = mainContainerRef.current;
     if (!mainContainer) return;
-  
+
     const containerWidth = mainContainer.offsetWidth;
     const cardWidth = 200; // Độ rộng của mỗi thẻ
-  
+
     const cardsPerRow = Math.floor(containerWidth / cardWidth); // Tính số lượng thẻ trên mỗi hàng
-    const calculatedProductsPerPage = cardsPerRow * 2; // Tính toán số lượng sản phẩm trên mỗi trang
+    const calculatedProductsPerPage = cardsPerRow * 2; // Tính toán số lượng sản phẩm trên mỗi trang (2 hàng)
     setCardsToShow(cardsPerRow); // Cập nhật giá trị cardsToShow
-  
+
     // Cập nhật giá trị productsPerPage
     setProductsPerPage(calculatedProductsPerPage);
   }, [mainContainerRef]);
