@@ -41,7 +41,7 @@ const getProductByBrandId = async (req, res) => {
   try {
     const brandId = req.params.brandId; 
     const products = await Product.find({ brand: brandId }).populate('variant');
-    shuffleArray(products);
+
 
     res.status(200).json({ success: true, data: products });
   } catch (error) {
@@ -54,9 +54,6 @@ const getProductsByCategoryAndBrand = async (req, res) => {
     const categoryId = req.params.categoryId; 
     const brandId = req.params.brandId; 
     const products = await Product.find({ category: categoryId, brand: brandId }).populate('variant');
- 
-    shuffleArray(products);
-
     res.status(200).json({ success: true, data: products });
   } catch (error) {
     console.error('Lỗi:', error);
@@ -75,7 +72,7 @@ const getProductsByCategory = async (req, res) => {
       },
     });;
 
-    shuffleArray(products);
+
 
     res.status(200).json({ success: true, data: products });
   } catch (error) {
@@ -83,12 +80,7 @@ const getProductsByCategory = async (req, res) => {
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
+
 
 const editProduct = async (req, res) => {
   try {

@@ -3,7 +3,6 @@ import HomePage from "../pages/HomePage/homepages";
 import Profilepage from "../pages/Profile/profilepage";
 import NotFoundPage from "../pages/notfoundpage";
 import ProductDetail from "../pages/ProductDetail/productdetail";
-import TypeProductPage from "../pages/ProductTypePage/producttypepage";
 import CartPage from "../pages/CartPage/CartPage";
 import FilterProductPage from "../pages/ProductTypePage/productfilterpage";
 import PaymentInfo from "../pages/PaymentPage/paymentinfo";
@@ -37,18 +36,6 @@ export const routes = [
         isShowHeader: true
     },
     {
-        path:'/type/:nameCategory',
-        page: TypeProductPage,
-    },
-    {
-        path:'/type/:nameCategory/:nameBrand',
-        page: TypeProductPage,
-    },
-    {
-        path:'/type',
-        page: TypeProductPage,
-    },
-    {
         path:'/product/:productName/:memory',
         page: ProductDetail,
         isShowHeader: true
@@ -57,6 +44,10 @@ export const routes = [
         path:'/cart',
         page: CartPage,
         isShowHeader: true
+    },
+    {
+        path:'/lowtoHigh',
+        page: FilterProductPage,
     },
     {
         path:'/lowtoHigh/:nameCategory/:nameBrand',

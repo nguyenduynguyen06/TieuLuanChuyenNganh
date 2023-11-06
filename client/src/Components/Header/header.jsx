@@ -36,7 +36,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     if (searchKeyword) {
         axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${searchKeyword}`)
             .then((response) => {
-                window.location.href = `/type?keyword=${searchKeyword}`;
+                window.location.href = `/lowtoHigh?keyword=${searchKeyword}`;
             })
             .catch((error) => {
                 console.error('Lỗi khi gọi API tìm kiếm: ', error);

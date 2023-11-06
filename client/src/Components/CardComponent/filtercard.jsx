@@ -5,17 +5,28 @@ import { Button, Pagination, Rate } from 'antd';
 import { WrapperCard, WrapperFilterCard } from './styled';
 import { InfoCircleFilled } from '@ant-design/icons'
 
-function FilterCard() {
+function FilterCard({minPrice,maxPrice,includeOldPrice,selectedMemory}) {
   const { nameCategory, nameBrand } = useParams();
   const location = useLocation();
+  const searchKeyword = new URLSearchParams(location.search).get('keyword');
   const [products, setProducts] = useState([]);
   const propertyNames = ["RAM", "Dung lượng pin", "Chip xử lý (CPU)"];
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const minPrice = searchParams.get('minPrice');
-    const maxPrice = searchParams.get('maxPrice');
-    const includeOldPrice = searchParams.get('includeOldPrice');
-    const selectedMemory = searchParams.get('selectedMemory');
+    if (searchKeyword) {
+      performSearch(searchKeyword);
+    }
+  }, [searchKeyword]);
+  const performSearch = (keyword) => {
+    axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${keyword}`)
+      .then((response) => {
+        const productsData = response.data.data;
+        setProducts(productsData);
+      })
+      .catch((error) => {
+        console.error('Lỗi khi gọi API tìm kiếm: ', error);
+      });
+  };
+  useEffect(() => {
     if (nameCategory) {
       if (nameBrand) {
         if (minPrice !== null && maxPrice !== null || includeOldPrice !== null || selectedMemory !== null) {
@@ -48,14 +59,8 @@ function FilterCard() {
       }
     }
 
-  }, [nameCategory, nameBrand, location.pathname]);
+  }, [nameCategory, nameBrand, location.pathname,minPrice,maxPrice,includeOldPrice,selectedMemory]);
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const minPrice = searchParams.get('minPrice');
-    const maxPrice = searchParams.get('maxPrice');
-    const includeOldPrice = searchParams.get('includeOldPrice');
-    const selectedMemory = searchParams.get('selectedMemory');
-
     if (
       (minPrice !== null && maxPrice !== null) ||
       includeOldPrice !== null ||
@@ -75,7 +80,7 @@ function FilterCard() {
         }
       }
     }
-  }, [location.search]);
+  }, [location.search,minPrice,maxPrice,includeOldPrice,selectedMemory]);
   const getProductsByCategoryName = async (categoryName) => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
