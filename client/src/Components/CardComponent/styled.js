@@ -3,6 +3,7 @@ import styled from "styled-components";
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
 
 export const WrapperFilterCard = styled.div`
+zoom: 1;
 *{
   margin: 0;
   padding: 0;
@@ -17,63 +18,70 @@ export const WrapperFilterCard = styled.div`
 .mainContainer {
   width:100%;
   background: #fff;
-  // display: flex;
-  // flex-wrap: wrap;
   display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 200px));
-  align-items: center;
+  grid-auto-rows: minmax(min-content,max-content);
+  grid-template-columns: repeat(5,minmax(0,1fr));
   overflow: hidden;
-  justify-content: start;
-  padding: 20px;
   border-radius: 0 0 8px 8px;
-  gap: 2px;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 40px;
 }
-
+.item-label span {
+  border-radius: 2px;
+  font-size: 11px;
+  line-height: 12px;
+  display: inline-block;
+  margin-right: 4px;
+  padding: 3px;
+  text-align: left;
+}
 .box {
   background: #fff;
-  text-align: center;
+  text-align: left;
+  justify-content: start;
   transition: .3s ease-in-out;
-  max-width: 200px;
-  width: 200px;
   border: 1px solid #efefef;
+  height: 100%;
   border-radius: 4px;
+  border-bottom: 1px solid #f3f3f3 !important;
+  border-right: 1px solid #f3f3f3 !important;
 }
-
+.lb-dis {
+  background-color: #f1f1f1;
+  color: #333;
+}
 .mainContainer .box:hover {
   box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
 }
 
 .mainContainer .card {
-  // padding: 15px 15px 0;
+  padding: 10px 15px 20px;
+  overflow: hidden;
   width: 100%;
+  height: 100%;
+
 }
 
-.card .image {
+.image {
   width:100%;
-  backgroud: #f9f9f9;
   margin: 20px auto;
   position: relative;
-}
-
-// .card .image::before {
-//   content: "";
-//   position: absolute;
-//   width: 10px;
-//   height: 10px;
-//   botton: 8px;
-//   left: 10px;
-//   border-radius: 50%;
-//   background-color: red;
-// }
-
-.card .image:hover img {
-  transform: scale(1.1);
+  margin-bottom: 10px;
+  display: block;
+  overflow: hidden;
+  margin-top: 10px;  
+  height: 225px;
+  line-height: 225px;
 }
 
 .card .image img {
   width:180px;
-  transition: .3s ease-in-out;
-  cursor: pointer;
+  margin-top: 8px;
+  max-width: 100%;
+  transition: all 300ms ease-in-out;
 }
 .memory-button.selected {
   border: 1px solid #00BFFF	; 
@@ -81,17 +89,22 @@ export const WrapperFilterCard = styled.div`
 .card .desc {
   width: 100%;
   margin: auto;
-  line-height: 3;
-  height: 20em;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal
+  white-space: normal;
 }
 
 .card .desc h1 {
-  font-size: 15px;
   text-transform: uppercase;
-
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 14px;
+  line-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 5px;
+  text-align: left;
 }
 
 .card .desc p {

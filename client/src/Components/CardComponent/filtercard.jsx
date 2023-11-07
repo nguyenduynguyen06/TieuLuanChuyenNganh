@@ -5,7 +5,7 @@ import { Button, Pagination, Rate } from 'antd';
 import { WrapperCard, WrapperFilterCard } from './styled';
 import { InfoCircleFilled } from '@ant-design/icons'
 
-function FilterCard({minPrice,maxPrice,includeOldPrice,selectedMemory}) {
+function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
   const { nameCategory, nameBrand } = useParams();
   const location = useLocation();
   const searchKeyword = new URLSearchParams(location.search).get('keyword');
@@ -61,7 +61,7 @@ function FilterCard({minPrice,maxPrice,includeOldPrice,selectedMemory}) {
       }
     }
 
-  }, [nameCategory, nameBrand, location.pathname,minPrice,maxPrice,includeOldPrice,selectedMemory]);
+  }, [nameCategory, nameBrand, location.pathname, minPrice, maxPrice, includeOldPrice, selectedMemory]);
   useEffect(() => {
     const mainContainer = mainContainerRef.current;
     if (!mainContainer) return;
@@ -93,7 +93,7 @@ function FilterCard({minPrice,maxPrice,includeOldPrice,selectedMemory}) {
         }
       }
     }
-  }, [location.search,minPrice,maxPrice,includeOldPrice,selectedMemory]);
+  }, [location.search, minPrice, maxPrice, includeOldPrice, selectedMemory]);
   const getProductsByCategoryName = async (categoryName) => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
@@ -303,27 +303,43 @@ function FilterCard({minPrice,maxPrice,includeOldPrice,selectedMemory}) {
     return product.ratings.length;
   }
 
+  const calculateDiscountPercentage = (newPrice, oldPrice) => {
+    if (oldPrice) {
+      const discount = oldPrice - newPrice;
+      const discountPercentage = (discount / oldPrice) * 100;
+      return discountPercentage.toFixed(2);
+    } else {
+      return 0;
+    }
+  };
 
   return (
     <div>
       <WrapperFilterCard>
-        <div className='mainContainer' ref={mainContainerRef} style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <ul className='mainContainer' ref={mainContainerRef} style={{ alignItems: 'center', justifyContent: 'center', listStyle: 'none' }}>
           {currentProducts
             .filter((product) => product.isHide === false)
             .map((product) => (
               product.variant.map((variant) => (
-                <div className='box' key={product._id + variant.memory} style={{ padding: '0' }}>
-                  <div className='card'>
-                    <NavLink className='image' to={`/product/${product.name}/${variant.memory}`}>
+                <li className='box' key={product._id + variant.memory} style={{ padding: '0' }} >
+                  <NavLink className='card' to={`/product/${product.name}/${variant.memory}`}>
+                    <div className='item-label'>
+                      {variant.oldPrice && (
+                        <span className='lb-dis'>
+                          Giảm giá {calculateDiscountPercentage(variant.newPrice, variant.oldPrice)}%
+                          </span>
+                      )}
+                    </div>
+                    <div className='image' style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }} >
                       <img src={product.thumnails[0]} />
-                    </NavLink>
+                    </div>
                     <div className='desc'>
                       <div style={{ height: '3em' }}>
                         <h1 style={{ padding: 3 }}>{product.name} - {variant.memory}</h1>
                       </div>
                       <div>
                         {product?.ratings.length > 0 ? (
-                          <div style={{ display: "flex", alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                          <div style={{ display: "flex", flexDirection: 'column' }}>
                             <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
                             <span style={{ margin: 0, height: '25px', fontSize: '13px' }}>Lượt đánh giá: {calculateTotalRatings(product)}</span>
                           </div>
@@ -343,7 +359,7 @@ function FilterCard({minPrice,maxPrice,includeOldPrice,selectedMemory}) {
                             const propertyValue = product?.properties?.[propertyName];
                             if (propertyValue !== undefined) {
                               return (
-                                <div style={{padding:'0 7px', display: 'flex', alignItems: 'center' }}>
+                                <div style={{ padding: '0 7px', display: 'flex', alignItems: 'center' }}>
                                   <i class="fas fa-circle" style={{ fontSize: 3 }}></i>
                                   <p key={index} style={{ fontSize: '13px', color: 'black', textAlign: 'left', paddingLeft: '10px', margin: '0', lineHeight: '19px' }}>
                                     {propertyName}: {propertyValue}
@@ -356,11 +372,11 @@ function FilterCard({minPrice,maxPrice,includeOldPrice,selectedMemory}) {
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  </NavLink>
+                </li>
               ))
             ))}
-        </div>
+        </ul>
       </WrapperFilterCard>
       <Pagination
         showQuickJumper
