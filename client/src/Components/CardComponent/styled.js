@@ -20,7 +20,7 @@ zoom: 1;
   background: #fff;
   display:grid;
   grid-auto-rows: minmax(min-content,max-content);
-  grid-template-columns: repeat(5,minmax(0,1fr));
+  grid-template-columns: repeat(6,minmax(0,1fr));
   overflow: hidden;
   border-radius: 0 0 8px 8px;
   margin-block-start: 1em;
@@ -48,6 +48,7 @@ zoom: 1;
   border-radius: 4px;
   border-bottom: 1px solid #f3f3f3 !important;
   border-right: 1px solid #f3f3f3 !important;
+  align-content: start;
 }
 .lb-dis {
   background-color: #f1f1f1;
@@ -64,7 +65,9 @@ zoom: 1;
   height: 100%;
 
 }
-
+.card{
+  align-content: start;
+}
 .image {
   width:100%;
   margin: 20px auto;
@@ -92,6 +95,10 @@ zoom: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
+  align-items: start;
+  display: flex;
+  flex-direction: column;
+  align-content: start;
 }
 
 .card .desc h1 {

@@ -11,8 +11,6 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
   const searchKeyword = new URLSearchParams(location.search).get('keyword');
   const [products, setProducts] = useState([]);
   const propertyNames = ["RAM", "Dung lượng pin", "Chip xử lý (CPU)"];
-  const [cardsToShow, setCardsToShow] = useState(null);
-  const mainContainerRef = useRef(null);
   useEffect(() => {
     if (searchKeyword) {
       performSearch(searchKeyword);
@@ -62,17 +60,6 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
     }
 
   }, [nameCategory, nameBrand, location.pathname, minPrice, maxPrice, includeOldPrice, selectedMemory]);
-  useEffect(() => {
-    const mainContainer = mainContainerRef.current;
-    if (!mainContainer) return;
-
-    const containerWidth = mainContainer.offsetWidth;
-    const cardWidth = 202; // Độ rộng của mỗi thẻ
-
-    const cardsPerRow = Math.floor(containerWidth / cardWidth); // Tính số lượng thẻ trên mỗi hàng
-    const calculatedProductsPerPage = cardsPerRow * 2; // Tính toán số lượng sản phẩm trên mỗi trang (2 hàng)
-    setProductsPerPage(calculatedProductsPerPage);
-  }, [mainContainerRef]);
   useEffect(() => {
     if (
       (minPrice !== null && maxPrice !== null) ||
@@ -282,10 +269,6 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
 
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(12);
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
   const calculateAverageRating = (product) => {
     if (product.length === 0) {
@@ -313,11 +296,18 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
     }
   };
 
-  return (
+  const productsPerPage = 12;
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+  const productsToDisplay = products
+  .filter((product) => product.isHide === false)
+  .slice(startIndex, endIndex);
+
+    return (
     <div>
       <WrapperFilterCard>
-        <ul className='mainContainer' ref={mainContainerRef} style={{ alignItems: 'center', justifyContent: 'center', listStyle: 'none' }}>
-          {currentProducts
+        <ul className='mainContainer' style={{alignItems: 'center', justifyContent: 'center', listStyle: 'none' }}>
+          {productsToDisplay
             .filter((product) => product.isHide === false)
             .map((product) => (
               product.variant.map((variant) => (
@@ -333,7 +323,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
                     <div className='image' style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }} >
                       <img src={product.thumnails[0]} />
                     </div>
-                    <div className='desc'>
+                    <div className='desc' style={{alignContent:'start'}}>
                       <div style={{ height: '3em' }}>
                         <h1 style={{ padding: 3 }}>{product.name} - {variant.memory}</h1>
                       </div>
@@ -379,11 +369,10 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
         </ul>
       </WrapperFilterCard>
       <Pagination
-        showQuickJumper
+        simple
         defaultCurrent={1}
         current={currentPage}
         total={products.length}
-        pageSize={productsPerPage}
         onChange={(page) => setCurrentPage(page)}
         style={{ textAlign: 'center', marginBottom: '20px' }}
       />
