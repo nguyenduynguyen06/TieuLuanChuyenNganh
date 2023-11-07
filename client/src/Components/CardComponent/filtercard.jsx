@@ -369,7 +369,6 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
         </ul>
       </WrapperFilterCard>
       <Pagination
-        simple
         defaultCurrent={1}
         current={currentPage}
         total={products.length}

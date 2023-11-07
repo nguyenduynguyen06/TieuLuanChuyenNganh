@@ -79,12 +79,14 @@ zoom: 1;
   height: 225px;
   line-height: 225px;
 }
-
-.card .image img {
-  width:180px;
+.card .image:hover img{
+  transform: scale(1.1);
+}
+.card .image img{
+  width:100%;
   margin-top: 8px;
+  transition: all .3s ease-in-out;
   max-width: 100%;
-  transition: all 300ms ease-in-out;
 }
 .memory-button.selected {
   border: 1px solid #00BFFF	; 
