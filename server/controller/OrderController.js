@@ -570,7 +570,50 @@ const addProductRating = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+const changeProduct = async (req, res) => {
+          const { id ,orderId} = req.query;
+          const order = await Order.findById(orderId); 
+
+          if (!order) {
+            return res.status(404).json({ success: false, error: 'Đơn hàng không tồn tại' });
+          }
+
+ 
+          const productItem = order.items.find((item) => item.id.toString() === id);
+
+          if (!productItem) {
+            return res.status(404).json({ success: false, error: 'Không tìm thấy sản phẩm trong đơn hàng' });
+          }
+          const vnTime = moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY HH:mm:ss");
+          if (productItem.change) {
+          productItem.change.isHave = true;
+          productItem.change.dateChange = vnTime;
+
+        
+          const productVariantId = productItem.productVariant;
+          const color = productItem.color;
+
+          const productVariant = await ProductVariant.findById(productVariantId);
+
+          if (!productVariant) {
+            return res.status(404).json({ success: false, error: 'Sản phẩm không tồn tại' });
+          }
+
+          const matchedAttribute = productVariant.attributes.find(attribute => attribute.color === color);
+
+          if (matchedAttribute) {
+            const quantityInCart = productItem.quantity;
+            const totalQuantity = matchedAttribute.quantity - quantityInCart;
+            const totalSold = matchedAttribute.sold + quantityInCart;
+
+            matchedAttribute.quantity = totalQuantity;
+            matchedAttribute.sold = totalSold;
+            await productVariant.save();
+          }
+        }
+        await order.save();
+        res.status(200).json({ success: true, message: 'Đã cập nhật yêu cầu đổi trả' });
+}
 
 
-
-module.exports = { getCanceldOrdersAtStore,addProductRating,getCanceldOrdersShipping,addOrder,cancelOrder,completeOrderUser,getOrdersDetails, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDeliveryReady, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, deleteOrder,getOrdersShipping,getOrdersStorePickupReady,searchOrder,getOrdersHomeDeliveryShipping,searchOrderAtStoreComplete,searchOrderShippingComplete,searchOrderGetReady,searchOrderShipping,searchOrderGetReadyAtStore,searchOrderReady };
+module.exports = { changeProduct,getCanceldOrdersAtStore,addProductRating,getCanceldOrdersShipping,addOrder,cancelOrder,completeOrderUser,getOrdersDetails, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDeliveryReady, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, deleteOrder,getOrdersShipping,getOrdersStorePickupReady,searchOrder,getOrdersHomeDeliveryShipping,searchOrderAtStoreComplete,searchOrderShippingComplete,searchOrderGetReady,searchOrderShipping,searchOrderGetReadyAtStore,searchOrderReady };

@@ -514,12 +514,23 @@ const ProductDetailComponents = () => {
                     </div>
                 </Col>
                 <Col span={8} style={{ paddingLeft: '10px', textAlign: 'center' }}>
-                    <WrapperPropTable dataSource={dataSource} pagination={false}>
-                        <ColumnGroup title="Thông số kỹ thuật">
-                            <Column dataIndex="prop" key="prop" />
-                            <Column dataIndex="info" key="info" />
-                        </ColumnGroup>
-                    </WrapperPropTable>
+                <WrapperPropTable dataSource={dataSource} pagination={false}>
+                    <ColumnGroup title="Thông số kỹ thuật">
+                        <Column dataIndex="prop" key="prop" />
+                        <Column
+                        dataIndex="info"
+                        key="info"
+                        render={(text, record) => {
+                            const containsHTML = /<[a-z][\s\S]*>/i.test(text);
+                            return containsHTML ? (
+                            <div dangerouslySetInnerHTML={{ __html: text }} />
+                            ) : (
+                            text
+                            );
+                        }}
+                        />
+                    </ColumnGroup>
+                </WrapperPropTable>
                 </Col>
             </Row>
             <hr className="my-4" />

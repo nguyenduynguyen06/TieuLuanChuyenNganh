@@ -120,7 +120,49 @@ const TableComplete = () => {
                             dataIndex: 'product',
                             render: product => <div>{product.warrantyPeriod} tháng</div>
                         },
-                        
+                        {
+                          title: 'Đã đổi trả',
+                          dataIndex: 'change',
+                          render: (change) => (
+                            <div>
+                              {change.dateChange ? (
+                                <div>Đã đổi trả vào ngày {change.dateChange}</div>
+                              ) : (
+                                <div>Chưa đổi trả</div>
+                              )}
+                            </div>
+                          )
+                        },
+                        {
+                          title: 'Đổi trả',
+                          dataIndex: 'change',
+                          render: (text, record) => {
+                            if (record.change.isHave) {
+                              return <span style={{ color: '#FF3300' }}>Đã đổi</span>;
+                            } else {
+                            return (
+                              <>
+                            <Button style={{color:'#FF3300'}} onClick={() => {
+                              setCurrrentProduct(record._id);
+                              setChange(true);
+                            }}>Đổi</Button>
+                            
+                            <Modal
+                            title="Xác nhận đổi hàng"
+                            visible={change}
+                            onOk={() => {
+                             handleChangeProduct(currrentProductOrder,selectProductOrder._id)
+                              setChange(false); 
+                            }}
+                            onCancel={() => setChange(false)} 
+                          >
+                          <p>Bạn có chắc chắn muốn đổi sản phẩm  này?</p>
+                          </Modal>
+                          </>
+                            )
+                          }
+                        }
+                      }
                     ]}
                     />
                 )}
@@ -143,6 +185,8 @@ const TableComplete = () => {
         ),
       },   
     ];
+    const [currrentProductOrder, setCurrrentProduct] = useState(null); 
+    const [change, setChange] = useState(false); 
     const [orderDataAtStore, setOrderAtStore] = useState([]); 
     const [orderDataAtShipping, setOrderShipping] = useState([]);
     const [displayOrdersAtStore, setDisplayOrdersAtStore] = useState(true);
@@ -151,6 +195,37 @@ const TableComplete = () => {
     const [searchResultsAtStore, setSearchResultsAtStore] = useState([]);
     const [searchResultsShipping, setSearchResultsShipping] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const handleChangeProduct = async (id,orderId) => {
+      try {
+        const response = await axios.put(
+          `${process.env.REACT_APP_API_URL}/order/changeProduct?id=${id}&orderId=${orderId}`,null
+        );
+        if (response.data.success) {
+          axios
+        .get(`${process.env.REACT_APP_API_URL}/order/completedAtStore`)
+        .then((response) => {
+            setOrderAtStore(response.data.data); 
+        })
+        .catch((error) => {
+          console.error('Lỗi khi gọi API: ', error);
+        });
+        axios
+        .get(`${process.env.REACT_APP_API_URL}/order/completedShipping`)
+        .then((response) => {
+          setOrderShipping(response.data.data); 
+        })
+        .catch((error) => {
+          console.error('Lỗi khi gọi API: ', error);
+        });
+          message.success('Đã đổi trả thành công');
+        } else {
+   
+          console.error('Có lỗi xảy ra khi đổi trả');
+        }
+      } catch (error) {
+        console.error('Có lỗi xảy ra khi gọi API:', error);
+      }
+    };
     const handleSearch = (query) => {
       setSearchQuery(query);
     };

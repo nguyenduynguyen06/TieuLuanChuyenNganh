@@ -119,15 +119,21 @@ const OrderDetail = () => {
                                                             </div>
 
                                                             {orderDetails.completeDate && (
-                                                            <div>
-                                                                <p style={{ margin: 0 }}>Hạn bảo hành: </p>
-                                                                <p style={{ margin: 0 }}>
-                                                                    {moment(orderDetails.completeDate, 'DD/MM/YYYY HH:mm:ss')
+                                                                <div>
+                                                                    <p style={{ margin: 0 }}>Hạn bảo hành: </p>
+                                                                    <p style={{ margin: 0 }}>
+                                                                    {item.change.dateChange ? (
+                                                                        moment(item.change.dateChange, 'DD/MM/YYYY HH:mm:ss')
                                                                         .add(item.product.warrantyPeriod, 'months')
-                                                                        .format('DD-MM-YYYY')}
-                                                                </p>
-                                                            </div>
-                                                            )}
+                                                                        .format('DD-MM-YYYY')
+                                                                    ) : (
+                                                                        moment(orderDetails.completeDate, 'DD/MM/YYYY HH:mm:ss')
+                                                                        .add(item.product.warrantyPeriod, 'months')
+                                                                        .format('DD-MM-YYYY')
+                                                                    )}
+                                                                    </p>
+                                                                </div>
+                                                                )}
                                                         {orderDetails && orderDetails.status === "Đã hoàn thành" ? (
                                                             item.rated ? (
                                                                 <span style={{ color: "#ff3300" }}>Đã đánh giá</span>

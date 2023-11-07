@@ -87,20 +87,6 @@ const editProduct = async (req, res) => {
     const productId = req.params.id;
     const data = req.body;
     const updateData = {};
-    if (data.brandName) {
-      const brand = await Brand.findOne({ name: data.brandName });
-      if (!brand) {
-        return res.status(404).json({ success: false, error: 'Brand không tồn tại' });
-      }
-      updateData.brand = brand._id;
-    }
-    if (data.categoryName) {
-      const category = await Category.findOne({ name: data.categoryName });
-      if (!category) {
-        return res.status(404).json({ success: false, error: 'Category không tồn tại' });
-      }
-      updateData.category = category._id;
-    }
     if (data.name) {
       updateData.name = data.name;
     }

@@ -206,13 +206,20 @@ const NewProduct = () => {
           </Form.Item>
 
           <Form.Item
-            label="Tính năng"
+            label="Tính năng (BC)"
             name="tinhnangbc"
             rules={[
               { required: true, message: 'Vui lòng điền Tính năng' },
             ]}
           >
-            <Input onChange={(e) => handlePropertyChange('Tính năng (BC)', e.target.value)} />
+           <ReactQuill
+            theme="snow"
+            placeholder="Nhập mô tả ở đây..."
+            onChange={(content, delta, source, editor) => {
+    
+              handlePropertyChange('Tính năng (BC)', content);
+            }}
+          />
           </Form.Item>
           <Form.Item
             label="Độ phân giải"
@@ -223,14 +230,21 @@ const NewProduct = () => {
           >
             <Input onChange={(e) => handlePropertyChange('Độ phân giải (FC)', e.target.value)} />
           </Form.Item>
-          <Form.Item
-            label="Tính năng"
+            <Form.Item
+            label="Tính năng (FC)"
             name="tinhnangfc"
             rules={[
               { required: true, message: 'Vui lòng điền Tính năng' },
             ]}
           >
-            <Input onChange={(e) => handlePropertyChange('Tính năng (FC)', e.target.value)} />
+               <ReactQuill
+            theme="snow"
+            placeholder="Nhập mô tả ở đây..."
+            onChange={(content, delta, source, editor) => {
+           
+              handlePropertyChange('Tính năng (FC)', content);
+            }}
+          />
           </Form.Item>
           <Form.Item
             label="Hệ điều hành"
@@ -285,6 +299,15 @@ const NewProduct = () => {
             ]}
           >
             <Input onChange={(e) => handlePropertyChange('Dung lượng còn lại (khả dụng)', e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Thẻ nhớ"
+            name="thenho"
+            rules={[
+              { required: true, message: 'Vui lòng điền Thẻ nhớ ' },
+            ]}
+          >
+            <Input onChange={(e) => handlePropertyChange('Thẻ nhớ', e.target.value)} />
           </Form.Item>
           <Form.Item
             label="Danh bạ"
@@ -403,6 +426,22 @@ const NewProduct = () => {
           >
             <Input onChange={(e) => handlePropertyChange('Bảo mật nâng cao', e.target.value)} />
           </Form.Item>
+          <Form.Item
+          label="Tính năng đặc biệt"
+          name="tinhnangdacbiet"
+          rules={[
+            { required: true, message: 'Vui lòng điền Tính năng đặc biệt' },
+          ]}
+        >
+          <ReactQuill
+            theme="snow"
+            placeholder="Nhập mô tả ở đây..."
+            onChange={(content, delta, source, editor) => {
+            
+              handlePropertyChange('Tính năng đặc biệt', content);
+            }}
+          />
+        </Form.Item>
           <Form.Item
             label="Kháng nước, bụi"
             name="wtdust"

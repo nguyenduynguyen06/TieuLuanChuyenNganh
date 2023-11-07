@@ -36,6 +36,15 @@ const cartItemSchema  = new mongoose.Schema({
   rated:{
     type: Boolean,
     default: false
+  },
+  change:{
+    isHave:{
+      type:Boolean,
+      default: false
+    },
+    dateChange:{
+      type:String
+    }
   }
 });
 const orderSchema = new mongoose.Schema({
