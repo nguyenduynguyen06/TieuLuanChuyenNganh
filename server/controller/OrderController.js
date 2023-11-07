@@ -584,13 +584,30 @@ const changeProduct = async (req, res) => {
     return res.status(404).json({ success: false, error: 'Không tìm thấy sản phẩm trong đơn hàng' });
   }
 
+  const product = await Product.findById(productItem.product).populate('category');
   const completeDate = moment(order.completeDate, "DD/MM/YYYY HH:mm:ss").tz("Asia/Ho_Chi_Minh");
   const currentDate = moment().tz("Asia/Ho_Chi_Minh");
   const diffDuration = moment.duration(currentDate.diff(completeDate));
   const diffDays = diffDuration.asDays();
 
-  if (diffDays > 3) {
-    return res.status(200).json({ success: false, error: 'Đã quá hạn đổi sản phẩm' });
+  if (product.category.name === 'Điện thoại') {
+    if (diffDays > 3) {
+      
+      return res.status(200).json({ success: false, error: 'Đã quá hạn đổi sản phẩm' });
+ 
+    }
+  } else {
+    if (!product.warrantyPeriod) {
+      return res.status(400).json({ success: false, error: 'Sản phẩm không có thời gian bảo hành' });
+    }
+
+    const warrantyMonths = product.warrantyPeriod;
+    const warrantyEndDate = moment(completeDate).add(warrantyMonths, 'months');
+    const diffDurationWarranty = moment.duration(currentDate.diff(warrantyEndDate));
+    const diffDaysWarranty = diffDurationWarranty.asDays();
+    if (diffDaysWarranty > 0) {
+      return res.status(200).json({ success: false, error: 'Đã quá hạn đổi sản phẩm' });
+    }
   }
 
   const vnTime = moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY HH:mm:ss");
@@ -623,6 +640,7 @@ const changeProduct = async (req, res) => {
   await order.save();
   res.status(200).json({ success: true, message: 'Đã cập nhật yêu cầu đổi trả' });
 }
+
 
 
 

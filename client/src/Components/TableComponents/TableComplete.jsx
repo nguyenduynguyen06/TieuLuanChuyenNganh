@@ -137,7 +137,7 @@ const TableComplete = () => {
                           title: 'Đổi trả',
                           dataIndex: 'change',
                           render: (text, record) => {
-                            if (record.change.isHave) {
+                            if (record.change.isHave && record.memory!= undefined ) {
                               return <span style={{ color: '#FF3300' }}>Đã đổi</span>;
                             } else {
                             return (
