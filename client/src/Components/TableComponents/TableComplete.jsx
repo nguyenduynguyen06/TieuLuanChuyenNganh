@@ -219,8 +219,7 @@ const TableComplete = () => {
         });
           message.success('Đã đổi trả thành công');
         } else {
-   
-          console.error('Có lỗi xảy ra khi đổi trả');
+          message.error(response.data.error);
         }
       } catch (error) {
         console.error('Có lỗi xảy ra khi gọi API:', error);

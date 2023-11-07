@@ -205,7 +205,14 @@ const FilterProductPage = () => {
                         </a>
                     </Dropdown>
                     )}
-                    { nameCategory === `Ốp lưng` || nameCategory === `Cáp sạc` && (
+                    { nameCategory === `Cáp sạc` && (
+                    <Dropdown overlay={menu3} placement="bottomLeft">
+                        <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                            Giá <DownOutlined />
+                        </a>
+                    </Dropdown>
+                    )}
+                    { nameCategory === `Ốp lưng` && (
                     <Dropdown overlay={menu3} placement="bottomLeft">
                         <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
                             Giá <DownOutlined />
