@@ -50,6 +50,10 @@ zoom: 1;
   border-right: 1px solid #f3f3f3 !important;
   align-content: start;
 }
+// .box:hover{
+//   transform: scale(1.1);
+//   z-index:1;
+// }
 .lb-dis {
   background-color: #f1f1f1;
   color: #333;
@@ -74,13 +78,13 @@ zoom: 1;
   position: relative;
   margin-bottom: 10px;
   display: block;
-  overflow: hidden;
   margin-top: 10px;  
-  height: 225px;
-  line-height: 225px;
+  height: 250px;
+  line-height: 250px;
 }
 .card .image:hover img{
   transform: scale(1.1);
+  z-index:1;
 }
 .card .image img{
   width:100%;
