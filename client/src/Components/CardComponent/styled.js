@@ -50,13 +50,14 @@ zoom: 1;
   border-right: 1px solid #f3f3f3 !important;
   align-content: start;
 }
-// .box:hover{
-//   transform: scale(1.1);
-//   z-index:1;
-// }
+.box:hover{
+  transform: scale(1);
+  z-index:1;
+}
 .lb-dis {
   background-color: #f1f1f1;
-  color: #333;
+  color: #ff3300;
+  font-weight:400;
 }
 .mainContainer .box:hover {
   box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
