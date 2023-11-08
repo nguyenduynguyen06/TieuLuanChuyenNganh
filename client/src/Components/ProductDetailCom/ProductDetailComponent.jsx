@@ -139,6 +139,10 @@ const ProductDetailComponents = () => {
                                         ...prevSelected,
                                         [variant._id]: selectedAttribute.sku,
                                     }));
+                                    setSelectedQuantity((prevSelected) => ({
+                                        ...prevSelected,
+                                        [variant._id]: selectedAttribute.quantity,
+                                    }));
                                 }
                             }
                         });
@@ -393,6 +397,10 @@ const ProductDetailComponents = () => {
                                                                 [variant._id]: 'N/A',
                                                             }));
                                                             setSelectedSKU((prevSelected) => ({
+                                                                ...prevSelected,
+                                                                [variant._id]: 'N/A',
+                                                            }));
+                                                            setSelectedQuantity((prevSelected) => ({
                                                                 ...prevSelected,
                                                                 [variant._id]: 'N/A',
                                                             }));

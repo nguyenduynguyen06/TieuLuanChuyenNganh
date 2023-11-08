@@ -583,18 +583,15 @@ const changeProduct = async (req, res) => {
   if (!productItem) {
     return res.status(404).json({ success: false, error: 'Không tìm thấy sản phẩm trong đơn hàng' });
   }
-
   const product = await Product.findById(productItem.product).populate('category');
   const completeDate = moment(order.completeDate, "DD/MM/YYYY HH:mm:ss").tz("Asia/Ho_Chi_Minh");
   const currentDate = moment().tz("Asia/Ho_Chi_Minh");
   const diffDuration = moment.duration(currentDate.diff(completeDate));
   const diffDays = diffDuration.asDays();
 
-  if (product.category.name === 'Điện thoại') {
+  if (productItem.memory !== undefined) {
     if (diffDays > 3) {
-      
       return res.status(200).json({ success: false, error: 'Đã quá hạn đổi sản phẩm' });
- 
     }
   } else {
     if (!product.warrantyPeriod) {
