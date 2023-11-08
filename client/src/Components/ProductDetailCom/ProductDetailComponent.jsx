@@ -304,7 +304,7 @@ const ProductDetailComponents = () => {
                                         <RetweetOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></RetweetOutlined>
                                         <p>
                                             1 đổi 1 trong&nbsp;
-                                            <b>7 ngày&nbsp;</b>đối với sản phẩm là điện thoại và trong thời gian bảo hành đối với sản phẩm là phụ kiện&nbsp;
+                                            <b>3 ngày&nbsp;</b>đối với sản phẩm là điện thoại và trong thời gian bảo hành đối với sản phẩm là phụ kiện&nbsp;
                                             <a href="/" title="Chính sách dổi trả">Xem chi tiết</a>
                                         </p>
                                     </li>
