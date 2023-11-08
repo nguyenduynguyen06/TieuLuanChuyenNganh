@@ -27,36 +27,20 @@ export const WrapperStyleColImage = styled(Col)`
     flex-basis: unset;
     display: flex;
 `
-export const WrapperStyleNameProduct = styled.h1`
-    color: rgb(36,36,36);
-    font-size: 24px;
-    font-weight: 300;
-    line-height: 32px;
-    word-break: break-word;
-`
 export const WrapperStyleTextSell = styled.div`
+    padding-top: 5px;
+    width: 100%;
     p {
-    padding: 20px 0 0 0;
-    font-size: 15px;
-    line-height: 0px;
-    color: rgb(120, 120, 120);
+        font-size: 15px;
+        margin: 0;
     }
 `
-export const WrapperPriceProduct = styled.span`
-    background: rgb(250, 250, 250);
-    border-radius: 4px;
-    font-size: 20px;
 
-
-
-`
 export const WrapperPriceTextProduct = styled.span`
-    font-size: 32px;
+    font-size: 25px;
     line-height: 40px;
     margin-right: 8px;
     font-weight: 500;
-    padding: 10px;
-    margin-top: 10px;
     color: #ff3300
 `
 
@@ -84,7 +68,6 @@ export const WrapperQuantityProduct = styled.div`
     border-radius: 4px;
     border: 1px solid #ccc;
     width: 120px;
-
     .ant-input-number-handler-wrap {
         display: none;
       }
@@ -95,6 +78,7 @@ export const WrapperInputNumber = styled(InputNumber)`
         width: 40px;
         border-top: none;
         border-bottom: none;
+        border-radius: 0;
         &.ant-input-number-handler-wrap {
             display: none !important;
         }
@@ -346,6 +330,80 @@ export const WrapperDetail = styled.div`
         align-items: center;
         justify-contents: center;
     }
+    .product-name {
+        width:100%
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: start;
+        font-size: 16px;
+        gap: 20px;
+        padding: 15px 0 0 15px;
+        background: #fff;
+    }
+    .product-pick {
+        padding: 16px;
+        background: #fff;
+        borderRadius: 4px;
+    }
+    .slider-col {
+        width:58%;
+        border: 1px solid #e5e5e5;
+        padding: 8px;
+    }
+    .pick-col{
+        width:42%;
+        padding-left:10px;
+    }
+    .rate-ave{
+        display:flex;
+        margin:0;
+        gap:20px;
+        padding-top: 10px;
+
+    }
+    .btn-color{
+        display: flex;
+        flex-wrap: wrap;
+        row-gap: 5px;
+    }
+    .policy-col{
+        width:58%;
+        border: 1px solid #e5e5e5;
+        padding: 8px
+    }
+    @media screen and (max-width: 500px) {
+        .product-pick{
+            display: flex;
+            flex-direction: column;
+        }
+        .product-name {
+            flex-direction: column;
+        }
+        .slider-col {
+            width:100%;
+        }
+        .policy-col{
+            width: 100%;
+        }
+        .slider-image {
+            height: 200px;
+        }
+        .slider-image img{
+            height: 200px;
+        }
+        .slider {
+            height: 200px;
+        }
+        .pick-col{
+            width: 100%;
+            padding-left:0px;
+        }
+        .button-row{
+            display: flex;
+        }
+      }
+    
     
 `
 export const WrapperPolicy = styled(Row)` 
@@ -354,6 +412,7 @@ export const WrapperPolicy = styled(Row)`
         border-radius: 5px;
         margin-bottom: 25px;
     }
+
     .policy {
         margin: 20px 16px 0 16px;
         padding: 12px 0;
@@ -363,18 +422,28 @@ export const WrapperPolicy = styled(Row)`
         flex-wrap: wrap;
         list-style: none;
     }
-    .policy__list li{
+    .policy-item{
         padding-right: 20px;
         border-bottom: 1px solid #f1f1f1;
         position: relative;
         padding: 12px 0 12px 35px;
         width: 50%;
-        display: inline-block;
     }
     .policy__list p{
         line-height: 20px;
         padding-left: 5px;
     }
+    @media screen and (max-width: 500px) {
+        .policy {
+            margin: 0;
+            padding: 10px;
+        }
+        .policy-item {
+            width:100%;
+            padding-right: 0px;
+        }
+    }
+
 `
 export const WrapperRate = styled.div`
 width: 100%;

@@ -8,8 +8,7 @@ import { CustomerServiceOutlined } from '@ant-design/icons';
 function ProductHomePage() {
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
-  const [cardsToShow, setCardsToShow] = useState();
-  const mainContainerRef = useRef(null);
+  const [cardsToShow, setCardsToShow] = useState(6);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,25 +38,6 @@ function ProductHomePage() {
     fetchData();
   }, []);
 
-  const calculateCardsPerRow = () => {
-    const mainContainer = mainContainerRef.current;
-    if (!mainContainer) return;
-
-    const containerWidth = mainContainer.offsetWidth;
-    const cardWidth = 200; // Width of each card
-
-    return Math.floor(containerWidth / cardWidth); // Calculate the number of cards per row
-  };
-  useEffect(() => {
-    const mainContainer = mainContainerRef.current;
-    if (!mainContainer) return;
-
-    const containerWidth = mainContainer.offsetWidth;
-    const cardWidth = 200; // Width of each card
-
-    const cardsPerRow = Math.floor(containerWidth / cardWidth); // Calculate the number of cards per row
-    setCardsToShow(cardsPerRow); // Set the number of cards to show initially
-  }, [mainContainerRef]);
 
   const calculateTotalRatings = (product) => {
     if (!product || !product.ratings) {
@@ -87,9 +67,8 @@ function ProductHomePage() {
 
   const [isButtonHovered, setIsButtonHovered] = useState(false);
 
-  const cardsPerRow = calculateCardsPerRow(); // Calculate the number of cards per row
-
   const hasMoreProducts = products.length > cardsToShow;
+
   const calculateAverageRating = (product) => {
     if (product.length === 0) {
       return 0;
@@ -101,7 +80,7 @@ function ProductHomePage() {
   return (
     <WrapperCard>
       <img className='imgtt' src="..\..\image\bannerpd.jpg" style={{ width: '100%' }} alt='title'></img>
-      <div className='mainContainer' ref={mainContainerRef} style={{ alignItems: 'center', justifyContent: 'center' }}>
+      <div className='mainContainer' style={{ alignItems: 'center', justifyContent: 'center' }}>
         {products
           .filter((product) => product.isHide === false)
           .slice(0, cardsToShow)
@@ -117,8 +96,7 @@ function ProductHomePage() {
                   </div>
                   <div>
                     {product?.variant.map((variant) => (
-                      <Button
-                        className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
+                      <Button classNames={'memory'} className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
                         onClick={() => {
                           setSelectedMemories((prevSelected) => ({
                             ...prevSelected,
@@ -161,7 +139,7 @@ function ProductHomePage() {
             onMouseEnter={() => setIsButtonHovered(true)}
             onMouseLeave={() => setIsButtonHovered(false)}
             onClick={() => {
-              setCardsToShow(cardsToShow + cardsPerRow); // Increase the number of cards to show
+              setCardsToShow(cardsToShow + 6); // Increase the number of cards to show
             }}
           >
             Xem thêm

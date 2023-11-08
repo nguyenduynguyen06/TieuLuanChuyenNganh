@@ -6,7 +6,7 @@ const ProductDetail = () =>{
         window.scrollTo({top:0,behavior: "instant"})
     },[])
     return (
-        <div style={{padding: '0 120px', background: '#efefef', height: 'auto'}}>
+        <div style={{padding: '3%', background: '#efefef', height: 'auto'}}>
                 <ProductDetailComponents/>
         </div>
     )

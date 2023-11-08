@@ -114,9 +114,10 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     }
   }, [user]);
   const [data,setData] = useState(null);
+  // style={isScrolled ? { position: 'fixed', zIndex: '100', width: '100%' } : {}}
   return (
     <WrapperSuperHeader>
-      <WrapperHeader className="header-container" style={isScrolled ? { position: 'fixed', zIndex: '100', width: '100%' } : {}}>
+      <WrapperHeader className="header-container" >
         <WrapperHeaderImage className="ant-image" >
           <NavLink to={`/`} className="logo">  <img src="../../image/didong1.png" alt="blink" /> </NavLink>
         </WrapperHeaderImage>

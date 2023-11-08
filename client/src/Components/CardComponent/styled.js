@@ -275,7 +275,7 @@ export const WrapperCard = styled.div`
     width: 100%;
     margin: auto;
     line-height: 3;
-    height: 15em;
+    height: auto;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: normal
