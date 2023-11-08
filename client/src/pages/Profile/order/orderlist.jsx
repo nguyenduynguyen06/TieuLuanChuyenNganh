@@ -64,9 +64,8 @@ const OrderList = ({ status }) => {
         orders.map((order) => (
           <div style={{ display: 'flex', flexDirection: 'column', padding: '10px', gap: '10px' }}>
             <div style={{ padding: '10px 10px 0 10px', border: '1px solid #ccc', display: 'flex', flexDirection: 'column' }} className='pre-order'>
-            
               <div style={{ background: '#8c52ff', color: '#fff', padding: '10px 10px 0 10px', textAlign: 'right', fontWeight: 600, borderRadius: '4px 4px 0 0' }}>
-              <p>Mã đơn hàng:&nbsp;<span>{order.orderCode}</span></p>
+                <p>Mã đơn hàng:&nbsp;<span>{order.orderCode}</span></p>
                 <p>Trạng thái đơn hàng:&nbsp;<span>{order.status}</span></p>
               </div>
               {order.items.length > 0 && (
