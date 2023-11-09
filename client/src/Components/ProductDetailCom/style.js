@@ -98,6 +98,9 @@ export const WrapperDesc = styled.div`
         word-wrap: break-word;
         overflow-wrap: break-word;
     }
+    .product-description p{
+        margin: 0;
+    }
     .product-image {
         max-width: 100%;
         height: auto;
@@ -344,7 +347,7 @@ export const WrapperDetail = styled.div`
     .product-pick {
         padding: 16px;
         background: #fff;
-        borderRadius: 4px;
+        border-radius: 4px;
     }
     .slider-col {
         width:58%;
@@ -371,6 +374,23 @@ export const WrapperDetail = styled.div`
         width:58%;
         border: 1px solid #e5e5e5;
         padding: 8px
+    }
+    .sale-col {
+        width: 42%;
+        padding-left: 10px;
+    }
+    .des-col{
+        width: 66%;
+        border: 1px solid #e5e5e5; 
+        padding: 10px; 
+        border-radius: 4px; 
+    }
+    .prop-col {
+        width: 34%;
+        border: 1px solid #e5e5e5; 
+        padding-left: 10px; 
+        border-radius: 4px; 
+
     }
     @media screen and (max-width: 500px) {
         .product-pick{
@@ -401,6 +421,18 @@ export const WrapperDetail = styled.div`
         }
         .button-row{
             display: flex;
+        }
+        .sale-col {
+            width: 100%;
+            padding-left: 0px;
+        }
+        .des-col{
+            width:100%;
+        }
+        .prop-col {
+            width:100%;
+            padding-left: 0;
+            margin-top: 10px;
         }
       }
     

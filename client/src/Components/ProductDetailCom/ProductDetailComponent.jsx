@@ -490,7 +490,7 @@ const ProductDetailComponents = () => {
                             </div>
                         </WrapperPolicy>
                     </Col>
-                    <Col span={10} style={{ paddingLeft: '10px' }}>
+                    <Col className="sale-col">
                         <Row style={{ height: 'auto', textAlign: 'justify' }}>
                             {productDetails && productDetails.promotion ? (
                                 <div style={{ fontSize: '14px' }}>
@@ -507,7 +507,7 @@ const ProductDetailComponents = () => {
             </Row>
             <hr className="my-4" />
             <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
-                <Col span={16} style={{ border: '1px solid #e5e5e5', padding: '10px', borderRadius: '4px' }}>
+                <Col className="des-col">
                     <h3>Mô tả sản phẩm</h3>
                     <div style={{ height: '600px', overflowY: 'scroll', textAlign: 'justify' }}>
                         {productDetails ? (
@@ -517,7 +517,7 @@ const ProductDetailComponents = () => {
                         )}
                     </div>
                 </Col>
-                <Col span={8} style={{ paddingLeft: '10px', textAlign: 'center' }}>
+                <Col className="prop-col" >
                     <WrapperPropTable dataSource={dataSource} pagination={false}>
                         <ColumnGroup title="Thông số kỹ thuật">
                             <Column dataIndex="prop" key="prop" />
