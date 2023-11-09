@@ -24,7 +24,9 @@ function SuggestCard({ searchKeyword }) {
       console.error('Lỗi:', error);
     }
   };
-
+  const handleNavLinkClick = () => {
+    setSearchedProducts([]);
+  };
 
   if (!searchKeyword || searchedProducts.length === 0) {
     return null; 
@@ -42,7 +44,7 @@ function SuggestCard({ searchKeyword }) {
     <div className='view-list' style={{ height: '400px', overflowY: 'scroll', textAlign: 'justify', position: 'absolute', zIndex:1, maxWidth: '440px'}}>
       {searchedProducts.map((product) => (
         product.variant.map((variant) => (
-          <NavLink className='view-list__wrapper' to={`/product/${product.name}/${variant.memory}`} key={product._id + variant.memory}>
+          <NavLink className='view-list__wrapper' to={`/product/${product.name}/${variant.memory}`} key={product._id + variant.memory} onClick={handleNavLinkClick} >
             <div className='item' style={{ border: '1px solid #ccc', padding: '10px' }}>
               <div className='item__img'>
                 <img src={product.thumnails[0]} alt={product.name} />

@@ -86,10 +86,10 @@ function ProductHomePage() {
           .slice(0, cardsToShow)
           .map((product) => (
             <div className='box' key={product._id} style={{ display: 'flex' }}>
-              <div className='card'>
-                <NavLink className="image" to={`/product/${product.name}/${selectedMemories[product._id]}`}>
+              <NavLink className='card' to={`/product/${product.name}/${selectedMemories[product._id]}`}>
+                <div className="image">
                   <img src={product.thumnails[0]} />
-                </NavLink>
+                </div>
                 <div className='desc'>
                   <div style={{ height: '3em' }}>
                     <h1 style={{ padding: 3 }}>{product?.name}</h1>
@@ -97,7 +97,8 @@ function ProductHomePage() {
                   <div>
                     {product?.variant.map((variant) => (
                       <Button classNames={'memory'} className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.preventDefault();
                           setSelectedMemories((prevSelected) => ({
                             ...prevSelected,
                             [product._id]: variant.memory,
@@ -125,7 +126,7 @@ function ProductHomePage() {
                     </div>
                   </div>
                 </div>
-              </div>
+                </NavLink>
             </div>
           ))}
       </div>
