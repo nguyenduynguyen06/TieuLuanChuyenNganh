@@ -19,6 +19,7 @@ import ProductDescription from "./productdesscription"
 import CommentBox from "./commentcomponent"
 import axios from "axios"
 import { NavLink, useParams } from "react-router-dom"
+import { ArrowLeftOutlined } from "@ant-design/icons"
 
 import Slider from 'react-slick';
 
@@ -245,9 +246,18 @@ const ProductDetailComponents = () => {
         totalRating = productDetails.ratings.reduce((total, review) => total + review.rating, 0);
         averageRating = totalRating / productDetails.ratings.length;
     }
+    const goBack = () => {
+        window.history.back();
+    };
     return (
         <WrapperDetail>
+            <div style={{background:'#fff', padding: '10px'}}>
+                <button style={{ border: 'none', background: 'transparent'}} onClick={goBack}>
+                    <ArrowLeftOutlined /> Quay lại
+                </button>
+            </div>
             <Row style={{ background: '#fff' }} >
+
                 {productDetails ? (
                     memory !== `undefined` ? (
                         <div className="product-name">
