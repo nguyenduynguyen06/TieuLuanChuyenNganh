@@ -22,11 +22,6 @@ export const WrapperFilterCard = styled.div`
   grid-template-columns: repeat(6,minmax(0,1fr));
   overflow: hidden;
   border-radius: 0 0 8px 8px;
-  margin-block-start: 1em;
-  margin-block-end: 1em;
-  margin-inline-start: 0px;
-  margin-inline-end: 0px;
-  padding-inline-start: 40px;
 }
 .item-label span {
   border-radius: 2px;
@@ -189,34 +184,11 @@ export const WrapperFilterCard = styled.div`
 }
 @media screen and (max-width: 500px) {
   .mainContainer {
-    display: grid;
-    grid-auto-rows: minmax(min-content,max-content);
     grid-template-columns: repeat(2,minmax(0,1fr));
     gap: 2px;
   }
 }
 
-}
-
-@media screen and (max-width: 1000px) {
-  .mainContainer {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 200px));
-    padding: 5rem 3rem;
-    column-gap: 6px;
-  }
-  .card .image img {
-    width:90px;
-    transition: .3s ease-in-out;
-    cursor: pointer;
-  }
-  .mainContainer .box:hover {
-    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-    transform: scale(1);
-  }
-  .card .image:hover img {
-    transform: scale(1.3);
-  }
-}
 
 button#show-more {
   background: #fff;

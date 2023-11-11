@@ -330,7 +330,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
                       <div>
                         {product?.ratings.length > 0 ? (
                           <div style={{ display: "flex", flexDirection: 'column' }}>
-                            <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
+                            <Rate className='stars' disabled allowHalf value={calculateAverageRating(product.ratings)} />
                             <span style={{ margin: 0, height: '25px', fontSize: '13px' }}>Lượt đánh giá: {calculateTotalRatings(product)}</span>
                           </div>
                         ) : (

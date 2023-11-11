@@ -20,7 +20,7 @@ export const CardWrapper = styled.div`
   grid-template-columns: repeat(auto-fit,minmax(0,1fr));
   overflow: hidden;
   border-radius: 0 0 8px 8px;
-  border: 1px solid #efefef;
+  border: 1px solid #000;
   height: auto;
   .card{
       width:100%;

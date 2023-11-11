@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Badge, Button, Col,Menu,Dropdown, FloatButton } from 'antd';
+import { Badge, Button, Col, Menu, Dropdown, FloatButton } from 'antd';
 import axios from "axios";
 import { CustomerServiceOutlined } from '@ant-design/icons';
 import { WrapperCartButton, WrapperHeader, WrapperHeaderAccount, WrapperHeaderImage, WrapperHeaderProduct, WrapperSearch, WrapperSuperHeader } from "./style";
@@ -9,7 +9,10 @@ import {
   ShoppingCartOutlined,
   SearchOutlined,
   UserOutlined,
-  DownOutlined
+  FacebookOutlined,
+  InstagramOutlined,
+  GoogleOutlined,
+  GithubOutlined
 } from '@ant-design/icons';
 import Login from "./login"
 import {
@@ -34,15 +37,15 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const handleSearch = () => {
     if (searchKeyword) {
-        axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${searchKeyword}`)
-            .then((response) => {
-                window.location.href = `/lowtoHigh?keyword=${searchKeyword}`;
-            })
-            .catch((error) => {
-                console.error('Lỗi khi gọi API tìm kiếm: ', error);
-            });
+      axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${searchKeyword}`)
+        .then((response) => {
+          window.location.href = `/lowtoHigh?keyword=${searchKeyword}`;
+        })
+        .catch((error) => {
+          console.error('Lỗi khi gọi API tìm kiếm: ', error);
+        });
     }
-}
+  }
 
   const handleLogout = async () => {
     try {
@@ -94,10 +97,10 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         <NavLink to="/profile">Thông tin cá nhân</NavLink>
       </Menu.Item>
       <Menu.Item key="4">
-        <NavLink  to="/orders">Đơn hàng của bạn</NavLink>
+        <NavLink to="/orders">Đơn hàng của bạn</NavLink>
       </Menu.Item>
       <Menu.Item key="3">
-        <NavLink  onClick={handleLogout}>Đăng xuất</NavLink>
+        <NavLink onClick={handleLogout}>Đăng xuất</NavLink>
       </Menu.Item>
     </Menu>
   );
@@ -113,7 +116,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         });
     }
   }, [user]);
-  const [data,setData] = useState(null);
+  const [data, setData] = useState(null);
   // style={isScrolled ? { position: 'fixed', zIndex: '100', width: '100%' } : {}}
   return (
     <WrapperSuperHeader>
@@ -123,57 +126,57 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         </WrapperHeaderImage>
         <WrapperSearch className="search-box" >
           {!isHiddenSearch && (
-           <div  style={{width:`200%`}}>
-        <Search
-        placeholder="Tìm Kiếm"
-        onSearch={(value) => {
-          if (value) {
-            handleSearch();
-          }
-        }}
-        enterButton={
-          <Button style={{
-            backgroundImage: 'linear-gradient(to bottom, #ff914d, #ffde59)',
-          }}>
-            <SearchOutlined style={{ width: '10px', height: '20px', color: 'black' }} />
-          </Button>
-        }
-        size="large"
-        value={searchKeyword}
-        onChange={(e) => {
-          const newSearchKeyword = e.target.value;
-          setSearchKeyword(newSearchKeyword);
-        }}
-        allowClear
-      />
-    <SuggestCard
-    searchKeyword={searchKeyword}
-  />
-      </div>
-        )}
-        </WrapperSearch>
-        <NavLink to={`/cart`}>
-        <WrapperCartButton>
-          {!isHiddenCart && (
-            <div className="grid-item">
-              <Badge count={data ? data.length : 0} size="small">
-                <button class="custom-button" style={{ backgroundColor: '#CC0000', right: '0px' }}>
-                  <ShoppingCartOutlined style={{ fontSize: '20px' }} >
-                  </ShoppingCartOutlined>&nbsp;Giỏ hàng
-                </button>
-              </Badge>
+            <div style={{ width: `200%` }}>
+              <Search
+                placeholder="Tìm Kiếm"
+                onSearch={(value) => {
+                  if (value) {
+                    handleSearch();
+                  }
+                }}
+                enterButton={
+                  <Button style={{
+                    backgroundImage: 'linear-gradient(to bottom, #ff914d, #ffde59)',
+                  }}>
+                    <SearchOutlined style={{ width: '10px', height: '20px', color: 'black' }} />
+                  </Button>
+                }
+                size="large"
+                value={searchKeyword}
+                onChange={(e) => {
+                  const newSearchKeyword = e.target.value;
+                  setSearchKeyword(newSearchKeyword);
+                }}
+                allowClear
+              />
+              <SuggestCard
+                searchKeyword={searchKeyword}
+              />
             </div>
           )}
-        </WrapperCartButton>
+        </WrapperSearch>
+        <NavLink to={`/cart`}>
+          <WrapperCartButton>
+            {!isHiddenCart && (
+              <div className="grid-item">
+                <Badge count={data ? data.length : 0} size="small">
+                  <button class="custom-button" style={{ backgroundColor: '#CC0000', right: '0px' }}>
+                    <ShoppingCartOutlined style={{ fontSize: '20px' }} >
+                    </ShoppingCartOutlined>&nbsp;Giỏ hàng
+                  </button>
+                </Badge>
+              </div>
+            )}
+          </WrapperCartButton>
         </NavLink>
         <WrapperHeaderAccount>
           {user?.fullName ? (
             <div>
-                  <Dropdown overlay={menu} placement="bottomLeft" style={{ width: '50px', height: '50px', cursor: 'pointer' }} >
-                    <div className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                    <UserOutlined style={{ fontSize: '30px' }} /> Xin chào, {user.fullName} 
-                    </div>
-                  </Dropdown>
+              <Dropdown overlay={menu} placement="bottomLeft" style={{ width: '50px', height: '50px', cursor: 'pointer' }} >
+                <div className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                  <UserOutlined style={{ fontSize: '30px' }} /> Xin chào, {user.fullName}
+                </div>
+              </Dropdown>
             </div>
           ) : (
             <div>
@@ -191,17 +194,21 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             </div>
           )}
         </WrapperHeaderAccount>
-        <FloatButton.Group shape="circle" style={{ right: 24 }}>
-        <FloatButton
-          shape="circle"
+        <FloatButton.Group
+          trigger="hover"
           type="primary"
           style={{
             right: 94,
           }}
           icon={<CustomerServiceOutlined />}
-        />
+        >
+          <FloatButton icon={<FacebookOutlined />} href="https://www.facebook.com/didonggenz"/>
+          <FloatButton icon={<InstagramOutlined />} />
+          <FloatButton icon={<GoogleOutlined />} />
+          <FloatButton icon={<GithubOutlined />} href="https://github.com/nguyenduynguyen06/TieuLuanChuyenNganh" />
+
+        </FloatButton.Group>
         <FloatButton.BackTop />
-      </FloatButton.Group>
       </WrapperHeader>
 
 

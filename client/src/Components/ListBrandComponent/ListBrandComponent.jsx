@@ -4,9 +4,9 @@ import axios from "axios";
 import { NavLink, useParams } from "react-router-dom";
 
 const ListBrand = () => {
-    const { nameCategory,nameBrand } = useParams();
+    const { nameCategory, nameBrand } = useParams();
     const [brands, setBrands] = useState([]);
-    const [categories, setCategories] = useState(null); 
+    const [categories, setCategories] = useState(null);
 
     useEffect(() => {
         const fetchCategoryByName = async () => {
@@ -25,7 +25,7 @@ const ListBrand = () => {
     useEffect(() => {
         if (categories) {
             const category = categories.find((cat) => cat.name === nameCategory);
-            if (category) { 
+            if (category) {
                 const categoryId = category._id;
                 fetchBrandsByCategory(categoryId);
             }
@@ -45,19 +45,15 @@ const ListBrand = () => {
 
     return (
         <WrapperBrandList>
-            <div className="brand-content">
-                <div className="list-brand">
                     {brands.filter((brand) => brand.isHide === false).map((brand) => (
-                       <NavLink
-                       key={brand.name}
-                       className={`list-brand-item ${nameBrand === brand.name ? 'bordered' : ''}`}
-                       to={`/lowtoHigh/${nameCategory}/${brand.name}`}
-                     >
-                       <img className="brand-img" src={brand.picture} alt={brand.name} />
-                     </NavLink>
+                        <NavLink
+                            key={brand.name}
+                            className={`list-brand-item ${nameBrand === brand.name ? 'bordered' : ''}`}
+                            to={`/lowtoHigh/${nameCategory}/${brand.name}`}>
+                            <img className="brand-img" src={brand.picture} alt={brand.name} />
+                        </NavLink>
                     ))}
-                </div>
-            </div>
+
         </WrapperBrandList>
     )
 }
