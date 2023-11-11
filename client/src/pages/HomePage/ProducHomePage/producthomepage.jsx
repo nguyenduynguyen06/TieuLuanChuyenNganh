@@ -147,17 +147,6 @@ function ProductHomePage() {
           </WrapperButtonMore>
         </div>
       )}
-      <FloatButton.Group shape="circle" style={{ right: 24 }}>
-        <FloatButton
-          shape="circle"
-          type="primary"
-          style={{
-            right: 94,
-          }}
-          icon={<CustomerServiceOutlined />}
-        />
-        <FloatButton.BackTop />
-      </FloatButton.Group>
     </WrapperCard>
   );
 }

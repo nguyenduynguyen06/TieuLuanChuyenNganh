@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Badge, Button, Col,Menu,Dropdown } from 'antd';
+import { Badge, Button, Col,Menu,Dropdown, FloatButton } from 'antd';
 import axios from "axios";
-
+import { CustomerServiceOutlined } from '@ant-design/icons';
 import { WrapperCartButton, WrapperHeader, WrapperHeaderAccount, WrapperHeaderImage, WrapperHeaderProduct, WrapperSearch, WrapperSuperHeader } from "./style";
 import Search from "antd/es/input/Search";
 import { MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem } from 'mdb-react-ui-kit';
@@ -191,7 +191,17 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             </div>
           )}
         </WrapperHeaderAccount>
-
+        <FloatButton.Group shape="circle" style={{ right: 24 }}>
+        <FloatButton
+          shape="circle"
+          type="primary"
+          style={{
+            right: 94,
+          }}
+          icon={<CustomerServiceOutlined />}
+        />
+        <FloatButton.BackTop />
+      </FloatButton.Group>
       </WrapperHeader>
 
 
