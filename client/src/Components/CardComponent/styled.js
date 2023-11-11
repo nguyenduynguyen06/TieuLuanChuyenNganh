@@ -3,7 +3,6 @@ import styled from "styled-components";
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
 
 export const WrapperFilterCard = styled.div`
-zoom: 1;
 *{
   margin: 0;
   padding: 0;
@@ -150,15 +149,53 @@ zoom: 1;
   font-size: 15px;
 }
 
-@media screen and (max-width: 998px) {
-  .mainContainer{
-    padding: 0 3rem;
-    justify-content: center;
+@media screen and (max-width: 1100px) {
+  .mainContainer {
+    display: grid;
+    grid-auto-rows: minmax(min-content,max-content);
+    grid-template-columns: repeat(6,minmax(0,1fr));
+    gap: 2px;
   }
-
+  .box {
+    background: #fff;
+    text-align: center;
+    transition: .3s ease-in-out;
+    border: 1px solid #efefef;
+    height: 100%;
+    width:100%;
+  }
+  .card .image img {
+    width: 100%;
+    transition: .3s ease-in-out;
+  }
   .card .image {
-    width: 50%
+    height: auto;
+    position: relative;
   }
+  .card .desc h1 {
+    font-size: 11px;
+  }
+  .memory-button span{
+    font-size: 11px;
+  }
+}
+@media screen and (max-width: 900px) {
+  .mainContainer {
+    display: grid;
+    grid-auto-rows: minmax(min-content,max-content);
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 2px;
+  }
+}
+@media screen and (max-width: 500px) {
+  .mainContainer {
+    display: grid;
+    grid-auto-rows: minmax(min-content,max-content);
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 2px;
+  }
+}
+
 }
 
 @media screen and (max-width: 1000px) {

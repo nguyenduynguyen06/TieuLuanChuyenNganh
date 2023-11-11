@@ -304,7 +304,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
   .slice(startIndex, endIndex);
 
     return (
-    <div>
+    <div style={{width:'100%'}}>
       <WrapperFilterCard>
         <ul className='mainContainer' style={{alignItems: 'center', justifyContent: 'center', listStyle: 'none' }}>
           {productsToDisplay
