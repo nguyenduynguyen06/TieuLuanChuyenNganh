@@ -223,3 +223,32 @@ export const WrapperInputNumber = styled(InputNumber)`
         }
     }
 `
+export const WrapperPhoneCart = styled.div`
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    .img-col{
+        width: 20%;
+    }
+    .img-prod{
+        width: 100%;
+    }
+    .inf-col{
+        width:80%;
+    }
+    .pd-name{
+        font-weight: 500;
+    }
+    .pd-total{
+        color: #FF3300;
+    }
+    .quantity{
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+    }
+    .pd-action{
+        margin-right: 50px;
+    }
+`

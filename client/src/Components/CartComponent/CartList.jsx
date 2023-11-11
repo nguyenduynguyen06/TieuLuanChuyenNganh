@@ -6,12 +6,27 @@ import axios from 'axios';
 import CartTotal from './CartTotal';
 import { Hidden } from '@mui/material';
 import { Link } from "react-router-dom"; // Thêm import Link
+import { WrapperPhoneCart } from './style';
 
 function CartList() {
   const user = useSelector((state) => state.user)
   const [modalDelete, setModalDelete] = useState(false);
   const [currentCartId, setCurrentCartId] = useState(null);
   const [total, setTotal] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+  const isMobile = windowWidth < 500;
+
   const calculateTotalPrice = (cartData) => {
     return cartData.reduce((total, item) => {
       return total + item.price * item.quantity;
@@ -231,30 +246,85 @@ function CartList() {
     tableColumns[tableColumns.length - 1].fixed = 'right';
   }
 
+  const renderContent = () => {
+    if (isMobile) {
+      // Render mobile content
+      return (
+        <WrapperPhoneCart>
+          <div className='img-col'>
+            <img className='img-prod' src='../../image/logo.png'></img>
+          </div>
+          <div className='inf-col'>
+            <div className='pd-name'>iPhone 15 Pro Max - 256GB iPhone 15 Pro Max - 256GB</div>
+            <div className='pd-color'>Phân loại:&nbsp;
+              <span>Đen</span>
+            </div>
+            <div className='pd-dongia'>Đơn giá:&nbsp;
+              <span>20000</span>
+            </div>
+            <div className='pd-total'>Tổng tiền:&nbsp;
+              <span>20000</span>
+            </div>
+            <div className='quantity'>
+              <div>
+                <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={{}}>-</Button>
+                <Input
+                  value={1}
+                  style={{ width: '50px', fontWeight: 'bold' }}
+                  onChange={{}}
+                />
+                <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={{}}>+</Button>
+              </div>
+              <div className='pd-action'>
+                <a onClick={{}}> <DeleteOutlined style={{color:'#ff3300'}} /></a>
+                <Modal
+                  title="Xoá giỏ hàng"
+                  visible={modalDelete}
+                  onOk={() => {
+                    handleDeleteCartItem(currentCartId);
+                    setModalDelete(false);
+                  }}
+                  onCancel={() => setModalDelete(false)}
+                >
+                  <p>Bạn có chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng?</p>
+                </Modal>
+              </div>
+            </div>
+          </div>
+        </WrapperPhoneCart>
+      );
+    } else {
+      // Render table and other content
+      return (
+        <>
+          <Table
+            columns={tableColumns}
+            dataSource={data}
+            scroll={scroll}
+            pagination={false}
+          />
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px', alignItems: 'center' }}>
+              <span style={{ fontWeight: 600 }}>Tổng giá:&nbsp;</span>
+              <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300' }}>
+                {new Intl.NumberFormat('vi-VN', {
+                  style: 'currency',
+                  currency: 'VND',
+                }).format(total)}
+              </span>
+              <Link to="/payment-infor">
+                <Button size='large' style={{ marginLeft: '100px', background: '#8c52ff', color: '#fff' }} disabled={isCartEmpty} >Mua hàng</Button>
+              </Link>
+            </div>
+          </div>
+        </>
+      );
+    }
+  };
 
   return (
     <>
-      <Table
-        columns={tableColumns}
-        dataSource={data}
-        scroll={scroll}
-        pagination={false}
-      />
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px', alignItems: 'center' }}>
-          <span style={{ fontWeight: 600 }}>Tổng giá:&nbsp;</span>
-          <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300' }}>
-            {new Intl.NumberFormat('vi-VN', {
-              style: 'currency',
-              currency: 'VND',
-            }).format(total)}
-          </span>
-          <Link to="/payment-infor">
-            <Button size='large' style={{ marginLeft: '100px', background: '#8c52ff', color: '#fff' }} disabled={isCartEmpty} >Mua hàng</Button>
-          </Link>
-        </div>
-      </div>
-
+      {renderContent()}
     </>
   );
 }
