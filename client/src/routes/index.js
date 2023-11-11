@@ -43,7 +43,7 @@ export const routes = [
     {
         path:'/cart',
         page: CartPage,
-        isShowHeader: true
+        isShowHeader: false
     },
     {
         path:'/lowtoHigh',

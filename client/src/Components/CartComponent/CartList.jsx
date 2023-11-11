@@ -250,48 +250,64 @@ function CartList() {
     if (isMobile) {
       // Render mobile content
       return (
-        <WrapperPhoneCart>
-          <div className='img-col'>
-            <img className='img-prod' src='../../image/logo.png'></img>
-          </div>
-          <div className='inf-col'>
-            <div className='pd-name'>iPhone 15 Pro Max - 256GB iPhone 15 Pro Max - 256GB</div>
-            <div className='pd-color'>Phân loại:&nbsp;
-              <span>Đen</span>
+        <>
+          <WrapperPhoneCart>
+            <div className='img-col'>
+              <img className='img-prod' src='../../image/logo.png'></img>
             </div>
-            <div className='pd-dongia'>Đơn giá:&nbsp;
-              <span>20000</span>
-            </div>
-            <div className='pd-total'>Tổng tiền:&nbsp;
-              <span>20000</span>
-            </div>
-            <div className='quantity'>
-              <div>
-                <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={{}}>-</Button>
-                <Input
-                  value={1}
-                  style={{ width: '50px', fontWeight: 'bold' }}
-                  onChange={{}}
-                />
-                <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={{}}>+</Button>
+            <div className='inf-col'>
+              <div className='pd-name'>iPhone 15 Pro Max - 256GB iPhone 15 Pro Max - 256GB</div>
+              <div className='pd-color'>Phân loại:&nbsp;
+                <span>Đen</span>
               </div>
-              <div className='pd-action'>
-                <a onClick={{}}> <DeleteOutlined style={{color:'#ff3300'}} /></a>
-                <Modal
-                  title="Xoá giỏ hàng"
-                  visible={modalDelete}
-                  onOk={() => {
-                    handleDeleteCartItem(currentCartId);
-                    setModalDelete(false);
-                  }}
-                  onCancel={() => setModalDelete(false)}
-                >
-                  <p>Bạn có chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng?</p>
-                </Modal>
+              <div className='pd-dongia'>Đơn giá:&nbsp;
+                <span>20000</span>
+              </div>
+              <div className='pd-total'>Tổng tiền:&nbsp;
+                <span>20000</span>
+              </div>
+              <div className='quantity'>
+                <div>
+                  <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={{}}>-</Button>
+                  <Input
+                    value={1}
+                    style={{ width: '50px', fontWeight: 'bold' }}
+                    onChange={{}}
+                  />
+                  <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={{}}>+</Button>
+                </div>
+                <div className='pd-action'>
+                  <a onClick={{}}> <DeleteOutlined style={{ color: '#ff3300' }} /></a>
+                  <Modal
+                    title="Xoá giỏ hàng"
+                    visible={modalDelete}
+                    onOk={() => {
+                      handleDeleteCartItem(currentCartId);
+                      setModalDelete(false);
+                    }}
+                    onCancel={() => setModalDelete(false)}
+                  >
+                    <p>Bạn có chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng?</p>
+                  </Modal>
+                </div>
               </div>
             </div>
+          </WrapperPhoneCart>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px'}}>
+            <div>
+              <span style={{ fontWeight: 600 }}>Tổng giá:&nbsp;</span>
+              <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300' }}>
+                {new Intl.NumberFormat('vi-VN', {
+                  style: 'currency',
+                  currency: 'VND',
+                }).format(total)}
+              </span>
+            </div>
+            <Link to="/payment-infor">
+              <Button size='large' style={{ background: '#8c52ff', color: '#fff' }} disabled={isCartEmpty} >Mua hàng</Button>
+            </Link>
           </div>
-        </WrapperPhoneCart>
+        </>
       );
     } else {
       // Render table and other content

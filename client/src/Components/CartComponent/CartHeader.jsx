@@ -3,6 +3,7 @@ import Search from 'antd/es/input/Search';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { HeaderWrapper } from './style';
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 function CartHeader({ product, removeFromCart }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,18 +24,23 @@ function CartHeader({ product, removeFromCart }) {
       setSearchResults([]);
     }
   }, [searchQuery]);
+  const goBack = () => {
+    window.history.back();
+  };
+
   return (
     <HeaderWrapper>
-      <div className="header-wrapper">
-        <div className='header-container'>
-          <div className='cart-page-header'>
-            <a className='cart-page-logo' href='#'>
-              <div viewBox="0 0 192 65" className='logo-icon'>
-                <img src='../../image/didong2.png' />
-              </div>
-              <div className='cart-page-name'>Giỏ hàng</div>
-            </a>
-          </div>
+      <div className='cart-page-header'>
+        <div className="btn-back">
+          <a onClick={goBack}>
+            <ArrowLeftOutlined /> Quay lại
+          </a>
+        </div>
+        <div className='cart-page-logo' >
+          <a viewBox="0 0 192 65" className='logo-icon' href='/'>
+            <img src='../../image/didong2.png' />
+          </a>
+          <a className='cart-page-name' href='/cart'>Giỏ hàng</a>
         </div>
       </div>
     </HeaderWrapper>
