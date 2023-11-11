@@ -195,20 +195,25 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
           )}
         </WrapperHeaderAccount>
         <FloatButton.Group
-          trigger="hover"
+          trigger="click"
           type="primary"
           style={{
-            right: 94,
+            right: 24,
+            bottom: 97,
           }}
           icon={<CustomerServiceOutlined />}
+          tooltip={<div>Chăm sóc khách hàng</div>} 
         >
-          <FloatButton icon={<FacebookOutlined />} href="https://www.facebook.com/didonggenz"/>
-          <FloatButton icon={<InstagramOutlined />} />
-          <FloatButton icon={<GoogleOutlined />} />
-          <FloatButton icon={<GithubOutlined />} href="https://github.com/nguyenduynguyen06/TieuLuanChuyenNganh" />
+          <FloatButton icon={<FacebookOutlined />} href="https://www.facebook.com/didonggenz" tooltip={<div>Facebook</div>}/>
+          <FloatButton icon={<InstagramOutlined />} tooltip={<div>Instagram</div>}/>
+          <FloatButton icon={<GithubOutlined />} href="https://github.com/nguyenduynguyen06/TieuLuanChuyenNganh" tooltip={<div>Github</div>}/>
 
         </FloatButton.Group>
-        <FloatButton.BackTop />
+        <FloatButton.BackTop           
+          style={{
+            right: 24,
+          }}
+ />
       </WrapperHeader>
 
 
