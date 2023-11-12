@@ -223,6 +223,17 @@ export const WrapperPaymentInfo = styled.div`
         padding: 15px;
     }
 `
-export const WrapperBtnNext = styled.div`
+export const PageWrapper = styled.div`
+    background: #efefef;
+    display: flex;
+    justify-content: center;
+    .container{
+        width: 60%;
+    }
+    @media screen and (max-width: 500px) {
+        .container{
+            width:100%;
+        }
+    }
 
 `
