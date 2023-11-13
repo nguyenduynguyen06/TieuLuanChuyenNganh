@@ -140,46 +140,42 @@ const TableVoucher = () => {
         <Input type='number'/>
       </Form.Item>
       <Form.Item
-  name="startDate"
-  label="Ngày bắt đầu"
-  rules={[
-    
-    ({ getFieldValue }) => ({
-      validator(_, value) {
-        const endDate = getFieldValue('endDate');
+      name="startDate"
+      label="Ngày bắt đầu"
+      rules={[
+        ({ getFieldValue }) => ({
+          validator(_, value) {
+            const endDate = getFieldValue('endDate');
+            if (value && !endDate) {
+              return Promise.reject('Vui lòng chọn Ngày kết thúc');
+            }
+            return Promise.resolve();
+          },
+        }),
+      ]}
+    >
+      <DatePicker />
+    </Form.Item>
 
-        if (value && !endDate) {
-          return Promise.reject('Vui lòng chọn Ngày kết thúc');
-        }
+      <Form.Item
+        name="endDate"
+        label="Ngày kết thúc"
+        rules={[
+          ({ getFieldValue }) => ({
+            validator(_, value) {
+              const startDate = getFieldValue('startDate');
 
-        return Promise.resolve();
-      },
-    }),
-  ]}
->
-  <DatePicker />
-</Form.Item>
+              if (value && !startDate) {
+                return Promise.reject('Vui lòng chọn Ngày bắt đầu');
+              }
 
-<Form.Item
-  name="endDate"
-  label="Ngày kết thúc"
-  rules={[
-    
-    ({ getFieldValue }) => ({
-      validator(_, value) {
-        const startDate = getFieldValue('startDate');
-
-        if (value && !startDate) {
-          return Promise.reject('Vui lòng chọn Ngày bắt đầu');
-        }
-
-        return Promise.resolve();
-      },
-    }),
-  ]}
->
-  <DatePicker />
-</Form.Item>
+              return Promise.resolve();
+            },
+          }),
+        ]}
+      >
+        <DatePicker />
+      </Form.Item>
 
               </Form>
             </Modal>

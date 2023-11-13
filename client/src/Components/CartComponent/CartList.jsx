@@ -251,20 +251,27 @@ function CartList() {
       // Render mobile content
       return (
         <>
+        {data && data.map((item) => (
           <WrapperPhoneCart>
             <div className='img-col'>
-              <img className='img-prod' src='../../image/logo.png'></img>
+              <img className='img-prod' src={item.pictures}></img>
             </div>
             <div className='inf-col'>
-              <div className='pd-name'>iPhone 15 Pro Max - 256GB iPhone 15 Pro Max - 256GB</div>
+              <div className='pd-name'>{item.product.name} {item.memory}</div>
               <div className='pd-color'>Phân loại:&nbsp;
-                <span>Đen</span>
+                <span>{item.color}</span>
               </div>
               <div className='pd-dongia'>Đơn giá:&nbsp;
-                <span>20000</span>
+                <span>{new Intl.NumberFormat('vi-VN', {
+                  style: 'currency',
+                  currency: 'VND',
+                }).format(item.price)}</span>
               </div>
               <div className='pd-total'>Tổng tiền:&nbsp;
-                <span>20000</span>
+                <span>{new Intl.NumberFormat('vi-VN', {
+                  style: 'currency',
+                  currency: 'VND',
+                }).format(item.subtotal)}</span>
               </div>
               <div className='quantity'>
                 <div>
@@ -277,7 +284,7 @@ function CartList() {
                   <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={{}}>+</Button>
                 </div>
                 <div className='pd-action'>
-                  <a onClick={{}}> <DeleteOutlined style={{ color: '#ff3300' }} /></a>
+                  <a onClick={() => { setModalDelete(true); setCurrentCartId(item._id) }}> <DeleteOutlined style={{ color: '#ff3300' }} /></a>
                   <Modal
                     title="Xoá giỏ hàng"
                     visible={modalDelete}
@@ -293,6 +300,7 @@ function CartList() {
               </div>
             </div>
           </WrapperPhoneCart>
+           ))}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px'}}>
             <div>
               <span style={{ fontWeight: 600 }}>Tổng giá:&nbsp;</span>
