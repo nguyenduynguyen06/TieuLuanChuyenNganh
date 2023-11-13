@@ -73,18 +73,14 @@ const OrderDetail = () => {
     return (
         <div>
             <Header></Header>
-            <br></br>
             <WrapperDetailOrder>
-                <Col style={{ width: '20%', paddingLeft: '10px', overflow: 'hidden' }}>
-                </Col>
-                <Col style={{ width: '60%', paddingLeft: '10px', paddingRight: '10px' }}>
+                <div className="mainContainer" >
                     <div>
                         <div className="nav">
                             <button className="btn-back" onClick={goBack}>
                                 <ArrowLeftOutlined />&nbsp;Quay lại
                             </button>
                             <h5 style={{ textAlign: 'center', textTransform: 'uppercase' }}>Thông tin đơn hàng</h5>
-                            <h5 style={{ textAlign: 'center', color: 'transparent'}}> nothinghere  </h5>
                         </div>
                         {orderDetails && (
                             <div>
@@ -203,9 +199,7 @@ const OrderDetail = () => {
                         </MDBModalContent>
                         </MDBModalDialog>
                         </Modal>
-                </Col>
-                <Col style={{ width: '20%', paddingLeft: '10px', overflow: 'hidden' }}>
-                </Col>
+                </div>
             </WrapperDetailOrder>
         </div>
     );

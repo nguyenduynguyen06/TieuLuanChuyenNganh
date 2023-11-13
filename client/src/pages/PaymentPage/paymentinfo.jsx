@@ -185,23 +185,25 @@ const PaymentInfo = () => {
                                         <div className="item" key={item.product._id}>
                                             <img className='item__img' src={item.pictures} alt={item.product.name} />
                                             <div className="item-info">
-                                                <p className="item-name">{item.product.name} - {item.memory}</p>
-                                                <p className="item-name">{item.color}</p>
+                                                <div className="item-name">
+                                                    <span>{item.product.name} - {item.memory}</span>
+                                                    <span>{item.color}</span>
+                                               </div>
                                                 <div className="item-price">
                                                     <div>
                                                         <div className="box-info__box-price">
-                                                            <p className="product__price--show">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', }).format(item.price)}</p>
+                                                            <span className="product__price--show">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', }).format(item.price)}</span>
                                                             {item.productVariant.oldPrice && (
-                                                                <p className="product__price--through">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', }).format(item.productVariant.oldPrice)}</p>
+                                                                <span className="product__price--through">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', }).format(item.productVariant.oldPrice)}</span>
                                                             )}
                                                         </div>
                                                     </div>
-                                                    <p>Số lượng : &nbsp;
+                                                    <span>Số lượng : &nbsp;
                                                         <span style={{ color: 'red' }}>{item.quantity}</span>
-                                                    </p>
-                                                    <p>Bảo hành : &nbsp;
+                                                    </span>
+                                                    <span>Bảo hành : &nbsp;
                                                         <span style={{ color: 'red' }}>{item.product.warrantyPeriod} tháng</span>
-                                                    </p>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -276,14 +278,16 @@ const PaymentInfo = () => {
                                         tabIndex="5"
                                     />
                                 </div>
-                                <Button
-                                    size='middle'
-                                    className="button__voucher"
-                                    style={{ fontSize: '15px', width: "20%" }}
-                                    onClick={() => checkVoucher({ code: vouchercode })}
-                                >
-                                    Áp dụng
-                                </Button>
+                                <div className="button-vou">
+                                    <Button
+                                        size='middle'
+                                        className="button__voucher"
+                                        onClick={() => checkVoucher({ code: vouchercode })}
+                                    >
+                                        Áp dụng
+                                    </Button>
+
+                                </div>
                             </div>
                             <div className="info-quote">
                                 <div className="info-quote__block">

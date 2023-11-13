@@ -1,21 +1,11 @@
 import styled from "styled-components";
 import { Button, Row } from "antd";
 
-export const WrapperTab = styled.div`
-    .tab-buttons {
-        width:100%;
-        display: flex;
-        flex-direction: row;
-    }
-    .active{
-        background: #8c52ff;
-        color: #fff;
-    }
-`
+
 export const WrapperBtn = styled(Button)`
     display: flex;
     flex-direction: column;
-    width: 16.66%;
+    width: 100%;
     align-items: center;
     justify-content: center;
     white-space: wrap;
@@ -23,8 +13,12 @@ export const WrapperBtn = styled(Button)`
     text-overflow: ellipsis;
 `
 
-export const WrapperDetailOrder = styled(Row)`
- .nav {
+export const WrapperDetailOrder = styled.div`
+    .mainContainer{
+        width: 60%; 
+        padding: 10px;
+    }
+    .nav {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -49,3 +43,112 @@ export const WrapperDetailOrder = styled(Row)`
         height: 100px;
     }
 `
+export const WrapperList = styled.div`
+    .has-container{
+        display: flex; 
+        flex-direction: column; 
+        padding: 10px; 
+        gap: 10px;
+    }
+    .pre-order{
+        padding: 10px 10px 0 10px; 
+        border: 1px solid #ccc; 
+        display: flex; 
+        flex-direction: column;
+    }
+    .state{
+        background: #8c52ff; 
+        color: #fff; 
+        padding: 10px; 
+        text-align: right; 
+        font-weight: 600; 
+        border-radius: 4px 4px 0 0;
+    }
+    .pd-info{
+        display: flex; 
+        height: auto; 
+        padding: 10px 10px 10px 0; 
+        border: 1px solid #ccc; 
+        border-radius: 0 0 4px 4px;
+    }
+    .order-img {
+        width: 10%; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
+    }
+    .img-item {
+        width: 100%; 
+        height: auto;
+    }
+    .order-info{
+        width: 90%;
+    }
+    .props{
+        display: flex; 
+        justify-content: space-between;
+        width: 100%
+    }
+    .price{
+        display: flex;
+        gap:10px;
+    }
+    .total{
+        padding: 10px; 
+        display: flex; 
+        justify-content: right; 
+        align-items: center; 
+        gap: 10px;
+    }
+    .tt-a{
+        display: flex;
+        gap: 10px; 
+    }
+    .btn-order{
+        display: flex; 
+        justify-content: right; 
+        gap: 2px;
+    }
+    @media screen and (max-width: 500px) {
+        .order-img {
+            width: 25%;
+        }
+        .order-info{
+            width: 75%;
+        }
+    
+        .img-item {
+            width: 100%; 
+            height: auto;
+        }
+        .img-item img{
+            width: 100px; 
+            height: auto;
+        }
+        .price{
+            flex-direction: column;
+            gap:0px;
+        }
+        .total{
+            text-align: right;
+            display: grid;
+        }
+    }
+`
+export const WrapperTab = styled.div`    
+    .tab-buttons {
+        display: grid;
+        grid-auto-rows: minmax(min-content,max-content);
+        grid-template-columns: repeat(auto-fit,minmax(0,1fr));
+    }
+    .active{
+        background: #8c52ff;
+        color: #fff;
+    }
+    @media screen and (max-width: 500px) {
+        .tab-buttons {
+            grid-template-columns: repeat(2,minmax(0,1fr));
+        }
+    }
+`
+
