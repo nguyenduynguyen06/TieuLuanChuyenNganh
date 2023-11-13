@@ -251,7 +251,7 @@ function CartList() {
       // Render mobile content
       return (
         <>
-        {data && data.map((item) => (
+        {data && data.map((item,index) => (
           <WrapperPhoneCart>
             <div className='img-col'>
               <img className='img-prod' src={item.pictures}></img>
@@ -274,15 +274,15 @@ function CartList() {
                 }).format(item.subtotal)}</span>
               </div>
               <div className='quantity'>
-                <div>
-                  <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={{}}>-</Button>
-                  <Input
-                    value={1}
-                    style={{ width: '50px', fontWeight: 'bold' }}
-                    onChange={{}}
-                  />
-                  <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={{}}>+</Button>
-                </div>
+                  <div>
+                <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={() => handleDecreaseQuantity(index)}>-</Button>
+                <Input
+                  value={quantities[index]}
+                  style={{ width: '50px', fontWeight: 'bold' }}
+                  onChange={(e) => handleQuantityChange(index, parseInt(e.target.value, 10))}
+                />
+                <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={() => handleIncreaseQuantity(index)}>+</Button>
+              </div>
                 <div className='pd-action'>
                   <a onClick={() => { setModalDelete(true); setCurrentCartId(item._id) }}> <DeleteOutlined style={{ color: '#ff3300' }} /></a>
                   <Modal
