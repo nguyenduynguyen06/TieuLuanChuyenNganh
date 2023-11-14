@@ -14,20 +14,60 @@ export const WrapperBtn = styled(Button)`
 `
 
 export const WrapperDetailOrder = styled.div`
+    display: flex;
+    justify-content: center;
     .mainContainer{
         width: 60%; 
         padding: 10px;
     }
+    .container{
+        display: flex; 
+        flex-direction: column; 
+        padding: 10px; 
+        gap: 10px; 
+        border: 1px solid #efefef; 
+        borderRadius: 4px;
+    }
+    .pre-order{
+        display: flex;
+        padding: 10px; 
+        width: 100%;
+        border: 1px solid #ccc; 
+        height: auto;
+        flex-direction:row;
+    }
+    .img-con{
+        width: 12.5%; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center;
+    }
+    .img-product{
+        height: auto; 
+        width: 100%;
+    }
+    .inf-con{
+        width: 87%; 
+        padding: 5px;
+    }
+    @media screen and (max-width: 500px) {
+        .mainContainer{
+            width: 100%; 
+        }
+        .img-con{
+            width: 25%; 
+            align-items: start;
+        }
+        .inf-con{
+            width: 75%; 
+        }
+    }
     .nav {
         display: flex;
-        justify-content: space-between;
         align-items: center;
         background-color: #fff;
-        gap: 10px;
-        left: 0;
-        margin-bottom: 10px;
-        padding: 5px 15px 10px;
         position: sticky;
+        justify-content: space-between;
         top: 0;
         width: 100%;
         z-index: 10;
@@ -41,6 +81,12 @@ export const WrapperDetailOrder = styled.div`
     .img-product img{
         width: 100px;
         height: 100px;
+    }
+    .pagetitle{
+        font-weight: bold;
+        text-transform: uppercase; 
+        display: flex; 
+        align-items: center
     }
 `
 export const WrapperList = styled.div`
