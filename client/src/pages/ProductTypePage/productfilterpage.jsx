@@ -7,6 +7,7 @@ import Slide from "../../Components/Slider/Slide"
 import { WrapperContent, WrapperTextValue, WrapperType, WrapperFilterList } from "./style";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import { DownOutlined, FallOutlined, RiseOutlined } from '@ant-design/icons';
+import axios from "axios";
 
 const FilterProductPage = () => {
     useEffect(() => {
@@ -51,22 +52,20 @@ const FilterProductPage = () => {
         pathToUse = '/lowtoHigh';
     }
     const hasNameBrand = nameBrand ? `/${nameBrand}` : '';
-    const renderContent = (type, options) => {
+    const renderContent = (type, categories) => {
         switch (type) {
-            case 'text':
-                return options.map((option) => {
-                    return (
-                        <NavLink to={`/lowtoHigh/${option}`} key={option}>
-                            <WrapperTextValue>
-                                <a onClick={handle} >{option}</a>
-                            </WrapperTextValue>
-                        </NavLink>
-                    )
-                })
-            default:
-                return {}
+          case 'categories':
+            return categories.map((category) => (
+              <NavLink to={`/lowtoHigh/${category.name}`} key={category._id}>
+                 <WrapperTextValue active={nameCategory === category.name}>
+                  <div onClick={handle}>{category.name}</div>
+                </WrapperTextValue>
+              </NavLink>
+            ));
+          default:
+            return {};
         }
-    }
+      };
     const menu1 = (
         <Menu>
             <Menu.Item key="1" onClick={() => handlePriceSelection(0, 2000000)}>
@@ -168,6 +167,20 @@ const FilterProductPage = () => {
             </Menu.Item>
         </Menu>
     );
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+  
+      const fetchCategories = async () => {
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
+          setCategories(response.data.data);
+        } catch (error) {
+          console.error('Lỗi khi lấy danh sách danh mục:', error);
+        }
+      };
+      fetchCategories();
+    }, []);
     return (
         <WrapperType>
             <Header />
@@ -176,7 +189,7 @@ const FilterProductPage = () => {
                     <br></br>
                     <Slide/>
                     <WrapperContent>
-                        {renderContent('text', ['Điện thoại', 'Ốp lưng', 'Cáp sạc', 'Pin dự phòng', 'Tai nghe'])}
+                        {renderContent('categories', categories)}
                     </WrapperContent>
                     <ListBrand />
                     {nameCategory ? (

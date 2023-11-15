@@ -60,6 +60,15 @@ export const WrapperTextValue =styled.div`
       color: #fff;
     }
   }
+  ${(props) =>
+    props.active &&
+    `
+    border: 1px solid #fff;
+    background: #9999ff;
+    div {
+      color: #fff;
+    }
+  `}
 `
 export const WrapperContent = styled.div`
     display: flex;
