@@ -88,6 +88,15 @@ export const WrapperDetailOrder = styled.div`
         display: flex; 
         align-items: center
     }
+    .statusord {
+        background: #14d9c5;
+        font-weight: 600;
+        color: #fff;
+        border: 1px solid #efefef;
+        border-radius: 4px;
+        display: flex;
+        padding: 12px 10px 0 10px;
+    }
 `
 export const WrapperList = styled.div`
     .has-container{

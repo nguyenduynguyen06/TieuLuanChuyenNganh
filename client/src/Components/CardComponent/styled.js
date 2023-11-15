@@ -378,78 +378,101 @@ export const WrapperCard = styled.div`
   }
 `
 export const WrapperSuggestCard = styled.div`
+
 .view-list{
   background-color: #fff;
   border: 1px solid rgba(145,158,171,.239);
   border-radius: 10px;
   padding: 5px 15px 0;
   width: 100%;
+  height: 400px; 
+  overflow-y: auto; 
+  text-align: justify; 
+  position: absolute; 
+  z-index:1; 
+  max-width: 440px;
 }
 .view-list__wrapper{
   display: flex;
-  flex-direction: column;
   width: 100%;
+  border: 1px solid #ccc;
+  border-style: none none solid none;
+}
+.view-list__wrapper:hover{
+  transform: scale(1,1);
 }
 .item{
   border-bottom: 0 solid rgba(145,158,171,.24);
   display: flex;
   gap: 15px;
   overflow: hidden;
-  padding: 12px 0;
   transition: .2s ease-in-out;
   width: 100%;
+  padding: 10px;
 }
 .item__img{
-  height: 100px;
-  width: 100px;
+  width: 20%;
+  height: auto;
   flex-shrink: 0;
 }
 img {
-  display: block;
   height: auto;
-  max-width: 100%;
+  width: 100%;
   vertical-align: middle;
 }
 .item-info {
   display: flex;
-  flex: 1;
   flex-direction: column;
-  gap: 5px;
 }
 .item-name {
   color: #111;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 14px;
 }
 .item-price {
   align-items: flex-end;
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
   justify-content: space-between;
 }
 .box-info__box-price {
-  align-items: flex-end;
+  align-items: flex-start;
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-direction: column;
 }
 .product__price--show {
   color: #d70018;
   display: inline-block;
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 500;
   line-height: 1;
 }
 .product__price--through {
   color: #707070;
   display: inline-block;
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 500;
   position: relative;
   -webkit-text-decoration: line-through;
   text-decoration: line-through;
   top: 2px;
+}
+.stars{
+  font-size: 13px;
+}
+@media screen and (max-width: 500px) {
+  .view-list{
+    width: 100%;
+    height: 400px; 
+    overflow-y: auto; 
+    text-align: justify; 
+    position: absolute; 
+    z-index:1; 
+    max-width: 315px;
+  }
+  .item__img{
+    width: 30%;
+  }
+  
 }
 `
 export const WrapperButtonMore = styled(ButtonComponent)`

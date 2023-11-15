@@ -84,7 +84,7 @@ const OrderDetail = () => {
                         </div>
                         {orderDetails && (
                             <div>
-                                <div style={{ background: '#14d9c5', fontWeight: 600, color: '#fff', border: '1px solid #efefef', borderRadius: '4px', display: 'flex', padding: '12px 10px 0 10px' }}>
+                                <div className="statusord">
                                     <p>Tình trạng đơn hàng:&nbsp;
                                         <span>{orderDetails.status}</span>
                                     </p>
