@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Badge, Button, Col, Menu, Dropdown, FloatButton } from 'antd';
 import axios from "axios";
 import { CustomerServiceOutlined } from '@ant-design/icons';
-import { WrapperCartButton, WrapperHeader, WrapperHeaderAccount, WrapperHeaderImage, WrapperHeaderProduct, WrapperSearch, WrapperSuperHeader } from "./style";
+import { WrapperCartButton, WrapperHeaderAccount, WrapperHeaderImage, WrapperHeaderProduct, WrapperSearch, WrapperSuperHeader } from "./style";
 import Search from "antd/es/input/Search";
-import { MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem } from 'mdb-react-ui-kit';
 import {
   ShoppingCartOutlined,
   SearchOutlined,
@@ -117,83 +116,81 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     }
   }, [user]);
   const [data, setData] = useState(null);
-  // style={isScrolled ? { position: 'fixed', zIndex: '100', width: '100%' } : {}}
   return (
-    <WrapperSuperHeader>
-      <WrapperHeader className="header-container" >
-        <WrapperHeaderImage className="ant-image" >
-          <NavLink to={`/`} className="logo">  <img src="../../image/didong1.png" alt="blink" /> </NavLink>
-        </WrapperHeaderImage>
-        <WrapperSearch className="search-box" >
-          {!isHiddenSearch && (
-            <div style={{ width: `200%` }}>
-              <Search
-                placeholder="Tìm Kiếm"
-                onSearch={(value) => {
-                  if (value) {
-                    handleSearch();
+    <WrapperSuperHeader >
+      <div className="header-container" style={isScrolled ? { position: 'sticky', zIndex:10 } : {}}>
+        <div className="first-com">
+          <NavLink to={`/`} className="ant-image" >
+            <img className="logo" src="../../image/didong1.png" alt="blink" />
+          </NavLink>
+        </div>
+        <div className="second-com">
+          <div className="search-box" >
+            {!isHiddenSearch && (
+              <div style={{ width: `100%` }}>
+                <Search
+                  placeholder="Tìm Kiếm"
+                  onSearch={(value) => {
+                    if (value) {
+                      handleSearch();
+                    }
+                  }}
+                  enterButton={
+                    <Button style={{
+                      backgroundImage: 'linear-gradient(to bottom, #ff914d, #ffde59)',
+                    }}>
+                      <SearchOutlined style={{ width: '10px', height: '20px', color: 'black' }} />
+                    </Button>
                   }
-                }}
-                enterButton={
-                  <Button style={{
-                    backgroundImage: 'linear-gradient(to bottom, #ff914d, #ffde59)',
-                  }}>
-                    <SearchOutlined style={{ width: '10px', height: '20px', color: 'black' }} />
-                  </Button>
-                }
-                size="large"
-                value={searchKeyword}
-                onChange={(e) => {
-                  const newSearchKeyword = e.target.value;
-                  setSearchKeyword(newSearchKeyword);
-                }}
-                allowClear
-              />
-              <SuggestCard
-                searchKeyword={searchKeyword}
-              />
-            </div>
-          )}
-        </WrapperSearch>
-        <NavLink to={`/cart`}>
-          <WrapperCartButton>
-            {!isHiddenCart && (
-              <div className="grid-item">
-                <Badge count={data ? data.length : 0} size="small">
-                  <button class="custom-button" style={{ backgroundColor: '#CC0000', right: '0px' }}>
-                    <ShoppingCartOutlined style={{ fontSize: '20px' }} >
-                    </ShoppingCartOutlined>&nbsp;Giỏ hàng
-                  </button>
-                </Badge>
+                  size="large"
+                  value={searchKeyword}
+                  onChange={(e) => {
+                    const newSearchKeyword = e.target.value;
+                    setSearchKeyword(newSearchKeyword);
+                  }}
+                  allowClear />
+                <SuggestCard searchKeyword={searchKeyword} />
               </div>
             )}
-          </WrapperCartButton>
-        </NavLink>
-        <WrapperHeaderAccount>
-          {user?.fullName ? (
-            <div>
-              <Dropdown overlay={menu} placement="bottomLeft" style={{ width: '50px', height: '50px', cursor: 'pointer' }} >
-                <div className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                  <UserOutlined style={{ fontSize: '30px' }} /> Xin chào, {user.fullName}
+          </div>
+        </div>
+        <div className="third-com">
+          <NavLink to={`/cart`} className="btn-cart">
+            {!isHiddenCart && (
+              <Badge count={data ? data.length : 0} size="small">
+                <button class="custom-button" style={{ backgroundColor: '#CC0000', right: '0px' }}>
+                  <ShoppingCartOutlined style={{ fontSize: '20px' }} >
+                  </ShoppingCartOutlined>&nbsp;Giỏ hàng
+                </button>
+              </Badge>
+            )}
+          </NavLink>
+          <div className="header-acc">
+            {user?.fullName ? (
+              <div>
+                <Dropdown overlay={menu} placement="bottomLeft" style={{ width: '50px', height: '50px', cursor: 'pointer' }} >
+                  <div className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                    <UserOutlined style={{ fontSize: '30px' }} /> Xin chào, {user.fullName}
+                  </div>
+                </Dropdown>
+              </div>
+            ) : (
+              <div>
+                <div class="popup" onClick={toggleShow}>
+                  <span style={{ fontSize: '15px' }} >
+                    Đăng nhập
+                  </span>
                 </div>
-              </Dropdown>
-            </div>
-          ) : (
-            <div>
-              <div class="popup" onClick={toggleShow}>
-                <span style={{ fontSize: '15px' }} >
-                  Đăng nhập
-                </span>
+                <span style={{ fontSize: '15px' }} > &nbsp; / &nbsp; </span>
+                <div class="popup" onClick={toggleShow1}>
+                  <span style={{ fontSize: '15px' }} >
+                    Đăng ký&nbsp;
+                  </span>
+                </div>
               </div>
-              <span style={{ fontSize: '15px' }} > &nbsp; / &nbsp; </span>
-              <div class="popup" onClick={toggleShow1}>
-                <span style={{ fontSize: '15px' }} >
-                  Đăng ký&nbsp;
-                </span>
-              </div>
-            </div>
-          )}
-        </WrapperHeaderAccount>
+            )}
+          </div>
+        </div>
         <FloatButton.Group
           trigger="click"
           type="primary"
@@ -202,22 +199,16 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             bottom: 97,
           }}
           icon={<CustomerServiceOutlined />}
-          tooltip={<div>Chăm sóc khách hàng</div>} 
-        >
-          <FloatButton icon={<FacebookOutlined />} href="https://www.facebook.com/didonggenz" tooltip={<div>Facebook</div>}/>
-          <FloatButton icon={<InstagramOutlined />} tooltip={<div>Instagram</div>}/>
-          <FloatButton icon={<GithubOutlined />} href="https://github.com/nguyenduynguyen06/TieuLuanChuyenNganh" tooltip={<div>Github</div>}/>
-
+          tooltip={<div>Chăm sóc khách hàng</div>}>
+          <FloatButton icon={<FacebookOutlined />} href="https://www.facebook.com/didonggenz" tooltip={<div>Facebook</div>} />
+          <FloatButton icon={<InstagramOutlined />} tooltip={<div>Instagram</div>} />
+          <FloatButton icon={<GithubOutlined />} href="https://github.com/nguyenduynguyen06/TieuLuanChuyenNganh" tooltip={<div>Github</div>} />
         </FloatButton.Group>
-        <FloatButton.BackTop           
+        <FloatButton.BackTop
           style={{
             right: 24,
-          }}
- />
-      </WrapperHeader>
-
-
-
+          }} />
+      </div>
       <MDBModal tabIndex='-1' show={centredModal} setShow={setCentredModal}>
         <MDBModalDialog centered>
           <MDBModalContent>
