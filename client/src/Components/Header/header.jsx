@@ -118,7 +118,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const [data, setData] = useState(null);
   return (
     <WrapperSuperHeader >
-      <div className="header-container" style={isScrolled ? { position: 'sticky', zIndex:10 } : {}}>
+      <div className="header-container" >
         <div className="first-com">
           <NavLink to={`/`} className="ant-image" >
             <img className="logo" src="../../image/didong1.png" alt="blink" />
@@ -170,7 +170,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
               <div>
                 <Dropdown overlay={menu} placement="bottomLeft" style={{ width: '50px', height: '50px', cursor: 'pointer' }} >
                   <div className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                    <UserOutlined style={{ fontSize: '30px' }} /> Xin chào, {user.fullName}
+                    <UserOutlined  style={{ fontSize: '20px' }} /> Xin chào, {user.fullName}
                   </div>
                 </Dropdown>
               </div>
@@ -209,7 +209,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             right: 24,
           }} />
       </div>
-      <MDBModal tabIndex='-1' show={centredModal} setShow={setCentredModal}>
+      <MDBModal tabIndex='-1' show={centredModal} setShow={setCentredModal} >
         <MDBModalDialog centered>
           <MDBModalContent>
             <MDBModalHeader>
