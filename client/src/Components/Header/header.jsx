@@ -127,7 +127,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         <div className="second-com">
           <div className="search-box" >
             {!isHiddenSearch && (
-              <div style={{ width: `100%` }}>
+              <div style={{ width: `100%`, display: 'flex', flexDirection: 'column' }}>
                 <Search
                   placeholder="Tìm Kiếm"
                   onSearch={(value) => {
@@ -149,7 +149,11 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                     setSearchKeyword(newSearchKeyword);
                   }}
                   allowClear />
-                <SuggestCard searchKeyword={searchKeyword} />
+                <SuggestCard searchKeyword={searchKeyword} width={100} />
+                <div className="link-sp"> 
+                  <a href="#" style={{ color: '#fff' }}>Tra cứu bảo hành</a>
+                  <a href="#" style={{ color: '#fff' }}>Chính sách bảo hành</a>
+                </div>
               </div>
             )}
           </div>
@@ -170,7 +174,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
               <div>
                 <Dropdown overlay={menu} placement="bottomLeft" style={{ width: '50px', height: '50px', cursor: 'pointer' }} >
                   <div className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                    <UserOutlined  style={{ fontSize: '20px' }} /> Xin chào, {user.fullName}
+                    <UserOutlined style={{ fontSize: '20px' }} /> Xin chào, {user.fullName}
                   </div>
                 </Dropdown>
               </div>

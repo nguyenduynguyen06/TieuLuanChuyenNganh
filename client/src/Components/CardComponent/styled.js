@@ -378,19 +378,16 @@ export const WrapperCard = styled.div`
   }
 `
 export const WrapperSuggestCard = styled.div`
-
 .view-list{
   background-color: #fff;
   border: 1px solid rgba(145,158,171,.239);
   border-radius: 10px;
   padding: 5px 15px 0;
-  width: 100%;
+  width: 50%;
   height: 400px; 
   overflow-y: auto; 
-  text-align: justify; 
   position: absolute; 
   z-index:1; 
-  max-width: 440px;
 }
 .view-list__wrapper{
   display: flex;

@@ -61,7 +61,7 @@ width: 100%;
     cursor: pointer;
   }
   .search-box{
-    width: 100%;
+    width: 70%;
     display: flex;
     align-items:center;
     justify-content: center;
@@ -78,6 +78,10 @@ width: 100%;
     display: flex;
     align-items:center;
     justify-content: center;
+  }
+  .link-sp{
+    display: flex;
+    gap: 10px;
   }
   @media screen and (max-width: 500px) {
     .header-container{
@@ -99,6 +103,10 @@ width: 100%;
     .header-acc{
       justify-content: space-between;
     }
+    .search-box{
+      width: 100%;
+    }
+  
     .logo{
       width: 40%;
       height: auto;
@@ -108,6 +116,10 @@ width: 100%;
     }
     .header-acc{
       justify-content: right;
+    }
+    .link-sp{
+      justify-content: space-between;
+      gap: 0;
     }
   }
 
