@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import html2pdf from "html2pdf.js";
 import { WrapperInvoice } from "./style";
-
-const Invoice = ({ order, }) => {
+import moment from 'moment';
+import 'moment/locale/vi';
+const Invoice = ({ order }) => {
   const tableCellStyle = {
     border: '1px solid #ddd', // You can adjust the color and thickness of the border
     padding: '8px', // Adjust the padding as needed
@@ -28,7 +29,7 @@ const Invoice = ({ order, }) => {
         <div className="body-inf">
           <span>Mã Đơn Hàng: {order.orderCode}</span>
           <span>Khách Hàng: {order.userName}</span>
-          <span>Ngày In Hóa Đơn: 01/09/2002</span>
+          <span>Ngày In Hóa Đơn: {moment().format('DD/MM/YYYY')}</span>
         </div>
         <div>
           <table style={{ fontSize: '15px', width: '100%', borderCollapse: 'collapse' }}>
@@ -63,6 +64,18 @@ const Invoice = ({ order, }) => {
                   </td>
                 </tr>
               ))}
+              <tr>
+              <td colSpan="4" style={{ textAlign: 'right', fontWeight: 'bold' }}>
+                Áp dụng giảm giá: {order?.voucher?.discount ? `${order.voucher.discount * 100} %` : '0'}
+              </td>
+              <td  style={{ textAlign: 'right', fontWeight: 'bold' }}>Tổng tiền:</td>
+              <td style={tableCellStyle}>
+                {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(order.totalPay)}
+              </td>
+          </tr>
             </tbody>
           </table>
         </div>
