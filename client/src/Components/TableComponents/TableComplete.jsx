@@ -4,9 +4,47 @@ import axios from "axios";
 import 'react-quill/dist/quill.snow.css';
 import { AppstoreOutlined,DeleteOutlined } from '@ant-design/icons';
 import './button.css'
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 import Search from "antd/es/input/Search";
+import { useSelector } from "react-redux";
+
+import html2canvas from "html2canvas";
+import Invoice from "./Invoice";
 
 const TableComplete = () => {
+  const handlePrintPDF = (order) => {
+    try {
+      // Tạo một instance mới của jsPDF
+      const pdfDoc = new jsPDF({
+        orientation: 'portrait', // hoặc 'landscape'
+        unit: 'mm',
+        format: 'a4',
+      });
+   
+      pdfDoc.setFont('Arial Unicode MS');
+      const invoiceContent = document.getElementById('invoiceContent');
+
+
+      pdfDoc.html(invoiceContent, {
+        callback: () => {
+          pdfDoc.setFont('Roboto');
+          pdfDoc.save(`order_invoice_${order.orderCode}.pdf`);
+          message.success('Đã tạo file PDF thành công');
+          
+        },
+        html2canvas: {
+          scale: 0.45,
+          letterRendering: true,
+        },
+      });
+    } catch (error) {
+      console.error('Error while generating PDF:', error);
+      message.error('Đã xảy ra lỗi khi tạo file PDF', error);
+    }
+  };
+  
+  
     const columns = [
       {
         title: 'Mã đơn hàng',
@@ -183,8 +221,24 @@ const TableComplete = () => {
             </Modal>
           </Space>
         ),
+      },
+      {
+        title: 'Thao tác',
+        dataIndex: 'actions',
+        render: (text, record) => (
+          <Space size="middle">
+             <div id="invoiceContent">
+        <Invoice order={record} />
+      </div>
+            <Button onClick={() => handlePrintPDF(record)} type="primary">In PDF</Button>
+          </Space>
+        ),
       },   
     ];
+    const user = useSelector((state)=> state.user)
+    const headers = {
+      token: `Bearers ${user.access_token}`,
+  };
     const [currrentProductOrder, setCurrrentProduct] = useState(null); 
     const [change, setChange] = useState(false); 
     const [orderDataAtStore, setOrderAtStore] = useState([]); 
@@ -198,7 +252,7 @@ const TableComplete = () => {
     const handleChangeProduct = async (id,orderId) => {
       try {
         const response = await axios.put(
-          `${process.env.REACT_APP_API_URL}/order/changeProduct?id=${id}&orderId=${orderId}`,null
+          `${process.env.REACT_APP_API_URL}/order/changeProduct?id=${id}&orderId=${orderId}`,null,{headers}
         );
         if (response.data.success) {
           axios

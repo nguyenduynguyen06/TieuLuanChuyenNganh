@@ -386,7 +386,7 @@ const ProductDetailComponents = () => {
                                                 ))}
                                             </div>
                                             <WrapperStyleTextSell>
-                                                <p>SKU {selectedSKU[variant._id]}</p>
+                                                <p>SKU: {selectedSKU[variant._id]}</p>
                                                 <p>Đã bán: {selectedSold[variant._id]}</p>
                                                 <p>Số lượng còn lại: {selectedQuantity[variant._id]}</p>
                                             </WrapperStyleTextSell>

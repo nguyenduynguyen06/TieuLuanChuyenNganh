@@ -74,7 +74,7 @@ const PaymentInfo = () => {
                 amount: totalVoucher || total,
                 language: '',
                 bankCode: '',
-                orderinfo: `${user1.email} thanh toán, mã hoá đơn là: `
+                orderinfo: `${user1.fullName} thanh toán, mã hoá đơn là: `
             };
             axios.post(`${process.env.REACT_APP_API_URL}/VNPAY/create_payment_url`, paymentData)
                 .then(response => {
@@ -117,7 +117,7 @@ const PaymentInfo = () => {
             label: 'Chi nhánh 1, Số 1 Võ Văn Ngân, Phường Linh Chiểu, Thành phố Thủ Đức, Thành phố Hồ Chí Minh',
         },
         {
-            value: 'Chi nhánh 2',
+            value: 'Chi nhánh 2,Hà Nội',
             label: 'Hà Nội',
         },
     ];
