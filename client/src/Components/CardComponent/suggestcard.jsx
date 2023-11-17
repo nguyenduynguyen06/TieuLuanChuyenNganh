@@ -3,10 +3,11 @@ import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 import { WrapperSuggestCard } from './styled';
 import { Rate } from 'antd';
+import Loading from '../LoadingComponents/Loading';
 
 function SuggestCard({ searchKeyword }) {
   const [searchedProducts, setSearchedProducts] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     if (searchKeyword) {
       getCategoryByName(searchKeyword);
@@ -20,8 +21,10 @@ function SuggestCard({ searchKeyword }) {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${keyword}`);
       const productsData = response.data.data;
       setSearchedProducts(productsData);
+      setLoading(false);
     } catch (error) {
       console.error('Lỗi:', error);
+      setLoading(false);
     }
   };
   const handleNavLinkClick = () => {
@@ -41,6 +44,7 @@ function SuggestCard({ searchKeyword }) {
   }
   return (
     <WrapperSuggestCard>
+      <Loading isLoading={loading}>
       <div className='view-list'>
         {searchedProducts.map((product) => (
           product.variant.map((variant) => (
@@ -78,6 +82,7 @@ function SuggestCard({ searchKeyword }) {
           ))
         ))}
       </div>
+      </Loading>
     </WrapperSuggestCard>
   );
 }

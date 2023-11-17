@@ -39,6 +39,7 @@ const Invoice = ({ order }) => {
                 <th style={tableCellStyle}>Bộ nhớ</th>
                 <th style={tableCellStyle}>Màu</th>
                 <th style={tableCellStyle}>Số lượng</th>
+                <th style={tableCellStyle}>Bảo hành</th>
                 <th style={tableCellStyle}>Đơn giá</th>
                 <th style={tableCellStyle}>Thành tiền</th>
               </tr>
@@ -50,6 +51,7 @@ const Invoice = ({ order }) => {
                   <td style={tableCellStyle}>{item.memory}</td>
                   <td style={tableCellStyle}>{item.color}</td>
                   <td style={tableCellStyle}>{item.quantity}</td>
+                  <td style={tableCellStyle}>{item.product.warrantyPeriod} tháng</td>
                   <td style={tableCellStyle}>
                     {new Intl.NumberFormat("vi-VN", {
                       style: "currency",

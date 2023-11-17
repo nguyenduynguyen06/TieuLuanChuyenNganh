@@ -7,6 +7,7 @@ import CartTotal from './CartTotal';
 import { Hidden } from '@mui/material';
 import { Link } from "react-router-dom"; // Thêm import Link
 import { WrapperPhoneCart } from './style';
+import Loading from '../LoadingComponents/Loading';
 
 function CartList() {
   const user = useSelector((state) => state.user)
@@ -14,6 +15,7 @@ function CartList() {
   const [currentCartId, setCurrentCartId] = useState(null);
   const [total, setTotal] = useState(0);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -124,6 +126,7 @@ function CartList() {
               const cartData = response.data.data;
               setData(cartData);
               updateTotalPrice(cartData);
+              setLoading(false);
             })
             .catch((error) => {
               console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
@@ -144,6 +147,7 @@ function CartList() {
           setQuantities(initialQuantities);
           const totalPrice = calculateTotalPrice(cartData);
           setTotal(totalPrice);
+          setLoading(false);
         })
         .catch((error) => {
           console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
@@ -251,6 +255,7 @@ function CartList() {
       // Render mobile content
       return (
         <>
+        <Loading isLoading={loading}>
         {data && data.map((item,index) => (
           <WrapperPhoneCart>
             <div className='img-col'>
@@ -315,11 +320,12 @@ function CartList() {
               <Button size='large' style={{ background: '#8c52ff', color: '#fff' }} disabled={isCartEmpty} >Mua hàng</Button>
             </Link>
           </div>
+          </Loading>
         </>
       );
     } else {
-      // Render table and other content
       return (
+        <Loading isLoading={loading}>
         <>
           <Table
             columns={tableColumns}
@@ -342,6 +348,7 @@ function CartList() {
             </div>
           </div>
         </>
+        </Loading>
       );
     }
   };

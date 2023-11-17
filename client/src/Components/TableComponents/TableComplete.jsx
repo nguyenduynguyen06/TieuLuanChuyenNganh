@@ -222,7 +222,7 @@ const TableComplete = () => {
           <Space size="middle">
               <a
               onClick={() => {
-            
+                setInvoice(record)
                 setInvoiceModalVisible(true);
               }}
             >
@@ -235,10 +235,10 @@ const TableComplete = () => {
                 width = {840}
                 >
               <div id="invoiceContent">
-              <Invoice order={record} style={{ width: '100%' }} />
+              <Invoice order={invoice} style={{ width: '100%' }} />
               </div>
               <Button
-                onClick={() => handlePrintPDF(record)}
+                onClick={() => handlePrintPDF(invoice)}
                 type="primary"
                 style={{ width: '100%', marginTop: '10px' }}
                 loading={isPrinting} 
@@ -262,6 +262,7 @@ const TableComplete = () => {
     const [orderDataAtShipping, setOrderShipping] = useState([]);
     const [displayOrdersAtStore, setDisplayOrdersAtStore] = useState(true);
     const [orderModalVisible, setOrderModalVisible] = useState(false);
+    const [invoice, setInvoice] = useState(null);
     const [invoiceModalVisible, setInvoiceModalVisible] = useState(false);
     const [selectProductOrder, setProductOrder] = useState(null);
  

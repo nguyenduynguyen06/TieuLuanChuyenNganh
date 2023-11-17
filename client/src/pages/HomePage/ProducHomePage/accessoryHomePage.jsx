@@ -3,11 +3,12 @@ import { WrapperButtonMore, WrapperCard } from '../styled';
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
 import { Rate } from 'antd';
+import Loading from '../../../Components/LoadingComponents/Loading';
 
 function AccessoryHomePage() {
   const [products, setProducts] = useState([]);
   const [cardsToShow, setCardsToShow] = useState(6);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getCategoryByName();
   }, []);
@@ -25,8 +26,10 @@ function AccessoryHomePage() {
       const productsData = await Promise.all(productPromises);
       const allProducts = productsData.flatMap((response) => response.data.data);
       setProducts(allProducts);
+      setLoading(false);
     } catch (error) {
       console.error('Lỗi:', error);
+      setLoading(false);
     }
   };
 
@@ -70,6 +73,7 @@ function AccessoryHomePage() {
   return (
     <WrapperCard>
       <img className='imgtt' src="..\..\image\banneracc.png" style={{ width: '100%' }} alt='title'></img>
+      <Loading isLoading={loading}>
       <div className='mainContainerAcc' style={{ alignItems: 'center', justifyContent: 'center' }}>
         {products.filter((product) => product.isHide === false).slice(0, cardsToShow).map((product) => (
           <div className='box' key={product._id}>
@@ -116,6 +120,7 @@ function AccessoryHomePage() {
             }}          >
           </WrapperButtonMore>
         </div>)}
+        </Loading>
     </WrapperCard>
   );
 }

@@ -5,12 +5,12 @@ import { WrapperButtonMore, WrapperCard } from '../styled';
 import { Button, FloatButton, Rate } from 'antd';
 import { Link, NavLink } from 'react-router-dom';
 import { CustomerServiceOutlined } from '@ant-design/icons';
-
+import Loading from '../../../Components/LoadingComponents/Loading'
 function ProductHomePage() {
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
   const [cardsToShow, setCardsToShow] = useState(6);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -32,8 +32,10 @@ function ProductHomePage() {
         });
 
         setSelectedMemories(initialMemories);
+        setLoading(false);
       } catch (error) {
         console.error('Lỗi:', error);
+        setLoading(false);
       }
     };
     fetchData();
@@ -81,6 +83,7 @@ function ProductHomePage() {
   return (
     <WrapperCard>
       <img className='imgtt' src="..\..\image\bannerpd.jpg" style={{ width: '100%' }} alt='title'></img>
+      <Loading isLoading={loading}>
       <div className='mainContainer' style={{ alignItems: 'center', justifyContent: 'center' }}>
         {products
           .filter((product) => product.isHide === false)
@@ -148,6 +151,7 @@ function ProductHomePage() {
           </WrapperButtonMore>
         </div>
       )}
+       </Loading>
     </WrapperCard>
   );
 }
