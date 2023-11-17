@@ -153,7 +153,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                   <SuggestCard searchKeyword={searchKeyword} />
                   </div>
                 <div className="link-sp"> 
-                  <a href="#" style={{ color: '#fff' }}>Tra cứu bảo hành</a>
+                  <a href="/warranty" style={{ color: '#fff' }}>Tra cứu bảo hành</a>
                   <a href="#" style={{ color: '#fff' }}>Chính sách bảo hành</a>
                 </div>
               </div>
