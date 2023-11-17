@@ -442,7 +442,6 @@ const getOrdersByUserId = async (req, res) => {
     const orders = await Order.find({ user: userId, status: status}).populate('items.product items.productVariant').populate('voucher');
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng của người dùng:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
@@ -461,7 +460,6 @@ const getOrdersDetails = async (req, res) => {
 
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng của người dùng:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
