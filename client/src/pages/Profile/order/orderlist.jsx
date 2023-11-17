@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { WrapperList } from './style';
+import Loading from '../../../Components/LoadingComponents/Loading';
 
 const OrderList = ({ status }) => {
   const user = useSelector((state) => state.user)
@@ -18,18 +19,23 @@ const OrderList = ({ status }) => {
   const startItem = (currentPage - 1) * itemsPerPage;
   const endItem = currentPage * itemsPerPage;
 
-
+  const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
   const [completeOrder, setCompleteOrder] = useState(false);
   const [currentComplete, setCurrentComplete] = useState(null);
   useEffect(() => {
+    setLoading(true);
     axios
       .get(`${process.env.REACT_APP_API_URL}/order/user/${user._id}?status=${status}`)
       .then((response) => {
-        setOrders(response.data.data);
+     
+          setOrders(response.data.data);
+          setLoading(false);
+      
       })
       .catch((error) => {
         console.error('Lỗi khi gọi API: ', error);
+        setLoading(false);
       });
   }, [user,status]);
   const handleCompleteOrder = async (orderId) => {
@@ -54,6 +60,7 @@ const OrderList = ({ status }) => {
   };
   return (
     <WrapperList>
+      <Loading isLoading={loading}>
       {orders.length === 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px' }}>
           <img src='https://res.cloudinary.com/doq4spvys/image/upload/v1698910439/zquwpxhn3lbxhul7qj0c.png' width={'200px'} height={'200px'}></img>
@@ -143,6 +150,7 @@ const OrderList = ({ status }) => {
           </div>
         ))
       )}
+        </Loading>
       <div className="pagination">
         <Pagination
           current={currentPage}
