@@ -1,8 +1,11 @@
 import { Button, Input, Radio, Space } from 'antd'
 import React, { useState } from 'react'
 import { WrapperWarranty } from './style';
+import Loading from '../LoadingComponents/Loading';
 
 const WarrantySearch = () => {
+    const [loading, setLoading] = useState(true);
+
     const [value, setValue] = useState(1);
     const onChange = (e) => {
         console.log('radio checked', e.target.value);
@@ -16,6 +19,7 @@ const WarrantySearch = () => {
 
 
     return (
+        <Loading isLoading={loading}>
         <WrapperWarranty>
             <div className='title'>
                 <p>Tra cứu thông tin bảo hành</p>
@@ -55,6 +59,7 @@ const WarrantySearch = () => {
                 </table>
             </div>
         </WrapperWarranty>
+        </Loading>
     )
 }
 export default WarrantySearch
