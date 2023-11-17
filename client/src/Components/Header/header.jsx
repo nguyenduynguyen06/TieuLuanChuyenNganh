@@ -149,7 +149,9 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                     setSearchKeyword(newSearchKeyword);
                   }}
                   allowClear />
-                <SuggestCard searchKeyword={searchKeyword} width={100} />
+                   <div style={{ width: `190%`, display: 'flex', flexDirection: 'column' }}>
+                  <SuggestCard searchKeyword={searchKeyword} />
+                  </div>
                 <div className="link-sp"> 
                   <a href="#" style={{ color: '#fff' }}>Tra cứu bảo hành</a>
                   <a href="#" style={{ color: '#fff' }}>Chính sách bảo hành</a>
