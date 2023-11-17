@@ -67,7 +67,7 @@ const Invoice = ({ order }) => {
                 </tr>
               ))}
               <tr>
-              <td colSpan="4" style={{ textAlign: 'right', fontWeight: 'bold' }}>
+              <td colSpan="5" style={{ textAlign: 'right', fontWeight: 'bold' }}>
                 Áp dụng giảm giá: {order?.voucher?.discount ? `${order.voucher.discount * 100} %` : '0'}
               </td>
               <td  style={{ textAlign: 'right', fontWeight: 'bold' }}>Tổng tiền:</td>
