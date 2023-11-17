@@ -31,7 +31,7 @@ const OrderList = ({ status }) => {
       .catch((error) => {
         console.error('Lỗi khi gọi API: ', error);
       });
-  }, [status]);
+  }, [user,status]);
   const handleCompleteOrder = async (orderId) => {
     try {
       const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/completeOrderUser/${orderId}?userId=${user._id}`);
