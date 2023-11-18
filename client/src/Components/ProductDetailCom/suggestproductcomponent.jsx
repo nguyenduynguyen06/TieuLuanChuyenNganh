@@ -5,9 +5,10 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { RightCircleFilled, LeftCircleFilled } from '@ant-design/icons'
 
-function SuggestProduct() {
+function SuggestProduct({suggested}) {
     const [products, setProducts] = useState([]);
     const [visibleProducts, setVisibleProducts] = useState();
+    
     const CustomPrevArrow = (props) => (
         <div {...props} className="custom-prev-arrow" style={{ ...arrowStyleprev, left: 0 }}>
             <LeftCircleFilled style={{ fontSize: '30px' }} />
@@ -37,49 +38,37 @@ function SuggestProduct() {
     if (window.innerWidth <= 500) {
         arrowStyle.transform = 'translateX(-150%)';
     }
-
+  
     const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 6, // Hiển thị 5 sản phẩm trên mỗi slide
-        slidesToScroll: 6, // Trượt qua 5 sản phẩm khi bấm "Next"
-        prevArrow: <CustomPrevArrow />, // Thêm nút "prev" tùy chỉnh
-        nextArrow: <CustomNextArrow />, // Thêm nút "next" tùy chỉnh
-        responsive: [
-            {
-                breakpoint: 500, // Adjust this breakpoint as needed
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 2,
-                },
-            },
-        ],
+      dots: true,
+      infinite: false,
+      speed: 500,
+      slidesToShow: 1,
+      slidesToScroll: 6, // Trượt qua 5 sản phẩm khi bấm "Next"
+      prevArrow: <CustomPrevArrow />, // Thêm nút "prev" tùy chỉnh
+      nextArrow: <CustomNextArrow />, // Thêm nút "next" tùy chỉnh
+      responsive: [
+        {
+          breakpoint: 500, // Adjust this breakpoint as needed
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 2,
+          },
+        },
+      ],
     };
 
 
     useEffect(() => {
-        getCategoryByName();
-    }, []);
-    const getCategoryByName = async () => {
-        try {
-            const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
-            const allCategories = res.data.data;
-            const phoneCategory = allCategories.find((cat) => cat.name === 'Điện thoại');
-            const phoneCategoryId = phoneCategory ? phoneCategory._id : null;
-            const otherCategories = allCategories.filter((cat) => cat._id !== phoneCategoryId);
-            const productPromises = otherCategories.map((category) => {
-                return axios.get(`${process.env.REACT_APP_API_URL}/product/getIdByCategory/${category._id}`);
-            });
-            const productsData = await Promise.all(productPromises);
-            const allProducts = productsData.flatMap((response) => response.data.data);
-            setProducts(allProducts);
-        } catch (error) {
-            console.error('Lỗi:', error);
-        }
-    };
+            axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${suggested}`)
+            .then((response) => {
+                setProducts(response.data.data)}
+            ).catch((response)=> {
+                console.log(response.err)
+            })
+    }, [suggested]);
     const handleCardClick = (product) => {
-        const url = `/product/${product.name}/undefined`;
+        const url = `/product/${product.name}/undefined`
         window.location.href = url;
     };
 
@@ -94,29 +83,33 @@ function SuggestProduct() {
                 <p >Sản phẩm gợi ý</p>
             </TitleWrapper>
             <WrapperSlider {...settings}>
-                {products.filter((product) => product.isHide === false).slice(0, visibleProducts).map((product) => (
-                    <div className='box' key={product._id}>
-                        <div className='card' onClick={() => handleCardClick(product)} style={{ cursor: 'pointer' }}>
-                            <div className='image' onClick={() => handleCardClick(product)} style={{ display: 'flex', justifyContent: 'center' }}>
-                                <img src={product.thumnails[0]} />
-                            </div>
-                            <div className='desc'>
-                                <h1>{product?.name}</h1>
-                                <div>
-                                    <div style={{ margin: 0 }}>
-                                        <p style={{ fontWeight: 700, height: '20px' }}>
-                                            {product?.variant[0]?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
-                                    </div>
-                                    <div style={{}}>
-                                        <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant[0]?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
-                                    </div>
-                                </div>
-                            </div>
+            {products
+                .filter((product) => product.isHide === false && !product.variant.some((v) => v.memory))
+                .map((product) => (
+                <div className='box' key={product._id}>
+                    <div className='card' onClick={() => handleCardClick(product)} style={{ cursor: 'pointer' }}>
+                    <div className='image' onClick={() => handleCardClick(product)} style={{ display: 'flex', justifyContent: 'center' }}>
+                        <img src={product.thumnails[0]} alt={product.name} />
+                    </div>
+                    <div className='desc'>
+                        <h1>{product?.name}</h1>
+                        <div>
+                        <div style={{ margin: 0 }}>
+                            <p style={{ fontWeight: 700, height: '20px' }}>
+                            {product?.variant[0]?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                            </p>
+                        </div>
+                        <div style={{}}>
+                            <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>
+                            {product?.variant[0]?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                            </p>
+                        </div>
                         </div>
                     </div>
+                    </div>
+                </div>
                 ))}
             </WrapperSlider>
-
         </div>
     );
 }
