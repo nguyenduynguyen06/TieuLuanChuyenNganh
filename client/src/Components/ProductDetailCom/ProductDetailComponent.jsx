@@ -549,8 +549,9 @@ const ProductDetailComponents = () => {
             </Row>
             <hr className="my-4" />
             {productDetails && memory !== "undefined" && (
+
                 <Row>
-                    <SuggestProduct suggested={productDetails.name.replace(/\s*\d+([GgBb]{1,2})?\s*$/, '')}/>
+                    <SuggestProduct suggested={productDetails.name.split(' ').slice(0, 2).join(' ')}/>
                 </Row>
             )}
             <hr className="my-4" />
