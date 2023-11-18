@@ -76,11 +76,11 @@ function AccessoryHomePage() {
       <Loading isLoading={loading}>
       <div className='mainContainerAcc' style={{ alignItems: 'center', justifyContent: 'center' }}>
         {products.filter((product) => product.isHide === false).slice(0, cardsToShow).map((product) => (
-          <div className='box' key={product._id}>
+          <NavLink className='box' key={product._id} to={`/product/${product.name}/undefined`}>
             <div className='card' >
-              <NavLink className="image" to={`/product/${product.name}/undefined`}>
+              <div className="image">
                 <img src={product.thumnails[0]} />
-              </NavLink>
+              </div>
               <div className='desc' >
                 <div style={{ height: '3em' }}>
                   <h1 style={{ padding: 3 }}>{product?.name}</h1>
@@ -104,7 +104,7 @@ function AccessoryHomePage() {
                 </div>
               </div>
             </div>
-          </div>
+          </NavLink>
         ))}
       </div>
       {hasMoreProducts && (

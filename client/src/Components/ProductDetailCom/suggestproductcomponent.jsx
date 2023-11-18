@@ -7,7 +7,7 @@ import { RightCircleFilled, LeftCircleFilled } from '@ant-design/icons'
 
 function SuggestProduct({ suggested }) {
     const [products, setProducts] = useState([]);
-    const [visibleProducts, setVisibleProducts] = useState();
+   
 
     const CustomPrevArrow = (props) => (
         <div {...props} className="custom-prev-arrow" style={{ ...arrowStyleprev, left: 0 }}>
@@ -79,41 +79,43 @@ function SuggestProduct({ suggested }) {
 
 
     return (
-        <div style={{width:'100%'}}>
-            <TitleWrapper>
-                <p >Sản phẩm gợi ý</p>
-            </TitleWrapper>
-            <WrapperSlider {...settings}>
+      <div style={{ width: '100%' }}>
+      {products.some((product) => product.isHide === false && !product.variant.some((v) => v.memory)) && (
+        <>
+          <TitleWrapper>
+            <p>Sản phẩm gợi ý</p>
+          </TitleWrapper>
+          <WrapperSlider {...settings}>
             {products
-        .filter((product) => product.isHide === false)
-        .flatMap((product) =>
-          product.variant.map((variant) => (
-            <div className='box' key={`${product._id}-${variant.memory}`}>
-              <div className='card' onClick={() => handleCardClick(product)} style={{ cursor: 'pointer' }}>
-                <div className='image' onClick={() => handleCardClick(product)} style={{ display: 'flex', justifyContent: 'center' }}>
-                  <img src={product.thumnails[0]} alt={product.name} />
-                </div>
-                <div className='desc'>
-                  <h1>{product?.name} - {variant.memory}</h1>
-                  <div>
-                    <div style={{ margin: 0 }}>
-                      <p style={{ fontWeight: 700, height: '20px' }}>
-                        {variant.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                      </p>
+              .filter((product) => product.isHide === false && !product.variant.some((v) => v.memory))
+              .map((product) => (
+                <div className='box' key={product._id}>
+                  <div className='card' onClick={() => handleCardClick(product)} style={{ cursor: 'pointer' }}>
+                    <div className='image' onClick={() => handleCardClick(product)} style={{ display: 'flex', justifyContent: 'center' }}>
+                      <img src={product.thumnails[0]} alt={product.name} />
                     </div>
-                    <div style={{}}>
-                      <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>
-                        {variant.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                      </p>
+                    <div className='desc'>
+                      <h1>{product?.name}</h1>
+                      <div>
+                        <div style={{ margin: 0 }}>
+                          <p style={{ fontWeight: 700, height: '20px' }}>
+                            {product?.variant[0]?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                          </p>
+                        </div>
+                        <div style={{}}>
+                          <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>
+                            {product?.variant[0]?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          ))
-        )}
-            </WrapperSlider>
-        </div>
+              ))}
+          </WrapperSlider>
+        </>
+      )}
+    </div>    
     );
 }
 
