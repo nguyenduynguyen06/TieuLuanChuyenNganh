@@ -57,8 +57,6 @@ function SuggestProduct({ suggested }) {
             },
         ],
     };
-
-
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${suggested}`)
             .then((response) => {

@@ -43,6 +43,15 @@ const ProductDetailComponents = () => {
     const [selectedMemories, setSelectedMemories] = useState({});
     const [selectedSKU, setSelectedSKU] = useState({});
     const [selectedQuantity, setSelectedQuantity] = useState({});
+    const [expanded, setExpanded] = useState(false);
+
+    const toggleExpand = () => {
+        setExpanded(!expanded);
+    };
+    const collapse = () => {
+        setExpanded(false);
+    };
+
     const sliderSettings = {
         dots: true,
         infinite: true,
@@ -182,21 +191,21 @@ const ProductDetailComponents = () => {
                 if (selectedVariant) {
                     const selectedSKUName = selectedSKU[selectedVariant._id];
                     await addToCart(user._id, productName, selectedSKUName, quantity);
-                    message.success('Thêm vào giỏ hàng thành công', 1); 
-                 
-                   
-                        window.location.href = '/cart';
-                 
+                    message.success('Thêm vào giỏ hàng thành công', 1);
+
+
+                    window.location.href = '/cart';
+
                 }
             } else {
                 const selectValues = Object.values(selectedSKU);
                 const selectedColorName = selectValues[selectValues.length - 1];
                 await addToCart(user._id, productName, selectedColorName, quantity);
-                message.success('Thêm vào giỏ hàng thành công', 1); 
-                
-              
-                    window.location.href = '/cart';
-              
+                message.success('Thêm vào giỏ hàng thành công', 1);
+
+
+                window.location.href = '/cart';
+
             }
         } catch (error) {
             console.error('Lỗi:', error);
@@ -251,8 +260,8 @@ const ProductDetailComponents = () => {
     };
     return (
         <WrapperDetail>
-            <div style={{background:'#fff', padding: '10px'}}>
-                <button style={{ border: 'none', background: 'transparent'}} onClick={goBack}>
+            <div style={{ background: '#fff', padding: '10px' }}>
+                <button style={{ border: 'none', background: 'transparent' }} onClick={goBack}>
                     <ArrowLeftOutlined /> Quay lại
                 </button>
             </div>
@@ -519,12 +528,43 @@ const ProductDetailComponents = () => {
             <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
                 <Col className="des-col">
                     <h3>Mô tả sản phẩm</h3>
-                    <div style={{ height: '600px', overflowY: 'scroll', textAlign: 'justify' }}>
+                    <div
+                        style={{
+                            height: expanded ? 'auto' : '600px',
+                            overflowY: 'hidden',
+                            textAlign: 'justify',
+                            position: 'relative',
+                        }}
+                    >
                         {productDetails ? (
                             <ProductDescription description={productDetails.desc} />
                         ) : (
                             <p>Loading...</p>
                         )}
+
+                        <div
+                            style={{
+                                position:'absolute',
+                                bottom: 0,
+                                left: 0,
+                                width: '100%',
+                                background: 'linear-gradient(to bottom, transparent, white)',
+                                padding: '30px 10px 0px',
+                                boxSizing: 'border-box',
+                                display:'flex',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            {!expanded ? (
+                                <Button onClick={toggleExpand} style={{width: '200px',textTransform: 'uppercase', cursor: 'pointer' }}>
+                                    Xem thêm
+                                </Button>
+                            ) : (
+                                <Button onClick={collapse} style={{width: '200px',textTransform: 'uppercase', cursor: 'pointer' }}>
+                                    Thu gọn
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </Col>
                 <Col className="prop-col" >
@@ -550,7 +590,7 @@ const ProductDetailComponents = () => {
             <hr className="my-4" />
             {productDetails && memory !== "undefined" && (
                 <Row>
-                    <SuggestProduct suggested={productDetails.name.replace(/\s*\d+([GgBb]{1,2})?\s*$/, '')}/>
+                    <SuggestProduct suggested={productDetails.name.replace(/\s*\d+([GgBb]{1,2})?\s*$/, '')} />
                 </Row>
             )}
             <hr className="my-4" />
