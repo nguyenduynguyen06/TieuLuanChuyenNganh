@@ -122,6 +122,7 @@ onChange(info) {
                 src={imageUrl}
                 alt={`Thumbnail ${index}`}
                 style={{ maxWidth: "100px", maxHeight: "100px" }}
+                loading="lazy"
               />
           ))}
         </div>
