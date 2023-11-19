@@ -515,37 +515,49 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     }
   };
   const updateProductVariant = async (variantId, newData) => {
-    axios.put( `${process.env.REACT_APP_API_URL}/product/editProductVariant/${variantId}`,
-    newData,{ headers })
-      .then((response) => {
-        axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`)
-      .then((response) => {
-        setProductData(response.data.data);
-      })
-      message.success('Sửa biến thể thành công')
-      form.resetFields();
-        setUpdate(false);
-      })
-      .catch((error) => {
-        console.error("Lỗi khi cập nhật biến thể: ", error);
+    try {
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}/product/editProductVariant/${variantId}`, newData, { headers });
+      const updatedVariant = response.data.data;
+  
+      setProductData(prevProductData => {
+        const updatedProductData = prevProductData.map(product => {
+          const updatedVariants = product.variant.map(variant => (variant._id === updatedVariant._id ? updatedVariant : variant));
+          return { ...product, variant: updatedVariants };
+        });
+  
+        return updatedProductData;
       });
+  
+      message.success('Sửa biến thể thành công');
+      form.resetFields();
+      setUpdate(false);
+    } catch (error) {
+      console.error("Lỗi khi cập nhật biến thể: ", error);
+    }
   };
+  
+  
+  
   const handleSaveEdit = (id, values) => {
     const productId = id;
-    axios.put(`${process.env.REACT_APP_API_URL}/product/editProduct/${productId}`, values,{ headers })
+    axios.put(`${process.env.REACT_APP_API_URL}/product/editProduct/${productId}`, values, { headers })
       .then((response) => {
-        axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`)
-      .then((response) => {
-        setProductData(response.data.data);
-      })
-      message.success('Sửa sản phẩm thành công')
-      form.resetFields();
+        const updatedProduct = response.data.data;
+  
+        setProductData(prevData => {
+          return prevData.map(product => (product.id === updatedProduct.id ? updatedProduct : product));
+        });
+  
+        message.success('Sửa sản phẩm thành công');
+        form.resetFields();
         setUpdate(false);
       })
       .catch((error) => {
         console.error("Lỗi khi cập nhật sản phẩm: ", error);
       });
   };
+  
+  
   
   const handleDeleteProduct = (productId) => {
     axios
@@ -652,10 +664,24 @@ const [selectedVariant, setSelectedVariant] = useState(null);
           }),
         };
         setSelectedProduct(updatedSelectedProduct);
-        axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`)
-      .then((response) => {
-        setProductData(response.data.data);
-      })
+        setProductData((prevData) => {
+          const updatedData = prevData.map((product) => {
+            const updatedVariants = product.variant.map((variant) => {
+              if (variant._id === variantId) {
+                return {
+                  ...variant,
+                  attributes: variant.attributes.filter(
+                    (attribute) => attribute._id.toString() !== attributeId.toString()
+                  ),
+                };
+              }
+              return variant;
+            });
+            return { ...product, variant: updatedVariants };
+          });
+          return updatedData;
+        });
+  
         message.success('Xoá thuộc tính thành công')
       })
       .catch((error) => {
@@ -666,14 +692,24 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     try {
       const response = await axios.put(
         `${process.env.REACT_APP_API_URL}/product/addQuantity/${variantId}/${attributeId}`,
-        newData,{ headers }
+        newData, { headers }
       );
-      axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`)
-      .then((response) => {
-        setProductData(response.data.data);
-      })
-      if (response.status === 200) {
-        message.success('Cộng thêm số lượng thành công')
+  
+      if (response.data.success) {
+        const updatedVariant = response.data.data;
+  
+        
+        setProductData((prevData) => {
+          const updatedData = prevData.map((product) => {
+            const updatedVariants = product.variant.map((variant) => {
+              return variant._id === updatedVariant._id ? updatedVariant : variant;
+            });
+            return { ...product, variant: updatedVariants };
+          });
+          return updatedData;
+        });
+  
+        message.success('Cộng thêm số lượng thành công');
         form.resetFields();
         setaddQuantityAttribute(false);
       } else {
@@ -683,6 +719,8 @@ const [selectedVariant, setSelectedVariant] = useState(null);
       console.error('Lỗi khi cập nhật biến thể:', error);
     }
   };
+  
+  
   const [category, setCategory] = useState([]);
   useEffect(() => {
     axios

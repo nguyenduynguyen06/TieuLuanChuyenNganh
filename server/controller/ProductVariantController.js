@@ -88,7 +88,7 @@ const updateProductVariant = async (req, res) => {
     if (data.newPrice !== undefined) {
       updateData.newPrice = data.newPrice;
     }
-    const updatedProduct = await ProductVariant.findByIdAndUpdate(productVariantId, updateData);
+    const updatedProduct = await ProductVariant.findByIdAndUpdate(productVariantId, updateData, { new: true });
     res.status(200).json({ success: true, data: updatedProduct });
   } catch (error) {
     return res.status(500).json({ error });

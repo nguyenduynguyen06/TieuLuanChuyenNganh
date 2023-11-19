@@ -119,7 +119,16 @@ const editProduct = async (req, res) => {
     if (data.promotion) {
       updateData.promotion = data.promotion;
     }
-    const updatedProduct = await Product.findByIdAndUpdate(productId, updateData);
+    const updatedProduct = await Product.findByIdAndUpdate(productId, updateData, { new: true })
+      .select('-desc -releaseTime -views -include -promotion') 
+      .populate('brand')
+      .populate({
+        path: 'variant',
+        populate: {
+          path: 'attributes',
+        },
+      })
+      .lean();
     res.status(200).json({ success: true, data: updatedProduct });
   } catch (error) {
     return res.status(500).json({ msg: 'Lỗi Server' });
@@ -193,7 +202,7 @@ const detailsProduct = async (req, res) => {
 const getAllProduct = async (req, res) => {
   try {
     const products = await Product.find()
-      .select('_id') // Chỉ hiển thị trường _id
+      .select('_id') 
       .exec();
 
     res.status(200).json({ success: true, data: products });
