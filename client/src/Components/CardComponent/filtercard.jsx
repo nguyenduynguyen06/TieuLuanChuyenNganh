@@ -14,6 +14,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
   const propertyNames = ["RAM", "Dung lượng pin", "Chip xử lý (CPU)"];
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    setLoading(true);
     if (searchKeyword) {
       performSearch(searchKeyword);
     }
@@ -31,6 +32,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       });
   };
   useEffect(() => {
+    setLoading(true);
     if (nameCategory) {
       if (nameBrand) {
         if (minPrice !== null && maxPrice !== null || includeOldPrice !== null || selectedMemory !== null) {
@@ -65,6 +67,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
 
   }, [nameCategory, nameBrand, location.pathname, minPrice, maxPrice, includeOldPrice, selectedMemory]);
   useEffect(() => {
+    setLoading(true);
     if (
       (minPrice !== null && maxPrice !== null) ||
       includeOldPrice !== null ||
