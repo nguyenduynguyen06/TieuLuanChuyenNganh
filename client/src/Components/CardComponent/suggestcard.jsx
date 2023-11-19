@@ -51,7 +51,7 @@ function SuggestCard({ searchKeyword }) {
             <NavLink className='view-list__wrapper' to={`/product/${product.name}/${variant.memory}`} key={product._id + variant.memory} onClick={handleNavLinkClick} >
               <div className='item' >
                 <div className='item__img'>
-                  <img src={product.thumnails[0]} alt={product.name} />
+                  <img src={product.thumnails[0]} alt={product.name} loading="lazy"/>
                 </div>
                 <div className='item-info'>
                   <div className='item-name'>

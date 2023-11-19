@@ -79,7 +79,7 @@ function AccessoryHomePage() {
           <NavLink className='box' key={product._id} to={`/product/${product.name}/undefined`}>
             <div className='card' >
               <div className="image">
-                <img src={product.thumnails[0]} />
+                <img src={product.thumnails[0]} loading="lazy" />
               </div>
               <div className='desc' >
                 <div style={{ height: '3em' }}>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Pagination, Rate } from 'antd';
@@ -315,9 +315,11 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
   const productsPerPage = 12;
   const startIndex = (currentPage - 1) * productsPerPage;
   const endIndex = startIndex + productsPerPage;
-  const productsToDisplay = products
-    .filter((product) => product.isHide === false)
-    .slice(startIndex, endIndex);
+  const productsToDisplay = useMemo(() => {
+    return products
+      .filter((product) => product.isHide === false)
+      .slice(startIndex, endIndex);
+  }, [products, startIndex, endIndex]);
 
   return (
     <Loading isLoading={loading}>
@@ -338,7 +340,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
                         )}
                       </div>
                       <div className='image' style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }} >
-                        <img src={product.thumnails[0]} />
+                        <img src={product.thumnails[0]} loading="lazy"/>
                       </div>
                       <div className='desc' style={{ alignContent: 'start' }}>
                         <div style={{ height: '3em' }}>

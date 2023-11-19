@@ -31,7 +31,7 @@ const Category = () => {
       <CardWrapper >
         {categories.filter((category) => category.isHide === false).map((category) => (
           <NavLink key={category._id} className='card' to={`/lowtoHigh/${category.name}`}>
-            <img src={category.picture} className='img-fluid' alt='' />
+            <img src={category.picture} className='img-fluid' alt='' loading="lazy"/>
             <p className='cate-name'>{category.name}</p>
           </NavLink>
         ))}

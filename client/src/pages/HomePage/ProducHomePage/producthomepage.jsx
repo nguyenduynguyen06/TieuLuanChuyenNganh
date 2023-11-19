@@ -92,7 +92,7 @@ function ProductHomePage() {
             <div className='box' key={product._id} style={{ display: 'flex' }}>
               <NavLink className='card' to={`/product/${product.name}/${selectedMemories[product._id]}`}>
                 <div className="image">
-                  <img src={product.thumnails[0]} />
+                  <img src={product.thumnails[0]} loading="lazy" />
                 </div>
                 <div className='desc'>
                   <div style={{ height: '3em' }}>
