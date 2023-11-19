@@ -65,14 +65,16 @@ const getProductsByCategory = async (req, res) => {
   try {
     const categoryId = req.params.categoryId;
 
-    const products = await Product.find({ category: categoryId }).populate('variant').populate('brand').populate({
-      path: 'variant',
-      populate: {
-        path: 'attributes',
-      },
-    });;
-
-
+    const products = await Product.find({ category: categoryId })
+      .select('-desc -releaseTime -views -include -promotion') 
+      .populate('brand')
+      .populate({
+        path: 'variant',
+        populate: {
+          path: 'attributes',
+        },
+      })
+      .lean();
 
     res.status(200).json({ success: true, data: products });
   } catch (error) {
@@ -80,6 +82,7 @@ const getProductsByCategory = async (req, res) => {
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
+
 
 
 const editProduct = async (req, res) => {
@@ -157,7 +160,7 @@ const searchProducts = async (req, res) => {
       populate: {
         path: 'attributes',
       },
-    });
+    }).lean();
     res.status(200).json({ success: true, data: products });
   } catch (error) {
     console.error('Lỗi:', error);
@@ -175,7 +178,7 @@ const detailsProduct = async (req, res) => {
         populate: {
           path: 'attributes',
         },
-      });
+      }).lean();
     if (!products) {
       return res.status(404).json({ success: false, error: 'Sản phẩm không tồn tại' });
     }
@@ -236,9 +239,10 @@ const filterProductsByCategory = async (req, res) => {
     }
 
     const products = await Product.find({ category: categoryId })
+      .select('-desc -releaseTime -views -include -promotion') 
       .populate('variant', null, matchCondition)
       .populate('brand')
-      .populate('category');
+      .populate('category').lean();
 
     let filteredProducts = products.filter((product) =>
       product.variant.some((variant) =>
@@ -302,9 +306,10 @@ const filterProductsByCategoryandBrand = async (req, res) => {
     }
 
     const products = await Product.find({ category: categoryId, brand: brandId })
+      .select('-desc -releaseTime -views -include -promotion')
       .populate('variant', null, matchCondition)
       .populate('brand')
-      .populate('category');
+      .populate('category').lean();
 
     let filteredProducts = products.filter((product) =>
       product.variant.some((variant) =>

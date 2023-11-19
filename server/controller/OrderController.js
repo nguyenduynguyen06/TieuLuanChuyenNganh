@@ -439,7 +439,7 @@ const getOrdersByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
     const  status  = req.query.status;
-    const orders = await Order.find({ user: userId, status: status}).populate('items.product items.productVariant').populate('voucher');
+    const orders = await Order.find({ user: userId, status: status}).populate('items.product items.productVariant').populate('voucher').lean();
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -456,7 +456,7 @@ const getOrdersDetails = async (req, res) => {
     const orders = await Order.findOne({ orderCode: orderCode })
       .populate('items.product')
       .populate('items.productVariant')
-      .populate('voucher');
+      .populate('voucher').lean();
 
     res.status(200).json({ success: true, data: orders });
   } catch (error) {

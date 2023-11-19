@@ -261,7 +261,7 @@ function CartList() {
         {data && data.map((item,index) => (
           <WrapperPhoneCart>
             <div className='img-col'>
-              <img className='img-prod' src={item.pictures}></img>
+              <img className='img-prod' src={item.pictures} loading='lazy'></img>
             </div>
             <div className='inf-col'>
               <div className='pd-name'>{item.product.name} {item.memory}</div>

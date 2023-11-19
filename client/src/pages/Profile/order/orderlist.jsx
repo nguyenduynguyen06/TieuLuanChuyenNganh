@@ -79,7 +79,7 @@ const OrderList = ({ status }) => {
               {order.items.length > 0 && (
                 <div className='pd-info'>
                   <div className='order-img'>
-                    <img className='img-item' src={order.items[0].pictures}></img>
+                    <img className='img-item' src={order.items[0].pictures} loading='lazy'></img>
                   </div>
                   <div className='order-info'>
                     <span style={{ fontWeight: 500 }}>{order.items[0].product.name} {order.items[0].memory}</span>

@@ -129,7 +129,7 @@ const addReply = async (req, res) => {
         path: 'replies',
         model: 'Comment',
         populate: { path: 'user' },
-      });
+      }).lean();
   
       if (!comments) {
         return res.status(404).json({ success: false, message: 'Không tìm thấy bình luận nào cho sản phẩm này.' });
