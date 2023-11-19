@@ -193,20 +193,16 @@ const detailsProduct = async (req, res) => {
 const getAllProduct = async (req, res) => {
   try {
     const products = await Product.find()
-      .populate('brand')
-      .populate('category')
-      .populate({
-        path: 'variant',
-        populate: {
-          path: 'attributes',
-        },
-      });
+      .select('_id') // Chỉ hiển thị trường _id
+      .exec();
+
     res.status(200).json({ success: true, data: products });
   } catch (error) {
     console.error('Lỗi:', error);
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
-}
+};
+
 
 const filterProductsByCategory = async (req, res) => {
   try {
