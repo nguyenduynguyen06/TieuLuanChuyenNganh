@@ -129,6 +129,7 @@ const editProduct = async (req, res) => {
         },
       })
       .lean();
+      
     res.status(200).json({ success: true, data: updatedProduct });
   } catch (error) {
     return res.status(500).json({ msg: 'Lỗi Server' });
@@ -249,31 +250,29 @@ const filterProductsByCategory = async (req, res) => {
       .populate('brand')
       .populate('category').lean();
 
-    let filteredProducts = products.filter((product) =>
-      product.variant.some((variant) =>
-        variant.newPrice >= minPrice && variant.newPrice <= maxPrice
-      )
-    );
+      let expandedProducts = [];
 
-    const sortMode = req.query.sort || 'lowToHigh';
-    if (sortMode === 'highToLow') {
-      filteredProducts = filteredProducts.sort((a, b) => {
+      products.forEach((product) => {
+        const expandedVariants = product.variant.map((variant) => ({
+          ...product,
+          variant: [variant],
+        }));
+  
+        expandedProducts = [...expandedProducts, ...expandedVariants];
+      });
+  
+      // Sắp xếp sản phẩm dựa trên giá của biến thể
+      const sortMode = req.query.sort || 'lowToHigh';
+      expandedProducts = expandedProducts.sort((a, b) => {
         const priceA = a.variant[0].newPrice;
         const priceB = b.variant[0].newPrice;
-        return priceB - priceA;
+        return sortMode === 'highToLow' ? priceB - priceA : priceA - priceB;
       });
-    } else {
-      filteredProducts = filteredProducts.sort((a, b) => {
-        const priceA = a.variant[0].newPrice;
-        const priceB = b.variant[0].newPrice;
-        return priceA - priceB;
+  
+      res.status(200).json({
+        success: true,
+        data: expandedProducts,
       });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: filteredProducts,
-    });
   } catch (error) {
     console.error('Lỗi:', error);
     res.status(500).json({ success: false, error: 'Lỗi Server' });
@@ -316,31 +315,29 @@ const filterProductsByCategoryandBrand = async (req, res) => {
       .populate('brand')
       .populate('category').lean();
 
-    let filteredProducts = products.filter((product) =>
-      product.variant.some((variant) =>
-        variant.newPrice >= minPrice && variant.newPrice <= maxPrice
-      )
-    );
+      let expandedProducts = [];
 
-    const sortMode = req.query.sort || 'lowToHigh';
-    if (sortMode === 'highToLow') {
-      filteredProducts = filteredProducts.sort((a, b) => {
+      products.forEach((product) => {
+        const expandedVariants = product.variant.map((variant) => ({
+          ...product,
+          variant: [variant],
+        }));
+  
+        expandedProducts = [...expandedProducts, ...expandedVariants];
+      });
+  
+      // Sắp xếp sản phẩm dựa trên giá của biến thể
+      const sortMode = req.query.sort || 'lowToHigh';
+      expandedProducts = expandedProducts.sort((a, b) => {
         const priceA = a.variant[0].newPrice;
         const priceB = b.variant[0].newPrice;
-        return priceB - priceA;
+        return sortMode === 'highToLow' ? priceB - priceA : priceA - priceB;
       });
-    } else {
-      filteredProducts = filteredProducts.sort((a, b) => {
-        const priceA = a.variant[0].newPrice;
-        const priceB = b.variant[0].newPrice;
-        return priceA - priceB;
+  
+      res.status(200).json({
+        success: true,
+        data: expandedProducts,
       });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: filteredProducts,
-    });
   } catch (error) {
     console.error('Lỗi:', error);
     res.status(500).json({ success: false, error: 'Lỗi Server' });

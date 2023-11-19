@@ -316,13 +316,17 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
   };
 
   const productsPerPage = 12;
+  const totalProducts = products.filter((product) => !product.isHide).length;
   const startIndex = (currentPage - 1) * productsPerPage;
-  const endIndex = startIndex + productsPerPage;
+  const endIndex = Math.min(startIndex + productsPerPage, totalProducts);
+
   const productsToDisplay = useMemo(() => {
     return products
-      .filter((product) => product.isHide === false)
+      .filter((product) => !product.isHide)
       .slice(startIndex, endIndex);
   }, [products, startIndex, endIndex]);
+
+  
 
   return (
     <Loading isLoading={loading}>
@@ -394,6 +398,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
           defaultCurrent={1}
           current={currentPage}
           total={products.length}
+          pageSize={productsPerPage}
           onChange={(page) => setCurrentPage(page)}
           style={{ textAlign: 'center', marginBottom: '20px' }}
         />
