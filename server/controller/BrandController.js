@@ -4,23 +4,31 @@ const Category = require('../Model/CategoryModel');
 const addBrand = async (req, res) => {
   try {
     const { name, picture, country, categoryName } = req.body;
+
     const category = await Category.findOne({ name: categoryName });
     if (!category) {
       return res.status(400).json({ success: false, error: 'Danh mục không tồn tại' });
+    }
+
+    const existingBrand = await Brand.findOne({ name, categoryId: category._id });
+    if (existingBrand) {
+      return res.status(200).json({ success: false, error: 'Brand đã tồn tại trong danh mục này' });
     }
     const brand = new Brand({
       name,
       picture,
       country,
-      categoryId: category._id, 
+      categoryId: category._id,
       isHide: false,
     });
+
     const newBrand = await brand.save();
     res.status(201).json({ success: true, data: newBrand });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
 
 const getAllBrand = async (req, res) => {
   try {

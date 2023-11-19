@@ -92,7 +92,7 @@ const NewBrand = () => {
         message.success('Thêm thương hiệu thành công');
         form.resetFields();
       } else {
-        message.error('Thêm thương hiệu thất bại');
+        message.error(response.data.error);
       }
     } catch (error) {
       console.error('Lỗi khi thêm thương hiệu:', error);
