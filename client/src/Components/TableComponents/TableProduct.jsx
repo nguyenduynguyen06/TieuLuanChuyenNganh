@@ -544,8 +544,10 @@ const [selectedVariant, setSelectedVariant] = useState(null);
       .then((response) => {
         const updatedProduct = response.data.data;
   
-        setProductData(prevData => {
-          return prevData.map(product => (product.id === updatedProduct.id ? updatedProduct : product));
+        setProductData((prevData) => {
+          return prevData.map((product) =>
+            product._id === updatedProduct._id ? updatedProduct : product
+          );
         });
   
         message.success('Sửa sản phẩm thành công');

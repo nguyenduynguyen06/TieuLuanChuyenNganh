@@ -326,7 +326,7 @@ const filterProductsByCategoryandBrand = async (req, res) => {
         expandedProducts = [...expandedProducts, ...expandedVariants];
       });
   
-      // Sắp xếp sản phẩm dựa trên giá của biến thể
+
       const sortMode = req.query.sort || 'lowToHigh';
       expandedProducts = expandedProducts.sort((a, b) => {
         const priceA = a.variant[0].newPrice;
