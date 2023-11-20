@@ -17,6 +17,31 @@ export const WrapperPaymentInfo = styled.div`
         flex-wrap: wrap;
         list-style: none;
     }
+    .cus-inf{
+        display: flex;
+        gap: 5px;
+    }
+    .cascader{
+        width: 100%;
+    }
+    .cus-infor{
+        width: 50%;
+    }
+    .custom-dropdown{
+        max-width: 100%
+    }
+    @media screen and (max-width: 500px) {
+        .cus-inf{
+            flex-direction: column;
+            gap: 0px;
+        }
+        .cus-infor{
+            width: 100%;
+        }
+
+    
+    }
+
     .btn-back {
         border: none;
         background: transparent;

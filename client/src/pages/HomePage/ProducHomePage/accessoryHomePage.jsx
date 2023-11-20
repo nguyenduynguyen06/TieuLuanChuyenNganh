@@ -82,7 +82,7 @@ function AccessoryHomePage() {
                 <img src={product.thumnails[0]} loading="lazy" />
               </div>
               <div className='desc' >
-                <div style={{ height: '3em' }}>
+                <div className='name'>
                   <h1 style={{ padding: 3 }}>{product?.name}</h1>
                 </div>
                 <div>

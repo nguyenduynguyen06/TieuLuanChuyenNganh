@@ -56,6 +56,9 @@ export const WrapperCard = styled.div`
     text-align: center;
     border-radius: 4px;
   }
+  .name{
+    height: 5em;
+  }
   .mainContainer {
     width:100%;
     background-image: linear-gradient(to left, #FE9100,  #F29600);
@@ -95,6 +98,9 @@ export const WrapperCard = styled.div`
     z-index:1;
   }
   .mainContainer .box:hover {
+    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+  }
+  .mainContainerAcc .box:hover {
     box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
   }
 
@@ -222,6 +228,9 @@ export const WrapperCard = styled.div`
     }
     .memory-button span{
       font-size: 11px;
+    }
+    .name{
+      height: 3em;
     }
   }
   @media screen and (max-width: 900px) {

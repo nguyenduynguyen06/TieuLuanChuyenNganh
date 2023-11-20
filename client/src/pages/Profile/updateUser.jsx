@@ -3,6 +3,7 @@ import {  DatePicker } from "antd";
 import { MDBBtn, MDBContainer, MDBCardBody, MDBCol, MDBRow, MDBInput } from 'mdb-react-ui-kit';
 import { useSelector } from "react-redux";
 import axios from 'axios';
+import { WrapperUpdate } from "./order/style";
 
 
 
@@ -58,24 +59,26 @@ const UpdateUser = () => {
       <MDBContainer fluid style={{ zIndex: 999 }}>
         <MDBCardBody className='p-5 text-center'>
           <h2 className="fw-bold mb-5">Cập nhật thông tin</h2>
-          <MDBRow>
-            <MDBCol col='6'>
+          <WrapperUpdate>
+            <div>
               <MDBInput wrapperClass='mb-4' label='Họ và tên' name="fullName" value={user1.fullName} onChange={(e) => onChange("fullName", e.target.value)} type='text' tabIndex="1" />
-            </MDBCol>
-            <MDBCol col='6'>
+            </div>
+            <div>
               <MDBInput wrapperClass='mb-4' label='Địa chỉ' name="addRess" value={user1.addRess} onChange={(e) => onChange("addRess", e.target.value)} type='text' tabIndex="2" />
-            </MDBCol>
-            <MDBCol col='6'>
+            </div>
             <DatePicker
+              style={{marginBottom:'20px'}}
               name="birthDay"
+              size="large"
               value={user1.birthDay}
               onChange={(date) => onChange("birthDay", date)}
               placeholder="Ngày sinh"
             />
-            </MDBCol>
-          </MDBRow>
-          <MDBInput wrapperClass='mb-4' label='Số điện thoại' name="phone_number" value={user1.phone_number} onChange={(e) => onChange("phone_number", e.target.value)} type='text' tabIndex="3" />
-          <br />
+            <div>
+            <MDBInput wrapperClass='mb-4' label='Số điện thoại' name="phone_number" value={user1.phone_number} onChange={(e) => onChange("phone_number", e.target.value)} type='text' tabIndex="3" />
+            </div>
+          </WrapperUpdate>
+
           <a href="/profile"> <MDBBtn className='w-100 mb-4' size='md' style={{ background: '#FF3300' }}>Lưu</MDBBtn> </a>
         </MDBCardBody>
       </MDBContainer>

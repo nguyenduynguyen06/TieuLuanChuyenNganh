@@ -56,7 +56,6 @@ const PaymentInfo = () => {
     };
 
 
-
     const [selectedPayment, setSelectedPayment] = useState('atStore');
     const handlePaymentChange = (e) => {
         setSelectedPayment(e.target.value);
@@ -163,6 +162,7 @@ const PaymentInfo = () => {
                 message.error('Mã voucher sai');
             });
     };
+    const isSmallScreen = window.innerWidth <= 500;
 
     return (
         <PageWrapper>
@@ -188,7 +188,7 @@ const PaymentInfo = () => {
                                                 <div className="item-name">
                                                     <span>{item.product.name} - {item.memory}</span>
                                                     <span>{item.color}</span>
-                                               </div>
+                                                </div>
                                                 <div className="item-price">
                                                     <div>
                                                         <div className="box-info__box-price">
@@ -214,17 +214,17 @@ const PaymentInfo = () => {
                             <hr></hr>
                             <div className="block-customer">
                                 <p>Thông tin khách hàng</p>
-                                <MDBRow>
-                                    <MDBCol col='6'>
+                                <div className="cus-inf">
+                                    <div className="cus-infor" >
                                         <MDBInput wrapperClass='mb-4' label='Họ và tên' name="userName" value={order.userName} onChange={onChange} type='text' tabIndex="1" />
-                                    </MDBCol>
-                                    <MDBCol col='6'>
+                                    </div>
+                                    <div className="cus-infor">
                                         <MDBInput wrapperClass='mb-4' label='Số điện thoại' name="userPhone" value={order.userPhone} onChange={onChange} type='text' tabIndex="3" />
-                                    </MDBCol>
-                                </MDBRow>
+                                    </div>
+                                </div>
                                 <MDBInput wrapperClass='mb-4' label='Email' name="userEmail" value={order.userEmail} onChange={onChange} type='email' tabIndex="4" />
-                                <MDBRow style={{ height: '100px' }} className="picking-address">
-                                    <MDBCol col='6'>
+                                <div style={{ display: 'flex', gap: '5px', flexDirection: 'column' }} className="picking-address">
+                                    <div style={{ width: '100%' }}>
                                         <input
                                             type="radio"
                                             name="deliveryOption"
@@ -236,8 +236,8 @@ const PaymentInfo = () => {
                                         {deliveryOption === 'homeDelivery' && (
                                             <MDBInput style={{ marginTop: '10px' }} wrapperClass='mb-4' label='Địa chỉ' name="address" value={order.address} onChange={onChange} type='text' tabIndex="2" />
                                         )}
-                                    </MDBCol>
-                                    <MDBCol col='6'>
+                                    </div>
+                                    <div style={{ width: '100%' }}>
                                         <input
                                             type="radio"
                                             name="deliveryOption"
@@ -249,17 +249,27 @@ const PaymentInfo = () => {
                                         {deliveryOption === 'storePickup' && (
                                             <div>
                                                 <Cascader
-                                                    style={{ marginTop: '12px', width: '100%' }}
+                                                    className="cascader"
                                                     options={options}
                                                     onChange={pickStore}
                                                     placeholder="Hãy chọn địa chỉ cửa hàng"
                                                     dropdownHeight={20}
+                                                    dropdownRender={(menu) => (
+                                                        <div
+                                                            style={{
+                                                                width: isSmallScreen ? '300px' : '100%', // Sử dụng điều kiện media để thiết lập width
+                                                                ...(isSmallScreen && { overflowX: 'auto' }),
+                                                            }}
+                                                        >
+                                                            {menu}
+                                                        </div>
+                                                    )}
                                                 />
                                             </div>
                                         )}
                                         <br></br>
-                                    </MDBCol>
-                                </MDBRow>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <hr></hr>

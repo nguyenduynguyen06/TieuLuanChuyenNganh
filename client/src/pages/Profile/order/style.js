@@ -207,3 +207,7 @@ export const WrapperTab = styled.div`
     }
 `
 
+export const WrapperUpdate = styled.div`
+    display: flex;
+    flex-direction: column;
+`

@@ -6,11 +6,11 @@ import ProductDetail from "../pages/ProductDetail/productdetail";
 import CartPage from "../pages/CartPage/CartPage";
 import FilterProductPage from "../pages/ProductTypePage/productfilterpage";
 import PaymentInfo from "../pages/PaymentPage/paymentinfo";
-import OrderSuccess from "../pages/ordersuccess";
 import PaymentSuccess from "../pages/paymentVNPAYsuccess";
 import Orders from "../pages/Profile/order/orders";
 import OrderDetail from "../pages/Profile/orderdetail";
 import WarrantySearch from "../Components/TableComponents/Warranty";
+import OrderSuccess from "../pages/OrderSuccess/ordersuccess";
 
 
 export const routes = [
