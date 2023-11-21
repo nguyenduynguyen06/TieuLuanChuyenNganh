@@ -14,6 +14,7 @@ export const WrapperFilterCard = styled.div`
   padding: 10px;
   
 }
+
 .mainContainer {
   width:100%;
   background: #fff;
@@ -22,6 +23,9 @@ export const WrapperFilterCard = styled.div`
   grid-template-columns: repeat(6,minmax(0,1fr));
   overflow: hidden;
   border-radius: 0 0 8px 8px;
+}
+.item-label{
+  height: 22px;
 }
 .item-label span {
   border-radius: 2px;
@@ -75,7 +79,7 @@ export const WrapperFilterCard = styled.div`
   display: block;
   margin-top: 10px;  
   height: 250px;
-  line-height: 250px;
+  max-height: 250px;
 }
 .card .image:hover img{
   transform: scale(1.1);

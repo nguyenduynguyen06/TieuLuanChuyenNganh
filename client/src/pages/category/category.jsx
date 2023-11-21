@@ -28,14 +28,18 @@ const Category = () => {
         <span className='title'>Danh mục sản phẩm</span>
       </div>
       <Loading isLoading={loading}>
-      <CardWrapper >
-        {categories.filter((category) => category.isHide === false).map((category) => (
-          <NavLink key={category._id} className='card' to={`/lowtoHigh/${category.name}`}>
-            <img src={category.picture} className='img-fluid' alt='' loading="lazy"/>
-            <p className='cate-name'>{category.name}</p>
-          </NavLink>
-        ))}
-      </CardWrapper>
+        <CardWrapper >
+          {categories.filter((category) => category.isHide === false).map((category) => (
+            <NavLink key={category._id} className='card' to={`/lowtoHigh/${category.name}`}>
+              <div  className='img-fluid'>
+                <img src={category.picture} className='img' loading="lazy" />
+              </div>
+              <div className='cate-name'>
+                <p >{category.name}</p>
+              </div>
+            </NavLink>
+          ))}
+        </CardWrapper>
       </Loading>
     </Wrapper>
 

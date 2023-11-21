@@ -27,22 +27,27 @@ export const CardWrapper = styled.div`
       text-align: center;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
       border-radius: 5px;
+      height: 200px;
       max-height: 200px;
   }
   .img-fluid {
-    height: 50%;
-    width: auto;
     display: flex;
     align-items: center;
+    justify-content: center;
+    height: 70%;
+    width: 100%;
   }
-  .img-fluid img{
-      width: 100px;
-      height: 100px;
+  .img{
+    width: 40%;
   }
   .cate-name{
+    height: 30%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;    
     color: #000;
     text-transform: uppercase;
     font-weight: 500;
@@ -54,13 +59,10 @@ export const CardWrapper = styled.div`
   }
 
   @media screen and (max-width: 500px) {
-      grid-template-columns: repeat(4,minmax(0,1fr));
-      .img-fluid {
-        padding-top: 5px;
-        min-height: 50%;
-        height: auto;
-        width: 50%;
-      }
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      .card{
+        max-height: 100px;
+    }
       .cate-name{
         font-size: 12px;
       } 

@@ -57,8 +57,12 @@ export const WrapperCard = styled.div`
     border-radius: 4px;
   }
   .name{
-    height: 5em;
-  }
+    padding: 5px; 
+    text-overflow: ellipsis;
+    max-width: 100%; 
+    overflow: hidden;
+    white-space: nowrap;
+    }
   .mainContainer {
     width:100%;
     background-image: linear-gradient(to left, #FE9100,  #F29600);
@@ -230,7 +234,6 @@ export const WrapperCard = styled.div`
       font-size: 11px;
     }
     .name{
-      height: 3em;
     }
   }
   @media screen and (max-width: 900px) {

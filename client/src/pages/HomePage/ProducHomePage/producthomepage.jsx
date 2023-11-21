@@ -80,78 +80,79 @@ function ProductHomePage() {
     const totalRating = product.reduce((total, item) => total + item.rating, 0);
     return totalRating / product.length;
   }
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <WrapperCard>
       <img className='imgtt' src="..\..\image\bannerpd.jpg" style={{ width: '100%' }} alt='title'></img>
       <Loading isLoading={loading}>
-      <div className='mainContainer' style={{ alignItems: 'center', justifyContent: 'center' }}>
-        {products
-          .filter((product) => product.isHide === false)
-          .slice(0, cardsToShow)
-          .map((product) => (
-            <div className='box' key={product._id} style={{ display: 'flex' }}>
-              <NavLink className='card' to={`/product/${product.name}/${selectedMemories[product._id]}`}>
-                <div className="image">
-                  <img src={product.thumnails[0]} loading="lazy" />
-                </div>
-                <div className='desc'>
-                  <div style={{ height: '3em' }}>
-                    <h1 style={{ padding: 3 }}>{product?.name}</h1>
+        <div className='mainContainer' style={{ alignItems: 'center', justifyContent: 'center' }}>
+          {products
+            .filter((product) => product.isHide === false)
+            .slice(0, cardsToShow)
+            .map((product) => (
+              <div className='box' key={product._id} style={{ display: 'flex' }}>
+                <NavLink className='card' to={`/product/${product.name}/${selectedMemories[product._id]}`}>
+                  <div className="image">
+                    <img src={product.thumnails[0]} loading="lazy" />
                   </div>
-                  <div>
-                    {product?.variant.map((variant) => (
-                      <Button classNames={'memory'} className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setSelectedMemories((prevSelected) => ({
-                            ...prevSelected,
-                            [product._id]: variant.memory,
-                          }));
-                        }}
-                        style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
-                      >
-                        {variant.memory}
-                      </Button>
-                    ))}
-                    {product?.ratings.length > 0 ? (
-                      <div style={{ display: "flex", gap: '0', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', margin: 0 }}>
-                        <Rate style={{ margin: 0 }} disabled allowHalf value={calculateAverageRating(product.ratings)} />
-                        <span style={{ margin: 0, height: '25px', fontSize: '13px' }}>Lượt đánh giá: {calculateTotalRatings(product)}</span>
-                      </div>
-                    ) : (
-                      null
-                    )}
-                    <div style={{ margin: 0 }}>
-                      <p style={{ fontWeight: 700, height: '20px', margin: 0 }}>
-                        {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
-                    </div>
-                    <div style={{}}>
-                      <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
-                    </div>
-                  </div>
-                </div>
-                </NavLink>
-            </div>
-          ))}
-      </div>
-      {hasMoreProducts && (
+                  <div className='desc'>
+                    <h1 className='name'>{product?.name}</h1>
 
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-          <WrapperButtonMore
-            textButton="Xem thêm"
-            type="outline"
-            styleButton={isButtonHovered ? buttonHoverStyle : buttonStyle}
-            onMouseEnter={() => setIsButtonHovered(true)}
-            onMouseLeave={() => setIsButtonHovered(false)}
-            onClick={() => {
-              setCardsToShow(cardsToShow + 6); // Increase the number of cards to show
-            }}
-          >
-            Xem thêm
-          </WrapperButtonMore>
+                    <div>
+                      {product?.variant.map((variant) => (
+                        <Button classNames={'memory'} className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setSelectedMemories((prevSelected) => ({
+                              ...prevSelected,
+                              [product._id]: variant.memory,
+                            }));
+                          }}
+                          style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
+                        >
+                          {variant.memory}
+                        </Button>
+                      ))}
+                      {product?.ratings.length > 0 ? (
+                        <div style={{ display: "flex", gap: '0', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', margin: 0 }}>
+                          <Rate style={{ margin: 0 }} disabled allowHalf value={calculateAverageRating(product.ratings)} />
+                          <span style={{ margin: 0, height: '25px', fontSize: '13px' }}>Lượt đánh giá: {calculateTotalRatings(product)}</span>
+                        </div>
+                      ) : (
+                        null
+                      )}
+                      <div style={{ margin: 0 }}>
+                        <p style={{ fontWeight: 700, height: '20px', margin: 0 }}>
+                          {product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+                      </div>
+                      <div style={{}}>
+                        <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+                      </div>
+                    </div>
+                  </div>
+                </NavLink>
+              </div>
+            ))}
         </div>
-      )}
-       </Loading>
+        {hasMoreProducts && (
+
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+            <WrapperButtonMore
+              textButton="Xem thêm"
+              type="outline"
+              styleButton={isButtonHovered ? buttonHoverStyle : buttonStyle}
+              onMouseEnter={() => setIsButtonHovered(true)}
+              onMouseLeave={() => setIsButtonHovered(false)}
+              onClick={() => {
+                setCardsToShow(cardsToShow + 6); // Increase the number of cards to show
+              }}
+            >
+              Xem thêm
+            </WrapperButtonMore>
+          </div>
+        )}
+      </Loading>
     </WrapperCard>
   );
 }
