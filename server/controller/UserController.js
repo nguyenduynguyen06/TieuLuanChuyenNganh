@@ -4,21 +4,32 @@ const { generalAcesstoken, generalRefreshtoken } = require('../middleware/JWT');
 const JWT = require('../middleware/JWT')
 const sendMail = require('../ultils/sendMail')
 const userRegister = async (req, res) => {
+  try {
+    
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (existingUser) {
+      return res.status(200).json({ success: false,msg: 'Email đã được sử dụng' });
+    }
     const hashPass = await argon2.hash(req.body.passWord);
-    User.create({
-        fullName: req.body.fullName,
-        phone_number: req.body.phone_number,
-        email : req.body.email,
-        passWord: hashPass,
-        googleId: req.body.googleId,
-        facebookId: req.body.facebookId,
-        role_id: 2,
-        addRess: req.body.addRess,
-        isBlocked: false,
-    })
-        .then(user => res.status(200).json({ msg: 'thành công' }))
-        .catch(err => res.status(400).json({msg : 'thất bại'}))
+    const newUser = new User({
+      fullName: req.body.fullName,
+      phone_number: req.body.phone_number,
+      email: req.body.email,
+      passWord: hashPass,
+      googleId: req.body.googleId,
+      facebookId: req.body.facebookId,
+      role_id: 2,
+      addRess: req.body.addRess,
+      isBlocked: false,
+    });
+    await newUser.save();
+    res.status(200).json({ success: true,msg: 'Đăng ký thành công' });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ success: false,msg: 'Thất bại' });
+  }
 };
+
 
 const userLogin = async (req, res) => {
     const password = req.body.passWord;

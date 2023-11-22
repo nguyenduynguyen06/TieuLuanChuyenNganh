@@ -46,17 +46,23 @@ function Register() {
         withCredentials: true,
       })
       .then((res) => {
-        setSuccess(true);
-        setMessage(`Đăng ký ${res.data.msg}`);
-        setUser({
-          fullName: '',
-          addRess: '',
-          phone_number: '',
-          email: '',
-          passWord: '',
-          confirmPassword: ''
-        });
-        navigate('/');
+        if(res.data.success)
+        {
+          setSuccess(true);
+          setMessage(`${res.data.msg}`);
+          setUser({
+            fullName: '',
+            addRess: '',
+            phone_number: '',
+            email: '',
+            passWord: '',
+            confirmPassword: ''
+          });
+          navigate('/');
+        } else {
+          setSuccess(false);
+          setMessage(`${res.data.msg}`);
+        }
       }).catch((err) => {
         setSuccess(false);
         setMessage(`Email đã được sử dụng`);

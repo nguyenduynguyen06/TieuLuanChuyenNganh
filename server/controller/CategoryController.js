@@ -4,7 +4,11 @@ const Category = require('../Model/CategoryModel');
 const addCategory = async (req, res) => {
   try {
     const { name, picture } = req.body;
-
+    const cate = await Category.findOne({name: name})
+    if(cate)
+    {
+      return res.status(200).json({success: false, error: "Danh mục đã tồn tại"})
+    }
     const category = new Category({
       name,
       picture,

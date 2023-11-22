@@ -6,6 +6,11 @@ const vi = require('date-fns/locale/vi');
 const addVoucher = async (req, res) => {
     try {
       const { name, code, quantity, discount } = req.body;
+      const maKM = await Voucher.findOne({code: code})
+      if(maKM)
+      {
+        return res.status(200).json({success: false, message: 'Code đã tồn tại'})
+      }
       const startDate = req.body.startDate
       const endDate = req.body.endDate
       const formatstartDate = format(new Date(startDate), 'dd/MM/yyyy'); 

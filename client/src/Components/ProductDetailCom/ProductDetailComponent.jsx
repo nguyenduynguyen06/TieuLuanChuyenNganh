@@ -65,14 +65,7 @@ const ProductDetailComponents = () => {
                 {dots}
             </ul>)
     };
-    const addToCart = async (userId, productName, SKU, quantity) => {
-        try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${userId}&productName=${productName}&SKU=${SKU}&quantity=${quantity}`)
-            return response.data;
-        } catch (error) {
-            throw error;
-        }
-    };
+
 
     useEffect(() => {
         if (memory !== `undefined`) {
@@ -168,15 +161,28 @@ const ProductDetailComponents = () => {
                 const selectedVariant = productDetails.variant.find((variant) => variant.memory === memory);
                 if (selectedVariant) {
                     const selectedSKUName = selectedSKU[selectedVariant._id]
-                    await addToCart(user._id, productName, selectedSKUName, quantity);
-                    message.success('Thêm vào giỏ hàng thành công')
+                    await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${productName}&SKU=${selectedSKUName}&quantity=${quantity}`)
+                    .then((response) => {
+                        if(response.data.success)
+                        {message.success('Thêm vào giỏ hàng thành công')}
+                        else{
+                            {message.error(response.data.error)}
+                        }
+                    })
+                  
 
                 }
             } else {
                 const selectValues = Object.values(selectedSKU);
                 const selectedColorName = selectValues[selectValues.length - 1];
-                await addToCart(user._id, productName, selectedColorName, quantity);
-                message.success('Thêm vào giỏ hàng thành công')
+                await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${productName}&SKU=${selectedColorName}&quantity=${quantity}`)
+                .then((response) => {
+                    if(response.data.success)
+                    {message.success('Thêm vào giỏ hàng thành công')}
+                    else{
+                        {message.error(response.data.error)}
+                    }
+                })
 
             }
         } catch (error) {
@@ -190,8 +196,14 @@ const ProductDetailComponents = () => {
                 const selectedVariant = productDetails.variant.find((variant) => variant.memory === memory);
                 if (selectedVariant) {
                     const selectedSKUName = selectedSKU[selectedVariant._id];
-                    await addToCart(user._id, productName, selectedSKUName, quantity);
-                    message.success('Thêm vào giỏ hàng thành công', 1);
+                    await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${productName}&SKU=${selectedSKUName}&quantity=${quantity}`)
+                    .then((response) => {
+                        if(response.data.success)
+                        {message.success('Thêm vào giỏ hàng thành công')}
+                        else{
+                            {message.error(response.data.error)}
+                        }
+                    })
 
 
                     window.location.href = '/cart';
@@ -200,8 +212,14 @@ const ProductDetailComponents = () => {
             } else {
                 const selectValues = Object.values(selectedSKU);
                 const selectedColorName = selectValues[selectValues.length - 1];
-                await addToCart(user._id, productName, selectedColorName, quantity);
-                message.success('Thêm vào giỏ hàng thành công', 1);
+                await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${productName}&SKU=${selectedColorName}&quantity=${quantity}`)
+                .then((response) => {
+                    if(response.data.success)
+                    {message.success('Thêm vào giỏ hàng thành công')}
+                    else{
+                        {message.error(response.data.error)}
+                    }
+                })
 
 
                 window.location.href = '/cart';

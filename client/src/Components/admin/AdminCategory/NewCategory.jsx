@@ -80,7 +80,7 @@ const NewCategory = () => {
         message.success('Thêm danh mục thành công');
         form.resetFields();
       } else {
-        message.error('Thêm danh mục thất bại');
+        message.error(response.data.error);
       }
     } catch (error) {
       console.error('Lỗi khi thêm danh mục:', error);

@@ -6,7 +6,7 @@ const addToCart = async (req, res) => {
   try {
     const { userId, productName, SKU, quantity } = req.query;
     if(!userId){
-      return res.status(200).json({message: 'Vui lòng đăng nhập để tiếp tục'})
+      return res.status(200).json({error: 'Vui lòng đăng nhập để tiếp tục'})
     }
     let cart = await Cart.findOne({ user: userId });
     if (!cart) {
@@ -33,7 +33,7 @@ const addToCart = async (req, res) => {
         color = attribute.color;
         matchingPictures = attribute.pictures;
         if (attribute.quantity < quantity) {
-          return res.status(400).json({ success: false, error: 'Số lượng vượt quá giới hạn trong kho' });
+          return res.status(200).json({ success: false, error: 'Số lượng vượt quá giới hạn trong kho' });
         }
         break;
       }
@@ -57,7 +57,7 @@ const addToCart = async (req, res) => {
       matchingItem.quantity = newQuantity;
       matchingItem.subtotal = Number(matchingItem.subtotal) + (productVariant.newPrice * quantity);
     } else {
-      return res.status(400).json({ success: false, error: 'Số lượng vượt quá giới hạn (3)' });
+      return res.status(200).json({ success: false, error: 'Số lượng vượt quá giới hạn (3)' });
     }
   } else {
     if (quantity <= 3) { 
@@ -74,7 +74,7 @@ const addToCart = async (req, res) => {
         subtotal,
       });
     } else {
-      return res.status(400).json({ success: false, error: 'Số lượng vượt quá giới hạn (3)' });
+      return res.status(200).json({ success: false, error: 'Số lượng vượt quá giới hạn (3)' });
     }
   }
   

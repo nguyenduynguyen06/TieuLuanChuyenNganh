@@ -117,8 +117,8 @@ const OrderDetail = () => {
                                                         <div style={{ display: 'flex', gap: '5px', justifyContent: 'right' }}>
                                                             <p style={{ margin: 0 }}>Hạn bảo hành:</p>
                                                             <span style={{ margin: 0 }}>
-                                                                {item.change.dateChange ? (
-                                                                    moment(item.change.dateChange, 'DD/MM/YYYY HH:mm:ss')
+                                                                {item.change?.dateChange ? (
+                                                                    moment(item.change?.dateChange, 'DD/MM/YYYY HH:mm:ss')
                                                                         .add(item.product.warrantyPeriod, 'months')
                                                                         .format('DD-MM-YYYY')
                                                                 ) : (
