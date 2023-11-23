@@ -208,7 +208,6 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
           tooltip={<div>Chăm sóc khách hàng</div>}>
           <FloatButton icon={<FacebookOutlined />} href="https://www.facebook.com/didonggenz" tooltip={<div>Facebook</div>} />
           <FloatButton icon={<InstagramOutlined />} tooltip={<div>Instagram</div>} />
-          <FloatButton icon={<GithubOutlined />} href="https://github.com/nguyenduynguyen06/TieuLuanChuyenNganh" tooltip={<div>Github</div>} />
         </FloatButton.Group>
         <FloatButton.BackTop
           style={{

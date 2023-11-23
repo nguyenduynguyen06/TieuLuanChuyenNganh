@@ -18,12 +18,12 @@ describe('User Model', function () {
 
   it('Lưu người dùng với dữ liệu hợp lệ', async function () {
     const userData = {
-      fullName: 'John Doe',
+      fullName: 'Nguyen Duy Nguyen',
       phone_number: '123456789',
-      email: 'john.doe@example.com',
+      email: 'nguyennguyen@example.com',
       passWord: 'hashedPassword',
       role_id: 2,
-      addRess: '123 Main St',
+      addRess: '123 Thu Duc',
       isBlocked: false,
     };
 
@@ -40,11 +40,11 @@ describe('User Model', function () {
 
   it('Yêu cầu trường email', async function () {
     const newUser = new User({
-      fullName: 'John Doe',
+      fullName: 'Nguyen Duy Nguyen',
       phone_number: '123456789',
       passWord: 'hashedPassword',
       role_id: 2,
-      addRess: '123 Main St',
+      addRess: '123 Thu Duc',
       isBlocked: false,
     });
 
@@ -61,10 +61,10 @@ describe('User Model', function () {
     const existingUserData = {
       fullName: 'Existing User',
       phone_number: '987654321',
-      email: 'existing.user@example.com',
+      email: 'nguyennguyen@example.com',
       passWord: 'hashedPassword',
       role_id: 2,
-      addRess: '456 Second St',
+      addRess: '456 Thu duc',
       isBlocked: false,
     };
 
@@ -72,12 +72,12 @@ describe('User Model', function () {
     await existingUser.save();
 
     const newUser = new User({
-      fullName: 'John Doe',
+      fullName: 'Nguyen Duy Nguyen',
       phone_number: '123456789',
-      email: 'existing.user@example.com',
+      email: 'nguyennguyen@example.com',
       passWord: 'hashedPassword',
       role_id: 2,
-      addRess: '123 Main St',
+      addRess: '123 Thu Duc',
       isBlocked: false,
     });
 
