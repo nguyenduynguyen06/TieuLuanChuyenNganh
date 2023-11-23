@@ -159,13 +159,25 @@ const deleteComment = async (req, res) => {
 };
 const getAll = async (req, res) => {
   try {
-    const comment = await Comment.find().populate('product').populate('user');
-    return res.status(200).json({ data: comment });
+    const comments = await Comment.find({ check: false })
+      .populate({
+        path: 'product',
+        select: 'name',
+      })
+      .populate({
+        path: 'user',
+        select: 'role_id',
+      });
+
+    return res.status(200).json({ data: comments });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred' });
   }
 };
+
+
+
 const check = async (req, res) => {
   try {
     const { commentId } = req.params;

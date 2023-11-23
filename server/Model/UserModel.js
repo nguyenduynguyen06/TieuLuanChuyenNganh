@@ -2,20 +2,20 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
     fullName: {
         type: String,
-        require: true
+        required: true
     },
     phone_number: {
         type: String,
-        require: true
+        required: true
     },
     email: {
         type: String,
-        require: true,
+        required: true,
         unique: true
     },
     passWord: {
         type: String,
-        require: true
+        required: true
     },
     googleId: {
         type: String
@@ -25,15 +25,15 @@ const UserSchema = new mongoose.Schema({
     },
     role_id: {
         type: Number,
-        require: true
+        required: true
     },
     addRess: {
         type: String,
-        require: true
+        required: true
     },
     isBlocked: {
         type: Boolean,
-        require: true
+        required: true
     },
     avatar: {
         type: String
@@ -41,7 +41,7 @@ const UserSchema = new mongoose.Schema({
     birthDay:{
         type: String
     }
-});
+}, { validateBeforeSave: true });
 const User = mongoose.model('User', UserSchema);
 
 module.exports = User;

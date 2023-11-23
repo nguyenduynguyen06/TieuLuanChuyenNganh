@@ -9,6 +9,7 @@ import Header from "../../Components/Header/header";
 import { MDBBtn, MDBModalContent, MDBModalDialog } from "mdb-react-ui-kit";
 import moment from 'moment';
 import { useSelector } from "react-redux";
+import Loading from "../../Components/LoadingComponents/Loading";
 
 const OrderDetail = () => {
     const { orderCode } = useParams();
@@ -17,6 +18,7 @@ const OrderDetail = () => {
     const [cancelOrder, setCancelOrder] = useState(false);
     const [centredModal1, setCentredModal1] = useState(false);
     const [currentProductId, setCurrentProductId] = useState(null);
+    const [loading, setLoading] = useState(true);
     const toggleShow1 = () => setCentredModal1(!centredModal1);
     const handleReviewClick = (productId) => {
         toggleShow1();
@@ -27,18 +29,22 @@ const OrderDetail = () => {
         axios.get(`${process.env.REACT_APP_API_URL}/order/oderDetails/${orderCode}?userId=${user._id}`)
             .then((response) => {
                 setOrderDetails(response.data.data)
+                setLoading(false)
             })
             .catch((error) => {
                 console.error('Lỗi khi gọi API: ', error);
+                setLoading(false)
             });
-    }, [orderCode]);
+    }, [orderCode,user]);
     const updateOrderDetails = () => {
         axios.get(`${process.env.REACT_APP_API_URL}/order/oderDetails/${orderCode}?userId=${user._id}`)
             .then((response) => {
                 setOrderDetails(response.data.data)
+                setLoading(false)
             })
             .catch((error) => {
                 console.error('Lỗi khi gọi API: ', error);
+                setLoading(false)
             });
     };
 
@@ -73,6 +79,7 @@ const OrderDetail = () => {
     return (
         <div>
             <Header></Header>
+            <Loading isLoading={loading}>
             <WrapperDetailOrder>
                 <div className="mainContainer" >
                     <div>
@@ -198,6 +205,7 @@ const OrderDetail = () => {
                     </Modal>
                 </div>
             </WrapperDetailOrder>
+            </Loading>
         </div>
     );
 }

@@ -19,6 +19,7 @@ import { useSelector } from "react-redux";
 const PaymentInfo = () => {
     const user1 = useSelector((state) => state.user)
     const [total, setTotal] = useState(0);
+    const [isLoading,setLoading] = useState(false)
     const calculateTotalPrice = (cartData) => {
         return cartData.reduce((total, item) => {
             return total + item.price * item.quantity;
@@ -42,12 +43,15 @@ const PaymentInfo = () => {
 
     const addOrder = event => {
         event.preventDefault();
+        setLoading(true);
         axios.post(`${process.env.REACT_APP_API_URL}/order/addOrder/${user1._id}`, order)
             .then((response) => {
                 window.location.href = `/order-success`
             })
             .catch((error) => {
                 message.error('Không có sản phẩm nào!');
+            }).finally(()=>{
+                setLoading(false);
             });
     };
 
@@ -359,7 +363,7 @@ const PaymentInfo = () => {
                         <hr></hr>
                         <div className="bottom-bar">
                             <div className="btn-submit">
-                                <button className="btn-next" type="submit">Đặt hàng</button>
+                                <button className="btn-next" type="submit">{isLoading ? 'Đang đặt hàng...' : 'Đặt hàng'}</button>
                             </div>
                         </div>
                     </form>

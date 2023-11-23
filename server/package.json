@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha \"test/**/*.test.js\"",
     "start": "npm install && node app.js"
   },
   "author": "duynguyen",
@@ -35,5 +35,9 @@
     "react-responsive-carousel": "^3.2.23",
     "request": "^2.88.2",
     "webpack-dev-server": "^4.15.1"
+  },
+  "devDependencies": {
+    "chai": "^4.3.10",
+    "mocha": "^10.2.0"
   }
 }
