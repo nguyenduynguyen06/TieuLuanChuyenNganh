@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Button, Col, Image, Row, Table, Rate, message, Input } from 'antd'
+import { Button, Col, Image, Row, Table, Rate, message, Input, Modal } from 'antd'
 import {
     WrapperStyleColImage,
     WrapperStyleImageSmall,
@@ -13,7 +13,7 @@ import {
     WrapperDetail,
     WrapperPolicy,
 } from "./style"
-import { PlusOutlined, MinusOutlined, RetweetOutlined, PropertySafetyOutlined, DropboxOutlined, GiftOutlined } from '@ant-design/icons'
+import { CloseOutlined, RetweetOutlined, PropertySafetyOutlined, DropboxOutlined, GiftOutlined } from '@ant-design/icons'
 import ButtonComponent from "../ButtonComponent/ButtonComponent"
 import ProductDescription from "./productdesscription"
 import CommentBox from "./commentcomponent"
@@ -29,6 +29,7 @@ import Rating from "./ratecomponent"
 import SuggestProduct from "./suggestproductcomponent"
 import ProductSale from "./productsale"
 import { useSelector } from "react-redux"
+import { MDBBtn, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalHeader } from "mdb-react-ui-kit"
 
 
 
@@ -44,7 +45,10 @@ const ProductDetailComponents = () => {
     const [selectedSKU, setSelectedSKU] = useState({});
     const [selectedQuantity, setSelectedQuantity] = useState({});
     const [expanded, setExpanded] = useState(false);
+    const [propExpanded, setPropExpanded] = useState(false);
+    const [centredModal, setCentredModal] = useState(false);
 
+    const toggleShow = () => setCentredModal(!centredModal);
     const toggleExpand = () => {
         setExpanded(!expanded);
     };
@@ -162,27 +166,25 @@ const ProductDetailComponents = () => {
                 if (selectedVariant) {
                     const selectedSKUName = selectedSKU[selectedVariant._id]
                     await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${productName}&SKU=${selectedSKUName}&quantity=${quantity}`)
-                    .then((response) => {
-                        if(response.data.success)
-                        {message.success('Thêm vào giỏ hàng thành công')}
-                        else{
-                            {message.error(response.data.error)}
-                        }
-                    })
-                  
+                        .then((response) => {
+                            if (response.data.success) { message.success('Thêm vào giỏ hàng thành công') }
+                            else {
+                                { message.error(response.data.error) }
+                            }
+                        })
+
 
                 }
             } else {
                 const selectValues = Object.values(selectedSKU);
                 const selectedColorName = selectValues[selectValues.length - 1];
                 await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${productName}&SKU=${selectedColorName}&quantity=${quantity}`)
-                .then((response) => {
-                    if(response.data.success)
-                    {message.success('Thêm vào giỏ hàng thành công')}
-                    else{
-                        {message.error(response.data.error)}
-                    }
-                })
+                    .then((response) => {
+                        if (response.data.success) { message.success('Thêm vào giỏ hàng thành công') }
+                        else {
+                            { message.error(response.data.error) }
+                        }
+                    })
 
             }
         } catch (error) {
@@ -197,13 +199,12 @@ const ProductDetailComponents = () => {
                 if (selectedVariant) {
                     const selectedSKUName = selectedSKU[selectedVariant._id];
                     await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${productName}&SKU=${selectedSKUName}&quantity=${quantity}`)
-                    .then((response) => {
-                        if(response.data.success)
-                        {message.success('Thêm vào giỏ hàng thành công')}
-                        else{
-                            {message.error(response.data.error)}
-                        }
-                    })
+                        .then((response) => {
+                            if (response.data.success) { message.success('Thêm vào giỏ hàng thành công') }
+                            else {
+                                { message.error(response.data.error) }
+                            }
+                        })
 
 
                     window.location.href = '/cart';
@@ -213,13 +214,12 @@ const ProductDetailComponents = () => {
                 const selectValues = Object.values(selectedSKU);
                 const selectedColorName = selectValues[selectValues.length - 1];
                 await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${productName}&SKU=${selectedColorName}&quantity=${quantity}`)
-                .then((response) => {
-                    if(response.data.success)
-                    {message.success('Thêm vào giỏ hàng thành công')}
-                    else{
-                        {message.error(response.data.error)}
-                    }
-                })
+                    .then((response) => {
+                        if (response.data.success) { message.success('Thêm vào giỏ hàng thành công') }
+                        else {
+                            { message.error(response.data.error) }
+                        }
+                    })
 
 
                 window.location.href = '/cart';
@@ -276,6 +276,7 @@ const ProductDetailComponents = () => {
     const goBack = () => {
         window.history.back();
     };
+    const displayData = propExpanded ? dataSource : dataSource.slice(0, 8);
     return (
         <WrapperDetail>
             <div style={{ background: '#fff', padding: '10px' }}>
@@ -298,8 +299,14 @@ const ProductDetailComponents = () => {
                         </div>
 
                     ) : (
-                        <div>
-                            <h3>{productDetails.name}</h3>
+                        <div className="product-name">
+                            <h5 style={{ margin: 0 }}>
+                                {productDetails.name}
+                            </h5>
+                            <div className="rate-ave">
+                                <Rate disabled allowHalf value={averageRating} />
+                                <span style={{ fontSize: 16 }}>{averageRating.toFixed(1)}</span>
+                            </div>
                         </div>
                     )
                 ) : (
@@ -562,31 +569,31 @@ const ProductDetailComponents = () => {
 
                         <div
                             style={{
-                                position:'absolute',
+                                position: 'absolute',
                                 bottom: 0,
                                 left: 0,
                                 width: '100%',
                                 background: 'linear-gradient(to bottom, transparent, white)',
                                 padding: '30px 10px 0px',
                                 boxSizing: 'border-box',
-                                display:'flex',
+                                display: 'flex',
                                 justifyContent: 'center',
                             }}
                         >
                             {!expanded ? (
-                                <Button onClick={toggleExpand} style={{width: '200px',textTransform: 'uppercase', cursor: 'pointer' }}>
+                                <Button onClick={toggleExpand} style={{ width: '200px', textTransform: 'uppercase', cursor: 'pointer' }}>
                                     Xem thêm
                                 </Button>
                             ) : (
-                                <Button onClick={collapse} style={{width: '200px',textTransform: 'uppercase', cursor: 'pointer' }}>
+                                <Button onClick={collapse} style={{ width: '200px', textTransform: 'uppercase', cursor: 'pointer' }}>
                                     Thu gọn
                                 </Button>
                             )}
                         </div>
                     </div>
                 </Col>
-                <Col className="prop-col" >
-                    <WrapperPropTable dataSource={dataSource} pagination={false}>
+                <Col className="prop-col">
+                    <WrapperPropTable dataSource={displayData} pagination={false}>
                         <ColumnGroup title="Thông số kỹ thuật">
                             <Column dataIndex="prop" key="prop" />
                             <Column
@@ -603,6 +610,11 @@ const ProductDetailComponents = () => {
                             />
                         </ColumnGroup>
                     </WrapperPropTable>
+                    {!propExpanded && (
+                        <div style={{ display: 'flex', justifyContent: 'center', padding: '10px' }}>
+                            <Button onClick={toggleShow}>Xem thêm</Button>
+                        </div>
+                    )}
                 </Col>
             </Row>
             <hr className="my-4" />
@@ -620,6 +632,35 @@ const ProductDetailComponents = () => {
                 <CommentBox />
             </Row>
             <hr className="my-4" />
+            <MDBModal tabIndex='-1' show={centredModal} setShow={setCentredModal}  >
+                <MDBModalDialog centered style={{ maxHeight: '80%', overflow: 'auto' }}>
+                    <MDBModalContent >
+                        <MDBModalHeader>
+                            <MDBBtn className='btn-close' color='none' onClick={toggleShow}></MDBBtn>
+                        </MDBModalHeader>
+                        <MDBModalBody style={{ maxHeight: '70vh', overflowY: 'auto' }} >
+                            <Table dataSource={dataSource} pagination={false}>
+                                <ColumnGroup title="Thông số kỹ thuật">
+                                    <Column dataIndex="prop" key="prop" />
+                                    <Column
+                                        dataIndex="info"
+                                        key="info"
+                                        render={(text, record) => {
+                                            const containsHTML = /<[a-z][\s\S]*>/i.test(text);
+                                            return containsHTML ? (
+                                                <div dangerouslySetInnerHTML={{ __html: text }} />
+                                            ) : (
+                                                text
+                                            );
+                                        }}
+                                    />
+                                </ColumnGroup>
+                            </Table>
+                        </MDBModalBody>
+                    </MDBModalContent>
+                </MDBModalDialog>
+            </MDBModal>
+
         </WrapperDetail>
     )
 }

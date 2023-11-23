@@ -17,19 +17,23 @@ export const routes = [
     {
         path:'/',
         page: HomePage,
+        isShowFooter : true,
     },
     {
         path:'*',
-        page: NotFoundPage
+        page: NotFoundPage,
+        isShowFooter: false
     },
     {
         path:'/admin',
-        page: AdminHomePage
+        page: AdminHomePage,
+        isShowFooter: false,
     },
     {
         path:'/profile',
         page: Profilepage,
-        isShowHeader : true
+        isShowHeader : true,
+        isShowFooter: false
     },
     {
         path:'/pdd',
@@ -77,6 +81,7 @@ export const routes = [
     {
         path:'/order-success',
         page: OrderSuccess,
+        isShowFooter: false
     },
     {
         path:'/vnpay_return',
@@ -84,7 +89,8 @@ export const routes = [
     },
     {
         path:'/orders',
-        page: Orders    
+        page: Orders ,
+        isShowHeader: true,   
     },
     {
         path:'/order-detail/:orderCode',

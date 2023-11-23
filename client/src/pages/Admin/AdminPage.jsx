@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AppstoreFilled, UserOutlined, ProfileFilled, QqOutlined, PrinterFilled, StarFilled, MessageFilled, SignalFilled } from '@ant-design/icons';
+import { AppstoreFilled, UserOutlined, ProfileFilled, QqOutlined, PrinterFilled, StarFilled, MessageFilled, SignalFilled, ArrowLeftOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { getItem } from './utils';
 import Header from '../../Components/Header/header';
@@ -21,6 +21,7 @@ import NewVoucher from '../../Components/admin/AdminVoucher/NewVoucher';
 import AdminVoucher from '../../Components/admin/AdminVoucher/AdminVoucher';
 import Cancel from '../../Components/admin/AdminOrder/Cancel';
 import Dashboard from '../../Components/admin/AdminDashboard/admindashboard';
+import HomePage from '../HomePage/homepages';
 
 const AdminHomePage = () => {
   useEffect(() => {
@@ -28,7 +29,9 @@ const AdminHomePage = () => {
   }, [])
   const [products, setProducts] = useState([]);
   const [keySelected, setKeySelected] = useState('dashboard');
-
+  const goBack = () => {
+    window.history.back();
+  };
   const renderPage = (key) => {
     switch (key) {
       case 'dashboard':
@@ -103,7 +106,6 @@ const AdminHomePage = () => {
 
 
   const items = [
-
     getItem('Dashboard', 'dashboard', <SignalFilled />),
     getItem('Người dùng', 'users', <UserOutlined />),
     getItem('Sản phẩm', 'sub1', <AppstoreFilled />, [
@@ -139,14 +141,19 @@ const AdminHomePage = () => {
     }
     return (
       <>
-        <Header isHiddenSearch isHiddenCart />
+        <Header isHiddenSearch isHiddenCart/>
+        <div style={{ background: '#fff', padding: '10px' , width:256, borderRightStyle:'solid', border:'1px  #ccc',boxShadow: '1px 2px 1px #ccc'}}>
+          <button style={{ border: 'none', background: 'transparent' }} onClick={goBack}>
+            <ArrowLeftOutlined /> Quay lại
+          </button>
+        </div>
         <div style={{ display: 'flex' }}>
           <Menu
             mode="inline"
             style={{
               width: 256,
               boxShadow: '1px 2px 1px #ccc',
-              height: '100vh',
+              height: 'auto',
             }}
             items={items}
             onClick={handleOnClick}

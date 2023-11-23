@@ -20,7 +20,7 @@ import { Card, Col, Collapse, Modal, Row } from 'antd';
 import UpdateUser from './updateUser';
 import ChangePassword from './changepass'
 import axios from 'axios';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, message, Upload } from 'antd';
 import { useSelector } from "react-redux";
 import OrderDetail from './orderdetail';
@@ -34,7 +34,9 @@ const Profilepage = () => {
   const [centredModal1, setCentredModal1] = useState(false);
   const [centredModal2, setCentredModal2] = useState(false);
   const [centredModal3, setCentredModal3] = useState(false);
-
+  const goBack = () => {
+    window.history.back();
+  };
 
   const toggleShow1 = () => setCentredModal1(!centredModal1);
   const toggleShow2 = () => setCentredModal2(!centredModal2);
@@ -63,8 +65,13 @@ const Profilepage = () => {
 
   return (
     <section style={{ backgroundColor: '#eee' }}>
-      <MDBContainer className="py-5">
+      <div style={{ background: '#fff', padding: '10px' }}>
+        <button style={{ border: 'none', background: 'transparent' }} onClick={goBack}>
+          <ArrowLeftOutlined /> Quay lại
+        </button>
+      </div>
 
+      <MDBContainer className="py-5">
         <MDBRow>
           <MDBCol lg="4">
             <MDBCard className="mb-4">
@@ -138,7 +145,7 @@ const Profilepage = () => {
               </MDBCardBody>
             </MDBCard>
 
-            
+
           </MDBCol>
         </MDBRow>
       </MDBContainer>

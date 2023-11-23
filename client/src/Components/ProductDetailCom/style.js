@@ -86,8 +86,7 @@ export const WrapperInputNumber = styled(InputNumber)`
 `
 
 export const WrapperPropTable = styled(Table)`
-    max-height: 500px; /* Đặt chiều cao tối đa của bảng */
-    overflow-y: scroll; /* Kích h
+    overflow-y: hidden;
 `
 export const WrapperSeeMore = styled.div`
     padding-top: 30px;
