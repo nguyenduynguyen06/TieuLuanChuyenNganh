@@ -103,7 +103,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       const productsData = response.data.data;
       setProducts(productsData);
       setLoading(false);
-
+      setCurrentPage(1)
     } catch (error) {
       console.error('Lỗi:', error);
       setLoading(false);
@@ -124,7 +124,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       const productsData = response.data.data;
       setProducts(productsData);
       setLoading(false);
-
+      setCurrentPage(1)
     } catch (error) {
       console.error('Lỗi:', error);
       setLoading(false);
@@ -147,6 +147,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       const productsData = response.data.data;
       setProducts(productsData);
       setLoading(false);
+      setCurrentPage(1)
     } catch (error) {
       console.error('Lỗi:', error);
       setLoading(false);
@@ -167,6 +168,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       const productsData = response.data.data;
       setProducts(productsData);
       setLoading(false);
+      setCurrentPage(1)
     } catch (error) {
       console.error('Lỗi:', error);
       setLoading(false);
@@ -194,6 +196,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       const productsData = response.data.data;
       setProducts(productsData);
       setLoading(false);
+      setCurrentPage(1)
     } catch (error) {
       console.error('Lỗi:', error);
       setLoading(false);
@@ -222,6 +225,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       const productsData = response.data.data;
       setProducts(productsData);
       setLoading(false);
+      setCurrentPage(1)
     } catch (error) {
       console.error('Lỗi:', error);
       setLoading(false);
@@ -251,6 +255,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       const productsData = response.data.data;
       setProducts(productsData);
       setLoading(false);
+      setCurrentPage(1)
     } catch (error) {
       console.error('Lỗi:', error);
       setLoading(false);
@@ -280,6 +285,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       const productsData = response.data.data;
       setProducts(productsData);
       setLoading(false);
+      setCurrentPage(1)
     } catch (error) {
       console.error('Lỗi:', error);
       setLoading(false);
