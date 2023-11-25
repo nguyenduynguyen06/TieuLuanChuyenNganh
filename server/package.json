@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha \"test/user/userUpdate.test.js\" --timeout 30000",
+    "test": "mocha \"test/*/*.test.js\" --timeout 30000",
     "start": "npm install && node server.js"
   },
   "author": "duynguyen",
