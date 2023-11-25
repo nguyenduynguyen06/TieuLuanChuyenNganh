@@ -23,6 +23,11 @@ jobs:
         env:
           CI: true
 
+      - name: Install Mocha
+        run: npm install -g mocha
+        env:
+          CI: true
+
       - name: Run Tests
         run: npm test
         env:
