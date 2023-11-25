@@ -2,11 +2,13 @@ const chai = require('chai');
 const mongoose = require('mongoose');
 const User = require('../../Model/UserModel');
 const { expect } = chai;
+const dotenv = require('dotenv');
 
+dotenv.config();
 describe('User Model', function () {
   before(async function () {
-    await mongoose.connect('mongodb://127.0.0.1:27017/didonggenz', { useNewUrlParser: true, useUnifiedTopology: true });
-  });
+    await mongoose.connect(`mongodb+srv://didonggenz:1234567890@cluster1.xpc7x0j.mongodb.net/test?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true });
+});
 
   after(async function () {
     await mongoose.connection.close();

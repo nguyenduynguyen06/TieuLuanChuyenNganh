@@ -23,6 +23,11 @@ jobs:
         env:
           CI: true
 
+      - name: Run Tests
+        run: npm test
+        env:
+          CI: true
+
   deploy:
     needs: build
     runs-on: ubuntu-latest

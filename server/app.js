@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const connect2DB = require('./config/data');
 const routerUser = require('./Router/UserRouter');
 const routerUpload = require('./Router/UploadRouter')
 const routerProduct = require('./Router/ProductRouter')
@@ -14,7 +13,6 @@ const routerVNPAY = require('./Router/RouterVNPAY');
 const bodyParser = require('body-parser');
 const path = require('path')
 const routerCategory = require('./Router/CategoryRouter')
-const server = require('http').createServer(app);
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
 
@@ -49,8 +47,5 @@ app.get('*',(req,res) =>{
 })
 
 
-connect2DB();
-const PORT = process.env.PORT 
-server.listen(PORT, () => {
-    console.log(`Server is now running on PORT: ${PORT}`);
-})
+
+module.exports = app;
