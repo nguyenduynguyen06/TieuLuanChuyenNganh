@@ -48,6 +48,11 @@ jobs:
         env:
           CI: true
 
+      - name: Install Moment-Timezone
+        run: npm install moment-timezone
+        env:
+          CI: true
+
       - name: Run Tests
         run: npm test
         env:
