@@ -23,8 +23,28 @@ jobs:
         env:
           CI: true
 
-      - name: Install Mocha
-        run: npm install -g mocha
+      - name: Install Chai
+        run: npm install chai
+        env:
+          CI: true
+
+      - name: Install Chai-Http
+        run: npm install chai-http
+        env:
+          CI: true
+
+      - name: Install Argon2
+        run: npm install argon2
+        env:
+          CI: true
+
+      - name: Install JSONWebToken
+        run: npm install jsonwebtoken
+        env:
+          CI: true
+
+      - name: Install dotenv
+        run: npm install dotenv
         env:
           CI: true
 
