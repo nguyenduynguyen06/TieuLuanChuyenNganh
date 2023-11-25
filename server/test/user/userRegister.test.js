@@ -26,7 +26,7 @@ after(async function () {
       .send({
         fullName: 'Nguyen Duy Nguyen',
         phone_number: '123456789',
-        email: 'nguyennguyen@example.com',
+        email: 'nguyennguyen2@example.com',
         passWord: 'hashedPassword',
         role_id: 2,
         addRess: '123 Thu Duc',
@@ -45,7 +45,7 @@ after(async function () {
       .send({
         fullName: 'Nguyen Duy Nguyen',
       phone_number: '123456789',
-      email: 'nguyennguyen@example.com',
+      email: 'nguyennguyen23@example.com',
       passWord: 'hashedPassword',
       role_id: 2,
       addRess: '123 Thu Duc',
@@ -58,7 +58,7 @@ after(async function () {
       .send({
         fullName: 'Nguyen Duy Nguyen',
         phone_number: '123456789',
-        email: 'nguyennguyen@example.com',
+        email: 'nguyennguyen23@example.com',
         passWord: 'hashedPassword',
         role_id: 2,
         addRess: '123 Thu Duc',

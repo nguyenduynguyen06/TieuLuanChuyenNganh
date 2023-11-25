@@ -63,7 +63,7 @@ describe('User Model', function () {
     const existingUserData = {
       fullName: 'Existing User',
       phone_number: '987654321',
-      email: 'nguyennguyen@example.com',
+      email: 'nguyennguyen12321321@example.com',
       passWord: 'hashedPassword',
       role_id: 2,
       addRess: '456 Thu duc',
@@ -76,7 +76,7 @@ describe('User Model', function () {
     const newUser = new User({
       fullName: 'Nguyen Duy Nguyen',
       phone_number: '123456789',
-      email: 'nguyennguyen@example.com',
+      email: 'nguyennguyen12321321@example.com',
       passWord: 'hashedPassword',
       role_id: 2,
       addRess: '123 Thu Duc',

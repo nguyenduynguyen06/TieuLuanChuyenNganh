@@ -47,7 +47,7 @@ describe('User Update', function () {
         const newUser = new User({
             fullName: 'Nguyen Duy Nguyen',
             phone_number: '123456789',
-            email: 'nguyennguyen@example.com',
+            email: 'nguyennguyen12@example.com',
             passWord: hashedPassword,
             role_id: 2,
             addRess: '123 Thu Duc',
