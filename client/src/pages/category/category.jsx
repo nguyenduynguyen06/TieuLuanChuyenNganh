@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Card } from 'antd';
 import { CardWrapper, Wrapper } from './style';
 import axios from 'axios';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import Loading from '../../Components/LoadingComponents/Loading';
 
 const Category = () => {

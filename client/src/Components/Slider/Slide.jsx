@@ -1,5 +1,5 @@
 import Slider from "react-slick";
-import { Col, Image, Row } from 'antd';
+import { Image } from 'antd';
 import React from 'react';
 import Slider1 from "../../image/banner1.png";
 import Slider2 from "../../image/banner2.png";

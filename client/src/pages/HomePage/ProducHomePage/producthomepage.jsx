@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { WrapperButtonMore, WrapperCard } from '../styled';
 
-import { Button, FloatButton, Rate } from 'antd';
-import { Link, NavLink } from 'react-router-dom';
-import { CustomerServiceOutlined } from '@ant-design/icons';
+import { Button, Rate } from 'antd';
+import { NavLink } from 'react-router-dom';
 import Loading from '../../../Components/LoadingComponents/Loading'
 function ProductHomePage() {
   const [products, setProducts] = useState([]);
