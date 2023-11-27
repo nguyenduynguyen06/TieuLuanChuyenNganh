@@ -4,17 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha \"test/**/*.test.js\"",
-    "start": "npm install && node app.js"
+    "test": "mocha \"test/*/*.test.js\" --timeout 30000",
+    "start": "npm install && node server.js"
   },
   "author": "duynguyen",
   "license": "ISC",
   "dependencies": {
     "argon2": "^0.31.1",
     "axios": "^1.6.0",
+    "chai-http": "^4.4.0",
     "cloudinary": "^1.41.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "crypto": "^1.0.1",
     "date-fns": "^2.30.0",
     "dateformat": "^5.0.3",

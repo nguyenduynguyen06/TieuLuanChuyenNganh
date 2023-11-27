@@ -86,8 +86,9 @@ const userUpdate = async (req, res) => {
         const data = req.body;
         if (userId) {
             const updatedUser = await User.findByIdAndUpdate(userId, data);        
-            if (!updatedUser) {
-                return res.status(404).json({ msg: 'Người dùng không tồn tại' });
+            if(updatedUser === null)
+            {
+              return res.status(401).json({ msg: 'Không tồn tại người dùng' });
             }
             return res.status(200).json({ msg: 'Cập nhật thành công', updatedUser });
         } else {
