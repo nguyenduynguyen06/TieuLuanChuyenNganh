@@ -25,7 +25,7 @@ const userRegister = async (req, res) => {
     await newUser.save();
     res.status(200).json({ success: true,msg: 'Đăng ký thành công' });
   } catch (error) {
-    console.error(error);
+
     res.status(400).json({ success: false,msg: 'Thất bại' });
   }
 };
@@ -74,7 +74,7 @@ const userLogin = async (req, res) => {
             return res.status(401).json({ err: 'Username/Password not match!' });
         }
     } catch (error) {
-        console.error('Error:', error);
+
         return res.status(500).json({ err: 'Something went wrong' });
     }
 };
@@ -95,7 +95,7 @@ const userUpdate = async (req, res) => {
             return res.status(401).json({ msg: 'Không tìm thấy ID' });
         }
     } catch (error) {
-        console.error('Lỗi:', error);
+    
         return res.status(500).json({ msg: 'Lỗi Server' });
     }
 };
@@ -104,13 +104,13 @@ const deleteUser = async (req, res) => {
     try {
         const userId = req.params.id;
         if (userId) {
-            const checkUser = await User.findOne({ _id: userId });
-            if (checkUser) {
-                const user = await User.findByIdAndDelete(userId);
-                return res.status(200).json({ data: user });
-            } else {
-                return res.status(401).json({ err: 'Không tồn tại User' });
+            const user = await User.findByIdAndDelete(userId);
+            if(user === null)
+            {
+              return res.status(401).json({msg: 'Không tồn tại người dùng'})
             }
+                return res.status(200).json({ data: user });
+          
         } else {
             return res.status(401).json({ msg: 'Không tìm thấy ID' });
         }
@@ -119,15 +119,14 @@ const deleteUser = async (req, res) => {
     }
 };
 const getAllUser = async (req, res) => {
-    try {
-        const data = await User.find();
-        return res.status(200).json({
-            data: data
-        });
-    } catch (error) {
-        console.error('Lỗi:', error);
-        return res.status(500).json({ msg: 'Lỗi Server' });
-    }
+  try {
+      const data = await User.find({ role_id: { $ne: 1 } });
+      return res.status(200).json({
+          data: data
+      });
+  } catch (error) {
+      return res.status(500).json({ msg: 'Lỗi Server' });
+  }
 };
 const getDetailUser = async (req, res) => {
     try {
@@ -143,7 +142,6 @@ const getDetailUser = async (req, res) => {
             return res.status(400).json({ msg: 'Không tìm thấy ID' });
         }
     } catch (error) {
-        console.error('Lỗi:', error);
         return res.status(500).json({ msg: 'Lỗi Server' });
     }
 };
@@ -155,22 +153,23 @@ const refreshToken = async (req, res) => {
             return res.status(401).json({ msg: 'Không tìm thấy ID' });
         }
         
-        const result = await JWT.refreshTokenJWT(token); // Gọi refreshTokenJWT và lưu kết quả vào biến result
+        const result = await JWT.refreshTokenJWT(token); 
         if (result.status === 'error') {
             return res.status(401).json({ msg: 'Lỗi khi làm mới token' });
         }
       res.status(200).json({ access_Token: result.access_Token });
     } catch (error) {
-        console.error('Lỗi Server:', error);
+    
         return res.status(500).json({ msg: 'Lỗi Server' });
     }
 };
 
 
 const userLogout = (req, res) => {
-    res.clearCookie('refresh_token', { httpOnly: true }); 
-    return res.status(200).json({ msg: 'Good bye!' });
-  };
+      res.clearCookie('refresh_token', { httpOnly: true });
+      return res.status(200).json({ msg: 'Tạm biệt!' });
+ 
+};
 function generateRandomPassword(length = 12) {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let password = "";
@@ -253,7 +252,7 @@ const forgotPassword = async (req, res) => {
         rs,
       });
     } catch (error) {
-      console.error("Error:", error);
+  
       return res.status(500).json({
         success: false,
         error: error.message,
@@ -285,14 +284,15 @@ const changePassword = async (req, res) => {
       const keyword = req.query.keyword;
       const regex = new RegExp(keyword, 'i'); 
       const users = await User.find({
-        email : { $regex: regex }, 
-      })
+        email : { $regex: regex },
+        role_id: { $ne: 1 }, 
+      });
       res.status(200).json({ success: true, data: users });
     } catch (error) {
-      console.error('Lỗi:', error);
       res.status(500).json({ success: false, error: 'Lỗi Server' });
     }
   };
+  
   const checkAcc = async (req, res) => {
     try {
       const  email  = req.params.email.toLowerCase();
@@ -303,7 +303,7 @@ const changePassword = async (req, res) => {
   
       res.json({ isBlocked: user.isBlocked });
     } catch (error) {
-      console.error('Error checking account status:', error);
+
       res.status(500).json({ message: 'Internal Server Error' });
     }
   };
