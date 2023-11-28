@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Badge, Button, Col, Menu, Dropdown, FloatButton } from 'antd';
+import { Badge, Button, Menu, Dropdown, FloatButton } from 'antd';
 import axios from "axios";
 import { CustomerServiceOutlined } from '@ant-design/icons';
-import { WrapperCartButton, WrapperHeaderAccount, WrapperHeaderImage, WrapperHeaderProduct, WrapperSearch, WrapperSuperHeader } from "./style";
+import { WrapperSuperHeader } from "./style";
 import Search from "antd/es/input/Search";
 import {
   ShoppingCartOutlined,
@@ -10,8 +10,6 @@ import {
   UserOutlined,
   FacebookOutlined,
   InstagramOutlined,
-  GoogleOutlined,
-  GithubOutlined
 } from '@ant-design/icons';
 import Login from "./login"
 import {

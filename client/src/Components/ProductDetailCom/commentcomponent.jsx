@@ -1,17 +1,11 @@
-import { Input, Row } from 'antd';
+import { Input } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { WrapperButton, WrapperComment, WrapperCommentNew, WrapperInfo, WrapperTextBox } from './style';
-import { LikeFilled, DislikeFilled, MessageFilled, SendOutlined } from '@ant-design/icons'
+import { WrapperCommentNew, WrapperInfo, WrapperTextBox } from './style';
+import { MessageFilled, SendOutlined } from '@ant-design/icons'
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import {
   MDBBtn,
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBCard,
-  MDBCardBody,
-  MDBInput,
   MDBModal,
   MDBModalDialog,
   MDBModalContent,

@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Button, Pagination, Rate } from 'antd';
-import { WrapperCard, WrapperFilterCard } from './styled';
-import { InfoCircleFilled } from '@ant-design/icons'
+import {Pagination, Rate } from 'antd';
+import {WrapperFilterCard } from './styled';
 import Loading from '../LoadingComponents/Loading';
 
 function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {

@@ -9,7 +9,6 @@ import {
   MDBCard,
   MDBCardBody,
   MDBInput,
-  MDBIcon,
   MDBModalBody,
   MDBModalContent,
   MDBModalDialog,

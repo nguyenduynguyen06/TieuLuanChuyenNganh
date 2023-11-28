@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from "react"
-import { Button, Col, Image, Row, Table, Rate, message, Input, Modal } from 'antd'
+import { Button, Col, Image, Row, Table, Rate, message } from 'antd'
 import {
     WrapperStyleColImage,
     WrapperStyleImageSmall,
     WrapperStyleImageBig,
     WrapperStyleTextSell,
     WrapperPriceTextProduct,
-    WrapperPriceProduct,
-    WrapperQuantityProduct,
     WrapperInputNumber,
     WrapperPropTable,
     WrapperDetail,
     WrapperPolicy,
 } from "./style"
-import { CloseOutlined, RetweetOutlined, PropertySafetyOutlined, DropboxOutlined, GiftOutlined } from '@ant-design/icons'
+import { RetweetOutlined, PropertySafetyOutlined, DropboxOutlined, GiftOutlined } from '@ant-design/icons'
 import ButtonComponent from "../ButtonComponent/ButtonComponent"
 import ProductDescription from "./productdesscription"
 import CommentBox from "./commentcomponent"

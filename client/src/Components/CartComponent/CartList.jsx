@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import CartTotal from './CartTotal';
 import { Hidden } from '@mui/material';
-import { Link } from "react-router-dom"; // Thêm import Link
+import { Link } from "react-router-dom"; 
 import { WrapperPhoneCart } from './style';
 import Loading from '../LoadingComponents/Loading';
 
