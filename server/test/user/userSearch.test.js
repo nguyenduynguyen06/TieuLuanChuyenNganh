@@ -12,7 +12,7 @@ chai.use(chaiHttp);
 describe('Search User', function () {
     let authToken;
   before(async function () {
-    await mongoose.connect(`mongodb+srv://didonggenz:1234567890@cluster1.xpc7x0j.mongodb.net/test?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect(process.env.mongodb_uri_test, { useNewUrlParser: true, useUnifiedTopology: true });
     const user = new User({
         fullName: 'Nguyen Duy Nguyen',
         phone_number: '123456789',
@@ -87,5 +87,4 @@ describe('Search User', function () {
     expect(response.body).to.have.property('success').to.equal(true);
     expect(response.body).to.have.property('data').to.be.an('array');
   });
-  
 });

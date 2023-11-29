@@ -10,7 +10,7 @@ const { expect } = chai;
 
 describe('Comment Model', function () {
     before(async function () {
-        await mongoose.connect(`mongodb+srv://didonggenz:1234567890@cluster1.xpc7x0j.mongodb.net/test?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true });
+        await mongoose.connect(process.env.mongodb_uri_test, { useNewUrlParser: true, useUnifiedTopology: true });
     });
 
   after(async function () {

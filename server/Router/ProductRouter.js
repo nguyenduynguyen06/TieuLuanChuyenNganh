@@ -7,8 +7,6 @@ const { authMiddleware } = require('../middleware/authMiddleware');
 
 router.post('/addProduct',authMiddleware, productController.addProduct);
 router.post('/addProductvariant/:id',authMiddleware, productvariantController.addProductVariant);
-router.get('/getIdByBrand/:brandId', productController.getProductByBrandId);
-router.get('/getProductsByCategoryAndBrand/:categoryId/:brandId', productController.getProductsByCategoryAndBrand);
 router.get('/getIdByCategory/:categoryId', productController.getProductsByCategory);
 router.put('/editProduct/:id',authMiddleware, productController.editProduct);
 router.delete('/delete/:id',authMiddleware, productController.deleteProduct);

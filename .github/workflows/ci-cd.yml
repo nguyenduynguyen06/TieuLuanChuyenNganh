@@ -30,6 +30,7 @@ jobs:
           echo "ACCESS_TOKEN=${{ secrets.ACCESS_TOKEN }}" >> $GITHUB_ENV
           echo "REFRESH_TOKEN=${{ secrets.REFRESH_TOKEN }}" >> $GITHUB_ENV
           echo "EMAIL_APP_PASSWORD=${{ secrets.EMAIL_APP_PASSWORD }}" >> $GITHUB_ENV
+          echo "EMAIL_APP_PASSWORD=${{ secrets.mongodb_uri_test }}" >> $GITHUB_ENV
           echo "EMAIL_NAME=${{ secrets.EMAIL_NAME }}" >> $GITHUB_ENV
           echo "VNP_TMN_CODE=${{ secrets.VNP_TMN_CODE }}" >> $GITHUB_ENV
           echo "VNP_HASH_SECRET=${{ secrets.VNP_HASH_SECRET }}" >> $GITHUB_ENV

@@ -4,12 +4,13 @@ const Cart = require('../../Model/CartModel');
 const Product = require('../../Model/ProductModel');
 const ProductVariant = require('../../Model/ProductVariantModel');
 const User = require('../../Model/UserModel');
-require('dotenv').config();
+const dotenv = require('dotenv');
+dotenv.config();
 const { expect } = chai;
 
 describe('Cart Model', function () {
     before(async function () {
-        await mongoose.connect(`mongodb+srv://didonggenz:1234567890@cluster1.xpc7x0j.mongodb.net/test?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true });
+        await mongoose.connect(process.env.mongodb_uri_test, { useNewUrlParser: true, useUnifiedTopology: true });
     });
 
   after(async function () {

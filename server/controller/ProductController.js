@@ -37,30 +37,6 @@ const addProduct = async (req, res) => {
 };
 
 
-const getProductByBrandId = async (req, res) => {
-  try {
-    const brandId = req.params.brandId;
-    const products = await Product.find({ brand: brandId }).populate('variant');
-
-
-    res.status(200).json({ success: true, data: products });
-  } catch (error) {
-    console.error('Lỗi:', error);
-    return res.status(500).json({ msg: 'Lỗi Server' });
-  }
-};
-const getProductsByCategoryAndBrand = async (req, res) => {
-  try {
-    const categoryId = req.params.categoryId;
-    const brandId = req.params.brandId;
-    const products = await Product.find({ category: categoryId, brand: brandId }).populate('variant');
-    res.status(200).json({ success: true, data: products });
-  } catch (error) {
-    console.error('Lỗi:', error);
-    return res.status(500).json({ msg: 'Lỗi Server' });
-  }
-};
-
 const getProductsByCategory = async (req, res) => {
   try {
     const categoryId = req.params.categoryId;
@@ -384,4 +360,4 @@ const getProductRating = async (req, res) => {
   }
 };
 
-module.exports = { addProduct, getProductRating, getProductByBrandId, getProductsByCategory, editProduct, deleteProduct, searchProducts, getAllProduct, getProductsByCategoryAndBrand, detailsProduct, filterProductsByCategory, filterProductsByCategoryandBrand };
+module.exports = { addProduct, getProductRating, getProductsByCategory, editProduct, deleteProduct, searchProducts, getAllProduct, detailsProduct, filterProductsByCategory, filterProductsByCategoryandBrand };
