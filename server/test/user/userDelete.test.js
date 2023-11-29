@@ -13,7 +13,7 @@ describe('Delete User', function () {
     let authToken;
 
     before(async function () {
-        await mongoose.connect(process.env.mongodb_uri_test, { useNewUrlParser: true, useUnifiedTopology: true });
+        await mongoose.connect(process.env.MONGODB_URI_TEST, { useNewUrlParser: true, useUnifiedTopology: true });
         const user = new User({
             fullName: 'Nguyen Duy Nguyen',
             phone_number: '123456789',

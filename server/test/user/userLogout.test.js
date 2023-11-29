@@ -13,7 +13,7 @@ describe('User Logout', function () {
     
 
     before(async function () {
-        await mongoose.connect(process.env.mongodb_uri_test, { useNewUrlParser: true, useUnifiedTopology: true });
+        await mongoose.connect(process.env.MONGODB_URI_TEST, { useNewUrlParser: true, useUnifiedTopology: true });
     });
     
 
