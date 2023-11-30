@@ -40,9 +40,17 @@ const addProduct = async (req, res) => {
 const getProductsByCategory = async (req, res) => {
   try {
     const categoryId = req.params.categoryId;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 10; 
 
+    
+    const skip = (page - 1) * pageSize;
+
+    const totalProducts = await Product.countDocuments({ category: categoryId });
+
+    
     const products = await Product.find({ category: categoryId })
-      .select('-desc -releaseTime -views -include -promotion') 
+      .select('-desc -releaseTime -views -include -promotion')
       .populate('brand')
       .populate({
         path: 'variant',
@@ -50,14 +58,25 @@ const getProductsByCategory = async (req, res) => {
           path: 'attributes',
         },
       })
+      .skip(skip)
+      .limit(pageSize)
       .lean();
 
-    res.status(200).json({ success: true, data: products });
+    res.status(200).json({
+      success: true,
+      data: products,
+      pageInfo: {
+        currentPage: page,
+        totalPages: Math.ceil(totalProducts / pageSize),
+        totalProducts: totalProducts,
+      },
+    });
   } catch (error) {
     console.error('Lỗi:', error);
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
+
 
 
 
@@ -139,20 +158,38 @@ const searchProducts = async (req, res) => {
   try {
     const keyword = req.query.keyword;
     const regex = new RegExp(keyword, 'i');
+
     const products = await Product.find({
-      name: { $regex: regex }, isHide: false
-    }).populate('brand').populate('category').populate({
+      name: { $regex: regex },
+      isHide: false
+    })
+    .select('-desc -releaseTime -views -include -promotion')
+    .populate('brand')
+    .populate('category')
+    .populate({
       path: 'variant',
       populate: {
         path: 'attributes',
       },
-    }).lean();
-    res.status(200).json({ success: true, data: products });
+    })
+    .lean();
+    let expandedProducts = [];
+    products.forEach((product) => {
+      product.variant.forEach((variant) => {
+        const productWithVariant = { ...product, variant: [variant] };
+        expandedProducts.push(productWithVariant);
+      });
+    });
+    res.status(200).json({
+      success: true,
+      data: expandedProducts,
+    });
   } catch (error) {
     console.error('Lỗi:', error);
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
+
 const detailsProduct = async (req, res) => {
   try {
     const { name } = req.params;
@@ -236,8 +273,6 @@ const filterProductsByCategory = async (req, res) => {
   
         expandedProducts = [...expandedProducts, ...expandedVariants];
       });
-  
-      // Sắp xếp sản phẩm dựa trên giá của biến thể
       const sortMode = req.query.sort || 'lowToHigh';
       expandedProducts = expandedProducts.sort((a, b) => {
         const priceA = a.variant[0].newPrice;
