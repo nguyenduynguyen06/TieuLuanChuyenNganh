@@ -29,6 +29,9 @@ jobs:
           echo "MONGODB_URI=${{ secrets.mongodb_uri }}" >> $GITHUB_ENV
           echo "MONGODB_URI_TEST=${{ secrets.mongodb_uri_test }}" >> $GITHUB_ENV
           echo "ACCESS_TOKEN=${{ secrets.ACCESS_TOKEN }}" >> $GITHUB_ENV
+          echo "CLOUDINARY_NAME=${{ secrets.CLOUDINARY_NAME }}" >> $GITHUB_ENV
+          echo "CLOUDINARY_KEY=${{ secrets.CLOUDINARY_KEY }}" >> $GITHUB_ENV
+          echo "CLOUDINARY_SECRET=${{ secrets.CLOUDINARY_SECRET }}" >> $GITHUB_ENV
           echo "REFRESH_TOKEN=${{ secrets.REFRESH_TOKEN }}" >> $GITHUB_ENV
           echo "EMAIL_APP_PASSWORD=${{ secrets.EMAIL_APP_PASSWORD }}" >> $GITHUB_ENV
           echo "EMAIL_NAME=${{ secrets.EMAIL_NAME }}" >> $GITHUB_ENV
