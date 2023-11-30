@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Alert, InputNumber, Modal, Table } from 'antd';
+import { Alert, InputNumber, Modal, Pagination, Table } from 'antd';
 import { Space } from 'antd';
 import { Switch } from 'antd';
 import { AppstoreAddOutlined, DeleteOutlined, EditOutlined,PlusOutlined,MinusCircleOutlined,AppstoreOutlined } from '@ant-design/icons';
@@ -444,20 +444,25 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   const [isDeleteAttributeVisible, setDeleteAttributeVisible] = useState(false);
   const [isUpdate, setUpdate] = useState(false);
   const [isAddVariant, setAddVariant] = useState(false);
-  const [productData, setProductData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const handleCategoryClick = (categoryId) => {
+  const [productData, setProductData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProduct, setTotalProduct] = useState(null);
+  const handleCategoryClick = (categoryId, page = 1) => {
     axios
-    .get(`${process.env.REACT_APP_API_URL}/product/getIdByCategory/${categoryId}`)
-            .then((response) => {
-              setSelectedCategory(categoryId);
-              setProductData(response.data.data);
-            })
-            .catch((error) => {
-              console.error('Lỗi khi gọi API: ', error);
-            });
-        };
+      .get(`${process.env.REACT_APP_API_URL}/product/getIdByCategory/${categoryId}?page=${page}`)
+      .then((response) => {
+        setSelectedCategory(categoryId);
+        setProductData(response.data.data);
+        setCurrentPage(response.data.pageInfo.currentPage);
+        setTotalPages(response.data.pageInfo.totalPages);
+        setTotalProduct(response.data.pageInfo.totalProducts)
+      })
+      .catch((error) => {
+        console.error('Lỗi khi gọi API: ', error);
+      });
+  };
   const addProductVariant = async (parentId, variantData) => {
     try {
       const response = await axios.post(
@@ -728,16 +733,18 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     axios
       .get(`${process.env.REACT_APP_API_URL}/category/getAll`)
       .then((response) => {
-          setCategory(response.data.data); 
-          if (isFirstLoad && response.data.data.length > 0) {
-            handleCategoryClick(response.data.data[0]._id);
-            setIsFirstLoad(false);
-          }
+        setCategory(response.data.data);
+        if (response.data.data.length > 0) {
+          handleCategoryClick(response.data.data[0]._id);
+        }
       })
       .catch((error) => {
         console.error('Lỗi khi gọi API: ', error);
       });
   }, []);
+  const handlePageChange = (page) => {
+    handleCategoryClick(selectedCategory, page);
+  };
   return (
     <div>
       <Alert
@@ -767,6 +774,9 @@ const [selectedVariant, setSelectedVariant] = useState(null);
           </Button>
         ))}
       </div>
+      <div>
+       Tổng {totalProduct} sản phẩm
+      </div>
       <div
         style={{
           marginBottom: 16,
@@ -779,13 +789,25 @@ const [selectedVariant, setSelectedVariant] = useState(null);
         >
         </span>
       </div>
-      <Table columns={columns} dataSource={searchQuery.trim() === '' ? productData.map((product, index) => ({
-        ...product,
-        key: index,
-      })) : searchResults.map((product, index) => ({
-        ...product,
-        key: index,
-      }))} />
+      <Table
+        columns={columns}
+        dataSource={searchQuery.trim() === '' ? productData.map((product, index) => ({
+          ...product,
+          key: index,
+        })) : searchResults.map((product, index) => ({
+          ...product,
+          key: index,
+        }))}
+        pagination={false}
+      />
+
+      <Pagination
+        current={currentPage}
+        pageSize={10}
+        total={totalPages * 10}
+        onChange={handlePageChange}
+        style={{ display: 'flex', justifyContent: 'flex-end' }}
+      />
 <Modal
   title="Danh sách biến thể"
   visible={variantModalVisible}
