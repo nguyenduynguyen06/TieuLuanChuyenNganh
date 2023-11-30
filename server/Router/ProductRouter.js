@@ -29,4 +29,6 @@ router.get('/filter/highToLow/:categoryId/:brandId', (req, res) => {
   req.query.sort = 'highToLow';
   productController.filterProductsByCategoryandBrand(req, res);
 });
+router.get('/all-with-sold', productController.getAllProductsWithTotalSold);
+
 module.exports = router;

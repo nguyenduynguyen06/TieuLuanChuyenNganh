@@ -252,6 +252,16 @@ const getOrdersShipping = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find();
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 const getOrdersStorePickupgetReady = async (req, res) => {
   try {
     const orders = await Order.find({
@@ -656,4 +666,4 @@ const checkBH = async (req, res) => {
 
 
 
-module.exports = { checkBH,changeProduct,getCanceldOrdersAtStore,addProductRating,getCanceldOrdersShipping,addOrder,cancelOrder,completeOrderUser,getOrdersDetails, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDeliveryReady, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, deleteOrder,getOrdersShipping,getOrdersStorePickupReady,searchOrder,getOrdersHomeDeliveryShipping,searchOrderAtStoreComplete,searchOrderShippingComplete,searchOrderGetReady,searchOrderShipping,searchOrderGetReadyAtStore,searchOrderReady };
+module.exports = { getAllOrders,checkBH,changeProduct,getCanceldOrdersAtStore,addProductRating,getCanceldOrdersShipping,addOrder,cancelOrder,completeOrderUser,getOrdersDetails, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDeliveryReady, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, deleteOrder,getOrdersShipping,getOrdersStorePickupReady,searchOrder,getOrdersHomeDeliveryShipping,searchOrderAtStoreComplete,searchOrderShippingComplete,searchOrderGetReady,searchOrderShipping,searchOrderGetReadyAtStore,searchOrderReady };

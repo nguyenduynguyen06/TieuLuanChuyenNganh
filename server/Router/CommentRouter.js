@@ -12,4 +12,3 @@ router.get('/getCommentsByProduct/:productName', commentController.getCommentsBy
 router.get('/getAll', commentController.getAll)
 router.delete('/delete/:commentId', authMiddleware , commentController.deleteComment)
 module.exports = router;
- 

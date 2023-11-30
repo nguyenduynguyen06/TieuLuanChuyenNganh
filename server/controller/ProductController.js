@@ -359,5 +359,29 @@ const getProductRating = async (req, res) => {
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
+const getAllProductsWithTotalSold = async (req, res) => {
+  try {
+    const products = await Product.find().populate('variant');
+    
+    const productList = products.map((product) => {
+      const totalSold = product.variant.reduce((total, variant) => {
+        return total + variant.attributes.reduce((attrTotal, attr) => {
+          return attrTotal + attr.sold;
+        }, 0);
+      }, 0);
 
-module.exports = { addProduct, getProductRating, getProductsByCategory, editProduct, deleteProduct, searchProducts, getAllProduct, detailsProduct, filterProductsByCategory, filterProductsByCategoryandBrand };
+      return {
+        productId: product._id,
+        productName: product.name,
+        totalSold: totalSold,
+      };
+    });
+
+    res.status(200).json({ success: true, data: productList });
+  } catch (error) {
+    console.error('Lỗi khi lấy thông tin sản phẩm và tổng số lượng đã bán:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports = {getAllProductsWithTotalSold, addProduct, getProductRating, getProductsByCategory, editProduct, deleteProduct, searchProducts, getAllProduct, detailsProduct, filterProductsByCategory, filterProductsByCategoryandBrand };

@@ -8,6 +8,7 @@ router.post('/addOrder/:userId', orderController.addOrder);
 router.put('/updateOrder/:orderId',authMiddleware, orderController.updateOrderStatus);
 router.put('/completeOrder/:orderId', authMiddleware , orderController.completeOrder);
 router.put('/completeOrderUser/:orderCode', orderController.completeOrderUser);
+router.get('/getAllOrders', orderController.getAllOrders);
 router.get('/waiting-for-confirmation', orderController.getOrdersWaitingForConfirmation);
 router.get('/home-delivery', orderController.getOrdersHomeDeliveryReady);
 router.get('/home-delivery-shipping', orderController.getOrdersHomeDeliveryShipping);
