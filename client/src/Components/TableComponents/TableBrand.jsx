@@ -96,7 +96,7 @@ const TableBrand = () => {
           }}
           onCancel={() => setDeleteBrand(false)} 
         >
-          <p>Bạn có chắc chắn muốn xoá thương hiệu {record.name} này?</p>
+          <p>Bạn có chắc chắn muốn xoá thương hiệu này?</p>
         </Modal>
               </div>
             );

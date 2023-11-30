@@ -96,7 +96,7 @@ const TableCategory = () => {
           }}
           onCancel={() => setDeleteCategory(false)} 
         >
-          <p>Bạn có chắc chắn muốn xoá danh mục {record.name} này?</p>
+          <p>Bạn có chắc chắn muốn xoá danh mục này?</p>
         </Modal>
               </div>
             );
