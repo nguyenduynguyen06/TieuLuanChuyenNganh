@@ -4,14 +4,50 @@ import axios from 'axios';
 import { NavLink } from 'react-router-dom';
 import { Rate } from 'antd';
 import Loading from '../../../Components/LoadingComponents/Loading';
+import { RightCircleFilled, LeftCircleFilled } from '@ant-design/icons'
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 function AccessoryHomePage() {
   const [products, setProducts] = useState([]);
-  const [cardsToShow, setCardsToShow] = useState(6);
+  const [cardsToShow, setCardsToShow] = useState(12);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     getCategoryByName();
   }, []);
+  const name = 'Ốp lưng'
+  const CustomPrevArrow = (props) => (
+    <div {...props} className="custom-prev-arrow" style={{ ...arrowStyleprev, left: 0 }}>
+      <LeftCircleFilled style={{ fontSize: '30px' }} />
+    </div>
+  );
+
+  const CustomNextArrow = (props) => (
+    <div {...props} className="custom-next-arrow" style={{ ...arrowStyle, right: 0 }}>
+      <RightCircleFilled style={{ fontSize: '30px' }} />
+    </div>
+  );
+
+  const arrowStyleprev = {
+    width: '5%',
+    cursor: 'pointer',
+    position: 'absolute',
+    top: '50%',
+    paddingLeft: '10px',
+    zIndex: '1',
+  };
+  const arrowStyle = {
+    width: '5%',
+    cursor: 'pointer',
+    position: 'absolute',
+    paddingLeft: '10px',
+    top: '50%',
+    zIndex: '1',
+  };
+  if (window.innerWidth <= 500) {
+    arrowStyle.transform = 'translateX(-150%)';
+  }
 
   const getCategoryByName = async () => {
     try {
@@ -33,6 +69,24 @@ function AccessoryHomePage() {
     }
   };
 
+  const sliderSettings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 6,
+    slidesToScroll: 6,
+    prevArrow: <CustomPrevArrow />, // Thêm nút "prev" tùy chỉnh
+    nextArrow: <CustomNextArrow />, // Thêm nút "next" tùy chỉnh
+    responsive: [
+      {
+        breakpoint: 500, // Adjust this breakpoint as needed
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+        },
+      },
+    ],
+  };
 
   const calculateTotalRatings = (product) => {
     if (!product || !product.ratings) {
@@ -74,7 +128,7 @@ function AccessoryHomePage() {
     <WrapperCard>
       <img className='imgtt' src="..\..\image\banneracc.png" style={{ width: '100%' }} alt='title'></img>
       <Loading isLoading={loading}>
-        <div className='mainContainerAcc' style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <Slider {...sliderSettings}>
           {products.filter((product) => product.isHide === false).slice(0, cardsToShow).map((product) => (
             <NavLink className='box' key={product._id} to={`/product/${product.name}/undefined`}>
               <div className='card' >
@@ -104,20 +158,17 @@ function AccessoryHomePage() {
               </div>
             </NavLink>
           ))}
-        </div>
-        {hasMoreProducts && (
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-            <WrapperButtonMore
-              textButton="Xem thêm"
-              type="outline"
-              styleButton={isButtonHovered ? buttonHoverStyle : buttonStyle}
-              onMouseEnter={() => setIsButtonHovered(true)}
-              onMouseLeave={() => setIsButtonHovered(false)}
-              onClick={() => {
-                setCardsToShow(cardsToShow + 6); // Increase the number of cards to show
-              }}          >
-            </WrapperButtonMore>
-          </div>)}
+        </Slider>
+        <NavLink style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }} to={`/lowtoHigh/${name}`}>
+          <WrapperButtonMore
+            textButton="Xem thêm"
+            type="outline"
+            styleButton={isButtonHovered ? buttonHoverStyle : buttonStyle}
+            onMouseEnter={() => setIsButtonHovered(true)}
+            onMouseLeave={() => setIsButtonHovered(false)}
+          >
+          </WrapperButtonMore>
+        </NavLink>
       </Loading>
     </WrapperCard>
   );

@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { WrapperButtonMore, WrapperCard } from '../styled';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { RightCircleFilled, LeftCircleFilled } from '@ant-design/icons'
 
 import { Button, Rate } from 'antd';
 import { NavLink } from 'react-router-dom';
@@ -8,8 +12,28 @@ import Loading from '../../../Components/LoadingComponents/Loading'
 function ProductHomePage() {
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
-  const [cardsToShow, setCardsToShow] = useState(6);
+  const [cardsToShow, setCardsToShow] = useState(12);
   const [loading, setLoading] = useState(true);
+
+  const sliderSettings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 6,
+    slidesToScroll: 6,
+    prevArrow: <CustomPrevArrow />, // Thêm nút "prev" tùy chỉnh
+    nextArrow: <CustomNextArrow />, // Thêm nút "next" tùy chỉnh
+    responsive: [
+        {
+            breakpoint: 500, // Adjust this breakpoint as needed
+            settings: {
+                slidesToShow: 2,
+                slidesToScroll: 2,
+            },
+        },
+    ],
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -69,8 +93,7 @@ function ProductHomePage() {
 
   const [isButtonHovered, setIsButtonHovered] = useState(false);
 
-  const hasMoreProducts = products.length > cardsToShow;
-
+  const name = 'Điện thoại'
   const calculateAverageRating = (product) => {
     if (product.length === 0) {
       return 0;
@@ -79,13 +102,11 @@ function ProductHomePage() {
     const totalRating = product.reduce((total, item) => total + item.rating, 0);
     return totalRating / product.length;
   }
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
     <WrapperCard>
       <img className='imgtt' src="..\..\image\bannerpd.jpg" style={{ width: '100%' }} alt='title'></img>
       <Loading isLoading={loading}>
-        <div className='mainContainer' style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <Slider {...sliderSettings}>
           {products
             .filter((product) => product.isHide === false)
             .slice(0, cardsToShow)
@@ -133,27 +154,53 @@ function ProductHomePage() {
                 </NavLink>
               </div>
             ))}
-        </div>
-        {hasMoreProducts && (
-
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-            <WrapperButtonMore
-              textButton="Xem thêm"
-              type="outline"
-              styleButton={isButtonHovered ? buttonHoverStyle : buttonStyle}
-              onMouseEnter={() => setIsButtonHovered(true)}
-              onMouseLeave={() => setIsButtonHovered(false)}
-              onClick={() => {
-                setCardsToShow(cardsToShow + 6); // Increase the number of cards to show
-              }}
-            >
-              Xem thêm
-            </WrapperButtonMore>
-          </div>
-        )}
+        </Slider>
+        <NavLink style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }} to={`/lowtoHigh/${name}`}>
+          <WrapperButtonMore
+            textButton="Xem thêm"
+            type="outline"
+            styleButton={isButtonHovered ? buttonHoverStyle : buttonStyle}
+            onMouseEnter={() => setIsButtonHovered(true)}
+            onMouseLeave={() => setIsButtonHovered(false)}
+          >
+            Xem thêm
+          </WrapperButtonMore>
+        </NavLink>
       </Loading>
     </WrapperCard>
   );
+}
+
+const CustomPrevArrow = (props) => (
+  <div {...props} className="custom-prev-arrow" style={{ ...arrowStyleprev, left: 0 }}>
+      <LeftCircleFilled style={{ fontSize: '30px' }} />
+  </div>
+);
+
+const CustomNextArrow = (props) => (
+  <div {...props} className="custom-next-arrow" style={{ ...arrowStyle, right: 0 }}>
+      <RightCircleFilled style={{ fontSize: '30px' }} />
+  </div>
+);
+
+const arrowStyleprev = {
+  width: '5%',
+  cursor: 'pointer',
+  position: 'absolute',
+  top: '50%',
+  paddingLeft: '10px',
+  zIndex: '1',
+};
+const arrowStyle = {
+  width: '5%',
+  cursor: 'pointer',
+  position: 'absolute',
+  paddingLeft: '10px',
+  top: '50%',
+  zIndex: '1',
+};
+if (window.innerWidth <= 500) {
+  arrowStyle.transform = 'translateX(-150%)';
 }
 
 export default ProductHomePage;
