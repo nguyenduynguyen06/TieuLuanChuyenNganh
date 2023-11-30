@@ -220,7 +220,7 @@ const filterProductsByCategory = async (req, res) => {
       ];
     }
 
-    const products = await Product.find({ category: categoryId })
+    const products = await Product.find({ category: categoryId, isHide: false })
       .select('-desc -releaseTime -views -include -promotion') 
       .populate('variant', null, matchCondition)
       .populate('brand')
@@ -285,7 +285,7 @@ const filterProductsByCategoryandBrand = async (req, res) => {
       ];
     }
 
-    const products = await Product.find({ category: categoryId, brand: brandId })
+    const products = await Product.find({ category: categoryId, brand: brandId, isHide: false })
       .select('-desc -releaseTime -views -include -promotion')
       .populate('variant', null, matchCondition)
       .populate('brand')

@@ -62,7 +62,6 @@ const productSchema = new mongoose.Schema({
   },
   isHide: {
     type: Boolean,
-    default: false,
   },
   isOutOfStock: {
     type: Boolean,

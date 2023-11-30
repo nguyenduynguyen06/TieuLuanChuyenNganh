@@ -41,6 +41,7 @@ const FilterProductPage = () => {
         setMaxPrice('');
         setSelectedMemory('');
         setIncludeOldPrice('');
+        setNameProduct('');
     };
     let pathToUse;
     if (location.pathname.startsWith('/lowtoHigh')) {
@@ -181,6 +182,15 @@ const FilterProductPage = () => {
       };
       fetchCategories();
     }, []);
+    const [nameProduct, setNameProduct] = useState('');
+
+    const handleNameProduct = (productName) => {
+    if (nameProduct === productName) {
+        setNameProduct('');
+    } else {
+        setNameProduct(productName);
+    }
+    };
     return (
         <WrapperType>
             <Header />
@@ -192,6 +202,26 @@ const FilterProductPage = () => {
                         {renderContent('categories', categories)}
                     </WrapperContent>
                     <ListBrand />
+                    <WrapperContent>
+                    {nameCategory === `Cáp sạc` && (
+                            <WrapperTextValue
+                                active={nameProduct === 'Adapter'}
+                                onClick={() => handleNameProduct('Adapter')}
+                                style={{ cursor: `pointer`}}
+                            >
+                                <div>Adapter Sạc</div>
+                            </WrapperTextValue>
+                            )}
+                            {nameCategory === `Cáp sạc` && (
+                            <WrapperTextValue
+                                active={nameProduct === 'Cáp'}
+                                onClick={() => handleNameProduct('Cáp')}
+                                style={{ cursor: `pointer`}}
+                            >
+                                <div>Dây sạc</div>
+                            </WrapperTextValue>
+                            )}
+                    </WrapperContent>
                     {nameCategory ? (
                         <WrapperFilterList>
                             <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -270,6 +300,7 @@ const FilterProductPage = () => {
                         maxPrice={maxPrice}
                         includeOldPrice={includeOldPrice}
                         selectedMemory={selectedMemory}
+                        nameProduct={nameProduct}
                     />
                 </div>
             </div>

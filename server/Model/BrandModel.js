@@ -17,7 +17,6 @@ const brandSchema = new mongoose.Schema({
   },
   isHide: {
     type: Boolean,
-    default: false,
   },
 });
 

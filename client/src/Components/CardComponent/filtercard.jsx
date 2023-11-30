@@ -5,7 +5,7 @@ import {Pagination, Rate } from 'antd';
 import {WrapperFilterCard } from './styled';
 import Loading from '../LoadingComponents/Loading';
 
-function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
+function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory,nameProduct }) {
   const { nameCategory, nameBrand } = useParams();
   const location = useLocation();
   const searchKeyword = new URLSearchParams(location.search).get('keyword');
@@ -340,6 +340,10 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
           <ul className='mainContainer' style={{ alignItems: 'center', justifyContent: 'center', listStyle: 'none' }}>
             {productsToDisplay
               .filter((product) => product.isHide === false)
+              .filter((product) => {
+                const productName = product.name.toLowerCase();
+                return productName.includes(nameProduct.toLowerCase());
+              })
               .map((product) => (
                 product.variant.map((variant) => (
                   <li className='box' key={product._id + variant.memory} style={{ padding: '0' }} >
