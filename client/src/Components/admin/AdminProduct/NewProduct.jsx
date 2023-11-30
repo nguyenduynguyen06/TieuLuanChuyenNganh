@@ -541,8 +541,8 @@ const NewProduct = () => {
             <Input onChange={(e) => handlePropertyChange('Đầu ra', e.target.value)} />
           </Form.Item>
           <Form.Item
-            label="Độ dài dây" name="length" rules={[{ required: true, message: 'Vui lòng điền Độ dài dây' },]}>
-            <Input onChange={(e) => handlePropertyChange('Độ dài dây', e.target.value)} />
+            label="Kích thước" name="length" rules={[{ required: true, message: 'Vui lòng điền Kích thước' },]}>
+            <Input onChange={(e) => handlePropertyChange('Kích thước', e.target.value)} />
           </Form.Item>
           <Form.Item
             label="Công suất tối đa" name="maxcs" rules={[{ required: true, message: 'Vui lòng điền Công suất tối đa' },]}>
