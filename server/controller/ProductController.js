@@ -72,7 +72,6 @@ const getProductsByCategory = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Lỗi:', error);
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
