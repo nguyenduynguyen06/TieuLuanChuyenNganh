@@ -184,10 +184,6 @@ const forgotPassword = async (req, res) => {
     try {
       const { email } = req.body;
       const user = await User.findOne({ email });     
-      if(!user)
-      {
-        return res.status(401).json({ msg : "Tài khoản không tồn tại"})
-      }
       const newPassword = generateRandomPassword();
       const hashPass = await argon2.hash(newPassword);
       user.passWord = hashPass;
