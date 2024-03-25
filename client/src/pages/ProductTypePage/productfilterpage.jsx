@@ -171,17 +171,20 @@ const FilterProductPage = () => {
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
-  
-      const fetchCategories = async () => {
-        try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
-          setCategories(response.data.data);
-        } catch (error) {
-          console.error('Lỗi khi lấy danh sách danh mục:', error);
-        }
-      };
-      fetchCategories();
-    }, []);
+        const fetchCategories = async () => {
+          try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
+            const allCategories = response.data.data;
+            const filteredCategories = allCategories.filter(category => !category.isHide);
+            setCategories(filteredCategories);
+          } catch (error) {
+            console.error('Lỗi khi lấy danh sách danh mục:', error);
+          }
+        };
+      
+        fetchCategories();
+      }, []);
+      
     const [nameProduct, setNameProduct] = useState('');
 
     const handleNameProduct = (productName) => {

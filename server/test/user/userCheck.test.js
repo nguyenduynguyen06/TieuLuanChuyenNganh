@@ -9,7 +9,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 chai.use(chaiHttp);
 
-describe('Check tải khoản', function () {
+describe('Check tài khoản', function () {
 
   before(async function () {
     await mongoose.connect(process.env.MONGODB_URI_TEST, { useNewUrlParser: true, useUnifiedTopology: true });
