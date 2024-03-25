@@ -11,8 +11,7 @@ import Orders from "../pages/Profile/order/orders";
 import OrderDetail from "../pages/Profile/orderdetail";
 import WarrantySearch from "../Components/TableComponents/Warranty";
 import OrderSuccess from "../pages/OrderSuccess/ordersuccess";
-
-
+import LandingPage from "../Components/LandingPage/LandingPage";
 export const routes = [
     {
         path:'/',
@@ -99,5 +98,9 @@ export const routes = [
     {
         path:'/warranty',
         page: WarrantySearch
-    }
+    },
+    {
+        path:'/landingpage',
+        page: LandingPage
+    },
 ]
