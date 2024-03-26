@@ -10,20 +10,29 @@ const Navbar = () => {
         const aboutSection = document.getElementById("about");
         aboutSection.scrollIntoView({ behavior: "smooth" });
     };
+    const scrollToContact = () => {
+        const contactSection = document.getElementById("contact");
+        contactSection.scrollIntoView({ behavior: "smooth" });
+    };
+
 
     const menuOptions = [
         {
             text: "Trang chủ",
         },
         {
+            text: "Về chúng tôi",
+            onClick: scrollToAbout, 
+        },
+        {
+            text: "Liên hệ",
+            onClick: scrollToContact, 
+        },
+        {
             text: "Đăng ký",
         },
         {
             text: "Đăng nhập",
-        },
-        {
-            text: "Về chúng tôi",
-            onClick: scrollToAbout, 
         },
         {
             text: "Giỏ hàng",
@@ -39,6 +48,7 @@ const Navbar = () => {
                 <div className="navbar-links-container">
                     <a href="/landingpage">Trang chủ</a>
                     <a href="#" onClick={scrollToAbout}>Về chúng tôi</a>
+                    <a href="#" onClick={scrollToContact}>Liên hệ</a>
                     <a href="">Đăng nhập</a>
                     <a href="">Đăng ký</a>
                     <a href="">

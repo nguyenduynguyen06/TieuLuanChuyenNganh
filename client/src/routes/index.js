@@ -12,6 +12,7 @@ import OrderDetail from "../pages/Profile/orderdetail";
 import WarrantySearch from "../Components/TableComponents/Warranty";
 import OrderSuccess from "../pages/OrderSuccess/ordersuccess";
 import LandingPage from "../Components/LandingPage/LandingPage";
+import LoginSignup from "../Components/LoginSignup/LoginSignup";
 export const routes = [
     {
         path:'/',
@@ -102,5 +103,9 @@ export const routes = [
     {
         path:'/landingpage',
         page: LandingPage
+    },
+    {
+        path:'/login',
+        page: LoginSignup
     },
 ]
