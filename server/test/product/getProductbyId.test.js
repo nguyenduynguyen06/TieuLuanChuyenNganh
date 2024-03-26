@@ -60,7 +60,6 @@ describe('Get Products By Category', function () {
     const response = await chai
       .request(app)
       .get(`/api/product/getIdByCategory/invalidCategoryId`);
-
     expect(response).to.have.status(500);
     expect(response.body).to.have.property('success').to.equal(false);
     expect(response.body).to.have.property('error').to.equal('Lỗi Server');
