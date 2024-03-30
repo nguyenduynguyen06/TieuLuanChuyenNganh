@@ -119,7 +119,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
       <div className="header-container" >
         <div className="first-com">
           <NavLink to={`/`} className="ant-image" >
-            <img className="logo" src="../../image/didong1.png" alt="blink" />
+            <img className="logo" src="../../image/didong4.png" alt="blink" />
           </NavLink>
         </div>
         <div className="second-com">

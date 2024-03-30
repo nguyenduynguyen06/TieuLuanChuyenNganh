@@ -7,7 +7,7 @@ width: 100%;
     padding: 30px 20px;
     height: auto;
     display: flex;
-    background-image: linear-gradient(to bottom, #004aad,  #cb6ce6);
+    background: #03647B;
     align-item:center;
   }
   .first-com{

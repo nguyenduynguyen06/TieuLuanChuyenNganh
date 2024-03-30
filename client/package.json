@@ -21,7 +21,7 @@
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
     "es6-promise": "^4.2.8",
-    "firebase": "^10.9.0",
+    "firebase": "^10.10.0",
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.1",
     "http-proxy-middleware": "^2.0.6",
