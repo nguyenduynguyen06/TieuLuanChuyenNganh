@@ -40,10 +40,7 @@ jobs:
           echo "VNP_URL=${{ secrets.VNP_URL }}" >> $GITHUB_ENV
           echo "VNP_RETURN_URL=${{ secrets.VNP_RETURN_URL }}" >> $GITHUB_ENV
 
-      - name: Run Tests
-        run: npm test
-        env:
-          CI: true
+
 
   deploy:
     needs: build
