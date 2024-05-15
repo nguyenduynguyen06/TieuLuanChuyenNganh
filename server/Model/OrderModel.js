@@ -45,6 +45,9 @@ const cartItemSchema  = new mongoose.Schema({
     dateChange:{
       type:String
     }
+  },
+  sku: {
+    type: String
   }
 });
 const orderSchema = new mongoose.Schema({
@@ -112,6 +115,12 @@ const orderSchema = new mongoose.Schema({
   completeDate: {
     type: String,
   },
+  isPay :{
+    type: String,
+  },
+  reasonCancelled: {
+    type: String
+  }
 });
 
 const Order = mongoose.model('Order', orderSchema);

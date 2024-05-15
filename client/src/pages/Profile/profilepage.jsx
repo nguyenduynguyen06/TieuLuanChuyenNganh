@@ -1,46 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import {
-  MDBCol,
-  MDBContainer,
-  MDBRow,
-  MDBCard,
-  MDBCardText,
-  MDBCardBody,
-  MDBCardImage,
-  MDBBtn,
-  MDBListGroupItem,
-  MDBCardTitle,
-  MDBCardLink,
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalHeader,
-} from 'mdb-react-ui-kit';
-import { Card, Col, Collapse, Modal, Row } from 'antd';
+import { MDBBtn } from 'mdb-react-ui-kit';
+import { AppstoreOutlined, CameraOutlined, LockOutlined } from '@ant-design/icons';
+import { Breadcrumb, message, Upload, Menu, Modal } from 'antd';
 import UpdateUser from './updateUser';
 import ChangePassword from './changepass'
-import axios from 'axios';
-import { UploadOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import { Button, message, Upload } from 'antd';
-import { useSelector } from "react-redux";
-import OrderDetail from './orderdetail';
+import { useSelector, useDispatch } from "react-redux";
+import Header from '../../Components/Header/header';
+import Orders from './order/orders';
+import axios from "axios";
+import { resetUser } from "../../redux/Slide/userSlice";
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+
+function getItem(label, key, icon, children, type) {
+  return {
+    key,
+    icon,
+    children,
+    label,
+    type,
+  };
+}
 
 
 const Profilepage = () => {
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" })
-  }, [])
-  const user = useSelector((state) => state.user)
-  const [centredModal1, setCentredModal1] = useState(false);
-  const [centredModal2, setCentredModal2] = useState(false);
-  const [centredModal3, setCentredModal3] = useState(false);
-  const goBack = () => {
-    window.history.back();
-  };
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const toggleShow1 = () => setCentredModal1(!centredModal1);
-  const toggleShow2 = () => setCentredModal2(!centredModal2);
-  const toggleShow3 = () => setCentredModal3(!centredModal3);
+  const user = useSelector((state) => state.user);
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+
+  const handleLogoutCancel = () => {
+    setLogoutModalVisible(false);
+  };
 
   function checkFile(file) {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -63,125 +55,94 @@ const Profilepage = () => {
     beforeUpload: checkFile,
   };
 
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${process.env.REACT_APP_API_URL}/user/Logout`, {}, { withCredentials: true });
+      dispatch(resetUser)
+      localStorage.clear();
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Đã xảy ra lỗi khi đăng xuất:', error);
+    }
+  };
+
+  const items = [
+    getItem('Thông tin cá nhân', '/profile/infor', <AppstoreOutlined />),
+    getItem('Đổi mật khẩu', '/profile/changepass', <LockOutlined />),
+    getItem('Đơn hàng của bạn', '/profile/orders', <AppstoreOutlined />),
+  ];
+
+  if (user.role_id === 1) {
+    items.push(getItem('Quản lý', '/admin', <LockOutlined />));
+  }
+
+  items.push(getItem('Đăng xuất', 'logout', <AppstoreOutlined />));
+
+  const onClick = ({ key }) => {
+    if (key === 'logout') {
+      setLogoutModalVisible(true);
+    } else {
+      navigate(key);
+    }
+  };
+  useEffect(() => {
+    document.title = "Di Động Gen Z | Người Dùng";
+}, []);
+
+
   return (
-    <section style={{ backgroundColor: '#eee' }}>
-      <div style={{ background: '#fff', padding: '10px' }}>
-        <button style={{ border: 'none', background: 'transparent' }} onClick={goBack}>
-          <ArrowLeftOutlined /> Quay lại
-        </button>
+    <section style={{ backgroundColor: '#fff' }}>
+      <Header></Header>
+      <div style={{ height: '100px', background: 'linear-gradient(to bottom, #B63245, #fff', display: 'flex' }}>
+        <div style={{ width: '50%' }}>
+          <img src={user.avatar} alt="avatar" className="rounded-circle"
+            style={{ height: '100%', width: 'auto', margin: '20px 20px 0px 20px' }} />
+          <span style={{ color: '#fff' }}>{user.fullname}</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', width: '50%', paddingRight: '30px' }}>
+          <Upload {...props}>
+            <MDBBtn style={{ backgroundColor: '#fff', color: "black" }}  > <CameraOutlined /> Ảnh đại diện</MDBBtn>
+          </Upload>
+        </div>
       </div>
 
-      <MDBContainer className="py-5">
-        <MDBRow>
-          <MDBCol lg="4">
-            <MDBCard className="mb-4">
-              <MDBCardBody className="text-center">
-                <img
-                  src={user.avatar}
-                  alt='avatar'
-                  className="rounded-circle"
-                  style={{ width: '150px' }}
-                />
+      <Breadcrumb style={{ margin: '30px 20px 10px' }}>
+        <Breadcrumb.Item>
+          <NavLink to="/">Home</NavLink>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>
+          <NavLink to={`/profile`}>Profile</NavLink>
+        </Breadcrumb.Item>
+      </Breadcrumb>
+      <div style={{ display: 'flex' }}>
+        <Menu
+          style={{ width: '15%', minWidth: '15%', background: "#fff" }}
+          onClick={onClick}
+          mode="inline"
+          selectedKeys={[location.pathname]}
+          items={items}
+        />
+        <div className='content-component' style={{minHeight:'100vh', maxHeight: '100vh', width: '100%', overflow:'auto' }}>
+          {location.pathname === '/profile' && <UpdateUser/>}
+          {location.pathname === '/profile/infor' && <UpdateUser />}
+          {location.pathname === '/profile/changepass' && <ChangePassword />}
+          {location.pathname === '/profile/orders' && <Orders />}
+        </div>
 
-                <div className="text-muted mb-1"></div>
-                <Upload {...props}>
-                  <MDBBtn style={{ backgroundColor: '#E8E8E8', color: "black" }}  > <UploadOutlined /> Ảnh đại diện</MDBBtn>
-                </Upload>
-                <div className="text-muted mb-1"></div>
-                <div className="d-flex justify-content-center mb-2">
-                  <MDBBtn onClick={toggleShow1} style={{ backgroundColor: "#8c52ff" }}>Cập nhật thông tin</MDBBtn>
-                  <MDBBtn onClick={toggleShow2} className="ms-1" style={{ border: '2px solid #8c52ff', color: '#8c52ff', backgroundColor: '#F5F5F5' }}>Đổi mật khẩu</MDBBtn>
-                </div>
-              </MDBCardBody>
-            </MDBCard>
-          </MDBCol>
-          <MDBCol lg="8">
-            <MDBCard className="mb-4">
-              <MDBCardBody>
-                <MDBRow>
-                  <MDBCol sm="3">
-                    <MDBCardText>Họ và Tên</MDBCardText>
-                  </MDBCol>
-                  <MDBCol sm="9">
-                    <MDBCardText className="text-muted">{user.fullName}</MDBCardText>
-                  </MDBCol>
-                </MDBRow>
-                <hr />
-                <MDBRow>
-                  <MDBCol sm="3">
-                    <MDBCardText>Email</MDBCardText>
-                  </MDBCol>
-                  <MDBCol sm="9">
-                    <MDBCardText className="text-muted">{user.email}</MDBCardText>
-                  </MDBCol>
-                </MDBRow>
-                <hr />
-                <MDBRow>
-                  <MDBCol sm="3">
-                    <MDBCardText>Số điện thoại</MDBCardText>
-                  </MDBCol>
-                  <MDBCol sm="9">
-                    <MDBCardText className="text-muted">{user.phone_number}</MDBCardText>
-                  </MDBCol>
-                </MDBRow>
-                <hr />
-                <MDBRow>
-                  <MDBCol sm="3">
-                    <MDBCardText>Ngày sinh</MDBCardText>
-                  </MDBCol>
-                  <MDBCol sm="9">
-                    <MDBCardText className="text-muted">{user.birthDay}</MDBCardText>
-                  </MDBCol>
-                </MDBRow>
-                <hr />
-                <MDBRow>
-                  <MDBCol sm="3">
-                    <MDBCardText>Địa chỉ</MDBCardText>
-                  </MDBCol>
-                  <MDBCol sm="9">
-                    <MDBCardText className="text-muted">{user.addRess}</MDBCardText>
-                  </MDBCol>
-                </MDBRow>
-              </MDBCardBody>
-            </MDBCard>
+        <Modal
+          title="Xác nhận đăng xuất"
+          visible={logoutModalVisible}
+          onCancel={handleLogoutCancel}
+          onOk={handleLogout}
+          okText="Đăng xuất"
+          cancelText="Hủy"
+          okButtonProps={{ style: { backgroundColor: '#C13346', borderColor: '#C13346', color: '#fff' } }} 
 
+        >
+          <p>Bạn có chắc chắn muốn đăng xuất?</p>
+        </Modal>
 
-          </MDBCol>
-        </MDBRow>
-      </MDBContainer>
-
-      <Modal
-        visible={centredModal1}
-        onCancel={toggleShow1}
-        footer={null}>
-        <MDBModalDialog size='xl'>
-          <MDBModalContent>
-            <UpdateUser></UpdateUser>
-          </MDBModalContent>
-        </MDBModalDialog>
-      </Modal>
-
-      <Modal
-        visible={centredModal2}
-        onCancel={toggleShow2}
-        footer={null}>
-        <MDBModalDialog size='xl'>
-          <MDBModalContent>
-            <ChangePassword></ChangePassword>
-          </MDBModalContent>
-        </MDBModalDialog>
-      </Modal>
-
-      <Modal
-        visible={centredModal3}
-        onCancel={toggleShow3}
-        footer={null}>
-        <MDBModalDialog size='xl'>
-          <MDBModalContent>
-            <OrderDetail></OrderDetail>
-          </MDBModalContent>
-        </MDBModalDialog>
-      </Modal>
+      </div>
     </section>
   )
 }

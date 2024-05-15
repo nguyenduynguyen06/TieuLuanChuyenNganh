@@ -3,6 +3,12 @@ import { CardWrapper, Wrapper } from './style';
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
 import Loading from '../../Components/LoadingComponents/Loading';
+import { Card } from 'antd';
+const gridStyle = {
+  width: '100%',
+  textAlign: 'center',
+};
+
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
@@ -22,27 +28,23 @@ const Category = () => {
     fetchCategories();
   }, []);
   return (
-    <Wrapper>
-      <div className='background'>
-        <span className='title'>Danh mục sản phẩm</span>
-      </div>
-      <Loading isLoading={loading}>
-        <CardWrapper >
-          {categories.filter((category) => category.isHide === false).map((category) => (
-            <NavLink key={category._id} className='card' to={`/lowtoHigh/${category.name}`}>
-              <div  className='img-fluid'>
-                <img src={category.picture} className='img' loading="lazy" />
-              </div>
-              <div className='cate-name'>
-                <p >{category.name}</p>
-              </div>
-            </NavLink>
-          ))}
-        </CardWrapper>
-      </Loading>
-    </Wrapper>
-
+    <Loading isLoading={loading}>
+      <CardWrapper >
+        {categories.filter((category) => category.isHide === false).map((category) => (
+          <NavLink key={category._id} className='card' to={`/products/${category.name}`}>
+            <div className='img-fluid'>
+              <img src={category.picture} className='img' loading="lazy" />
+            </div>
+            <div className='cate-name'>
+              <p >{category.name}</p>
+            </div>
+          </NavLink>
+        ))}
+      </CardWrapper>
+    </Loading>
   )
 }
 
 export default Category
+
+{/*  */ }

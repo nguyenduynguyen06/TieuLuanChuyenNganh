@@ -36,8 +36,12 @@ const TableComment = () => {
       {
         title: 'Sản phẩm',
         dataIndex: 'product',
-        render: product => product?.name
-      },
+        render: product => (
+          <a href={`/product/${product?.name}/undefined`}>
+            {product?.name}
+          </a>
+        )
+      },      
       {
         title: 'Đây là Reply',
         dataIndex: 'isReply',
@@ -178,7 +182,7 @@ const TableComment = () => {
     }, []);
     return (
       <div>
-        <Table columns={columns} dataSource={commentData} /> 
+        <Table bordered columns={columns} dataSource={commentData} /> 
       </div>
     );
   };

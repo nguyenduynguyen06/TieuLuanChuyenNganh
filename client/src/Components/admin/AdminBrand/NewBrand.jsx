@@ -1,52 +1,40 @@
-import React,{useEffect,useState} from 'react';
+import React, { useState, useEffect } from 'react';
+import 'react-quill/dist/quill.snow.css';
+import axios from 'axios';
 import { UploadOutlined } from '@ant-design/icons';
-import {  message, Upload } from 'antd';
+import { message, Upload } from 'antd';
 import {
   Button,
   Form,
   Input,
-  Select
+  Select,
 } from 'antd';
-import axios from 'axios';
 import { useSelector } from 'react-redux';
-const {Option} = Select
+const { Option } = Select;
 const formItemLayout = {
   labelCol: {
     xs: {
-      span: 24,
+      span: 3,
     },
     sm: {
-      span: 8,
+      span: 5,
     },
   },
   wrapperCol: {
     xs: {
-      span: 24,
+      span: 30,
     },
     sm: {
-      span: 16,
-    },
-  },
-};
-const tailFormItemLayout = {
-  wrapperCol: {
-    xs: {
-      span: 24,
-      offset: 0,
-    },
-    sm: {
-      span: 20,
-      offset: 8,
+      span: 29,
     },
   },
 };
 
-const NewBrand = () => {
-  const user = useSelector((state)=> state.user)
-  const headers = {
-    token: `Bearers ${user.access_token}`,
-};
+const NewBrand = ({ closeModal }) => {
+  const user = useSelector((state) => state.user);
   const [form] = Form.useForm();
+  const [categories, setCategories] = useState([]);
+  const [formProperties, setFormProperties] = useState([]);
   const props = {
     name: 'image',
     action: `${process.env.REACT_APP_API_URL}/upload`,
@@ -60,7 +48,7 @@ const NewBrand = () => {
         message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
       }
       return isJpgOrPng;
-    }, 
+    },
     onChange(info) {
       if (info.file.status !== 'uploading') {
         console.log(info.file);
@@ -68,14 +56,14 @@ const NewBrand = () => {
       if (info.file.status === 'done') {
         message.success(`${info.file.name} file uploaded successfully`);
         const uploadedFilePaths = info.file.response.imageUrl
-        console.log('uploadedFilePaths',uploadedFilePaths)
+        console.log('uploadedFilePaths', uploadedFilePaths)
         form.setFieldsValue({ picture: uploadedFilePaths });
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} file upload failed.`);
       }
     }
   };
-  const [categories, setCategories] = useState([])
+
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`)
       .then((response) => {
@@ -85,9 +73,18 @@ const NewBrand = () => {
         console.error('Error fetching categories:', error);
       });
   }, []);
+
+  const handleCloseModal = () => {
+    closeModal();
+    form.resetFields();
+    setFormProperties([]);
+  };
   const onFinish = async (values) => {
+    const headers = {
+      token: `Bearers ${user.access_token}`,
+    };
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/brand/addBrand`, values,{ headers });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/brand/addBrand`, values, { headers });
       if (response.data.success) {
         message.success('Thêm thương hiệu thành công');
         form.resetFields();
@@ -99,13 +96,20 @@ const NewBrand = () => {
       message.error('Đã xảy ra lỗi khi thêm thương hiệu');
     }
   };
+
+  const data = Object.keys(formProperties).map((label, index) => ({
+    key: index,
+    label: label,
+    value: formProperties[label],
+  }));
+
   return (
     <Form
       {...formItemLayout}
       form={form}
       onFinish={onFinish}
       style={{
-        maxWidth: 600,
+        width: "100%",
       }}
       scrollToFirstError
     >
@@ -115,25 +119,11 @@ const NewBrand = () => {
         rules={[
           {
             required: true,
-            message: 'Điền tên của danh mục',
+            message: 'Điền tên thương hiệu',
           },
         ]}
       >
-        <Input/>
-      </Form.Item>
-      <Form.Item
-        name="picture"
-        label="Hình ảnh"
-        rules={[
-          {
-            required: true,
-            message: 'Vui lòng chọn ảnh',
-          },
-        ]}
-      >
-       <Upload {...props}>
-    <Button icon={<UploadOutlined />}>Ảnh</Button>
-  </Upload>
+        <Input />
       </Form.Item>
       <Form.Item
         name="categoryName"
@@ -145,13 +135,27 @@ const NewBrand = () => {
           },
         ]}
       >
-       <Select placeholder="Chọn danh mục">
+        <Select placeholder="Chọn danh mục" >
           {categories.map((category) => (
             <Option key={category.id} value={category.name}>
               {category.name}
             </Option>
           ))}
         </Select>
+      </Form.Item>
+      <Form.Item
+        name="picture"
+        label="Hình ảnh"
+        rules={[
+          {
+            required: true,
+            message: 'Vui lòng chọn ảnh',
+          },
+        ]}
+      >
+        <Upload {...props}>
+          <Button icon={<UploadOutlined />}>Ảnh</Button>
+        </Upload>
       </Form.Item>
       <Form.Item
         name="country"
@@ -163,14 +167,22 @@ const NewBrand = () => {
           },
         ]}
       >
-        <Input/>
+        <Input />
       </Form.Item>
-      <Form.Item {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit">
-          Thêm
-        </Button>
+
+      <Form.Item >
+        <div style={{ display: 'flex', gap: '20px', justifyContent: 'end' }}>
+          <Button type="primary" size="large" htmlType="submit">
+            Thêm thương hiệu
+          </Button>
+          <Button type="primary" size="large" danger onClick={handleCloseModal}>
+            Huỷ bỏ
+          </Button>
+        </div>
       </Form.Item>
-      </Form>
-  )
-}
-export default NewBrand
+
+    </Form>
+
+  );
+};
+export default NewBrand;

@@ -4,10 +4,10 @@ export const WrapperSuperHeader = styled.div`
 width: 100%;
   .header-container {
     width: 100%;
-    padding: 30px 20px;
+    padding: 20px 10px 20px 10px;
     height: auto;
     display: flex;
-    background: #03647B;
+    background: #B63245;
     align-item:center;
   }
   .first-com{
@@ -18,17 +18,24 @@ width: 100%;
 
   }
   .second-com{
-    width: 50%;
+    width: 60%;
     display: flex;
     align-items:center;
     justify-content: center;
   }
   .third-com{
-    width: 30%;
+    width: 20%;
     display: flex;
     align-items:center;
     justify-content: center;
+    gap: 20px;
   }
+  .second-com .search-and-suggest-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
   .ant-image {
     width: 100%;
     display: flex;
@@ -36,7 +43,7 @@ width: 100%;
     justify-content: center;
   }
   .logo{
-    width: 80%;
+    width: 50%;
     height: auto;
   }
   .logo img{
@@ -63,22 +70,22 @@ width: 100%;
   .search-box{
     width: 70%;
     display: flex;
+    flex-direction: column;
     align-items:center;
     justify-content: center;
   }
-  .btn-cart{
-    width: 50%;
+  .list-com{
     display: flex;
-    align-items:center;
-    justify-content: center;
+    gap: 10px;
+    color: black;
+    align-items: center;
+    align-content: center;
   }
-  .header-acc{
-    width: 50%;
-    color: #fff;
-    display: flex;
-    align-items:center;
-    justify-content: center;
+  .list-com a{
+    color: black;
+    cursor: pointer;
   }
+
   .link-sp{
     display: flex;
     gap: 10px;

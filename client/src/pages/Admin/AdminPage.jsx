@@ -3,166 +3,104 @@ import { AppstoreFilled, UserOutlined, ProfileFilled, QqOutlined, PrinterFilled,
 import { Menu } from 'antd';
 import { getItem } from './utils';
 import Header from '../../Components/Header/header';
-import AdminProduct from '../../Components/admin/AdminProduct/AdminProduct';
-import AdminUser from '../../Components/admin/AdminUser/AdminUser';
 import { useSelector } from 'react-redux';
-import NewProduct from '../../Components/admin/AdminProduct/NewProduct';
-import AdminCategory from '../../Components/admin/AdminCategory/AdminCategory';
+
 import NewCategory from '../../Components/admin/AdminCategory/NewCategory';
-import AdminBrand from '../../Components/admin/AdminBrand/AdminBrand';
 import NotFoundPage from '../notfoundpage';
 import NewBrand from '../../Components/admin/AdminBrand/NewBrand';
 import AdminComment from '../../Components/admin/AdminComment/AdminComment';
-import Pending from '../../Components/admin/AdminOrder/Pending';
-import AtStore from '../../Components/admin/AdminOrder/AtStore';
-import Complete from '../../Components/admin/AdminOrder/Complete';
-import Shipping from '../../Components/admin/AdminOrder/Shipping';
+
+
 import NewVoucher from '../../Components/admin/AdminVoucher/NewVoucher';
-import AdminVoucher from '../../Components/admin/AdminVoucher/AdminVoucher';
-import Cancel from '../../Components/admin/AdminOrder/Cancel';
+
 import Dashboard from '../../Components/admin/AdminDashboard/admindashboard';
-import HomePage from '../HomePage/homepages';
+
+import Product from '../../Components/admin/AdminProduct/Product';
+import OrderPending from '../../Components/admin/AdminOrder/OrderPending';
+import OrderReady from '../../Components/admin/AdminOrder/OrderReady';
+import OrderComplete from '../../Components/admin/AdminOrder/OrderComplete';
+import OrderDelivery from '../../Components/admin/AdminOrder/OrderDelivery';
+import OrderReadyCancel from '../../Components/admin/AdminOrder/OrderReadyCancel';
+import OrderCanCel from '../../Components/admin/AdminOrder/OrderCancel';
+import Category from '../../Components/admin/AdminCategory/Category';
+import Brand from '../../Components/admin/AdminBrand/Brand';
+import Sider from 'antd/es/layout/Sider';
+import User from '../../Components/admin/AdminUser/User';
+import Voucher from '../../Components/admin/AdminVoucher/Voucher';
+import OrderDelivered from '../../Components/admin/AdminOrder/OrderDelivered';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const AdminHomePage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+
   useEffect(() => {
+    document.title = "Di Động Gen Z | Quản Lý";
+
     window.scrollTo({ top: 0, behavior: "instant" })
   }, [])
-  const [products, setProducts] = useState([]);
-  const [keySelected, setKeySelected] = useState('dashboard');
   const goBack = () => {
     window.history.back();
   };
-  const renderPage = (key) => {
-    switch (key) {
-      case 'dashboard':
-        return (
-          <Dashboard />
-        )
-      case 'users':
-        return (
-          <AdminUser />
-        )
-      case 'products':
-        return (
-          <AdminProduct />
-        )
-      case 'addProduct':
-        return (
-          <div><NewProduct /></div>
-        )
-      case 'categorys':
-        return (
-          <div><AdminCategory /></div>
-        )
-      case 'addcategory':
-        return (
-          <div><NewCategory /></div>
-        )
-      case 'brands':
-        return (
-          <div><AdminBrand /></div>
-        )
-      case 'addbrand':
-        return (
-          <div><NewBrand /></div>
-        )
-      case 'comments':
-        return (
-          <div><AdminComment /></div>
-        )
-      case 'pending':
-        return (
-          <div><Pending /></div>
-        )
-      case 'atStore':
-        return (
-          <div><AtStore /></div>
-        )
-      case 'shipping':
-        return (
-          <div><Shipping /></div>
-        )
-      case 'success':
-        return (
-          <div><Complete /></div>
-        )
-      case 'cancel':
-        return (
-          <div><Cancel /></div>
-        )
-      case 'addVoucher':
-        return (
-          <div><NewVoucher /></div>
-        )
-      case 'vouchers':
-        return (
-          <div><AdminVoucher /></div>
-        )
-      default:
-        return <></>
-    }
-  }
-
-
 
   const items = [
-    getItem('Dashboard', 'dashboard', <SignalFilled />),
-    getItem('Người dùng', 'users', <UserOutlined />),
-    getItem('Sản phẩm', 'sub1', <AppstoreFilled />, [
-      getItem('Danh sách sản phẩm', 'products'),
-      getItem('Thêm sản phẩm', 'addProduct'),
+    getItem('Dashboard', '/admin/dashboard', <SignalFilled />),
+    getItem('Người dùng', '/admin/users', <UserOutlined />),
+    getItem('Sản phẩm', '/admin/products', <AppstoreFilled />),
+    getItem('Danh mục', '/admin/categories', <ProfileFilled />),
+    getItem('Thương hiệu', '/admin/brands', <QqOutlined />),
+    getItem('Bình luận', '/admin/comments', <MessageFilled />),
+    getItem('Đơn hàng', '/admin/order', <PrinterFilled />, [
+      getItem('Chờ xác nhận', '/admin/order/pending'),
+      getItem('Đang chuẩn bị đơn hàng', '/admin/order/ready'),
+      getItem('Đang giao hàng', '/admin/order/delivery'),
+      getItem('Đã giao hàng', '/admin/order/delivered'),
+      getItem('Đã hoàn thành', '/admin/order/complete'),
+      getItem('Đang chờ huỷ', '/admin/order/readycancel'),
+      getItem('Đã huỷ', '/admin/order/cancel'),
     ]),
-    getItem('Danh mục', 'category', <ProfileFilled />, [
-      getItem('Danh sách danh mục', 'categorys'),
-      getItem('Thêm danh mục', 'addcategory'),
-    ]),
-    getItem('Thương hiệu', 'brand', <QqOutlined />, [
-      getItem('Danh sách thương hiệu', 'brands'),
-      getItem('Thêm thương hiệu', 'addbrand'),
-    ]),
-    getItem('Bình luận', 'comments', <MessageFilled />),
-    getItem('Đơn hàng', 'order', <PrinterFilled />, [
-      getItem('Chờ xác nhận', 'pending'),
-      getItem('Nhận tại cửa hàng', 'atStore'),
-      getItem('Giao tận nơi', 'shipping'),
-      getItem('Đã hoàn thành', 'success'),
-      getItem('Đã huỷ', 'cancel'),
-    ]),
-    getItem('Voucher', 'voucher', <StarFilled />, [
-      getItem('Danh sách Voucher', 'vouchers'),
-      getItem('Thêm Voucher', 'addVoucher'),
-    ]),
+    getItem('Voucher', '/admin/voucher', <StarFilled />)
   ];
 
   const user = useSelector((state) => state.user)
   if (user && user.role_id == 1) {
-    const handleOnClick = ({ key }) => {
-      setKeySelected(key)
-    }
+    const onClick = ({ key }) => {
+      navigate(key);
+    };
     return (
       <>
-        <Header isHiddenSearch isHiddenCart/>
-        <div style={{ background: '#fff', padding: '10px' , width:256, borderRightStyle:'solid', border:'1px  #ccc',boxShadow: '1px 2px 1px #ccc'}}>
-          <button style={{ border: 'none', background: 'transparent' }} onClick={goBack}>
-            <ArrowLeftOutlined /> Quay lại
-          </button>
-        </div>
+        <Header isHiddenSearch isHiddenCart />
         <div style={{ display: 'flex' }}>
-          <Menu
-            mode="inline"
-            style={{
-              width: 256,
-              boxShadow: '1px 2px 1px #ccc',
-              height: 'auto',
-            }}
-            items={items}
-            onClick={handleOnClick}
-          />
-          <div style={{ flex: 1, padding: '15px' }}>
-            {renderPage(keySelected)}
+          <Sider width={'15%'}>
+            <Menu
+              style={{ width: '100%', height: '100vh', boxShadow: '1px 2px 1px #ccc' }}
+              onClick={onClick}
+              mode="inline"
+              selectedKeys={[location.pathname]}
+              items={items}
+            />
+          </Sider>
+          <div className='content-component' style={{ minHeight: '100vh', maxHeight: '100vh', width: '100%', overflow: 'auto', padding:'30px 30px 0 30px', scrollbarWidth:'none' }}>
+            {location.pathname === '/admin' && <Dashboard />}
+            {location.pathname === '/admin/dashboard' && <Dashboard />}
+            {location.pathname === '/admin/users' && <User />}
+            {location.pathname === '/admin/products' && <Product />}
+            {location.pathname === '/admin/categories' && <Category />}
+            {location.pathname === '/admin/brands' && <Brand />}
+            {location.pathname === '/admin/comments' && <AdminComment />}
+            {location.pathname === '/admin/order/pending' && <OrderPending />}
+            {location.pathname === '/admin/order/ready' && <OrderReady />}
+            {location.pathname === '/admin/order/delivery' && <OrderDelivery />}
+            {location.pathname === '/admin/order/delivered' && <OrderDelivered />}
+            {location.pathname === '/admin/order/complete' && <OrderComplete />}
+            {location.pathname === '/admin/order/readycancel' && <OrderReadyCancel />}
+            {location.pathname === '/admin/order/cancel' && <OrderCanCel />}
+            {location.pathname === '/admin/voucher' && <Voucher />}
           </div>
         </div>
-      </>);
+      </>
+    );
   } else {
     return (
       <div>

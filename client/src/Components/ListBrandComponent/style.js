@@ -2,6 +2,8 @@ import styled from "styled-components"
 export const WrapperBrandList = styled.div`
     display: flex;
     flex-wrap: wrap;
+    gap: 12px;
+    
     .list-brand-item{
         align-item: center;
         border: 1px solid #ccc;
@@ -10,11 +12,12 @@ export const WrapperBrandList = styled.div`
         height: 34px;
         align-items: center;
         justify-content: center;
-        margin: 10px;
         padding:  0 10px 0 10px;
+        margin-top: 10px;
+        min-width: 120px;
     }
     .list-brand-item a{
-        color: #ff3300;
+        color: #B63245;
         cursor: pointer;
     }
     .list-brand-item .brand-img {
@@ -25,7 +28,7 @@ export const WrapperBrandList = styled.div`
         max-width: 100%;
     }
     .list-brand-item.bordered {
-        border: 1px solid #FE3300;
+        border: 1px solid #B63245;
       }
     @media screen and (max-width: 500px) {
         .list-brand-item{

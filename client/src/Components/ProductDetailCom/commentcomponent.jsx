@@ -104,7 +104,7 @@ const Comment = () => {
     <WrapperCommentNew >
       <div className='comment-container'>
         <div className='comment-form'>
-          <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#ff3300' }}>Hỏi và đáp</p>
+          <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#B63245' }}>Hỏi và đáp</p>
           <form onSubmit={addComment}>
             <WrapperInfo style={{ display: 'flex', alignContent: 'space-between' }}>
 
@@ -120,7 +120,7 @@ const Comment = () => {
 
             <div className='comment-form-content'>
               <div className='textarea-comment'>
-                <img src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/af808c10-144a-4f31-b08d-e2108b4481bc/d622juu-a6a55fc8-da00-46b5-ab1f-8a32e5d48e1d.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2FmODA4YzEwLTE0NGEtNGYzMS1iMDhkLWUyMTA4YjQ0ODFiY1wvZDYyMmp1dS1hNmE1NWZjOC1kYTAwLTQ2YjUtYWIxZi04YTMyZTVkNDhlMWQucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.OVHJUeMJdQ-ojp4LQwln1WdAjdmTAL4T8Q8d6ydk-qM' width={55} alt='icon' className='icon-img' />
+                <img src='https://res.cloudinary.com/doq4spvys/image/upload/v1714700566/nefgcpuzc4mlmiiemqca.png' width={55} alt='icon' className='icon-img' />
                 <textarea className='textarea' id='textarea' placeholder='Hãy để lại câu hỏi, chúng tôi sẽ giải đáp thắc mắc cho bạn!'
                   cols="120"
                   name='content'
@@ -141,7 +141,7 @@ const Comment = () => {
                     Thông báo
                   </MDBModalHeader>
                   <MDBModalBody>
-                    <i className="fas fa-check-circle" style={{ color: 'green', fontSize: '30px' }}>&nbsp;</i> <p>Bình luận của bạn đã được gửi để kiểm duyệt, sau đó sẽ hiển thị ra</p>
+                    <i className="fas fa-check-circle" style={{ color: 'green', fontSize: '30px' }}>&nbsp;</i> <p>Bình luận của bạn đã được gửi để kiểm duyệt</p>
                   </MDBModalBody>
                   <MDBModalFooter>
                     <MDBBtn onClick={toggleModal}>
@@ -160,14 +160,10 @@ const Comment = () => {
           commentData.map((comments, index) => (
             <div className='block-comment-list'>
               <br></br>
-
               <div id className='list-comment'>
                 <hr></hr>
-
                 <div className='item-comment'>
-
                   <div className='box-cmt'>
-
                     <div className='cmt-inf'>
                       <div className='box-inf'>
                         <div className='box-inf-avt'>
@@ -200,7 +196,7 @@ const Comment = () => {
                             />
                             <div className='comment-form-content'>
                               <div className='textarea-comment'>
-                                <img src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/af808c10-144a-4f31-b08d-e2108b4481bc/d622juu-a6a55fc8-da00-46b5-ab1f-8a32e5d48e1d.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2FmODA4YzEwLTE0NGEtNGYzMS1iMDhkLWUyMTA4YjQ0ODFiY1wvZDYyMmp1dS1hNmE1NWZjOC1kYTAwLTQ2YjUtYWIxZi04YTMyZTVkNDhlMWQucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.OVHJUeMJdQ-ojp4LQwln1WdAjdmTAL4T8Q8d6ydk-qM' width={55} alt='icon' className='icon-img' />
+                                <img src='https://res.cloudinary.com/doq4spvys/image/upload/v1714700566/nefgcpuzc4mlmiiemqca.png' width={55} alt='icon' className='icon-img' />
                                 <textarea
                                   className='textarea'
                                   placeholder='Trả lời!'

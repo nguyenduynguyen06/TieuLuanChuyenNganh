@@ -4,9 +4,14 @@ import { WrapperDashboard } from './style';
 
 import PieChartComponent from '../../ChartComponent/piechart';
 import { Table } from 'antd';
+import { useSelector } from 'react-redux';
 
 
 function Dashboard() {
+    const user = useSelector((state) => state.user)
+    const headers = {
+        token: `Bearer ${user.access_token}`,
+    };
     const [productCount, setProductCount] = useState(0);
     const [completedShippingOrders, setCompletedShippingOrders] = useState(0);
     const [completedAtStoreOrders, setCompletedAtStoreOrders] = useState(0);
@@ -26,7 +31,7 @@ function Dashboard() {
                 const order2 = await axios.get(`${process.env.REACT_APP_API_URL}/order/completedAtStore`);
                 setCompletedAtStoreOrders(order2.data.data.length);
 
-                const order3 = await axios.get(`${process.env.REACT_APP_API_URL}/order/getAllOrders`);
+                const order3 = await axios.get(`${process.env.REACT_APP_API_URL}/order/getAllOrdersDashBoard` ,{headers});
                 setAllOrders(order3.data.data.length);
 
                 const cate = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);

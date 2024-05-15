@@ -2,8 +2,7 @@ import styled from "styled-components";
 
 export const WrapperInvoice = styled.div`
     padding: 10px;
-    width: 210mm;
-    height: 297mm;
+    max-width: 210mm; 
     margin: 0;
     padding: 10px; 
     font-family: Times;
@@ -40,9 +39,11 @@ export const WrapperInvoice = styled.div`
     
 `
 export const WrapperWarranty = styled.div`
-    width: 100%;
     display: flex;
     flex-direction: column;
+    width: 100%;
+    align-items: center;
+    //background: #FDE2B2;
     .title{
         padding-top: 20px;
         text-align: center;
@@ -70,7 +71,7 @@ export const WrapperWarranty = styled.div`
         align-items: flex-end;
         display: flex;
         height: 2.875rem;
-        color: #8c52ff;
+        color: #C13346;
         cursor: pointer;
         font-size: 1.25rem;
         text-transform: capitalize;

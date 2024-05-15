@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Button, Col, Image, Row, Table, Rate, message } from 'antd'
+import { Button, Col, Image, Row, Table, Rate, message, Breadcrumb } from 'antd'
 import {
     WrapperStyleColImage,
     WrapperStyleImageSmall,
@@ -17,9 +17,10 @@ import ProductDescription from "./productdesscription"
 import CommentBox from "./commentcomponent"
 import axios from "axios"
 import { NavLink, useParams } from "react-router-dom"
-import { ArrowLeftOutlined } from "@ant-design/icons"
+import { ArrowLeftOutlined, CaretLeftFilled, CaretRightFilled } from "@ant-design/icons"
 
 import Slider from 'react-slick';
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -28,7 +29,7 @@ import SuggestProduct from "./suggestproductcomponent"
 import ProductSale from "./productsale"
 import { useSelector } from "react-redux"
 import { MDBBtn, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalHeader } from "mdb-react-ui-kit"
-
+import './button.css'
 
 
 const { Column, ColumnGroup } = Table;
@@ -45,13 +46,29 @@ const ProductDetailComponents = () => {
     const [expanded, setExpanded] = useState(false);
     const [propExpanded, setPropExpanded] = useState(false);
     const [centredModal, setCentredModal] = useState(false);
-
+    const [category, setCategory] = useState("");
+    const [brand, setBrand] = useState("");
     const toggleShow = () => setCentredModal(!centredModal);
     const toggleExpand = () => {
         setExpanded(!expanded);
     };
     const collapse = () => {
         setExpanded(false);
+    };
+
+    const calculateTotalRatings = (product) => {
+        if (!product || !product.ratings) {
+            return 0;
+        }
+
+        return product.ratings.length;
+    }
+    const PrevArrow = ({ onClick }) => {
+        return <div className="slick-arrow slick-prev" onClick={onClick}></div>;
+    };
+
+    const NextArrow = ({ onClick }) => {
+        return <div className="slick-arrow slick-next" onClick={onClick} ></div>;
     };
 
     const sliderSettings = {
@@ -65,7 +82,8 @@ const ProductDetailComponents = () => {
         appendDots: (dots) => (
             <ul style={{ position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)', listStyle: 'none', padding: '0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 {dots}
-            </ul>)
+            </ul>),
+
     };
 
 
@@ -75,6 +93,12 @@ const ProductDetailComponents = () => {
                 .then((response) => {
                     const productDetails = response.data.data;
                     setProductDetails(productDetails);
+                    const { category, brand } = productDetails;
+
+
+                    setCategory(category);
+                    setBrand(brand);
+
 
                     const defaultMemory = memory;
 
@@ -120,7 +144,9 @@ const ProductDetailComponents = () => {
                 .then((response) => {
                     const productDetails = response.data.data;
                     setProductDetails(productDetails);
-
+                    const { category, brand } = productDetails;
+                    setCategory(category);
+                    setBrand(brand);
                     const initialMemories = {
                         [productDetails._id]: productDetails.variant[0].memory
                     };
@@ -157,13 +183,16 @@ const ProductDetailComponents = () => {
                 });
         }
     }, [productName, memory]);
+    let encodedProductName = encodeURIComponent(productName);
+    const [isAddingToCart, setIsAddingToCart] = useState(false);
     const handleAddToCart = async () => {
         try {
+            setIsAddingToCart(true);
             if (memory !== 'undefined') {
                 const selectedVariant = productDetails.variant.find((variant) => variant.memory === memory);
                 if (selectedVariant) {
                     const selectedSKUName = selectedSKU[selectedVariant._id]
-                    await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${productName}&SKU=${selectedSKUName}&quantity=${quantity}`)
+                    await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${encodedProductName}&SKU=${selectedSKUName}&quantity=${quantity}`)
                         .then((response) => {
                             if (response.data.success) { message.success('Thêm vào giỏ hàng thành công') }
                             else {
@@ -176,7 +205,7 @@ const ProductDetailComponents = () => {
             } else {
                 const selectValues = Object.values(selectedSKU);
                 const selectedColorName = selectValues[selectValues.length - 1];
-                await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${productName}&SKU=${selectedColorName}&quantity=${quantity}`)
+                await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${encodedProductName}&SKU=${selectedColorName}&quantity=${quantity}`)
                     .then((response) => {
                         if (response.data.success) { message.success('Thêm vào giỏ hàng thành công') }
                         else {
@@ -187,51 +216,61 @@ const ProductDetailComponents = () => {
             }
         } catch (error) {
             console.error('Lỗi:', error);
-            message.error('Vui lòng đăng nhập để tiếp tục')
+            message.error(error.response.data.error)
+        }
+        finally {
+            setIsAddingToCart(false);
+        }
+    };
+    const handleClickaddToCart = () => {
+        if (!isAddingToCart) {
+            handleAddToCart();
         }
     };
     const handleBuyNow = async () => {
         try {
+            setIsAddingToCart(true);
             if (memory !== 'undefined') {
                 const selectedVariant = productDetails.variant.find((variant) => variant.memory === memory);
                 if (selectedVariant) {
                     const selectedSKUName = selectedSKU[selectedVariant._id];
-                    await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${productName}&SKU=${selectedSKUName}&quantity=${quantity}`)
+                    await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${encodedProductName}&SKU=${selectedSKUName}&quantity=${quantity}`)
                         .then((response) => {
-                            if (response.data.success) { message.success('Thêm vào giỏ hàng thành công') }
+                            if (response.data.success) {
+                                window.location.href = '/payment-infor';
+                                 message.success('Thêm vào giỏ hàng thành công') }
                             else {
                                 { message.error(response.data.error) }
                             }
                         })
 
-
-                    window.location.href = '/cart';
-
                 }
             } else {
                 const selectValues = Object.values(selectedSKU);
                 const selectedColorName = selectValues[selectValues.length - 1];
-                await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${productName}&SKU=${selectedColorName}&quantity=${quantity}`)
+                await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${encodedProductName}&SKU=${selectedColorName}&quantity=${quantity}`)
                     .then((response) => {
                         if (response.data.success) { message.success('Thêm vào giỏ hàng thành công') }
                         else {
                             { message.error(response.data.error) }
                         }
                     })
-
-
-                window.location.href = '/cart';
+                window.location.href = '/payment-infor';
 
             }
         } catch (error) {
             console.error('Lỗi:', error);
-            message.error('Vui lòng đăng nhập để tiếp tục');
+            message.error(error.response.data.error);
+        }
+        finally {
+            setIsAddingToCart(false);
         }
     };
-
-
-
-
+    const handleClickNBuyNow = () => {
+        if (!isAddingToCart) {
+            handleBuyNow();
+        }
+    };
     const [quantity, setQuantity] = useState(1);
 
     const handleDecreaseQuantity = () => {
@@ -239,7 +278,6 @@ const ProductDetailComponents = () => {
             setQuantity(quantity - 1);
         }
     };
-
     const handleIncreaseQuantity = () => {
         if (quantity < 3) {
             setQuantity(quantity + 1);
@@ -248,8 +286,6 @@ const ProductDetailComponents = () => {
     const handleChange = (value) => {
         setQuantity(value);
     };
-
-
     const dataSource = productDetails && productDetails.properties
         ? Object.keys(productDetails.properties).map((propertyKey) => ({
             key: propertyKey,
@@ -266,63 +302,55 @@ const ProductDetailComponents = () => {
     }
     let totalRating = 0;
     let averageRating = 0;
+    let hasRatings = false;
 
     if (productDetails?.ratings.length > 0) {
         totalRating = productDetails.ratings.reduce((total, review) => total + review.rating, 0);
         averageRating = totalRating / productDetails.ratings.length;
+        hasRatings = true;
+
     }
     const goBack = () => {
         window.history.back();
     };
-    const displayData = propExpanded ? dataSource : dataSource.slice(0, 8);
+    const displayData = propExpanded ? dataSource : dataSource.slice(0, 7);
+
     return (
         <WrapperDetail>
             <div style={{ background: '#fff', padding: '10px' }}>
                 <button style={{ border: 'none', background: 'transparent' }} onClick={goBack}>
                     <ArrowLeftOutlined /> Quay lại
                 </button>
+                <Breadcrumb style={{ margin: '16px 0' }}>
+                    <Breadcrumb.Item>
+                        <NavLink to="/">Home</NavLink>
+                    </Breadcrumb.Item>
+                    <Breadcrumb.Item>
+                        <NavLink to={`/lowtoHigh/${category.name}`}>{category.name}</NavLink>
+                    </Breadcrumb.Item>
+                    <Breadcrumb.Item>
+                        <NavLink to={`/lowtoHigh/${category.name}/${brand.name}`}>{brand.name}</NavLink>
+                    </Breadcrumb.Item>
+                    <Breadcrumb.Item>{productName}</Breadcrumb.Item>
+                    {memory && memory !== 'undefined' && <Breadcrumb.Item>{memory}</Breadcrumb.Item>}
+                </Breadcrumb>
             </div>
-            <Row style={{ background: '#fff' }} >
 
-                {productDetails ? (
-                    memory !== `undefined` ? (
-                        <div className="product-name">
-                            <h5 style={{ margin: 0 }}>
-                                {productDetails.name} {memory}
-                            </h5>
-                            <div className="rate-ave">
-                                <Rate disabled allowHalf value={averageRating} />
-                                <span style={{ fontSize: 16 }}>{averageRating.toFixed(1)}</span>
-                            </div>
-                        </div>
-
-                    ) : (
-                        <div className="product-name">
-                            <h5 style={{ margin: 0 }}>
-                                {productDetails.name}
-                            </h5>
-                            <div className="rate-ave">
-                                <Rate disabled allowHalf value={averageRating} />
-                                <span style={{ fontSize: 16 }}>{averageRating.toFixed(1)}</span>
-                            </div>
-                        </div>
-                    )
-                ) : (
-                    <p>Loading...</p>
-                )}
+            <Row style={{ background: '#fff' }}>
             </Row>
             <Row className="product-pick">
                 <Col className="slider-col">
-                    <Slider {...sliderSettings} className="slider" style={{ border: '1px solid #ccc', borderRadius: '4px' }}>
+                    <Slider {...sliderSettings} className="slider" style={{ border: '1px solid #ccc', borderRadius: '4px' }} prevArrow={<PrevArrow />} nextArrow={<NextArrow />} >
                         {productDetails && productDetails.thumnails.slice(1).map((thumbnail, index) => (
                             <WrapperStyleImageBig key={index}>
                                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Image src={thumbnail} alt={`Thumbnail ${index}`} className="slider-image" />
+                                    <Image src={thumbnail} alt={`Thumbnail ${index}`} className="slider-image" preview={false} />
                                 </div>
                             </WrapperStyleImageBig>
                         ))}
                     </Slider>
                     <Row style={{ display: 'flex', marginTop: '10px', padding: '5px', alignItems: 'center', justifyContent: 'flex-start', border: '1px solid #ccc', borderRadius: '4px' }}>
+
                         {productDetails && productDetails.variant && selectedMemories[productDetails._id] ? (
                             productDetails.variant
                                 .filter((variant) => variant.memory === selectedMemories[productDetails._id])
@@ -340,6 +368,48 @@ const ProductDetailComponents = () => {
                 </Col>
                 <br></br>
                 <Col className="pick-col">
+                    <div className="name-row">
+                        {productDetails ? (
+                            memory !== `undefined` ? (
+                                <div className="product-name">
+                                    <h5 style={{ margin: 0 }}>
+                                        {productDetails.name} {memory}
+                                    </h5>
+                                    <div className="rate-ave">
+                                        {hasRatings ? (
+                                            <>
+                                                <Rate disabled allowHalf value={averageRating} />
+                                                <span style={{ fontSize: 16 }}>{averageRating.toFixed(1)}</span>
+                                                <span style={{ fontSize: 13 }}>({calculateTotalRatings(productDetails)} đánh giá)</span>
+                                            </>
+                                        ) : (
+                                            <span>Chưa có đánh giá</span>
+                                        )}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="product-name">
+                                    <h5 style={{ margin: 0 }}>
+                                        {productDetails.name}
+                                    </h5>
+                                    <div className="rate-ave">
+                                        {hasRatings ? (
+                                            <>
+                                                <Rate disabled allowHalf value={averageRating} />
+                                                <span style={{ fontSize: 16 }}>{averageRating.toFixed(1)}</span>
+                                            </>
+                                        ) : (
+                                            <span>Chưa có đánh giá</span>
+                                        )}
+                                    </div>
+                                </div>
+                            )
+                        ) : (
+                            <p>Loading...</p>
+                        )}
+
+
+                    </div>
                     <div className="button-row" style={{ padding: '0 0 10px' }}>
                         {productDetails?.variant.map((variant) => (
                             variant?.memory && (
@@ -470,7 +540,7 @@ const ProductDetailComponents = () => {
                                 border: 'none',
                                 borderRadius: '4px'
                             }}
-                            onClick={handleBuyNow}
+                            onClick={handleClickNBuyNow}
                             textButton={'Mua Ngay'}
                             styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}>
                         </ButtonComponent>
@@ -484,7 +554,7 @@ const ProductDetailComponents = () => {
                                 border: 'none',
                                 borderRadius: '4px'
                             }}
-                            onClick={handleAddToCart}
+                            onClick={handleClickaddToCart}
                             textButton={'Thêm Vào Giỏ'}
                             styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}>
                         </ButtonComponent>
@@ -523,7 +593,7 @@ const ProductDetailComponents = () => {
                                         {productDetails && productDetails.include ? (
                                             <li className="policy-item">
                                                 <DropboxOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></DropboxOutlined>
-                                                <p>Bộ sản phẩm gồm Bộ sản phẩm gồm: {productDetails.include} </p>
+                                                <p>Bộ sản phẩm gồm: {productDetails.include} </p>
                                             </li>
                                         ) : null}
                                     </ul>
@@ -548,12 +618,11 @@ const ProductDetailComponents = () => {
                 </Row>
             </Row>
             <hr className="my-4" />
-            <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
+            <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px'}}>
                 <Col className="des-col">
-                    <h3>Mô tả sản phẩm</h3>
                     <div
                         style={{
-                            height: expanded ? 'auto' : '600px',
+                            height: expanded ? 'auto' : '50em',
                             overflowY: 'hidden',
                             textAlign: 'justify',
                             position: 'relative',
@@ -565,16 +634,17 @@ const ProductDetailComponents = () => {
                             <p>Loading...</p>
                         )}
 
-                        <div
+                    </div>
+                    <div
                             style={{
                                 position: 'absolute',
                                 bottom: 0,
                                 left: 0,
                                 width: '100%',
                                 background: 'linear-gradient(to bottom, transparent, white)',
-                                padding: '30px 10px 0px',
                                 boxSizing: 'border-box',
                                 display: 'flex',
+                                paddingTop: '20px',
                                 justifyContent: 'center',
                             }}
                         >
@@ -583,12 +653,12 @@ const ProductDetailComponents = () => {
                                     Xem thêm
                                 </Button>
                             ) : (
-                                <Button onClick={collapse} style={{ width: '200px', textTransform: 'uppercase', cursor: 'pointer' }}>
+                                <Button onClick={collapse} style={{width: '200px', textTransform: 'uppercase', cursor: 'pointer' }}>
                                     Thu gọn
                                 </Button>
                             )}
                         </div>
-                    </div>
+
                 </Col>
                 <Col className="prop-col">
                     <WrapperPropTable dataSource={displayData} pagination={false}>
@@ -615,7 +685,6 @@ const ProductDetailComponents = () => {
                     )}
                 </Col>
             </Row>
-            <hr className="my-4" />
             {productDetails && memory !== "undefined" && (
                 <Row>
                     <SuggestProduct suggested={productDetails.name.replace(/\s*\d+[GgBb]{1,2}\s*$/, '')} />

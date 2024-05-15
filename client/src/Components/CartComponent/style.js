@@ -8,17 +8,6 @@ export const HeaderWrapper = styled.div`
     justify-content: space-between;
     padding: 10px;
 }
-.btn-back{
-    align-items: flex-end;
-    display: flex;
-    height: 2.875rem;
-    color: #8c52ff;
-    cursor: pointer;
-    font-size: 1.25rem;
-    text-transform: capitalize;
-    margin-bottom: 0.12rem;
-
-}
 .cart-page-logo {
     text-decoration: none;
     color: rgba(0,0,0,.87);
@@ -33,7 +22,7 @@ export const HeaderWrapper = styled.div`
     width: 8.125rem;
     height: 2.875rem;
     cursor: pointer;
-    fill: #8c52ff;
+    fill: #C13346;
 }
 .logo-icon img{
     padding-top: 10%;
@@ -49,8 +38,8 @@ export const HeaderWrapper = styled.div`
 }
 .cart-page-name {
     margin-left: 0.9375rem;
-    border-left: 0.0625rem solid #8c52ff;
-    color: #8c52ff;
+    border-left: 0.0625rem solid #B63245;
+    color: #B63245;
     font-size: 1.25rem;
     line-height: 1.875rem;
     height: 1.875rem;

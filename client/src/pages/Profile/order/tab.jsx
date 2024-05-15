@@ -18,22 +18,22 @@ const Tab = () => {
           <i class="fas fa-check-to-slot"></i>Chờ xác nhận
         </WrapperBtn>
         <WrapperBtn size='large' style={{ height: 'auto' }}
-          className={activeTab === 'Đơn hàng đang được chuẩn bị' ? 'active' : ''}
-          onClick={() => changeTab('Đơn hàng đang được chuẩn bị')}
+          className={activeTab === 'Đang chuẩn bị đơn hàng' ? 'active' : ''}
+          onClick={() => changeTab('Đang chuẩn bị đơn hàng')}
         >
           <i class="fas fa-box"></i>Chờ chuẩn bị hàng
         </WrapperBtn>
         <WrapperBtn size='large' style={{ height: 'auto' }}
-          className={activeTab === 'Đơn hàng đang được giao' ? 'active' : ''}
-          onClick={() => changeTab('Đơn hàng đang được giao')}
+          className={activeTab === 'Đang giao hàng' ? 'active' : ''}
+          onClick={() => changeTab('Đang giao hàng')}
         >
-          <i class="fas fa-truck"></i>Chờ giao hàng
+          <i class="fas fa-truck"></i>Đang giao hàng
         </WrapperBtn>
         <WrapperBtn size='large' style={{ height: 'auto' }}
-          className={activeTab === 'Đơn hàng sẵn sàng' ? 'active' : ''}
-          onClick={() => changeTab('Đơn hàng sẵn sàng')}
+          className={activeTab === 'Đã giao hàng' ? 'active' : ''}
+          onClick={() => changeTab('Đã giao hàng')}
         >
-          <i class="fas fa-box-open"></i>Nhận tại cửa hàng
+          <i class="fas fa-truck"></i>Đã giao hàng
         </WrapperBtn>
         <WrapperBtn size='large' style={{ height: 'auto' }}
           className={activeTab === 'Đã hoàn thành' ? 'active' : ''}
@@ -42,8 +42,8 @@ const Tab = () => {
           <i class="fas fa-clipboard-check"></i>Đã hoàn thành
         </WrapperBtn>
         <WrapperBtn size='large' style={{ height: 'auto' }}
-          className={activeTab === 'Đã hủy' ? 'active' : ''}
-          onClick={() => changeTab('Đã hủy')}
+          className={activeTab === 'Đã huỷ' ? 'active' : ''}
+          onClick={() => changeTab('Đã huỷ')}
         >
           <i class="fas fa-rectangle-xmark"></i>Đã huỷ
         </WrapperBtn>

@@ -71,7 +71,7 @@ function Forget() {
                   <h2 className="fw-bold mb-2 text-center">Quên Mật Khẩu</h2>
                   <p className="text-white-50 mb-3"></p>
                   <MDBInput wrapperClass='mb-4 w-100' label='Email' name="email" value={user.email} type='email' size="lg" onChange={onChange} />
-                  <MDBBtn size='lg' type="submit" disabled={loading} style={{backgroundColor: '#FF3300'}}>
+                  <MDBBtn size='lg' type="submit" disabled={loading} style={{backgroundColor: '#B63245'}}>
                     {loading ? 'Đang gửi...' : 'Xác nhận'}
                   </MDBBtn>
                 </MDBCardBody>

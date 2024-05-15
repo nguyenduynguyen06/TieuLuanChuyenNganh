@@ -19,7 +19,7 @@ const TableCategory = () => {
     const columns = [
       {
         title: 'Tên danh mục',
-        dataIndex: 'name',
+        dataIndex: 'name', 
       },
       {
         title: 'Hình ảnh',
@@ -153,7 +153,7 @@ const TableCategory = () => {
             showIcon
             style={{ marginBottom: '16px',background:'#FFFF99' }}
           />
-        <Table columns={columns} dataSource={categoryData} /> 
+        <Table bordered columns={columns} dataSource={categoryData} /> 
       </div>
     );
   };

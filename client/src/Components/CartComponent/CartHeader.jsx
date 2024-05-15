@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 
 import { HeaderWrapper } from './style';
 import { ArrowLeftOutlined } from "@ant-design/icons";
+import { Breadcrumb } from 'antd';
+import { NavLink } from 'react-router-dom';
 
 function CartHeader({ product, removeFromCart }) {
 
@@ -16,15 +18,20 @@ function CartHeader({ product, removeFromCart }) {
     <HeaderWrapper>
       <div className='cart-page-header'>
         <div className="btn-back">
-          <a onClick={goBack}>
-            <ArrowLeftOutlined /> Quay lại
-          </a>
+          <Breadcrumb style={{ margin: '16px 0' }}>
+            <Breadcrumb.Item>
+              <NavLink to="/">Home</NavLink>
+            </Breadcrumb.Item>
+              <Breadcrumb.Item>
+                <NavLink to={`/cart`}>Giỏ hàng</NavLink>
+              </Breadcrumb.Item>
+          </Breadcrumb>
         </div>
         <div className='cart-page-logo' >
-          <a viewBox="0 0 192 65" className='logo-icon' href='/'>
-            <img src='../../image/didong2.png' />
-          </a>
-          <a className='cart-page-name' href='/cart'>Giỏ hàng</a>
+          <NavLink viewBox="0 0 192 65" className='logo-icon' to="/">
+            <img src='../../image/home-logo1.png' />
+          </NavLink>
+          <NavLink className='cart-page-name' to={`/cart`}>Giỏ hàng</NavLink>
         </div>
       </div>
     </HeaderWrapper>

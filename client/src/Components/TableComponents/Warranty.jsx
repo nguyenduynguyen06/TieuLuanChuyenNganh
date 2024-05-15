@@ -1,111 +1,121 @@
-    import { Button, Input, Radio, Space, message } from 'antd';
-    import React, { useState } from 'react';
-    import { WrapperWarranty } from './style';
-    import Loading from '../LoadingComponents/Loading';
-    import axios from 'axios';
-    import moment from 'moment';
-    import { ArrowLeftOutlined } from "@ant-design/icons";
-    import { MDBBtn, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalHeader } from 'mdb-react-ui-kit';
-    import OTPInput from "otp-input-react";
-    import { BsFillShieldLockFill, BsTelephoneFill } from "react-icons/bs";
-    import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { Breadcrumb, Button, Input, Radio, Space, message } from 'antd';
+import React, { useState } from 'react';
+import { WrapperWarranty } from './style';
+import Loading from '../LoadingComponents/Loading';
+import axios from 'axios';
+import moment from 'moment';
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { MDBBtn, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalHeader } from 'mdb-react-ui-kit';
+import OTPInput from "otp-input-react";
+import { BsFillShieldLockFill, BsTelephoneFill } from "react-icons/bs";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from './FirebaseController';
+import { NavLink } from 'react-router-dom';
+import ReactDOM from "react-dom";
+const WarrantySearch = () => {
+    const [loading, setLoading] = useState(false);
+    const [value, setValue] = useState(1);
+    const [data, setData] = useState(null);
+    const [sdt, setSdt] = useState(null);
+    const [OTP, setOTP] = useState("");
+    const [info, setInfo] = useState("");
+    const [lastCheckTime, setLastCheckTime] = useState(null);
+    const [verifiedPhoneNumber, setVerifiedPhoneNumber] = useState(null);
+    async function onSignup() {
+        setLoading(true);
+        const currentTime = new Date().getTime();
+        if (verifiedPhoneNumber !== sdt || (verifiedPhoneNumber === sdt && currentTime - lastCheckTime >= 30 * 60 * 1000)) {
+            const appVerifier = new RecaptchaVerifier(
+                auth,
+                "recaptcha-container",
+                {
+                    size: "invisible",
+                    callback: (response) => {
+                        onSignup();
+                    },
+                    "expired-callback": () => { },
+                }
+            );
 
-    const WarrantySearch = () => {
-        const [loading, setLoading] = useState(false);
-        const [value, setValue] = useState(1);
-        const [data, setData] = useState(null);
-        const [sdt, setSdt] = useState(null);
-        const [OTP, setOTP] = useState("");
-        const [info, setInfo] = useState ("");
-        function onCaptchVerify() {
-            if (!window.recaptchaVerifier) {
-                window.recaptchaVerifier = new RecaptchaVerifier(
-                    auth,
-                    "recaptcha-container",
-                    {
-                        size: "invisible",
-                        callback: (response) => {
-                            onSignup();
-                        },
-                        "expired-callback": () => {},
-                    }
-                );                
-            }
-        }
-        
-        function onSignup() {
-            setLoading(true);
-            onCaptchVerify()
-            const appVerifier = window.recaptchaVerifier;
-        
-            const formatPh = "+84" + sdt;
-        
-            signInWithPhoneNumber(auth, formatPh, appVerifier)
-                .then((confirmationResult) => {
-                    window.confirmationResult = confirmationResult;
-                    setLoading(false);
-                    setCentredModal1(true);
-                    message.success("OTP sent successfully!");
-                })
-                .catch((error) => {
-                    console.log(error);
-                    setLoading(false);
-                });
-        }
-        
-        
-        
-          function onOTPVerify() {
-            setLoading(true);
-            window.confirmationResult
-              .confirm(OTP)
-              .then(async (res) => {
-                handleSearch()
-                setLoading(false);
-                setCentredModal1(false);
-                setOTP(null)
-              })
-              .catch((err) => {
-                setInfo("OTP không hợp lệ, hãy thử lại")
-                setLoading(false);
-              });
-          }
-
-        const onChange = (e) => {
-            setValue(e.target.value);
-        };
-
-        const tableCellStyle = {
-            border: '1px solid #ddd',
-            padding: '8px',
-            textAlign: 'left',
-        };
-        const [centredModal1, setCentredModal1] = useState(false);
-
-        const toggleShow1 = () => setCentredModal1(!centredModal1);
-        const handleSearch = async () => {
             try {
-                setLoading(true);
-                const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/checkBH`, { phone: sdt });
-                setData(response.data.products);
+                const formatPh = "+84" + sdt;
+                const confirmationResult = await signInWithPhoneNumber(auth, formatPh, appVerifier);
+                window.confirmationResult = confirmationResult;
+                setLoading(false);
+                setCentredModal1(true);
+                document.getElementById("recaptcha-container").innerHTML = "";
+                message.success("OTP sent successfully!");
+                console.log(verifiedPhoneNumber)
             } catch (error) {
-                console.error('Error calling API:', error);
-            } finally {
+                console.log(error);
                 setLoading(false);
             }
-        };
-        const goBack = () => {
-            window.history.back();
-        };
-        
-        return (
-            <WrapperWarranty>
-                <div className="btn-back">
-            <a onClick={goBack}>
-                <ArrowLeftOutlined /> Quay lại
-            </a>
-            </div>
+        } else {
+            setLoading(true);
+            handleSearch();
+            setLoading(false);
+        }
+    }
+
+
+    function onOTPVerify() {
+        setLoading(true);
+        window.confirmationResult
+            .confirm(OTP)
+            .then(async (res) => {
+                setCentredModal1(false);
+                setOTP(null);
+                const currentTime = new Date().getTime();
+                setVerifiedPhoneNumber(sdt);
+                setLastCheckTime(currentTime)
+                handleSearch();
+                setLoading(false);
+            })
+            .catch((err) => {
+                setInfo("OTP không hợp lệ, hãy thử lại");
+                setLoading(false);
+            });
+    }
+
+
+    const onChange = (e) => {
+        setValue(e.target.value);
+    };
+
+    const tableCellStyle = {
+        border: '1px solid #ddd',
+        padding: '8px',
+        textAlign: 'left',
+    };
+
+    const [centredModal1, setCentredModal1] = useState(false);
+
+    const toggleShow1 = () => setCentredModal1(!centredModal1);
+
+    const handleSearch = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/checkBH`, { phone: sdt });
+            setData(response.data.products);
+        } catch (error) {
+            console.error('Error calling API:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <WrapperWarranty>
+            <div style={{ width: '70%' }}>
+                <Breadcrumb style={{ margin: '16px 0' }}>
+                    <Breadcrumb.Item>
+                        <NavLink to="/">Home</NavLink>
+                    </Breadcrumb.Item>
+                    <Breadcrumb.Item>
+                        <NavLink to="/warranty">Tra cứu thông tin bảo hành</NavLink>
+                    </Breadcrumb.Item>
+                </Breadcrumb>
+
                 <div className='title'>
                     <p>Tra cứu thông tin bảo hành</p>
                 </div>
@@ -121,7 +131,7 @@ import { auth } from './FirebaseController';
                             value={sdt}
                             onChange={(e) => setSdt(e.target.value)}
                         />
-                        <Button type="primary" onClick={onSignup} disabled={loading}>
+                        <Button style={{ backgroundColor: '#B63245', color: 'white' }} onClick={onSignup} disabled={loading}>
                             KIỂM TRA
                         </Button>
                     </Space.Compact>
@@ -147,14 +157,14 @@ import { auth } from './FirebaseController';
                                         <td style={tableCellStyle}>{item.color}</td>
                                         <td style={tableCellStyle}>{item.quantity}</td>
                                         <td style={tableCellStyle}> {item.change.dateChange ? (
-                                                                        moment(item.change.dateChange, 'DD/MM/YYYY HH:mm:ss')
-                                                                            .add(item.product.warrantyPeriod, 'months')
-                                                                            .format('DD-MM-YYYY')
-                                                                    ) : (
-                                                                        moment(item.completeDate, 'DD/MM/YYYY HH:mm:ss')
-                                                                            .add(item.product.warrantyPeriod, 'months')
-                                                                            .format('DD-MM-YYYY')
-                                                                    )}</td>
+                                            moment(item.change.dateChange, 'DD/MM/YYYY HH:mm:ss')
+                                                .add(item.product.warrantyPeriod, 'months')
+                                                .format('DD-MM-YYYY')
+                                        ) : (
+                                            moment(item.completeDate, 'DD/MM/YYYY HH:mm:ss')
+                                                .add(item.product.warrantyPeriod, 'months')
+                                                .format('DD-MM-YYYY')
+                                        )}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -162,41 +172,42 @@ import { auth } from './FirebaseController';
                     </Loading>
                 </div>
                 <MDBModal show={centredModal1} tabIndex='-1' setShow={setCentredModal1} >
-            <MDBModalDialog centered>
-            <MDBModalContent className="custom-emerald">
-                <MDBModalHeader>
-                <MDBBtn className='btn-close' color='none' onClick={toggleShow1}></MDBBtn>
-                </MDBModalHeader>
-                <MDBModalBody style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div className="logo-container mx-auto">
-                    <BsFillShieldLockFill size={30} />
-                </div>
+                    <MDBModalDialog centered>
+                        <MDBModalContent className="custom-emerald">
+                            <MDBModalHeader>
+                                <MDBBtn className='btn-close' color='none' onClick={toggleShow1}></MDBBtn>
+                            </MDBModalHeader>
+                            <MDBModalBody style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <div className="logo-container mx-auto">
+                                    <BsFillShieldLockFill size={30} />
+                                </div>
 
-                <label className="font-bold text-xl text-white text-center">Hãy nhập OTP của bạn</label>
-                <br></br>
-                <OTPInput 
-                    value={OTP} 
-                    onChange={setOTP}
-                    OTPLength={6}
-                    otpType="number"
-                    disabled={false}
-                    autoFocus
-                    className="otp-container">
-                </OTPInput>
-                <br></br>
-                {info && <label className="font-bold text-xl text-white text-center">{info}</label>}
-                <br></br>
-                <Loading isLoading={loading}>
-                <button onClick = {onOTPVerify} className="custom-button">
-                    <span style={{ fontSize: '1rem' }}>Xác nhận OTP</span>
-                </button>
-                </Loading>
-                </MDBModalBody>
-            </MDBModalContent>
-            </MDBModalDialog>
-        </MDBModal>
-            </WrapperWarranty>
-        );
-    };
+                                <label className="font-bold text-xl text-black text-center">Hãy nhập OTP của bạn</label>
+                                <br></br>
+                                <OTPInput
+                                    value={OTP}
+                                    onChange={setOTP}
+                                    OTPLength={6}
+                                    otpType="number"
+                                    disabled={false}
+                                    autoFocus
+                                    className="otp-container">
+                                </OTPInput>
+                                <br></br>
+                                {info && <label className="font-bold text-xl text-white text-center">{info}</label>}
+                                <br></br>
+                                <Loading isLoading={loading}>
+                                    <button onClick={onOTPVerify} className="custom-button">
+                                        <span style={{ fontSize: '1rem' }}>Xác nhận OTP</span>
+                                    </button>
+                                </Loading>
+                            </MDBModalBody>
+                        </MDBModalContent>
+                    </MDBModalDialog>
+                </MDBModal>
+            </div>
+        </WrapperWarranty>
+    );
+};
 
-    export default WarrantySearch;
+export default WarrantySearch;

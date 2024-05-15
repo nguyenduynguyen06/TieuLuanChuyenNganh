@@ -2,7 +2,7 @@ const ProvinceModel = require('../Model/ProvinceModel')
 const getProvince = async (req, res) => {
     try {
         const provinces = await ProvinceModel.find({}, { _id: 0, 'province.idProvince': 1, 'province.name': 1 });
-        res.status(201).json({ success: true, data: provinces });
+        res.status(201).json({ success: true, data: provinces[0].province });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -38,7 +38,7 @@ const getCommunesByDistrict = async (req, res) => {
         const communes = district.commune.filter(commune => commune.idDistrict === idDistrict);;
         res.status(200).json({ success: true, data: communes });
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Loi ne:', error);
         res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
 };

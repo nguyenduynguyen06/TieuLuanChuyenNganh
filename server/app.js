@@ -9,7 +9,9 @@ const routerCart = require('./Router/CartRouter')
 const routerComment = require('./Router/CommentRouter')
 const routerOrder = require('./Router/OrderRouter')
 const routerProvince = require('./Router/ProvinceRouter')
+const routerRecommend = require('./Router/RecommendRouter')
 const routerVoucher = require('./Router/VoucherRouter')
+const routerBanner = require('./Router/BannerRouter')
 const routerVNPAY = require('./Router/RouterVNPAY');
 const bodyParser = require('body-parser');
 const path = require('path')
@@ -38,10 +40,12 @@ app.use('/api/comment',routerComment);
 app.use('/api/brand',routerBrand)
 app.use('/api/cart',routerCart)
 app.use('/api/order',routerOrder)
+app.use('/api/banner',routerBanner)
 app.use('/api/VNPAY', routerVNPAY)
 app.use('/api/voucher',routerVoucher)
+app.use('/api/voucher',routerVoucher)
 app.use('/api/province',routerProvince)
-
+app.use('/api/recommend',routerRecommend)
 app.use(express.static(path.join(__dirname,'../client/build')))
 app.get('*',(req,res) =>{
     res.sendFile(path.join(__dirname,'../client/build/index.html'))

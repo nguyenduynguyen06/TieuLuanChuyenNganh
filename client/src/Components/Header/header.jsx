@@ -1,26 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Badge, Button, Menu, Dropdown, FloatButton } from 'antd';
+import { Badge, Button, Menu, Dropdown, FloatButton, Tooltip } from 'antd';
 import axios from "axios";
-import { CustomerServiceOutlined } from '@ant-design/icons';
+import { CustomerServiceOutlined, PhoneOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import { WrapperSuperHeader } from "./style";
 import Search from "antd/es/input/Search";
-import {
-  ShoppingCartOutlined,
-  SearchOutlined,
-  UserOutlined,
-  FacebookOutlined,
-  InstagramOutlined,
-} from '@ant-design/icons';
-import Login from "./login"
-import {
-  MDBBtn,
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalHeader,
-  MDBModalBody
-} from 'mdb-react-ui-kit';
-import Register from "./register";
+import { ShoppingCartOutlined, SearchOutlined, UserOutlined, FacebookOutlined, InstagramOutlined } from '@ant-design/icons';
 import { useSelector } from "react-redux";
 import { useDispatch } from 'react-redux'
 import { resetUser } from "../../redux/Slide/userSlice";
@@ -28,15 +12,72 @@ import { NavLink } from "react-router-dom";
 import SuggestCard from "../CardComponent/suggestcard";
 
 
-
 const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const dispatch = useDispatch();
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState({});
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+
+  const toggleSearch = () => {
+    setIsSearchVisible(!isSearchVisible);
+  };
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
+        setCategories(response.data.data);
+      } catch (error) {
+        console.error('Lỗi khi lấy danh sách danh mục:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const fetchBrands = async (categoryId) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/brand/getBrand/${categoryId}`);
+      setBrands(prevState => ({
+        ...prevState,
+        [categoryId]: response.data.data
+      }));
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching brands:', error);
+      setLoading(false);
+    }
+  };
+
+  const handleMouseEnter = async (categoryId) => {
+    if (!brands[categoryId]) {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/brand/getBrand/${categoryId}`);
+        setBrands(prevState => ({
+          ...prevState,
+          [categoryId]: response.data.data
+        }));
+        setLoading(false);
+      } catch (error) {
+        console.error('Lỗi khi lấy danh sách thương hiệu theo danh mục:', error);
+        setLoading(false);
+      }
+    }
+  };
+
+
+
+
+
   const handleSearch = () => {
     if (searchKeyword) {
       axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${searchKeyword}`)
         .then((response) => {
-          window.location.href = `/lowtoHigh?keyword=${searchKeyword}`;
+          window.location.href = `/products?keyword=${searchKeyword}`;
         })
         .catch((error) => {
           console.error('Lỗi khi gọi API tìm kiếm: ', error);
@@ -54,34 +95,11 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
       console.error('Đã xảy ra lỗi khi đăng xuất:', error);
     }
   };
-  const [isScrolled, setIsScrolled] = useState(false);
 
-  const handleScroll = () => {
-    if (window.scrollY > 0) {
-      setIsScrolled(true);
-    } else {
-      setIsScrolled(false);
-    }
-  };
 
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-  const [centredModal, setCentredModal] = useState(false);
-  const toggleShow = () => setCentredModal(!centredModal);
-
-  const [centredModal1, setCentredModal1] = useState(false);
-
-  const toggleShow1 = () => setCentredModal1(!centredModal1);
 
   const user = useSelector((state) => state.user)
-  const closePopup = () => {
-    setCentredModal(false);
-  };
+
 
   const menu = (
     <Menu>
@@ -101,6 +119,27 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
       </Menu.Item>
     </Menu>
   );
+  const usermenu = (
+    <Menu>
+      <Menu.Item key="1">
+        <NavLink to="/login">Đăng nhập</NavLink>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <NavLink to="/register">Đăng ký</NavLink>
+      </Menu.Item>
+    </Menu>
+  );
+  const brandmenu = (categoryId, categoryName) => (
+    <Menu>
+      {brands[categoryId]?.map((brand) => (
+        <Menu.Item key={brand._id}>
+          <NavLink to={`/lowtoHigh/${categoryName}/${brand.name}`}>{brand.name}</NavLink>
+        </Menu.Item>
+      ))}
+    </Menu>
+  );
+
+
   useEffect(() => {
     if (user && user._id) {
       axios.get(`${process.env.REACT_APP_API_URL}/cart/getToCart/${user._id}`)
@@ -115,129 +154,103 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   }, [user]);
   const [data, setData] = useState(null);
   return (
-    <WrapperSuperHeader >
-      <div className="header-container" >
-        <div className="first-com">
-          <NavLink to={`/`} className="ant-image" >
-            <img className="logo" src="../../image/didong4.png" alt="blink" />
-          </NavLink>
-        </div>
-        <div className="second-com">
-          <div className="search-box" >
-            {!isHiddenSearch && (
-              <div style={{ width: `100%`, display: 'flex', flexDirection: 'column' }}>
-                <Search
-                  placeholder="Tìm Kiếm"
-                  onSearch={(value) => {
-                    if (value) {
-                      handleSearch();
+    <>
+      <WrapperSuperHeader >
+        <div className="header-container" >
+          <div className="first-com">
+            <NavLink to={`/`} className="ant-image" >
+              <img className="logo" src="../../image/didong4.png" alt="blink" />
+            </NavLink>
+          </div>
+          <div className="second-com">
+            <div className="search-box" >
+              {!isHiddenSearch && (
+                <div className="search-and-suggest-container">
+                  <Search
+                    placeholder="Bạn muốn tìm sản phẩm nào?"
+                    onSearch={(value) => {
+                      if (value) {
+                        handleSearch();
+                      }
+                    }}
+                    enterButton={
+                      <Button style={{ background: '#fff', display: 'flex', alignItems: 'center' }}>
+                        <SearchOutlined style={{ width: '10px', height: '20px', color: '#B63245' }} />
+                      </Button>
                     }
-                  }}
-                  enterButton={
-                    <Button style={{
-                      backgroundImage: 'linear-gradient(to bottom, #ff914d, #ffde59)',
-                    }}>
-                      <SearchOutlined style={{ width: '10px', height: '20px', color: 'black' }} />
-                    </Button>
-                  }
-                  size="large"
-                  value={searchKeyword}
-                  onChange={(e) => {
-                    const newSearchKeyword = e.target.value;
-                    setSearchKeyword(newSearchKeyword);
-                  }}
-                  allowClear />
-                   <div style={{ width: `190%`, display: 'flex', flexDirection: 'column' }}>
-                  <SuggestCard searchKeyword={searchKeyword} />
+                    size="large"
+                    value={searchKeyword}
+                    onChange={(e) => {
+                      const newSearchKeyword = e.target.value;
+                      setSearchKeyword(newSearchKeyword);
+                    }}
+                    allowClear ></Search>
+                  <div>
+                    <SuggestCard searchKeyword={searchKeyword} />
                   </div>
-                <div className="link-sp"> 
-                  <a href="/warranty" style={{ color: '#fff' }}>Tra cứu bảo hành</a>
-                  <a href="#" style={{ color: '#fff' }}>Chính sách bảo hành</a>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-        <div className="third-com">
-          <NavLink to={`/cart`} className="btn-cart">
+          <div className="third-com">
+
+            <Tooltip title="Tra cứu bảo hành" mouseEnterDelay={1}>
+              <NavLink to={"/warranty"} className="list-com">
+                <PhoneOutlined style={{ fontSize: '20px', color: '#fff' }} />
+              </NavLink>
+            </Tooltip>
+
             {!isHiddenCart && (
-              <Badge count={data ? data.length : 0} size="small">
-                <button class="custom-button" style={{ backgroundColor: '#CC0000', right: '0px' }}>
-                  <ShoppingCartOutlined style={{ fontSize: '20px' }} >
-                  </ShoppingCartOutlined>&nbsp;Giỏ hàng
-                </button>
-              </Badge>
-            )}
-          </NavLink>
-          <div className="header-acc">
-            {user?.fullName ? (
-              <div>
-                <Dropdown overlay={menu} placement="bottomLeft" style={{ width: '50px', height: '50px', cursor: 'pointer' }} >
-                  <div className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                    <UserOutlined style={{ fontSize: '20px' }} /> Xin chào, {user.fullName}
-                  </div>
-                </Dropdown>
-              </div>
-            ) : (
-              <div>
-                <div class="popup" onClick={toggleShow}>
-                  <span style={{ fontSize: '15px' }} >
-                    Đăng nhập
-                  </span>
-                </div>
-                <span style={{ fontSize: '15px' }} > &nbsp; / &nbsp; </span>
-                <div class="popup" onClick={toggleShow1}>
-                  <span style={{ fontSize: '15px' }} >
-                    Đăng ký&nbsp;
-                  </span>
-                </div>
+              <div className="list-com">
+                <Badge count={data ? data.length : 0} size="small" >
+                  <Tooltip title="Giỏ hàng" mouseEnterDelay={1}>
+                    <NavLink to={"/cart"}>
+                      <ShoppingCartOutlined style={{ color: '#fff', fontSize: '20px' }} />
+                    </NavLink>
+                  </Tooltip>
+                </Badge>
               </div>
             )}
+
+            <div className="list-com">
+              {user?.fullName ? (
+                <Tooltip title="Tài khoản" mouseEnterDelay={1}>
+                  <NavLink to={'/profile'}><UserSwitchOutlined style={{ fontSize: '20px', color: '#fff' }} /></NavLink>
+                </Tooltip>
+              ) : (
+                <div className="list-com">
+                  <Dropdown overlay={usermenu} trigger={['click']}>
+                    <Tooltip title="Tài khoản" mouseEnterDelay={1}>
+                      <div style={{ cursor: 'pointer' }}>
+                        <UserOutlined style={{ fontSize: '20px', color: '#fff' }} />
+                      </div>
+                    </Tooltip>
+                  </Dropdown>
+                </div>
+              )}
+            </div>
           </div>
+
+          <FloatButton.Group
+            trigger="click"
+            type="primary"
+            style={{
+              right: 24,
+              bottom: 97,
+            }}
+            icon={<CustomerServiceOutlined />}
+            tooltip={<div>Chăm sóc khách hàng</div>}>
+            <FloatButton icon={<FacebookOutlined />} href="https://www.facebook.com/didonggenz" tooltip={<div>Facebook</div>} />
+            <FloatButton icon={<InstagramOutlined />} tooltip={<div>Instagram</div>} />
+          </FloatButton.Group>
+          <FloatButton.BackTop
+            style={{
+              right: 24,
+            }} />
         </div>
-        <FloatButton.Group
-          trigger="click"
-          type="primary"
-          style={{
-            right: 24,
-            bottom: 97,
-          }}
-          icon={<CustomerServiceOutlined />}
-          tooltip={<div>Chăm sóc khách hàng</div>}>
-          <FloatButton icon={<FacebookOutlined />} href="https://www.facebook.com/didonggenz" tooltip={<div>Facebook</div>} />
-          <FloatButton icon={<InstagramOutlined />} tooltip={<div>Instagram</div>} />
-        </FloatButton.Group>
-        <FloatButton.BackTop
-          style={{
-            right: 24,
-          }} />
-      </div>
-      <MDBModal tabIndex='-1' show={centredModal} setShow={setCentredModal} >
-        <MDBModalDialog centered>
-          <MDBModalContent>
-            <MDBModalHeader>
-              <MDBBtn className='btn-close' color='none' onClick={toggleShow}></MDBBtn>
-            </MDBModalHeader>
-            <MDBModalBody>
-              <Login onClose={closePopup} />
-            </MDBModalBody>
-          </MDBModalContent>
-        </MDBModalDialog>
-      </MDBModal>
+      </WrapperSuperHeader>
 
-
-
-      <MDBModal show={centredModal1} tabIndex='-1' setShow={setCentredModal1}>
-        <MDBModalDialog size='xl'>
-          <MDBModalContent>
-            <MDBModalHeader>
-              <MDBBtn className='btn-close' color='none' onClick={toggleShow1}></MDBBtn>
-            </MDBModalHeader>
-            <Register></Register>
-          </MDBModalContent>
-        </MDBModalDialog>
-      </MDBModal>
-    </WrapperSuperHeader>
+    </>
   )
 }
 export default Header

@@ -3,6 +3,7 @@ const ProductVariant = require('../Model/ProductVariantModel');
 const Order = require('../Model/OrderModel');
 const Voucher = require('../Model/VourcherModel');
 const Product = require('../Model/ProductModel')
+const cron = require('node-cron');
 const moment = require("moment-timezone");
 const orderSendMail = require('../ultils/oderSendMail');
 const generateRandomOrderCode = async () => {
@@ -33,14 +34,14 @@ const addOrder = async (req, res) => {
     if (!cart || !cart.items || cart.items.length === 0) {
       return res.status(400).json({ success: false, error: 'Giỏ hàng không tồn tại hoặc trống' });
     }
-    let voucher = await Voucher.findOne( { code: vouchercode })
+    let voucher = await Voucher.findOne({ code: vouchercode })
     if (voucher && voucher.quantity > 0) {
-      voucher.quantity--; 
-      await voucher.save(); 
+      voucher.quantity--;
+      await voucher.save();
     } else {
       voucher = null;
-    }    
-    
+    }
+
     const newOrder = new Order({
       orderCode,
       user: userId,
@@ -55,27 +56,34 @@ const addOrder = async (req, res) => {
       shippingFee: 0,
       totalPay,
       voucher: voucher ? voucher._id : null,
-      userPhone
+      userPhone,
+      isPay: 'Đang chờ thanh toán'
     });
 
     for (const cartItem of cart.items) {
       const productVariantId = cartItem.productVariant;
       const productVariant = await ProductVariant.findById(productVariantId);
+      const productId = cartItem.product;
+      const product = await Product.findById(productId)
       if (!productVariant) {
-        return res.status(404).json({ success: false, error: 'Sản phẩm biến thể không tồn tại' });
+        return res.status(400).json({ success: false, error: 'Sản phẩm biến thể không tồn tại' });
+      }
+      const matchedAttribute = productVariant.attributes.find(attribute => attribute.sku === cartItem.sku);
+      if (!matchedAttribute) {
+        return res.status(400).json({ success: false, error: 'Sản phẩm đã hết hàng' });
+      }
+      const quantityInCart = cartItem.quantity;
+      const remainingQuantity = matchedAttribute.quantity - quantityInCart;
+      if (remainingQuantity < 0) {
+        return res.status(400).json({ success: false, error: `Sản phẩm ${product.name} với màu ${cartItem.color} đã hết hàng` });
       }
 
-      const matchedAttribute = productVariant.attributes.find(attribute => attribute.color === cartItem.color);
-      if (matchedAttribute) {
-        const quantityInCart = cartItem.quantity;
-        const remainingQuantity = matchedAttribute.quantity - quantityInCart;
+      matchedAttribute.quantity = remainingQuantity;
+      matchedAttribute.sold += quantityInCart;
 
-        matchedAttribute.quantity = remainingQuantity;
-        matchedAttribute.sold += quantityInCart;
-
-        await productVariant.save();
-      }
+      await productVariant.save();
     }
+
 
     await Cart.updateOne({ user: userId }, { $set: { items: [] } });
     const savedOrder = await newOrder.save();
@@ -187,8 +195,272 @@ const addOrder = async (req, res) => {
 
     await orderSendMail(data);
   } catch (error) {
-    console.error('Lỗi khi thêm đơn hàng:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: 'Lỗi khi thêm đơn hàng:' });
+  }
+};
+const getAllOrdersPending = async (req, res) => {
+  try {
+    const { shippingMethod } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 10;
+
+    const skip = (page - 1) * pageSize;
+
+    let query = { status: "Chờ xác nhận" };
+    if (shippingMethod) {
+      query.shippingMethod = shippingMethod;
+    }
+    const totalOrders = await Order.countDocuments(query);
+    const orders = await Order.find(query)
+      .populate({
+        path: 'items.product',
+        select: 'name warrantyPeriod'
+      })
+      .populate('voucher')
+      .skip(skip)
+      .limit(pageSize)
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      data: orders,
+      pageInfo: {
+        currentPage: page,
+        totalPages: Math.ceil(totalOrders / pageSize),
+        totalOrders: totalOrders,
+      },
+    });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const getAllOrdersReady = async (req, res) => {
+  try {
+    const { shippingMethod } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 10;
+
+    const skip = (page - 1) * pageSize;
+
+    let query = { status: "Đang chuẩn bị đơn hàng" };
+    if (shippingMethod) {
+      query.shippingMethod = shippingMethod;
+    }
+    const totalOrders = await Order.countDocuments(query);
+    const orders = await Order.find(query)
+      .populate({
+        path: 'items.product',
+        select: 'name warrantyPeriod'
+      })
+
+      .populate('voucher')
+      .skip(skip)
+      .limit(pageSize)
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      data: orders,
+      pageInfo: {
+        currentPage: page,
+        totalPages: Math.ceil(totalOrders / pageSize),
+        totalOrders: totalOrders,
+      },
+    });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const getAllOrdersDelivery = async (req, res) => {
+  try {
+    const { shippingMethod } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 10;
+
+    const skip = (page - 1) * pageSize;
+
+    let query = { status: "Đang giao hàng" };
+    if (shippingMethod) {
+      query.shippingMethod = shippingMethod;
+    }
+    const totalOrders = await Order.countDocuments(query);
+    const orders = await Order.find(query)
+      .populate({
+        path: 'items.product',
+        select: 'name warrantyPeriod'
+      })
+
+      .populate('voucher')
+      .skip(skip)
+      .limit(pageSize)
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      data: orders,
+      pageInfo: {
+        currentPage: page,
+        totalPages: Math.ceil(totalOrders / pageSize),
+        totalOrders: totalOrders,
+      },
+    });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const getAllOrdersDelivered = async (req, res) => {
+  try {
+    const { shippingMethod } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 10;
+
+    const skip = (page - 1) * pageSize;
+
+    let query = { status: "Đã giao hàng" };
+    if (shippingMethod) {
+      query.shippingMethod = shippingMethod;
+    }
+    const totalOrders = await Order.countDocuments(query);
+    const orders = await Order.find(query)
+      .populate({
+        path: 'items.product',
+        select: 'name warrantyPeriod'
+      })
+
+      .populate('voucher')
+      .skip(skip)
+      .limit(pageSize)
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      data: orders,
+      pageInfo: {
+        currentPage: page,
+        totalPages: Math.ceil(totalOrders / pageSize),
+        totalOrders: totalOrders,
+      },
+    });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const getAllOrdersComplete = async (req, res) => {
+  try {
+    const { shippingMethod } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 10;
+
+    const skip = (page - 1) * pageSize;
+
+    let query = { status: "Đã hoàn thành" };
+    if (shippingMethod) {
+      query.shippingMethod = shippingMethod;
+    }
+    const totalOrders = await Order.countDocuments(query);
+    const orders = await Order.find(query)
+      .populate({
+        path: 'items.product',
+        select: 'name warrantyPeriod'
+      })
+
+      .populate('voucher')
+      .skip(skip)
+      .limit(pageSize)
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      data: orders,
+      pageInfo: {
+        currentPage: page,
+        totalPages: Math.ceil(totalOrders / pageSize),
+        totalOrders: totalOrders,
+      },
+    });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const getAllOrdersReadyCancel = async (req, res) => {
+  try {
+    const { shippingMethod } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 10;
+
+    const skip = (page - 1) * pageSize;
+
+    let query = { status: "Đang chờ huỷ" };
+    if (shippingMethod) {
+      query.shippingMethod = shippingMethod;
+    }
+    const totalOrders = await Order.countDocuments(query);
+    const orders = await Order.find(query)
+      .populate({
+        path: 'items.product',
+        select: 'name warrantyPeriod'
+      })
+
+      .populate('voucher')
+      .skip(skip)
+      .limit(pageSize)
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      data: orders,
+      pageInfo: {
+        currentPage: page,
+        totalPages: Math.ceil(totalOrders / pageSize),
+        totalOrders: totalOrders,
+      },
+    });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const getAllOrdersCancel = async (req, res) => {
+  try {
+    const { shippingMethod } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 10;
+
+    const skip = (page - 1) * pageSize;
+
+    let query = { status: "Đã huỷ" };
+    if (shippingMethod) {
+      query.shippingMethod = shippingMethod;
+    }
+    const totalOrders = await Order.countDocuments(query);
+    const orders = await Order.find(query)
+      .populate({
+        path: 'items.product',
+        select: 'name warrantyPeriod'
+      })
+
+      .populate('voucher')
+      .skip(skip)
+      .limit(pageSize)
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      data: orders,
+      pageInfo: {
+        currentPage: page,
+        totalPages: Math.ceil(totalOrders / pageSize),
+        totalOrders: totalOrders,
+      },
+    });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách đơn hàng:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
 const updateOrderStatus = async (req, res) => {
@@ -212,14 +484,19 @@ const completeOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
 
-   
+
     const vnTime = moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY HH:mm:ss");
 
 
-    const updateData = {
-      status: 'Đã hoàn thành',
+    let updateData = {
+      status: 'Đã giao hàng',
       completeDate: vnTime,
     };
+
+
+    if (order.isPay === 'Đang chờ thanh toán') {
+      updateData.isPay = 'Đã thanh toán';
+    }
 
     const updatedOrder = await Order.findByIdAndUpdate(orderId, updateData, { new: true });
 
@@ -233,113 +510,52 @@ const completeOrder = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+const deliveredOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
 
-const getOrdersWaitingForConfirmation = async (req, res) => {
-  try {
-    const orders = await Order.find({ shippingMethod: 'Nhận tại cửa hàng',status: 'Chờ xác nhận' }).populate('items.product').populate('voucher');
-    res.status(200).json({ success: true, data: orders });
+    const vnTime = moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY HH:mm:ss");
+
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ success: false, error: 'Đơn hàng không tồn tại' });
+    }
+
+    let updateData = {
+      status: 'Đã giao hàng',
+      completeDate: vnTime,
+    };
+
+
+    if (order.isPay === 'Đang chờ thanh toán') {
+      updateData.isPay = 'Đã thanh toán';
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdate(orderId, updateData, { new: true });
+
+    res.status(200).json({ success: true, data: updatedOrder });
   } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng chờ xác nhận:', error);
+    console.error('Lỗi khi cập nhật trạng thái đơn hàng:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
-const getOrdersShipping = async (req, res) => {
+const getAllOrdersDashboard = async (req, res) => {
   try {
-    const orders = await Order.find({ shippingMethod: 'Giao tận nơi',status: 'Chờ xác nhận' }).populate('items.product').populate('voucher');
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng giao tận nơi:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-const getAllOrders = async (req, res) => {
-  try {
-    const orders = await Order.find();
-    res.status(200).json({ success: true, data: orders });
+    const orders = await Order.find()
+      .populate('items.product')
+      .populate('voucher')
+      .lean();
+    res.status(200).json({
+      success: true,
+      data: orders,
+    });
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đơn hàng:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
 
-const getOrdersStorePickupgetReady = async (req, res) => {
-  try {
-    const orders = await Order.find({
-      shippingMethod: 'Nhận tại cửa hàng',
-      status:  'Đơn hàng đang được chuẩn bị' 
-    }).populate('items.product').populate('voucher');
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng nhận tại cửa hàng:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-const getOrdersStorePickupReady = async (req, res) => {
-  try {
-    const orders = await Order.find({
-      shippingMethod: 'Nhận tại cửa hàng',
-      status:  'Đơn hàng sẵn sàng' 
-    }).populate('items.product').populate('voucher');
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng nhận tại cửa hàng:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-const getCompletedOrdersAtStore = async (req, res) => {
-  try {
-    const orders = await Order.find({ status: 'Đã hoàn thành', shippingMethod: 'Nhận tại cửa hàng'}).populate('items.product').populate('voucher');
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng đã hoàn thành:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-const getCompletedOrdersShipping = async (req, res) => {
-  try {
-    const orders = await Order.find({ status: 'Đã hoàn thành', shippingMethod: 'Giao tận nơi'}).populate('items.product').populate('voucher');
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng đã hoàn thành:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-const getCanceldOrdersAtStore = async (req, res) => {
-  try {
-    const orders = await Order.find({ status: 'Đã hủy', shippingMethod: 'Nhận tại cửa hàng'}).populate('items.product').populate('voucher');
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng đã hoàn thành:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-const getCanceldOrdersShipping = async (req, res) => {
-  try {
-    const orders = await Order.find({ status: 'Đã hủy', shippingMethod: 'Giao tận nơi'}).populate('items.product').populate('voucher');
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng đã hoàn thành:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-const getOrdersHomeDeliveryReady = async (req, res) => {
-  try {
-    const orders = await Order.find({ shippingMethod: 'Giao tận nơi',status:'Đơn hàng đang được chuẩn bị' }).populate('items.product').populate('voucher');
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng giao tận nơi:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-const getOrdersHomeDeliveryShipping = async (req, res) => {
-  try {
-    const orders = await Order.find({ shippingMethod: 'Giao tận nơi',status:'Đơn hàng đang được giao' }).populate('items.product').populate('voucher');
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách đơn hàng giao tận nơi:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
 const deleteOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -353,7 +569,7 @@ const deleteOrder = async (req, res) => {
       const productVariant = await ProductVariant.findById(productVariantId);
 
       if (productVariant) {
-        const matchedAttribute = productVariant.attributes.find(attribute => attribute.color === cartItem.color);
+        const matchedAttribute = productVariant.attributes.find(attribute => attribute.sku === cartItem.sku);
 
         if (matchedAttribute) {
           const quantityInCart = cartItem.quantity;
@@ -375,118 +591,20 @@ const deleteOrder = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-const searchOrder = async (req, res) => {
+const cancelOrderWithReason = async (req, res) => {
   try {
-    const keyword = req.query.keyword;
-    const order = await Order.find({orderCode: keyword}).populate('items.product')
-    res.status(200).json({ success: true, data: order });
-  } catch (error) {
-    console.error('Lỗi:', error);
-    res.status(500).json({ success: false, error: 'Lỗi Server' });
-  }
-};
-const searchOrderAtStoreComplete = async (req, res) => {
-  try {
-    const keyword = req.query.keyword;
-    const order = await Order.find({orderCode: keyword,shippingMethod:'Nhận tại cửa hàng'}).populate('items.product')
-    res.status(200).json({ success: true, data: order });
-  } catch (error) {
-    console.error('Lỗi:', error);
-    res.status(500).json({ success: false, error: 'Lỗi Server' });
-  }
-};
-const searchOrderShippingComplete = async (req, res) => {
-  try {
-    const keyword = req.query.keyword;
-    const order = await Order.find({orderCode: keyword,shippingMethod:'Giao tận nơi'}).populate('items.product')
-    res.status(200).json({ success: true, data: order });
-  } catch (error) {
-    console.error('Lỗi:', error);
-    res.status(500).json({ success: false, error: 'Lỗi Server' });
-  }
-};
-const searchOrderGetReady = async (req, res) => {
-  try {
-    const keyword = req.query.keyword;
-    const order = await Order.find({orderCode: keyword,shippingMethod:'Giao tận nơi',status:'Đơn hàng đang được chuẩn bị'}).populate('items.product')
-    res.status(200).json({ success: true, data: order });
-  } catch (error) {
-    console.error('Lỗi:', error);
-    res.status(500).json({ success: false, error: 'Lỗi Server' });
-  }
-};
-const searchOrderShipping = async (req, res) => {
-  try {
-    const keyword = req.query.keyword;
-    const order = await Order.find({orderCode: keyword,shippingMethod:'Giao tận nơi',status:'Đơn hàng đang được giao'}).populate('items.product')
-    res.status(200).json({ success: true, data: order });
-  } catch (error) {
-    console.error('Lỗi:', error);
-    res.status(500).json({ success: false, error: 'Lỗi Server' });
-  }
-};
-const searchOrderGetReadyAtStore = async (req, res) => {
-  try {
-    const keyword = req.query.keyword;
-    const order = await Order.find({orderCode: keyword,shippingMethod:'Nhận tại cửa hàng',status:'Đơn hàng đang được chuẩn bị'}).populate('items.product')
-    res.status(200).json({ success: true, data: order });
-  } catch (error) {
-    console.error('Lỗi:', error);
-    res.status(500).json({ success: false, error: 'Lỗi Server' });
-  }
-};
-const searchOrderReady = async (req, res) => {
-  try {
-    const keyword = req.query.keyword;
-    const order = await Order.find({orderCode: keyword,shippingMethod:'Nhận tại cửa hàng',status:'Đơn hàng sẵn sàng'}).populate('items.product')
-    res.status(200).json({ success: true, data: order });
-  } catch (error) {
-    console.error('Lỗi:', error);
-    res.status(500).json({ success: false, error: 'Lỗi Server' });
-  }
-};
-const getOrdersByUserId = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const  status  = req.query.status;
-    const orders = await Order.find({ user: userId, status: status}).populate('items.product items.productVariant').populate('voucher').lean();
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-const getOrdersDetails = async (req, res) => {
-  try {
-    const { orderCode } = req.params;
-    const { userId } = req.query;
-    const order = await Order.findOne({ orderCode: orderCode });
-    if (order && order.user && order.user.toString() !== userId) {
-      return res.status(403).json({ success: false, error: 'Không có quyền truy cập đơn hàng này' });
-    }
-    const orders = await Order.findOne({ orderCode: orderCode })
-      .populate('items.product')
-      .populate('items.productVariant')
-      .populate('voucher').lean();
-
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-const cancelOrder = async (req, res) => {
-  try {
-    const { orderCode } = req.params;
-    const { userId } = req.query;
-    const order = await Order.findOne({ orderCode: orderCode });
-    if (order && order.user.toString() !== userId) {
-      return res.status(403).json({ success: false, error: 'Không có quyền truy cập đơn hàng này' });
+    const { orderId } = req.params;
+    const { reason } = req.body;
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ success: false, error: 'Đơn hàng không tồn tại' });
     }
     for (const cartItem of order.items) {
       const productVariantId = cartItem.productVariant;
       const productVariant = await ProductVariant.findById(productVariantId);
 
       if (productVariant) {
-        const matchedAttribute = productVariant.attributes.find(attribute => attribute.color === cartItem.color);
+        const matchedAttribute = productVariant.attributes.find(attribute => attribute.sku === cartItem.sku);
 
         if (matchedAttribute) {
           const quantityInCart = cartItem.quantity;
@@ -500,19 +618,243 @@ const cancelOrder = async (req, res) => {
         }
       }
     }
-    order.status = 'Đã hủy';
+    order.status = 'Đã huỷ';
+    order.reasonCancelled = reason || order.reasonCancelled;
     await order.save();
-    res.status(200).json({ success: true, message: 'Đã hủy đơn hàng' });
+    res.status(200).json({ success: true, message: 'Đã cập nhật trạng thái đơn hàng thành đã huỷ' });
+  } catch (error) {
+    console.error('Lỗi khi huỷ đơn hàng:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+const searchOrderPending = async (req, res) => {
+  try {
+    const orderCode = req.query.orderCode.toUpperCase();
+    const order = await Order.findOne({
+      orderCode: orderCode,
+      status: 'Chờ xác nhận'
+    }).populate({
+      path: 'items.product',
+      select: 'name warrantyPeriod'
+    })
+      .populate('voucher');
+    if (order) {
+      res.status(200).json({ success: true, data: order });
+    } else {
+      res.status(404).json({ success: false, error: 'Không tìm thấy đơn hàng' });
+    }
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const searchOrderReady = async (req, res) => {
+  try {
+    const orderCode = req.query.orderCode.toUpperCase();
+    const order = await Order.findOne({
+      orderCode: orderCode,
+      status: 'Đang chuẩn bị đơn hàng'
+    }).populate({
+      path: 'items.product',
+      select: 'name warrantyPeriod'
+    })
+      .populate('voucher');
+    if (order) {
+      res.status(200).json({ success: true, data: order });
+    } else {
+      res.status(404).json({ success: false, error: 'Không tìm thấy đơn hàng' });
+    }
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const searchOrderDelivery = async (req, res) => {
+  try {
+    const orderCode = req.query.orderCode.toUpperCase();
+    const order = await Order.findOne({
+      orderCode: orderCode,
+      status: 'Đang giao hàng'
+    }).populate({
+      path: 'items.product',
+      select: 'name warrantyPeriod'
+    })
+      .populate('voucher');
+    if (order) {
+      res.status(200).json({ success: true, data: order });
+    } else {
+      res.status(404).json({ success: false, error: 'Không tìm thấy đơn hàng' });
+    }
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const searchOrderDelivered = async (req, res) => {
+  try {
+    const orderCode = req.query.orderCode.toUpperCase();
+    const order = await Order.findOne({
+      orderCode: orderCode,
+      status: 'Đã giao hàng'
+    }).populate({
+      path: 'items.product',
+      select: 'name warrantyPeriod'
+    })
+      .populate('voucher');
+    if (order) {
+      res.status(200).json({ success: true, data: order });
+    } else {
+      res.status(404).json({ success: false, error: 'Không tìm thấy đơn hàng' });
+    }
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const searchOrderComplete = async (req, res) => {
+  try {
+    const orderCode = req.query.orderCode.toUpperCase();
+    const order = await Order.findOne({
+      orderCode: orderCode,
+      status: 'Đã hoàn thành'
+    }).populate({
+      path: 'items.product',
+      select: 'name warrantyPeriod'
+    })
+      .populate('voucher');
+    if (order) {
+      res.status(200).json({ success: true, data: order });
+    } else {
+      res.status(404).json({ success: false, error: 'Không tìm thấy đơn hàng' });
+    }
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const searchOrderReadyCancel = async (req, res) => {
+  try {
+    const orderCode = req.query.orderCode.toUpperCase();
+    const order = await Order.findOne({
+      orderCode: orderCode,
+      status: 'Đang chờ huỷ'
+    }).populate({
+      path: 'items.product',
+      select: 'name warrantyPeriod'
+    })
+      .populate('voucher');
+    if (order) {
+      res.status(200).json({ success: true, data: order });
+    } else {
+      res.status(404).json({ success: false, error: 'Không tìm thấy đơn hàng' });
+    }
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const searchOrderCancel = async (req, res) => {
+  try {
+    const orderCode = req.query.orderCode.toUpperCase();
+    const order = await Order.findOne({
+      orderCode: orderCode,
+      status: 'Đã huỷ'
+    }).populate({
+      path: 'items.product',
+      select: 'name warrantyPeriod'
+    })
+      .populate('voucher');
+    if (order) {
+      res.status(200).json({ success: true, data: order });
+    } else {
+      res.status(404).json({ success: false, error: 'Không tìm thấy đơn hàng' });
+    }
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+const getOrdersByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const status = req.query.status;
+    const orders = await Order.find({ user: userId, status: status })
+      .populate({
+        path: 'items.product',
+        select: 'name warrantyPeriod'
+      })
+      .populate('voucher')
+      .sort({ createDate: -1 })
+      .lean();
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+const getOrdersDetails = async (req, res) => {
+  try {
+    const { orderCode } = req.params;
+    const { userId } = req.query;
+    const order = await Order.findOne({ orderCode: orderCode });
+    if (order && order.user && order.user.toString() !== userId) {
+      return res.status(403).json({ success: false, error: 'Không có quyền truy cập đơn hàng này' });
+    }
+    const orders = await Order.findOne({ orderCode: orderCode })
+      .populate({
+        path: 'items.product',
+        select: 'name warrantyPeriod'
+      })
+      .populate('voucher').lean();
+
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const cancelOrderbyUser = async (req, res) => {
+  try {
+    const { orderCode } = req.params;
+    const { reason } = req.body;
+    const { userId } = req.query;
+    const order = await Order.findOne({ orderCode: orderCode });
+    if (order && order.user.toString() !== userId) {
+      return res.status(403).json({ success: false, error: 'Không có quyền truy cập đơn hàng này' });
+    }
+    for (const cartItem of order.items) {
+      const productVariantId = cartItem.productVariant;
+      const productVariant = await ProductVariant.findById(productVariantId);
+
+      if (productVariant) {
+        const matchedAttribute = productVariant.attributes.find(attribute => attribute.sku === cartItem.sku);
+
+        if (matchedAttribute) {
+          const quantityInCart = cartItem.quantity;
+          const totalQuantity = matchedAttribute.quantity + quantityInCart;
+          const totalSold = matchedAttribute.sold - quantityInCart;
+
+          matchedAttribute.quantity = totalQuantity;
+          matchedAttribute.sold = totalSold;
+
+          await productVariant.save();
+        }
+      }
+    }
+    order.status = 'Đang chờ huỷ';
+    order.reasonCancelled = reason;
+    await order.save();
+    res.status(200).json({ success: true, message: 'Đã gửi yêu cầu huỷ đơn hàng' });
   } catch (error) {
     console.error('Lỗi khi hủy đơn hàng:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
 const completeOrderUser = async (req, res) => {
   try {
     const { orderCode } = req.params;
     const { userId } = req.query;
-    const vnTime = moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY HH:mm:ss");
 
     const order = await Order.findOne({ orderCode });
 
@@ -524,8 +866,7 @@ const completeOrderUser = async (req, res) => {
     }
 
     const updateData = {
-      status: 'Đã hoàn thành',
-      completeDate: vnTime,
+      status: 'Đã hoàn thành'
     };
 
     const updatedOrder = await Order.findOneAndUpdate({ orderCode }, updateData, { new: true });
@@ -538,7 +879,7 @@ const completeOrderUser = async (req, res) => {
 };
 const addProductRating = async (req, res) => {
   try {
-    const {productId, userId, orderCode } = req.query; 
+    const { productId, userId, orderCode } = req.query;
     const { rating, comment, pictures } = req.body;
 
     const product = await Product.findById(productId);
@@ -548,7 +889,7 @@ const addProductRating = async (req, res) => {
     }
     const order = await Order.findOne({
       user: userId,
-      orderCode, 
+      orderCode,
       items: {
         $elemMatch: { product: productId, rated: false }
       }
@@ -579,8 +920,11 @@ const addProductRating = async (req, res) => {
   }
 };
 const changeProduct = async (req, res) => {
-  const { id, orderId } = req.query;
-  const order = await Order.findById(orderId);
+  const { id, orderId } = req.params;
+  const order = await Order.findById(orderId).populate({
+    path: 'items.product',
+    select: 'name warrantyPeriod'
+  });
 
   if (!order) {
     return res.status(404).json({ success: false, error: 'Đơn hàng không tồn tại' });
@@ -591,30 +935,6 @@ const changeProduct = async (req, res) => {
   if (!productItem) {
     return res.status(404).json({ success: false, error: 'Không tìm thấy sản phẩm trong đơn hàng' });
   }
-  const product = await Product.findById(productItem.product).populate('category');
-  const completeDate = moment(order.completeDate, "DD/MM/YYYY HH:mm:ss").tz("Asia/Ho_Chi_Minh");
-  const currentDate = moment().tz("Asia/Ho_Chi_Minh");
-  const diffDuration = moment.duration(currentDate.diff(completeDate));
-  const diffDays = diffDuration.asDays();
-
-  if (productItem.memory !== undefined) {
-    if (diffDays > 3) {
-      return res.status(200).json({ success: false, error: 'Đã quá hạn đổi sản phẩm' });
-    }
-  } else {
-    if (!product.warrantyPeriod) {
-      return res.status(400).json({ success: false, error: 'Sản phẩm không có thời gian bảo hành' });
-    }
-
-    const warrantyMonths = product.warrantyPeriod;
-    const warrantyEndDate = moment(completeDate).add(warrantyMonths, 'months');
-    const diffDurationWarranty = moment.duration(currentDate.diff(warrantyEndDate));
-    const diffDaysWarranty = diffDurationWarranty.asDays();
-    if (diffDaysWarranty > 0) {
-      return res.status(200).json({ success: false, error: 'Đã quá hạn đổi sản phẩm' });
-    }
-  }
-
   const vnTime = moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY HH:mm:ss");
 
   if (productItem.change) {
@@ -622,7 +942,7 @@ const changeProduct = async (req, res) => {
     productItem.change.dateChange = vnTime;
 
     const productVariantId = productItem.productVariant;
-    const color = productItem.color;
+    const sku = productItem.sku;
 
     const productVariant = await ProductVariant.findById(productVariantId);
 
@@ -630,25 +950,34 @@ const changeProduct = async (req, res) => {
       return res.status(404).json({ success: false, error: 'Sản phẩm không tồn tại' });
     }
 
-    const matchedAttribute = productVariant.attributes.find(attribute => attribute.color === color);
+    const matchedAttribute = productVariant.attributes.find(attribute => attribute.sku === sku);
 
-    if (matchedAttribute) {
-      const quantityInCart = productItem.quantity;
-      const totalQuantity = matchedAttribute.quantity - quantityInCart;
-      const totalSold = matchedAttribute.sold + quantityInCart;
-
-      matchedAttribute.quantity = totalQuantity;
-      matchedAttribute.sold = totalSold;
-      await productVariant.save();
+    if (!matchedAttribute) {
+      return res.status(400).json({ success: false, error: 'Sản phẩm đã hết hàng' });
     }
+    const remainingQuantity = matchedAttribute.quantity - 1;
+    if (remainingQuantity < 0) {
+      return res.status(400).json({ success: false, error: `Sản phẩm ${productItem.product.name} ${productItem.memory} đã hết hàng` });
+    }
+
+    matchedAttribute.quantity = remainingQuantity;
+    matchedAttribute.sold += 1;
+    await productVariant.save();
   }
   await order.save();
-  res.status(200).json({ success: true, message: 'Đã cập nhật yêu cầu đổi trả' });
+  res.status(200).json({
+    success: true,
+    message: 'Đã cập nhật yêu cầu đổi trả',
+    updatedItem: productItem
+  });
 }
 const checkBH = async (req, res) => {
   try {
     const { phone } = req.body;
-    const orders = await Order.find({ userPhone: phone,status:"Đã hoàn thành" }).populate('items.product');
+    const orders = await Order.find({ userPhone: phone, status: "Đã hoàn thành" }).populate({
+      path: 'items.product',
+      select: 'name warrantyPeriod'
+    });
     if (!orders || orders.length === 0) {
       return res.status(200).json({ message: "Không tìm thấy đơn hàng" });
     }
@@ -662,8 +991,64 @@ const checkBH = async (req, res) => {
     return res.status(500).json({ message: "Đã xảy ra lỗi server" });
   }
 };
+const autoUpdateOrderStatus = async () => {
+  try {
+    const sevenDaysAgo = moment().tz("Asia/Ho_Chi_Minh").subtract(30, 'seconds').format("DD/MM/YYYY HH:mm:ss");
+
+    const ordersToUpdate = await Order.find({ status: 'Đã giao hàng', completeDate: { $lte: sevenDaysAgo } });
+    for (const order of ordersToUpdate) {
+      await Order.findByIdAndUpdate(order._id, { status: 'Đã hoàn thành' });
+    }
+
+    console.log(`Đã cập nhật ${ordersToUpdate.length} đơn hàng thành trạng thái 'Đã hoàn thành'.`);
+  } catch (error) {
+    console.error('Lỗi khi tự động cập nhật trạng thái đơn hàng:', error);
+  }
+};
+const autoUpdateCancelledStatus = async () => {
+  try {
+    const oneMinuteAgo = moment().tz("Asia/Ho_Chi_Minh").subtract(2, 'minutes').format("DD/MM/YYYY HH:mm:ss");
+
+    const ordersToCancel = await Order.find({
+      paymentMethod: { $ne: 'Thanh toán khi nhận hàng' },
+      isPay: 'Đang chờ thanh toán',
+      createDate: { $lte: oneMinuteAgo }
+    });
+    for (const order of ordersToCancel) {
+      for (const cartItem of order.items) {
+        const productVariantId = cartItem.productVariant;
+        const productVariant = await ProductVariant.findById(productVariantId);
+
+        if (productVariant) {
+          const matchedAttribute = productVariant.attributes.find(attribute => attribute.sku === cartItem.sku);
+
+          if (matchedAttribute) {
+            const quantityInCart = cartItem.quantity;
+            const totalQuantity = matchedAttribute.quantity + quantityInCart;
+            const totalSold = matchedAttribute.sold - quantityInCart;
+
+            matchedAttribute.quantity = totalQuantity;
+            matchedAttribute.sold = totalSold;
+
+            await productVariant.save();
+          }
+        }
+      }
+      await Order.findByIdAndUpdate(order._id, { status: 'Đã huỷ', reasonCancelled: 'Chưa thanh toán thông qua ví điện tử', isPay: 'Chưa thanh toán' });
+    }
+
+    console.log(`Đã cập nhật ${ordersToCancel.length} đơn hàng thành trạng thái 'Đã hủy'.`);
+  } catch (error) {
+    console.error('Lỗi khi tự động cập nhật trạng thái đơn hàng:', error);
+  }
+};
+//cron.schedule('0 0 * * *', autoUpdateCancelledStatus); 
+//cron.schedule('0 0 */7 * *', autoUpdateOrderStatus);
+cron.schedule('*/1 * * * *', autoUpdateOrderStatus);
+cron.schedule('*/2 * * * *', autoUpdateCancelledStatus);
 
 
 
 
-module.exports = { getAllOrders,checkBH,changeProduct,getCanceldOrdersAtStore,addProductRating,getCanceldOrdersShipping,addOrder,cancelOrder,completeOrderUser,getOrdersDetails, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDeliveryReady, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, deleteOrder,getOrdersShipping,getOrdersStorePickupReady,searchOrder,getOrdersHomeDeliveryShipping,searchOrderAtStoreComplete,searchOrderShippingComplete,searchOrderGetReady,searchOrderShipping,searchOrderGetReadyAtStore,searchOrderReady };
+
+module.exports = { deliveredOrder, searchOrderDelivered, getAllOrdersDelivered, searchOrderReadyCancel, getAllOrdersReadyCancel, searchOrderDelivery, searchOrderComplete, searchOrderCancel, cancelOrderWithReason, searchOrderReady, getAllOrdersCancel, getAllOrdersComplete, getAllOrdersDelivery, getAllOrdersReady, getAllOrdersDashboard, getAllOrdersPending, checkBH, changeProduct, addProductRating, addOrder, cancelOrderbyUser, completeOrderUser, getOrdersDetails, updateOrderStatus, completeOrder, getOrdersByUserId, deleteOrder, searchOrderPending };

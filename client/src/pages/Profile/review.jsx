@@ -94,7 +94,7 @@ const ReviewModal = ({  onClose, productId,orderCode }) => {
                     <Button icon={<UploadOutlined />}>Ảnh</Button>
                 </Upload>
                 <br />
-                <Button style={{ background: '#8c52ff', color: '#fff' }} onClick={submitReview}>Gửi đánh giá</Button>
+                <Button style={{ background: '#C13346', color: '#fff' }} onClick={submitReview}>Gửi đánh giá</Button>
             </div>
         </div>
     );

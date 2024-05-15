@@ -25,7 +25,7 @@ function CartTotal({ data , isCartEmpty}) {
           }).format(total)}
         </span>
         <Link to="/payment-infor">
-          <Button size='large' style={{ marginLeft: '100px', background: '#8c52ff', color: '#fff' }}  disabled={isCartEmpty} >Mua hàng</Button>
+          <Button size='large' style={{ marginLeft: '100px', background: '#C13346', color: '#fff' }}  disabled={isCartEmpty} >Mua hàng</Button>
         </Link>
       </div>
     </div>

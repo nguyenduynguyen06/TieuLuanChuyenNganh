@@ -230,7 +230,7 @@ const TableVoucher = () => {
       
     return (
       <div>
-        <Table columns={columns} dataSource={voucherData} /> 
+        <Table bordered columns={columns} dataSource={voucherData} /> 
       </div>
     );
   };

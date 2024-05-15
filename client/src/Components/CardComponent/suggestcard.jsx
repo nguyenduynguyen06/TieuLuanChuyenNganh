@@ -8,9 +8,18 @@ import Loading from '../LoadingComponents/Loading';
 function SuggestCard({ searchKeyword }) {
   const [searchedProducts, setSearchedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [typingTimeout, setTypingTimeout] = useState(null);
+
   useEffect(() => {
     if (searchKeyword) {
-      getCategoryByName(searchKeyword);
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
+      setLoading(true);
+      const timeout = setTimeout(() => {
+        getCategoryByName(searchKeyword);
+      }, 500);
+      setTypingTimeout(timeout);
     } else {
       setSearchedProducts([]);
     }
@@ -19,7 +28,7 @@ function SuggestCard({ searchKeyword }) {
   const getCategoryByName = async (keyword) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${keyword}`);
-      const productsData = response.data.data;
+      const productsData = response.data;
       setSearchedProducts(productsData);
       setLoading(false);
     } catch (error) {
@@ -27,6 +36,7 @@ function SuggestCard({ searchKeyword }) {
       setLoading(false);
     }
   };
+
   const handleNavLinkClick = () => {
     setSearchedProducts([]);
   };
@@ -34,6 +44,7 @@ function SuggestCard({ searchKeyword }) {
   if (!searchKeyword || searchedProducts.length === 0) {
     return null;
   }
+
   const calculateAverageRating = (product) => {
     if (product.length === 0) {
       return 0;
@@ -42,47 +53,46 @@ function SuggestCard({ searchKeyword }) {
     const totalRating = product.reduce((total, item) => total + item.rating, 0);
     return totalRating / product.length;
   }
+
   return (
     <WrapperSuggestCard>
-      <Loading isLoading={loading}>
-      <div className='view-list'>
-        {searchedProducts.map((product) => (
-          product.variant.map((variant) => (
-            <NavLink className='view-list__wrapper' to={`/product/${product.name}/${variant.memory}`} key={product._id + variant.memory} onClick={handleNavLinkClick} >
-              <div className='item' >
-                <div className='item__img'>
-                  <img src={product.thumnails[0]} alt={product.name} loading="lazy"/>
-                </div>
-                <div className='item-info'>
-                  <div className='item-name'>
-                    <span>{product.name} - {variant.memory}</span>
+        <Loading isLoading={loading} >
+          <div className='view-list'>
+          {searchedProducts.map((product) => (
+              <NavLink className='view-list__wrapper' to={`/product/${product.productName.name}/${product.memory}`}  onClick={handleNavLinkClick} >
+                <div className='item' >
+                  <div className='item__img'>
+                    <img src={product.productName.thumnails[0]} alt={product.productName.name} loading="lazy" />
                   </div>
-                  <div className='item-price'>
-                    <div className='box-info__box-price'>
-                      <div style={{display:'flex', gap:'4px', height: '20px'}}>
-                        <p className='product__price--show' style={{ fontWeight: '500' }}>
-                          {variant.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                        </p>
-                        <p className='product__price--through' style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>
-                          {variant.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                        </p>
+                  <div className='item-info'>
+                    <div className='item-name'>
+                      <span>{product.productName.name} - {product.memory}</span>
+                    </div>
+                    <div className='item-price'>
+                      <div className='box-info__box-price'>
+                        <div style={{ display: 'flex', gap: '4px', height: '20px' }}>
+                          <p className='product__price--show' style={{ fontWeight: '500' }}>
+                            {product.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                          </p>
+                          <p className='product__price--through' style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>
+                            {product.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                          </p>
 
+                        </div>
+                        {product?.productName.ratings.length > 0 ? (
+                          <Rate className='stars' disabled allowHalf value={calculateAverageRating(product.productName.ratings)} />
+                        ) : (
+                          null
+                        )}
                       </div>
-                      {product?.ratings.length > 0 ? (
-                        <Rate className='stars' disabled allowHalf value={calculateAverageRating(product.ratings)} />
-                      ) : (
-                        null
-                      )}
                     </div>
                   </div>
                 </div>
-              </div>
 
-            </NavLink>
-          ))
-        ))}
-      </div>
-      </Loading>
+              </NavLink>
+          ))}
+          </div>
+        </Loading>
     </WrapperSuggestCard>
   );
 }

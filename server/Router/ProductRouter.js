@@ -10,25 +10,21 @@ router.post('/addProductvariant/:id',authMiddleware, productvariantController.ad
 router.get('/getIdByCategory/:categoryId', productController.getProductsByCategory);
 router.put('/editProduct/:id',authMiddleware, productController.editProduct);
 router.delete('/delete/:id',authMiddleware, productController.deleteProduct);
-router.get('/searchProduct', productController.searchProducts);
+router.get('/searchProduct', productvariantController.searchProductVariantsByName);
+router.get('/searchProductAdmin', productController.searchProductAdmin);
+router.get('/getVariant/:id', productvariantController.getVariantsByProductId);
+router.get('/getIdVariant/:id', productvariantController.IdVariant);
+router.get('/getAttributes/:id/attributes', productvariantController.getAttributesByVariantId);
+router.get('/getDetailsAttributes/:id', productvariantController.getAttributeDetailsById);
 router.delete('/deleteVariant/:id',authMiddleware, productvariantController.deleteProductVariant);
 router.put('/editProductVariant/:id',authMiddleware, productvariantController.updateProductVariant);
 router.post('/addAttributes/:id',authMiddleware, productvariantController.addAttributes);
-router.delete('/deleteAttributes/:id/:attributeIdToRemove',authMiddleware, productvariantController.deleteAttributes);
-router.put('/addQuantity/:variantId/:attributeId',authMiddleware,productvariantController.addQuantityToAttribute);
+router.put('/editAttributes/:id',authMiddleware, productvariantController.editAttribute);
+router.delete('/deleteAttributes/:id',authMiddleware, productvariantController.deleteAttributeById);
 router.get('/getAll',productController.getAllProduct)
 router.get('/getRating/:productName',productController.getProductRating)
+router.get('/getProduct/:id', productController.IdProduct);
 router.get('/getDetails/:name', productController.detailsProduct);
-router.get('/filter/:categoryId', productController.filterProductsByCategory);
-router.get('/filter/highToLow/:categoryId', (req, res) => {
-  req.query.sort = 'highToLow';
-  productController.filterProductsByCategory(req, res);
-});
-router.get('/filter/:categoryId/:brandId', productController.filterProductsByCategoryandBrand);
-router.get('/filter/highToLow/:categoryId/:brandId', (req, res) => {
-  req.query.sort = 'highToLow';
-  productController.filterProductsByCategoryandBrand(req, res);
-});
 router.get('/all-with-sold', productController.getAllProductsWithTotalSold);
-
+router.get('/productVariant',productvariantController.getProductVariants)
 module.exports = router;

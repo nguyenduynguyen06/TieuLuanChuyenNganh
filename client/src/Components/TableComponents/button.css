@@ -5,18 +5,18 @@
 }
 
 .custom-emerald {
-  background-color: #18ad40; 
+  background-color: #fff; 
 }
 
 .logo-container {
-  background-color: white; 
+  background-color: #efefef; 
   width: fit-content;
   border-radius: 50%; 
   padding: 10px; 
 }
 .custom-button {
   padding: 8px 60px;
-  background-color: #68d391; /* Màu nền xanh lá cây */
+  background-color: #ff3300; /* Màu nền xanh lá cây */
   color: #ffffff; /* Màu chữ trắng */
   border: none; /* Loại bỏ đường viền */
   border-radius: 5px; /* Bo góc */

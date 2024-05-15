@@ -112,7 +112,7 @@ export const WrapperList = styled.div`
         flex-direction: column;
     }
     .state{
-        background: #8c52ff; 
+        background: #C13346; 
         color: #fff; 
         padding: 10px; 
         text-align: right; 
@@ -192,12 +192,11 @@ export const WrapperList = styled.div`
 `
 export const WrapperTab = styled.div`    
     .tab-buttons {
-        display: grid;
-        grid-auto-rows: minmax(min-content,max-content);
-        grid-template-columns: repeat(auto-fit,minmax(0,1fr));
+        display: flex;
+        width: 100%;
     }
     .active{
-        background: #8c52ff;
+        background: #B63245;
         color: #fff;
     }
     @media screen and (max-width: 500px) {

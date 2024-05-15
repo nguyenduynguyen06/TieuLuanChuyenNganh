@@ -41,7 +41,7 @@ export const WrapperPriceTextProduct = styled.span`
     line-height: 40px;
     margin-right: 8px;
     font-weight: 500;
-    color: #ff3300
+    color: #B63245
 `
 
 export const WrapperAddressProduct = styled.div`
@@ -110,11 +110,11 @@ export const WrapperDesc = styled.div`
 export const WrapperButton = styled(Col)`
       .btn {
         background: #fff;
-        color: #ff3300;
-        border: 1px solid #ff3300;
+        color: #B63245;
+        border: 1px solid #B63245;
       }
       .btn:hover {
-        background: #ff3300;
+        background: #B63245;
         color: #fff;
       }
       
@@ -150,7 +150,7 @@ export const WrapperInfo = styled(Row)`
 export const WrapperComment = styled(Row)`
     .singlecmt .name{
         margin-bottom:0px;
-        color: #ff3300;
+        color: #B63245;
         font-weight: '700'
     }
     .singlecmt .content{
@@ -166,7 +166,7 @@ export const WrapperComment = styled(Row)`
     }
 `
 export const WrapperCommentNew = styled.div`
-    width: 65%;
+    width:65%;
     .comment-container {
         background-color: #f9fafb;
         border-radius: 10px;
@@ -229,7 +229,7 @@ export const WrapperCommentNew = styled.div`
         font-family: sans-serif!important;
     }
     .btn-send {
-        background-color: #ff3300;
+        background-color: #B63245;
         border: 0;
         color: #fff;
         gap: 5px;
@@ -310,7 +310,7 @@ export const WrapperCommentNew = styled.div`
         align-items: center;
         background-color: transparent;
         border: 0;
-        color: #ff3300;
+        color: #B63245;
         cursor: pointer;
         display: flex;
         font-size: 14px;
@@ -331,8 +331,7 @@ export const WrapperCommentNew = styled.div`
 `
 export const WrapperDetail = styled.div`
     .slider {
-        height: 400px; /* Đặt chiều cao cố định cho slider ở đây */
-        overflow: hidden;
+        height: 400px;
         align-items: center;
         justify-contents: center;
     }
@@ -344,7 +343,6 @@ export const WrapperDetail = styled.div`
         justify-content: start;
         font-size: 16px;
         gap: 20px;
-        padding: 15px 0 0 15px;
         background: #fff;
     }
     .product-pick {
@@ -361,12 +359,46 @@ export const WrapperDetail = styled.div`
         width:42%;
         padding-left:10px;
     }
+    .name-row{
+        margin-bottom: 10px;
+    }
     .rate-ave{
         display:flex;
+        align-items: center;
         margin:0;
         gap:20px;
-        padding-top: 10px;
+        margin-top: 10px;
+    }
+    .slick-prev, .slick-next {
+        z-index: 10; /* Điều chỉnh giá trị của z-index tùy theo nhu cầu */
+        position: absolute;
+        background-color: black;
+        opacity: 50%;  
+        height: 50px;
+        width: 40px;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+    }
+    .slick-prev::before,
 
+.slick-prev::before {
+    content: "<"; /* Ký tự muốn sử dụng cho mũi tên trước */
+    font-size: 24px;
+    font-weight: 900;
+    color: white; /* Kích thước của ký tự */
+}
+
+.slick-next::before {
+    content: ">"; /* Ký tự muốn sử dụng cho mũi tên sau */
+    font-size: 24px; /* Kích thước của ký tự */
+}
+
+    .slick-prev {
+        left: 0;
+    }
+    .slick-next {
+        right: 0;
     }
     .btn-color{
         display: flex;
@@ -487,7 +519,7 @@ width: 100%;
         box-shadow: 0 1px 2px 0 rgba(60,64,67,.1), 0 2px 6px 2px rgba(60,64,67,.15);
         margin-bottom: 15px;
         padding: 1rem;
-        width: 66%;
+        width: 100%;
         background: #fff;
     }
     .title.is-6 {    
@@ -770,11 +802,11 @@ export const WrapperSlider = styled(Slider)`
   }
   .box .btn,
   .box .card .image::before {
-    background: #ff3300;
+    background: #B63245;
   }
 
     .box .card p {
-    color: #ff3300;
+    color: #B63245;
     font-size: 15px;
   }
 

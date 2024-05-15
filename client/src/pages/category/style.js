@@ -1,46 +1,32 @@
 import styled from "styled-components";
-export const Wrapper = styled.div`
-  .background {
-    padding: 10px;
-    background-image: linear-gradient(to right, #5170ff,  #ff66c4);
-    border-radius: 6px 6px 0 0;
-  }
-  .title{
-    font-size: 22px;
-    color: #fff;
-    fontWeight: 600;
-    text-transform: uppercase;
-  }
-`
+
 
 export const CardWrapper = styled.div`
   width: 100%;
-  display: grid;
+  display: flex;
   grid-auto-rows: minmax(min-content,max-content);
   grid-template-columns: repeat(auto-fit,minmax(0,1fr));
   overflow: hidden;
-  border-radius: 0 0 8px 8px;
-  border: 1px solid #000;
   height: auto;
   .card{
       width:100%;
       text-align: center;
       display: flex;
+      justify-content: center;
       flex-direction: column;
       align-items: center;
-      border-radius: 5px;
-      height: 200px;
-      max-height: 200px;
+      border-radius: 0px;
   }
   .img-fluid {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 70%;
-    width: 100%;
+    max-width: 50%;
+    max-height: 50%
   }
   .img{
-    width: 40%;
+    max-width: 100%;
+    max-height: 100%
   }
   .cate-name{
     height: 30%;
@@ -53,9 +39,9 @@ export const CardWrapper = styled.div`
     font-weight: 500;
   } 
   .card:hover {
-    transform: scale(1);
+    transform: scale(1.1);
     z-index:1;
-    background: #9999ff;
+    background: #efefef;
   }
 
   @media screen and (max-width: 500px) {

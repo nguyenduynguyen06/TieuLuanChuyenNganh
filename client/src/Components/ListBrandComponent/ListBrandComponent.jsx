@@ -53,10 +53,10 @@ const ListBrand = () => {
         <Loading isLoading={loading}>
         <WrapperBrandList>
                     {brands.filter((brand) => brand.isHide === false).map((brand) => (
-                        <NavLink
+                        <NavLink 
                             key={brand.name}
                             className={`list-brand-item ${nameBrand === brand.name ? 'bordered' : ''}`}
-                            to={`/lowtoHigh/${nameCategory}/${brand.name}`}>
+                            to={`/products/${nameCategory}/${brand.name}`}>
                             <img className="brand-img" src={brand.picture} alt={brand.name} />
                         </NavLink>
                     ))}

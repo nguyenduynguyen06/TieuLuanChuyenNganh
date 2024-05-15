@@ -1,36 +1,35 @@
 const express = require('express');
 const router = express.Router();
 const orderController = require('../controller/OrderController');
-const { authMiddleware } = require('../middleware/authMiddleware');
+const { authMiddleware, authUserMiddleware } = require('../middleware/authMiddleware');
 
 
 router.post('/addOrder/:userId', orderController.addOrder);
 router.put('/updateOrder/:orderId',authMiddleware, orderController.updateOrderStatus);
 router.put('/completeOrder/:orderId', authMiddleware , orderController.completeOrder);
+router.put('/deliveredOrder/:orderId', authMiddleware , orderController.deliveredOrder);
 router.put('/completeOrderUser/:orderCode', orderController.completeOrderUser);
-router.get('/getAllOrders', orderController.getAllOrders);
-router.get('/waiting-for-confirmation', orderController.getOrdersWaitingForConfirmation);
-router.get('/home-delivery', orderController.getOrdersHomeDeliveryReady);
-router.get('/home-delivery-shipping', orderController.getOrdersHomeDeliveryShipping);
-router.get('/store-pickup-getready', orderController.getOrdersStorePickupgetReady);
-router.get('/store-pickup-ready', orderController.getOrdersStorePickupReady);
-router.get('/completedAtStore', orderController.getCompletedOrdersAtStore);
-router.get('/completedShipping', orderController.getCompletedOrdersShipping);
-router.get('/cancelAtStore', orderController.getCanceldOrdersAtStore);
-router.get('/cancelShipping', orderController.getCanceldOrdersShipping);
-router.get('/searchOrder', orderController.searchOrder);
-router.get('/searchOrderAtStoreComplete', orderController.searchOrderAtStoreComplete);
-router.get('/searchOrderShippingComplete', orderController.searchOrderShippingComplete);
-router.get('/searchOrderGetReady', orderController.searchOrderGetReady);
-router.get('/searchOrderShipping', orderController.searchOrderShipping);
-router.get('/searchOrderGetReadyAtStore', orderController.searchOrderGetReadyAtStore);
-router.get('/searchOrderReady', orderController.searchOrderReady);
+router.get('/getAllOrdersPending',authMiddleware, orderController.getAllOrdersPending);
+router.get('/getAllOrdersReady',authMiddleware, orderController.getAllOrdersReady);
+router.get('/getAllOrdersDelivery',authMiddleware, orderController.getAllOrdersDelivery);
+router.get('/getAllOrdersComplete',authMiddleware, orderController.getAllOrdersComplete);
+router.get('/getAllOrdersReadyCancel',authMiddleware, orderController.getAllOrdersReadyCancel);
+router.get('/getAllOrdersCancel',authMiddleware, orderController.getAllOrdersCancel);
+router.get('/getAllOrdersDashBoard',authMiddleware, orderController.getAllOrdersDashboard);
+router.get('/getAllOrdersDelivered',authMiddleware, orderController.getAllOrdersDelivered);
+router.get('/searchOrderPending',authMiddleware, orderController.searchOrderPending);
+router.get('/searchOrderReady',authMiddleware, orderController.searchOrderReady);
+router.get('/searchOrderCancel',authMiddleware, orderController.searchOrderCancel);
+router.get('/searchOrderDelivery',authMiddleware, orderController.searchOrderDelivery);
+router.get('/searchOrderDelivered',authMiddleware, orderController.searchOrderDelivered);
+router.get('/searchOrderReadyCancel',authMiddleware, orderController.searchOrderReadyCancel);
+router.get('/searchOrderComplete',authMiddleware, orderController.searchOrderComplete);
+router.put('/cancelOrderWithReason/:orderId',authMiddleware, orderController.cancelOrderWithReason);
 router.get('/user/:userId', orderController.getOrdersByUserId);
 router.get('/oderDetails/:orderCode', orderController.getOrdersDetails);
 router.delete('/delete/:orderId',authMiddleware,orderController.deleteOrder)
-router.put('/cancel/:orderCode',orderController.cancelOrder)
-router.get('/getOrderShipping', orderController.getOrdersShipping);
+router.put('/cancel/:orderCode',orderController.cancelOrderbyUser)
 router.put('/rating',orderController.addProductRating)
-router.put('/changeProduct', authMiddleware,orderController.changeProduct)
+router.put('/changeProduct/:id/:orderId', authMiddleware,orderController.changeProduct)
 router.put('/checkBH',orderController.checkBH)
 module.exports = router;

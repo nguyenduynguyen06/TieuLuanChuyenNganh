@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   MDBBtn,
   MDBContainer,
@@ -13,18 +13,24 @@ import {
   MDBModalContent,
   MDBModalDialog,
   MDBModal,
-  MDBModalHeader
+  MDBModalHeader,
+  MDBIcon
 }
   from 'mdb-react-ui-kit';
+
 import jwt_decode from "jwt-decode";
 import { useDispatch } from 'react-redux'
 import { updateUser } from "../../redux/Slide/userSlice";
 import Forget from "./forget";
+import Header from "./header";
+import { Button, Modal } from "antd";
 
 
 function Login({ onClose }) {
   const [message, setMessage] = useState('');
   const axiosJWT = axios.create();
+  const [showModal, setShowModal] = useState(false);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [user, setUser] = useState({
@@ -35,6 +41,7 @@ function Login({ onClose }) {
     event.preventDefault();
     setUser({ ...user, [event.target.name]: event.target.value });
   }
+  const handleCloseModal = () => setShowModal(false);
 
   const [centredModal, setCentredModal] = useState(false);
 
@@ -44,6 +51,7 @@ function Login({ onClose }) {
     setCentredModal(false);
   };
 
+  
   const loginHandler = async (event) => {
     event.preventDefault();
     try {
@@ -51,6 +59,7 @@ function Login({ onClose }) {
       const { isBlocked } = response.data;
       if (isBlocked) {
         setMessage('Tài khoản của bạn đã bị khoá. Vui lòng liên hệ với quản trị viên.');
+        setShowModal(true);
       } else {
         axios
           .post(`${process.env.REACT_APP_API_URL}/user/Login`, user, {
@@ -69,10 +78,12 @@ function Login({ onClose }) {
           })
           .catch((err) => {
             setMessage('Hãy kiểm tra lại email hoặc password');
+            setShowModal(true);
           });
       }
     } catch (error) {
       setMessage('Hãy kiểm tra lại email');
+      setShowModal(true);
     }
   };
 
@@ -93,55 +104,50 @@ function Login({ onClose }) {
 
   return (
     <div>
-      <form className="form-add-new" onSubmit={(e) => {
-        loginHandler(e);
-      }} >
-        <MDBContainer fluid>
-          <MDBRow className='d-flex justify-content-center align-items-center h-100'>
-            <MDBCol col='12'>
-              <MDBCard className='bg-white my-5 mx-auto' style={{ borderRadius: '1rem', maxWidth: '500px' }}>
-                <MDBCardBody className='p-5 w-100 d-flex flex-column'>
-                  {message && (
-                    <h4 className="fw-bold mb-2 text-center">
-                      <i className="fas fa-times-circle" style={{ color: 'red' }}>&nbsp;</i>
-                      {message}
-                    </h4>
+      <MDBContainer fluid >
+        <MDBRow>
+          <MDBCol sm='5' className='d-none d-sm-block px-0'>
+            <img src="../../image/about-background-image.png"
+              alt="Login image" className="w-100" style={{ objectFit: 'cover', objectPosition: 'left' }} />
+          </MDBCol>
+          <MDBCol sm='7' style={{ alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
+            {message && (
+              <Modal
+                title={showModal ? "Lỗi!" : "Thành công"}
+                visible={true}
+                footer={null}
+                onCancel={() => setMessage('')} // Đóng modal khi người dùng nhấn nút đóng
+              >
+                <h2 style={{ fontSize: '20px' }}>
+                  {showModal ? (
+                    <i className="fas fa-times-circle" style={{ color: 'red' }}>&nbsp;</i>
+                  ) : (
+                    <i className="fas fa-check-circle" style={{ color: 'green' }}>&nbsp;</i>
                   )}
-
-                  <h2 className="fw-bold mb-2 text-center">Đăng nhập</h2>
-                  <p className="text-white-50 mb-3"></p>
-
-                  <MDBInput wrapperClass='mb-4 w-100' label='Email' name="email" value={user.email} type='email' size="lg" onChange={onChange} />
-                  <MDBInput wrapperClass='mb-4 w-100' label='Password' name="passWord" value={user.passWord} type='password' size="lg" onChange={onChange} />
+                  {message}
+                </h2>
+              </Modal>
+            )}
 
 
-                  <MDBBtn size='lg' type="submit" >
-                    Login
-                  </MDBBtn>
-                  <div className=" text-center">
-                    <hr className="my-4" />
-                    <span style={{ fontSize: '15px', cursor: 'pointer', color: '#FF3300' }} clickable class="popup" onClick={toggleShow} >
-                      Quên mật khẩu?
-                    </span>
-                  </div>
-                  {/*
+            <div className='d-flex flex-row' style={{ paddingTop: '20px' }}>
+              <img className="logo" src="../../image/didong3.png" alt="" style={{ maxWidth: '100%' }} />
+            </div>
+            <h3 className="fw-normal" style={{ letterSpacing: '1px', color: '#B63245' }}>Đăng nhập</h3>
+            <div className='d-flex flex-column justify-content-center h-custom-2 w-75 pt-4'>
+            <form onSubmit={loginHandler}>
+              <MDBInput wrapperClass='mb-4 mx-5 w-100' label='Email' name="email" value={user.email} type='email' size="lg" onChange={onChange}   />
+              <MDBInput wrapperClass='mb-4 mx-5 w-100' label='Password' name="passWord" value={user.passWord} type='password' size="lg" onChange={onChange}   />
+              <MDBBtn className="mb-4 px-5 mx-5 w-100" style={{ background: '#B63245' }} size='lg' type="submit"
+              >Đăng nhập</MDBBtn>
+              </form>
+              <p className="ms-5 text-muted " style={{ cursor: 'pointer' }} onClick={toggleShow} >Quên mật khẩu?</p>
+              <span className="ms-5 text-muted ">Bạn chưa có tài khoản? <NavLink to='/register'>Đăng ký ngay</NavLink></span>
+            </div>
 
-              <MDBBtn className="mb-2 w-100" size="lg" style={{backgroundColor: '#dd4b39'}}>
-                <MDBIcon fab icon="google" className="mx-2"/>
-                Sign in with google
-              </MDBBtn>
-
-              <MDBBtn className="mb-4 w-100" size="lg" style={{backgroundColor: '#3b5998'}}>
-                <MDBIcon fab icon="facebook-f" className="mx-2"/>
-                Sign in with facebook
-              </MDBBtn> */}
-                </MDBCardBody>
-              </MDBCard>
-
-            </MDBCol>
-          </MDBRow>
-        </MDBContainer>
-      </form>
+          </MDBCol>
+        </MDBRow>
+      </MDBContainer>
       <MDBModal tabIndex='-1' show={centredModal} setShow={setCentredModal}>
         <MDBModalDialog centered>
           <MDBModalContent>
@@ -155,6 +161,29 @@ function Login({ onClose }) {
         </MDBModalDialog>
       </MDBModal>
 
+      <MDBModal tabIndex='-1' show={centredModal} setShow={setCentredModal}>
+        <MDBModalDialog centered>
+          <MDBModalContent>
+            <MDBModalHeader>
+              <MDBBtn className='btn-close' color='none' onClick={toggleShow}></MDBBtn>
+            </MDBModalHeader>
+            <MDBModalBody>
+              <Forget onClose={closePopup} />
+            </MDBModalBody>
+          </MDBModalContent>
+        </MDBModalDialog>
+      </MDBModal>
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Error</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{message}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
     </div>
   );

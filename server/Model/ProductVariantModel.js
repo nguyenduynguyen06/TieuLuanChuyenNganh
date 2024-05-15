@@ -11,6 +11,7 @@ const productVariantSchema = new mongoose.Schema({
     sku: {
       type: String,
       required: true,
+      unique: true, 
       default: '',
     },
     color: 

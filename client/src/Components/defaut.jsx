@@ -2,7 +2,7 @@ import React from "react";
 import Header from "./Header/header";
 const Default = () => {
     return (
-        <div>
+        <div >
             <Header/>
         </div>
     )

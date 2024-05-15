@@ -182,7 +182,7 @@ const TableBrand = () => {
           </Button>
         ))}
       </div>
-      <Table columns={columns} dataSource={selectedCategoryBrands} />
+      <Table bordered columns={columns} dataSource={selectedCategoryBrands} />
     </div>
     );
   };

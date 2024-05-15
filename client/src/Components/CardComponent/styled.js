@@ -19,22 +19,31 @@ export const WrapperFilterCard = styled.div`
   background: #fff;
   display:grid;
   grid-auto-rows: minmax(min-content,max-content);
-  grid-template-columns: repeat(6,minmax(0,1fr));
+  grid-template-columns: repeat(5,minmax(0,1fr));
   overflow: hidden;
   border-radius: 0 0 8px 8px;
 }
 .item-label{
   height: 22px;
+  text-align: left;
+  margin-bottom: 20px;
+}
+.lb-dis {
+  background-color: #980300;
+  color: #fff;
+  font-weight: 400;
+}
+.lb-dis span{
+    font-size: 5px;
 }
 .item-label span {
-  border-radius: 2px;
-  font-size: 11px;
-  line-height: 12px;
+  border-radius: 8px;
   display: inline-block;
   margin-right: 4px;
-  padding: 3px;
+  padding: 4px 8px;
   text-align: left;
 }
+
 .box {
   background: #fff;
   text-align: left;
@@ -51,11 +60,7 @@ export const WrapperFilterCard = styled.div`
   transform: scale(1);
   z-index:1;
 }
-.lb-dis {
-  background-color: #f1f1f1;
-  color: #ff3300;
-  font-weight:400;
-}
+
 .mainContainer .box:hover {
   box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
 }
@@ -95,7 +100,6 @@ export const WrapperFilterCard = styled.div`
 }
 .card .desc {
   width: 100%;
-  margin: auto;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
@@ -142,11 +146,15 @@ export const WrapperFilterCard = styled.div`
   background: #ff3300;
 }
 
-  .box .card p {
+  .box .card .price-box p {
   color: #ff3300;
   font-size: 15px;
 }
+.box .card .props p{
+  font-size: 15px;
+  color: #000;
 
+}
 @media screen and (max-width: 1100px) {
   .mainContainer {
     display: grid;
@@ -382,21 +390,22 @@ export const WrapperCard = styled.div`
 `
 export const WrapperSuggestCard = styled.div`
 .view-list{
+  max-height: 400px;
   background-color: #fff;
-  border: 1px solid rgba(145,158,171,.239);
-  border-radius: 10px;
-  padding: 5px 15px 0;
-  width: 50%;
-  height: 400px; 
-  overflow-y: auto; 
+  width: 100%;
   position: absolute; 
-  z-index:1; 
+  overflow-y: auto; 
+  scrollbar-width: none; 
+  z-index: 1; 
+
 }
 .view-list__wrapper{
+  background-color: #fff;
   display: flex;
   width: 100%;
   border: 1px solid #ccc;
-  border-style: none none solid none;
+  padding: 5px 15px 0;
+  border: 1px solid rgba(145,158,171,.239);
 }
 .view-list__wrapper:hover{
   transform: scale(1,1);
@@ -460,15 +469,6 @@ img {
   font-size: 13px;
 }
 @media screen and (max-width: 500px) {
-  .view-list{
-    width: 100%;
-    height: 400px; 
-    overflow-y: auto; 
-    text-align: justify; 
-    position: absolute; 
-    z-index:1; 
-    max-width: 315px;
-  }
   .item__img{
     width: 30%;
   }

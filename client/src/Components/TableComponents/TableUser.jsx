@@ -175,7 +175,7 @@ const TableUser = () => {
                 >
                 </span>
             </div>
-            <Table columns={columns} dataSource={searchQuery.trim() === '' ? users.map((user, index) => ({
+            <Table bordered columns={columns} dataSource={searchQuery.trim() === '' ? users.map((user, index) => ({
         ...user,
         key: index,
       })) : searchResults.map((user, index) => ({

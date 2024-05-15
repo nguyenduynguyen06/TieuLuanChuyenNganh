@@ -4,8 +4,11 @@ const Category = require('../Model/CategoryModel');
 const ProductVariant = require('../Model/ProductVariantModel');
 const { format } = require('date-fns');
 const addProduct = async (req, res) => {
+  let variantsAddedSuccessfully = true;
+  let newProduct;
+
   try {
-    const { name, desc, warrantyPeriod, brandName, categoryName, properties, thumnails, include } = req.body;
+    const { name, desc, warrantyPeriod, brandName, categoryName, properties, thumnails, include, variants } = req.body;
     const releaseTimeInput = req.body.releaseTime;
     const formattedReleaseTime = format(new Date(releaseTimeInput), 'dd/MM/yyyy');
     const brand = await Brand.findOne({ name: brandName });
@@ -29,12 +32,43 @@ const addProduct = async (req, res) => {
       thumnails,
       include
     });
-    const newProduct = await product.save();
+    newProduct = await product.save();
+
+    for (const variantData of variants) {
+      const { memory, imPrice, oldPrice, newPrice, attributes } = variantData;
+      const duplicateSku = await ProductVariant.findOne({ "attributes.sku": { $in: attributes.map(attr => attr.sku) } });
+      if (duplicateSku) {
+        await Product.deleteOne({ _id: newProduct._id });
+        return res.status(400).json({ success: false, error: 'Thuộc tính SKU đã tồn tại' });
+      }
+
+      const productVariant = new ProductVariant({
+        productName: newProduct._id,
+        memory,
+        imPrice,
+        oldPrice,
+        newPrice,
+        attributes,
+      });
+      const newProductVariant = await productVariant.save();
+      newProduct.variant.push(newProductVariant._id);
+    }
+
+    await newProduct.save();
+
     res.status(201).json({ success: true, data: newProduct });
   } catch (error) {
+    variantsAddedSuccessfully = false; 
+    if (newProduct) {
+      await Product.deleteOne({ _id: newProduct._id });
+    }
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+
+
+
 
 
 const getProductsByCategory = async (req, res) => {
@@ -50,7 +84,7 @@ const getProductsByCategory = async (req, res) => {
 
     
     const products = await Product.find({ category: categoryId })
-      .select('-desc -releaseTime -views -include -promotion')
+      .select('-desc  -views -include -promotion ')
       .populate('brand')
       .populate({
         path: 'variant',
@@ -58,6 +92,7 @@ const getProductsByCategory = async (req, res) => {
           path: 'attributes',
         },
       })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(pageSize)
       .lean();
@@ -98,11 +133,25 @@ const editProduct = async (req, res) => {
     if (data.warrantyPeriod) {
       updateData.warrantyPeriod = data.warrantyPeriod;
     }
-    if (data.properties) {
-      updateData.properties = data.properties;
+    if (data.brandName) {
+      const brand = await Brand.findOne({ name: data.brandName });
+      if (!brand) {
+        return res.status(404).json({ success: false, error: 'Brand không tồn tại' });
+      }
+      updateData.brand = brand._id;
     }
-    if (data.thumnails) {
-      updateData.thumnails = data.thumnails;
+    if (data.categoryName) {
+      const category = await Category.findOne({ name: data.categoryName });
+      if (!category) {
+        return res.status(404).json({ success: false, error: 'Category không tồn tại' });
+      }
+      updateData.category = category._id;
+    }
+    if (data.variant) {
+      updateData.variant = data.variant;
+    }
+    if (data.ratings) {
+      updateData.ratings = data.ratings;
     }
     if (data.include) {
       updateData.include = data.include;
@@ -110,11 +159,16 @@ const editProduct = async (req, res) => {
     if (data.isHide !== undefined) {
       updateData.isHide = data.isHide;
     }
+    if (data.properties) {
+      updateData.properties = data.properties;
+    }
+    if (data.thumnails) {
+      updateData.thumnails = data.thumnails;
+    }
     if (data.promotion) {
       updateData.promotion = data.promotion;
     }
     const updatedProduct = await Product.findByIdAndUpdate(productId, updateData, { new: true })
-      .select('-desc -releaseTime -views -include -promotion') 
       .populate('brand')
       .populate({
         path: 'variant',
@@ -126,9 +180,14 @@ const editProduct = async (req, res) => {
       
     res.status(200).json({ success: true, data: updatedProduct });
   } catch (error) {
-    return res.status(500).json({ msg: 'Lỗi Server' });
+    console.log(error)
+    return res.status(500).json({ msg: error });
   }
 };
+
+
+
+
 
 const deleteProduct = async (req, res) => {
   try {
@@ -153,7 +212,7 @@ const deleteProduct = async (req, res) => {
     return res.status(500).json({ msg: 'Lỗi Server' });
   }
 };
-const searchProducts = async (req, res) => {
+const searchProductAdmin = async (req, res) => {
   try {
     const keyword = req.query.keyword;
     const regex = new RegExp(keyword, 'i');
@@ -162,9 +221,8 @@ const searchProducts = async (req, res) => {
       name: { $regex: regex },
       isHide: false
     })
-    .select('-desc -releaseTime -views -include -promotion')
+    .select('-desc -views -include -promotion')
     .populate('brand')
-    .populate('category')
     .populate({
       path: 'variant',
       populate: {
@@ -172,16 +230,9 @@ const searchProducts = async (req, res) => {
       },
     })
     .lean();
-    let expandedProducts = [];
-    products.forEach((product) => {
-      product.variant.forEach((variant) => {
-        const productWithVariant = { ...product, variant: [variant] };
-        expandedProducts.push(productWithVariant);
-      });
-    });
     res.status(200).json({
       success: true,
-      data: expandedProducts,
+      data: products,
     });
   } catch (error) {
     console.error('Lỗi:', error);
@@ -211,12 +262,21 @@ const detailsProduct = async (req, res) => {
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
-
-const getAllProduct = async (req, res) => {
+const IdProduct = async (req, res) => {
   try {
-    const products = await Product.find()
-      .select('_id') 
-      .exec();
+    const { id } = req.params;
+    const products = await Product.findOne({ _id: id })
+      .populate('brand')
+      .populate('category')
+      .populate({
+        path: 'variant',
+        populate: {
+          path: 'attributes',
+        },
+      }).lean();
+    if (!products) {
+      return res.status(404).json({ success: false, error: 'Sản phẩm không tồn tại' });
+    }
 
     res.status(200).json({ success: true, data: products });
   } catch (error) {
@@ -225,129 +285,13 @@ const getAllProduct = async (req, res) => {
   }
 };
 
-
-const filterProductsByCategory = async (req, res) => {
+const getAllProduct = async (req, res) => {
   try {
-    const categoryId = req.params.categoryId;
-    const minPrice = parseFloat(req.query.minPrice) || 0;
-    const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_VALUE;
-    const includeOldPrice = req.query.includeOldPrice === 'true';
-    const selectedMemory = req.query.selectedMemory;
+    const products = await Product.find()
+      .select('_id') 
+      .exec();
 
-    let matchCondition = {
-      newPrice: {
-        $gte: minPrice,
-        $lte: maxPrice,
-      },
-    };
-
-    if (includeOldPrice) {
-      matchCondition.$or = [{ oldPrice: { $exists: true } }];
-    }
-
-    if (selectedMemory) {
-      matchCondition.$and = [
-        {
-          $or: [
-            { memory: selectedMemory },
-            { memory: { $exists: false } },
-          ],
-        },
-      ];
-    }
-
-    const products = await Product.find({ category: categoryId, isHide: false })
-      .select('-desc -releaseTime -views -include -promotion') 
-      .populate('variant', null, matchCondition)
-      .populate('brand')
-      .populate('category').lean();
-
-      let expandedProducts = [];
-
-      products.forEach((product) => {
-        const expandedVariants = product.variant.map((variant) => ({
-          ...product,
-          variant: [variant],
-        }));
-  
-        expandedProducts = [...expandedProducts, ...expandedVariants];
-      });
-      const sortMode = req.query.sort || 'lowToHigh';
-      expandedProducts = expandedProducts.sort((a, b) => {
-        const priceA = a.variant[0].newPrice;
-        const priceB = b.variant[0].newPrice;
-        return sortMode === 'highToLow' ? priceB - priceA : priceA - priceB;
-      });
-  
-      res.status(200).json({
-        success: true,
-        data: expandedProducts,
-      });
-  } catch (error) {
-    console.error('Lỗi:', error);
-    res.status(500).json({ success: false, error: 'Lỗi Server' });
-  }
-};
-const filterProductsByCategoryandBrand = async (req, res) => {
-  try {
-    const categoryId = req.params.categoryId;
-    const brandId = req.params.brandId;
-    const minPrice = parseFloat(req.query.minPrice) || 0;
-    const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_VALUE;
-    const includeOldPrice = req.query.includeOldPrice === 'true';
-    const selectedMemory = req.query.selectedMemory;
-
-    let matchCondition = {
-      newPrice: {
-        $gte: minPrice,
-        $lte: maxPrice,
-      },
-    };
-
-    if (includeOldPrice) {
-      matchCondition.$or = [{ oldPrice: { $exists: true } }];
-    }
-
-    if (selectedMemory) {
-      matchCondition.$and = [
-        {
-          $or: [
-            { memory: selectedMemory },
-            { memory: { $exists: false } },
-          ],
-        },
-      ];
-    }
-
-    const products = await Product.find({ category: categoryId, brand: brandId, isHide: false })
-      .select('-desc -releaseTime -views -include -promotion')
-      .populate('variant', null, matchCondition)
-      .populate('brand')
-      .populate('category').lean();
-
-      let expandedProducts = [];
-
-      products.forEach((product) => {
-        const expandedVariants = product.variant.map((variant) => ({
-          ...product,
-          variant: [variant],
-        }));
-  
-        expandedProducts = [...expandedProducts, ...expandedVariants];
-      });
-  
-
-      const sortMode = req.query.sort || 'lowToHigh';
-      expandedProducts = expandedProducts.sort((a, b) => {
-        const priceA = a.variant[0].newPrice;
-        const priceB = b.variant[0].newPrice;
-        return sortMode === 'highToLow' ? priceB - priceA : priceA - priceB;
-      });
-  
-      res.status(200).json({
-        success: true,
-        data: expandedProducts,
-      });
+    res.status(200).json({ success: true, data: products });
   } catch (error) {
     console.error('Lỗi:', error);
     res.status(500).json({ success: false, error: 'Lỗi Server' });
@@ -418,4 +362,4 @@ const getAllProductsWithTotalSold = async (req, res) => {
   }
 };
 
-module.exports = {getAllProductsWithTotalSold, addProduct, getProductRating, getProductsByCategory, editProduct, deleteProduct, searchProducts, getAllProduct, detailsProduct, filterProductsByCategory, filterProductsByCategoryandBrand };
+module.exports = {searchProductAdmin,IdProduct,getAllProductsWithTotalSold, addProduct, getProductRating, getProductsByCategory, editProduct, deleteProduct, getAllProduct, detailsProduct };

@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const WrapperContainer = styled.div`
 
-    height: 100vh; 
+    height: 88vh; 
     display: flex; 
     flex-direction: column; 
     justify-content: center; 

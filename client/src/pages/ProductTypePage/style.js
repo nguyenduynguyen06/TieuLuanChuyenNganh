@@ -1,18 +1,25 @@
 import styled from "styled-components"; 
 
 export const WrapperType = styled.div`
+background: #fff;
 .align-checkbox {
     vertical-align: middle; /* Align the checkbox vertically with the text */
     margin-left: 10px; /* Adjust the spacing as needed */
   }
+  .navi{
+    margin: 10px 0px;
+    padding: 0px 10px;
+    border: 1px solid #efefef;
+    border-radius: 4px;
+    background: #fff;
+    }
 `
 
 
 export const WrapperFilterList = styled.nav` 
-padding: 10px;
 display: flex;
-gap: 10px;
 flex-wrap: wrap;
+margin: 6px 0px;
 .ant-dropdown-menu-item {
     padding: 8px 16px;
   }
@@ -41,16 +48,16 @@ flex-wrap: wrap;
 `
 export const WrapperTextValue =styled.div`
   margin-top: 10px;
-  border-radius: 20px;
+  border-radius: 4px;
   text-align: center;
-  border: 1px solid  #9999ff; 
+  color: #B63245;
+  border: 1px solid  #B63245; 
   padding: 10px;
+  min-width: 120px;
   &:hover {
-    a{
-      color:#fff;
-    }
-    border: 1px solid  #fff; 
-    background: #9999ff;
+    color:#fff;
+    border: 1px solid #B63245; 
+    background: #B63245;
   }
   a {
     font-size:16px;
@@ -64,7 +71,7 @@ export const WrapperTextValue =styled.div`
     props.active &&
     `
     border: 1px solid #fff;
-    background: #9999ff;
+    background: #B63245;
     div {
       color: #fff;
     }

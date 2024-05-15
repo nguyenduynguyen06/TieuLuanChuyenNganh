@@ -4,15 +4,16 @@ import Profilepage from "../pages/Profile/profilepage";
 import NotFoundPage from "../pages/notfoundpage";
 import ProductDetail from "../pages/ProductDetail/productdetail";
 import CartPage from "../pages/CartPage/CartPage";
-import FilterProductPage from "../pages/ProductTypePage/productfilterpage";
 import PaymentInfo from "../pages/PaymentPage/paymentinfo";
 import PaymentSuccess from "../pages/paymentVNPAYsuccess";
-import Orders from "../pages/Profile/order/orders";
 import OrderDetail from "../pages/Profile/orderdetail";
 import WarrantySearch from "../Components/TableComponents/Warranty";
 import OrderSuccess from "../pages/OrderSuccess/ordersuccess";
 import LandingPage from "../Components/LandingPage/LandingPage";
-import LoginSignup from "../Components/LoginSignup/LoginSignup";
+import Register from "../Components/Header/register";
+import Login from "../Components/Header/login";
+import About from "../Components/LandingPage/About";
+import ProductPage from "../pages/ProductTypePage/ProductPage";
 export const routes = [
     {
         path:'/',
@@ -25,21 +26,16 @@ export const routes = [
         isShowFooter: false
     },
     {
-        path:'/admin',
+        path:'/admin/*',
         page: AdminHomePage,
         isShowFooter: false,
     },
     {
-        path:'/profile',
+        path:'/profile/*',
         page: Profilepage,
-        isShowHeader : true,
-        isShowFooter: false
+        isShowFooter: true
     },
-    {
-        path:'/pdd',
-        page: ProductDetail,
-        isShowHeader: true
-    },
+
     {
         path:'/product/:productName/:memory',
         page: ProductDetail,
@@ -48,49 +44,21 @@ export const routes = [
     {
         path:'/cart',
         page: CartPage,
-        isShowHeader: false
-    },
-    {
-        path:'/lowtoHigh',
-        page: FilterProductPage,
-    },
-    {
-        path:'/lowtoHigh/:nameCategory/:nameBrand',
-        page: FilterProductPage,
-    },
-    {
-        path:'/lowtoHigh/:nameCategory',
-        page: FilterProductPage,
-    },
-    {
-        path:'/highToLow/:nameCategory/:nameBrand',
-        page: FilterProductPage,
-    },
-    {
-        path:'/highToLow/:nameCategory',
-        page: FilterProductPage,
-    },
-    {
-        path:'/highToLow',
-        page: FilterProductPage,
+        isShowHeader: true
     },
     {
         path:'/payment-infor',
-        page: PaymentInfo
+        page: PaymentInfo,
+        isShowHeader: true
     },
     {
         path:'/order-success',
         page: OrderSuccess,
-        isShowFooter: false
+        isShowHeader: true
     },
     {
         path:'/vnpay_return',
         page: PaymentSuccess,
-    },
-    {
-        path:'/orders',
-        page: Orders ,
-        isShowHeader: true,   
     },
     {
         path:'/order-detail/:orderCode',
@@ -98,7 +66,8 @@ export const routes = [
     },
     {
         path:'/warranty',
-        page: WarrantySearch
+        page: WarrantySearch,
+        isShowHeader: true
     },
     {
         path:'/landingpage',
@@ -106,6 +75,30 @@ export const routes = [
     },
     {
         path:'/login',
-        page: LoginSignup
+        page: Login,
+        isShowHeader: true
+
+    },
+    {
+        path:'/register',
+        page: Register,
+        isShowHeader: true
+    },
+    {
+        path: '/about',
+        page: About
+    },
+    {
+        path: '/products/:nameCategory/:nameBrand',
+        page: ProductPage,
+      
+    },
+    {
+        path: '/products/:nameCategory',
+        page: ProductPage,
+    },
+    {
+        path: '/products',
+        page: ProductPage,
     },
 ]

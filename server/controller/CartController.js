@@ -5,7 +5,7 @@ const ProductVariant = require('../Model/ProductVariantModel');
 const addToCart = async (req, res) => {
   try {
     const { userId, productName, SKU, quantity } = req.query;
-    if(!userId){
+    if(userId === 'undefined'){
       return res.status(200).json({error: 'Vui lòng đăng nhập để tiếp tục'})
     }
     let cart = await Cart.findOne({ user: userId });
@@ -38,27 +38,35 @@ const addToCart = async (req, res) => {
         break;
       }
     }
-  let matchingItem = null;
-  for (const item of cart.items) {
-    if (
-      item.product.toString() === product._id.toString() &&
-      item.productVariant._id.toString() === productVariant._id.toString() &&
-      item.color.toString() === color
-    ) {
-      matchingItem = item;
-      break;
+    let matchingItem = null;
+    for (const item of cart.items) {
+      if (
+        item.product.toString() === product._id.toString() &&
+        item.productVariant._id.toString() === productVariant._id.toString() &&
+        item.color.toString() === color
+      ) {
+        matchingItem = item;
+        break;
+      }
     }
-  }
-  if (matchingItem) {
-    const newQuantity = Number(matchingItem.quantity) + Number(quantity);
+    
+    if (matchingItem) {
+      const newQuantity = Number(matchingItem.quantity) + Number(quantity);
+      
+
+      const sku = productVariant.attributes.find(attr => attr.sku === matchingItem.sku);
+      if (newQuantity > sku.quantity) {
+        return res.status(200).json({ success: false, error: 'Số lượng vượt quá giới hạn trong kho' });
+      }
+      
+      if (newQuantity <= 3) {
+        matchingItem.quantity = newQuantity;
+        matchingItem.subtotal = Number(matchingItem.subtotal) + (productVariant.newPrice * quantity);
+      } else {
+        return res.status(200).json({ success: false, error: 'Số lượng vượt quá giới hạn (3)' });
+      }
     
     
-    if (newQuantity <= 3) {
-      matchingItem.quantity = newQuantity;
-      matchingItem.subtotal = Number(matchingItem.subtotal) + (productVariant.newPrice * quantity);
-    } else {
-      return res.status(200).json({ success: false, error: 'Số lượng vượt quá giới hạn (3)' });
-    }
   } else {
     if (quantity <= 3) { 
       const price = productVariant.newPrice;
@@ -72,6 +80,7 @@ const addToCart = async (req, res) => {
         pictures: matchingPictures,
         quantity,
         subtotal,
+        sku: SKU
       });
     } else {
       return res.status(200).json({ success: false, error: 'Số lượng vượt quá giới hạn (3)' });
@@ -104,22 +113,27 @@ const deleteCartItem = async (req, res) => {
   }
 };
 const updateCartItemQuantity = async (req, res) => {
-  const userId = req.params.userId; 
-  const cartItemId = req.params.cartItemId; 
-  const { quantity } = req.body; 
-
+  const userId = req.params.userId;
+  const cartItemId = req.params.cartItemId;
+  const { quantity } = req.body;
   try {
-
     const cart = await Cart.findOne({ user: userId });
 
     if (!cart) {
       return res.status(404).json({ success: false, error: 'Giỏ hàng không tồn tại' });
     }
+
     const item = cart.items.find((item) => item._id.toString() === cartItemId);
+
     if (!item) {
       return res.status(404).json({ success: false, error: 'Mục giỏ hàng không tồn tại' });
     }
     const productVariant = await ProductVariant.findById(item.productVariant);
+    const sku = productVariant.attributes.find(attr => attr.sku === item.sku);
+    if (quantity > sku.quantity) {
+      return res.status(400).json({ success: false, error: 'Số lượng trong kho không đủ' });
+    }
+
     item.quantity = quantity;
     item.subtotal = productVariant.newPrice * quantity;
     await cart.save();
@@ -128,6 +142,8 @@ const updateCartItemQuantity = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+
 const getCartItemsByUserId = async (req, res) => {
   const userId = req.params.userId; 
   try {
@@ -135,6 +151,7 @@ const getCartItemsByUserId = async (req, res) => {
       path: 'items',
       populate: {
         path: 'product',
+        select: 'name warrantyPeriod'
       }
     }).populate({
       path: 'items',

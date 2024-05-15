@@ -77,6 +77,10 @@ const productSchema = new mongoose.Schema({
   }],
   promotion: {
     type: String
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 });
 const Product = mongoose.model('Product', productSchema);
