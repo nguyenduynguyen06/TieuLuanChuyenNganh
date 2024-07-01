@@ -50,6 +50,7 @@ const formItemLayout = {
 
 const EditVariant = ({ closeModal, variantId }) => {
     const user = useSelector((state) => state.user);
+    const [reload, setReload] = useState(false);
     const [form] = Form.useForm();
     useEffect(() => {
         if (variantId) {
@@ -67,13 +68,18 @@ const EditVariant = ({ closeModal, variantId }) => {
                     console.error('Error fetching product:', error);
                 });
         }
-    }, [variantId, form]);
+    }, [variantId, form, reload]);
+    const handleCloseModal = () => {
+      closeModal();
+      setReload(!reload)
+  };
     const onFinish = (values) => {
         const headers = {
             token: `Bearer ${user.access_token}`,
         };
         try {
             axios.put(`${process.env.REACT_APP_API_URL}/product/editProductVariant/${variantId}`, values, { headers });
+            closeModal();
             message.success('Sửa biến thể thành công')
           } catch (error) {
             message.error('Thêm biến thể thất bại', error)
@@ -118,7 +124,7 @@ const EditVariant = ({ closeModal, variantId }) => {
                     <Button type="primary" size="large" htmlType="submit">
                         Sửa biến thế
                     </Button>
-                    <Button type="primary" size="large" danger onClick={closeModal}>
+                    <Button type="primary" size="large" danger onClick={handleCloseModal}>
                         Huỷ bỏ
                     </Button>
                 </div>

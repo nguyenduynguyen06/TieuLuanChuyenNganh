@@ -9,11 +9,12 @@ import {
     Form,
     Input,
     Select,
-    DatePicker,
 } from 'antd';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
-
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import '../AdminNews/datepicker.css'
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -51,10 +52,12 @@ const EditProduct = ({ closeModal, productId }) => {
     const [form] = Form.useForm();
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
-
+    const [publishedDate, setPublishedDate] = useState(null);
     const [properties, setProperties] = useState({});
     const [newProperty, setNewProperty] = useState({ label: '', value: '' });
     const [selectedProperty, setSelectedProperty] = useState(null);
+    const [reload, setReload] = useState(false);
+
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`)
             .then((response) => {
@@ -70,7 +73,8 @@ const EditProduct = ({ closeModal, productId }) => {
                 .then((response) => {
                     const productData = response.data.data;
                     const productDateParts = productData.releaseTime.split('/');
-                    const releaseTime = moment(`${productDateParts[2]}-${productDateParts[1]}-${productDateParts[0]}`, 'YYYY-MM-DD');
+                    const publishedDate = moment(`${productDateParts[2]}-${productDateParts[1]}-${productDateParts[0]} ${productData.releaseTime}`, 'YYYY-MM-DD').toDate();
+                    setPublishedDate(publishedDate);
                     handleCategoryChange(productData.category.name);
                     form.setFieldsValue({
                         name: productData.name,
@@ -78,7 +82,7 @@ const EditProduct = ({ closeModal, productId }) => {
                         categoryName: productData.category.name,
                         brandName: productData.brand.name,
                         include: productData.include,
-                        releaseTime,
+                   
                         thumnails: productData.thumnails,
                         desc: productData.desc,
                         promotion: productData.promotion,
@@ -89,12 +93,17 @@ const EditProduct = ({ closeModal, productId }) => {
                     console.error('Error fetching product:', error);
                 });
         }
-    }, [productId, form]);
+    }, [productId, form, reload]);
     const handlePropertyLabelChange = (key, value) => {
         const updatedProperties = { ...properties, [value]: properties[key] };
         delete updatedProperties[key];
         setProperties(updatedProperties);
     };
+    const handleCloseModal = () => {
+        closeModal();
+        setReload(!reload)
+    };
+
 
     const handlePropertyValueChange = (key, value) => {
         setProperties({ ...properties, [key]: value });
@@ -152,6 +161,7 @@ const EditProduct = ({ closeModal, productId }) => {
     };
     const handleCategoryChange = async (value) => {
         try {
+            form.setFieldsValue({ brandName: null });
             const category = categories.find((cat) => cat.name === value);
             if (category) {
                 const categoryId = category._id;
@@ -171,6 +181,7 @@ const EditProduct = ({ closeModal, productId }) => {
         axios
             .put(`${process.env.REACT_APP_API_URL}/product/editProduct/${productId}`, editedValues, { headers })
             .then((response) => {
+                closeModal();
                 message.success('Sửa sản phẩm thành công');
             })
             .catch((error) => {
@@ -216,6 +227,12 @@ const EditProduct = ({ closeModal, productId }) => {
             <Form.Item
                 name="categoryName"
                 label="Danh mục"
+                rules={[
+                    {
+                        required: true,
+                        message: 'Vui lòng điền danh mục',
+                    },
+                ]}
             >
                 <Select placeholder="Chọn danh mục" onChange={handleCategoryChange}>
                     {categories.map((category) => (
@@ -228,6 +245,12 @@ const EditProduct = ({ closeModal, productId }) => {
             <Form.Item
                 name="brandName"
                 label="Thương hiệu"
+                rules={[
+                    {
+                        required: true,
+                        message: 'Vui lòng điền thương hiệu',
+                    },
+                ]}
             >
                 <Select placeholder="Chọn thương hiệu">
                     {brands.map((brand) => (
@@ -241,7 +264,12 @@ const EditProduct = ({ closeModal, productId }) => {
                 name="releaseTime"
                 label="Ngày ra mắt"
             >
-                <DatePicker />
+                  <DatePicker
+                    selected={publishedDate}
+                    onChange={(date) => setPublishedDate(date)}
+                    dateFormat="dd/MM/yyyy"
+                    showYearDropdown
+                />
             </Form.Item>
             <Form.Item
                 name="include"
@@ -330,7 +358,7 @@ const EditProduct = ({ closeModal, productId }) => {
                     <Button type="primary" size="large" htmlType="submit">
                         Sửa sản phẩm
                     </Button>
-                    <Button type="primary" size="large" danger onClick={closeModal}>
+                    <Button type="primary" size="large" danger onClick={handleCloseModal}>
                         Huỷ bỏ
                     </Button>
                 </div>

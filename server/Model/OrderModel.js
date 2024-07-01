@@ -37,13 +37,22 @@ const cartItemSchema  = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  change:{
-    isHave:{
-      type:Boolean,
-      default: false
+  change: {
+    status: {
+      type: String,
     },
-    dateChange:{
-      type:String
+    changeDates: {
+      type: String, 
+    },
+    changeDateComplete: {
+      type: String, 
+    },
+    changeCount: {
+      type: Number,
+      default: 0,
+    },
+    reasons: {
+      type: String,
     }
   },
   sku: {

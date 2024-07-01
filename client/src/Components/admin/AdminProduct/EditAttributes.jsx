@@ -52,6 +52,8 @@ const tailFormItemLayout = {
 const EditAttributes = ({ closeModal, attributesId }) => {
     const user = useSelector((state) => state.user);
     const [form] = Form.useForm();
+    const [reload, setReload] = useState(false);
+
     const props = ({
         name: 'image',
         action: `${process.env.REACT_APP_API_URL}/upload`,
@@ -99,18 +101,24 @@ const EditAttributes = ({ closeModal, attributesId }) => {
                     console.error('Error fetching product:', error);
                 });
         }
-    }, [attributesId, form]);
+    }, [attributesId, form, reload]);
     const onFinish = (values) => {
         const headers = {
             token: `Bearer ${user.access_token}`,
         };
         try {
             axios.put(`${process.env.REACT_APP_API_URL}/product/editAttributes/${attributesId}`, values, { headers });
+            closeModal();
             message.success('Sửa thuộc tính thành công')
         } catch (error) {
             message.error('Sửa thuộc tính thất bại', error)
         }
     };
+    const handleCloseModal = () => {
+        closeModal();
+        setReload(!reload)
+    };
+
     return (
         <Form
             {...formItemLayout}
@@ -152,7 +160,7 @@ const EditAttributes = ({ closeModal, attributesId }) => {
                     <Button type="primary" size="large" htmlType="submit">
                         Sửa thuộc tính
                     </Button>
-                    <Button type="primary" size="large" danger onClick={closeModal}>
+                    <Button type="primary" size="large" danger onClick={handleCloseModal}>
                         Huỷ bỏ
                     </Button>
                 </div>

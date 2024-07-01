@@ -26,5 +26,7 @@ router.get('/getRating/:productName',productController.getProductRating)
 router.get('/getProduct/:id', productController.IdProduct);
 router.get('/getDetails/:name', productController.detailsProduct);
 router.get('/all-with-sold', productController.getAllProductsWithTotalSold);
-router.get('/productVariant',productvariantController.getProductVariants)
+router.get('/productVariant',productvariantController.getProductVariants);
+router.get('/getRandomProduct',productController.getRandomProduct)
+
 module.exports = router;

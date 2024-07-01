@@ -10,6 +10,14 @@ const provinceSchema = new mongoose.Schema({
       name: {
         type: String,
         required: true
+      },
+      shippingFee: {
+        type: Number,
+        required: true
+      },
+      deleted: {
+        type: Boolean,
+        default: false
       }
     }
   ],
@@ -26,6 +34,10 @@ const provinceSchema = new mongoose.Schema({
       name: {
         type: String,
         required: true
+      },
+      deleted: {
+        type: Boolean,
+        default: false
       }
     }
   ],
@@ -42,6 +54,10 @@ const provinceSchema = new mongoose.Schema({
       name: {
         type: String,
         required: true
+      },
+      deleted: {
+        type: Boolean,
+        default: false
       }
     }
   ]

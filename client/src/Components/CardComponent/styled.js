@@ -245,18 +245,18 @@ export const WrapperCard = styled.div`
     gap: 2px;
   }
 
-  .mainContainer .box {
+  .box {
     background: #fff;
     text-align: center;
     transition: .3s ease-in-out;
     width: 200px;
   }
 
-  .mainContainer .box:hover {
+  .box:hover {
     box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
   }
 
-  .mainContainer .card {
+  .card {
     // padding: 15px 15px 0;
     width: 100%;
   }

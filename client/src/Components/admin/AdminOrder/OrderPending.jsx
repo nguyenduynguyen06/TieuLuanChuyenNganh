@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { WrapperHeader } from "../AdminUser/style";
 import { MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
-import { Button, Dropdown, Menu, Modal, Tooltip, message } from 'antd';
+import { Button, Dropdown, Input, Menu, Modal, Tooltip, message  } from 'antd';
 import { AppstoreFilled, CaretDownOutlined } from '@ant-design/icons';
 import axios from "axios";
 import Search from "antd/es/input/Search";
@@ -31,45 +31,55 @@ const OrderPending = () => {
     const [cancelModalVisible, setCancelModalVisible] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [loading, setLoading] = useState(true)
-    useEffect(() => {
-        setLoading(true);
-        fetchOrders(currentPage);
-    }, [currentPage]);
-
     const [triggerSearch, setTriggerSearch] = useState(false);
-
-    const handleSearch = (query) => {
-        setLoading(true);
-        setSearchQuery(query);
-        setTriggerSearch(!triggerSearch);
-    };
-
     useEffect(() => {
-        if (searchQuery.trim() !== '') {
-            axios.get(`${process.env.REACT_APP_API_URL}/order/searchOrderPending?orderCode=${searchQuery}`, { headers })
-                .then((response) => {
-                    setSearchResults(response.data.data);
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    setSearchResults(null);
-                    setOrderData([]);
-                    console.error('Error searching products:', error);
-                    setLoading(false);
-                });
+        if (!searchResults) {
+            setLoading(true);
+            fetchOrders(currentPage);
         } else {
-            setSearchResults(null);
-            setLoading(false);
+            handleSearch(searchQuery, selectedShippingMethod, currentPage)
         }
-    }, [searchQuery, triggerSearch]);
+    }, [currentPage]);
+    useEffect(() => {
+        if (triggerSearch) {
+            const delayDebounceFn = setTimeout(() => {
+                handleSearch(searchQuery, selectedShippingMethod);
+                setTriggerSearch(false);
+            }, 400);
 
+            return () => clearTimeout(delayDebounceFn);
+        }
+    }, [triggerSearch]);
 
-    const fetchOrders = (page) => {
+    const handleSearch = (query, shippingMethod, page = 1) => {
+        setLoading(true);
+        axios.get(`${process.env.REACT_APP_API_URL}/order/searchOrderPending?q=${query}&page=${page}&shippingMethod=${shippingMethod}`, { headers })
+            .then((response) => {
+                setSearchResults(response.data.data);
+                setTotalPages(response.data.pageInfo.totalPages)
+                if (response.data.data.length === 0 && currentPage > 1) {
+                    setCurrentPage(currentPage - 1)
+                }
+                setOrderData([])
+                setLoading(false);
+            })
+            .catch((error) => {
+                setSearchResults(null);
+                setOrderData([]);
+                console.error('Error searching products:', error);
+                setLoading(false);
+            });
+    };
+    const fetchOrders = (page = 1) => {
         axios
             .get(`${process.env.REACT_APP_API_URL}/order/getAllOrdersPending?page=${page}`, { headers })
             .then((response) => {
+                setSearchResults(null);
                 setOrderData(response.data.data);
                 setTotalPages(response.data.pageInfo.totalPages);
+                if (response.data.data.length === 0 && currentPage > 1) {
+                    setCurrentPage(currentPage - 1)
+                }
                 setLoading(false)
             })
             .catch((error) => {
@@ -81,26 +91,13 @@ const OrderPending = () => {
     const handleShippingMethodChange = (e) => {
         setSelectedShippingMethod(e.target.value);
     };
-
-    const handleConfirm = () => {
-        setLoading(true);
-        fetchOrdersWithShippingMethod(selectedShippingMethod, currentPage);
+    const handleSearchInputChange = (e) => {
+        setSearchQuery(e.target.value);
     };
-
-    const fetchOrdersWithShippingMethod = (shippingMethod, page) => {
-        axios
-            .get(`${process.env.REACT_APP_API_URL}/order/getAllOrdersPending?page=${page}&shippingMethod=${shippingMethod}`, { headers })
-            .then((response) => {
-                setOrderData(response.data.data);
-                setTotalPages(response.data.pageInfo.totalPages);
-                setSearchResults(null);
-                setSearchQuery('');
-                setLoading(false)
-            })
-            .catch((error) => {
-                setLoading(false)
-                console.error('Lỗi khi gọi API: ', error);
-            });
+    const handleReset = () => {
+        setLoading(true)
+        setCurrentPage(1)
+        fetchOrders(currentPage)
     };
 
     const handleMenuClick = (e, order) => {
@@ -141,8 +138,14 @@ const OrderPending = () => {
         axios
             .put(`${process.env.REACT_APP_API_URL}/order/updateOrder/${orderId}`, { newStatus: 'Đang chuẩn bị đơn hàng' }, { headers })
             .then((response) => {
+                setLoading(true)
                 message.success('Xác nhận thành công')
-                fetchOrders(currentPage);
+                if (!searchResults) {
+                    fetchOrders(currentPage);
+                }
+                else {
+                    handleSearch(searchQuery, selectedShippingMethod, currentPage)
+                }
             })
             .catch((error) => {
                 console.error('Lỗi khi cập nhật đơn hàng: ', error);
@@ -153,8 +156,14 @@ const OrderPending = () => {
         axios
             .delete(`${process.env.REACT_APP_API_URL}/order/delete/${orderId}`, { headers })
             .then((response) => {
+                setLoading(true)
                 message.success('Huỷ thành công')
-                fetchOrders(currentPage);
+                if (!searchResults) {
+                    fetchOrders(currentPage);
+                }
+                else {
+                    handleSearch(searchQuery, selectedShippingMethod, currentPage)
+                }
             })
             .catch((error) => {
                 console.error('Lỗi khi cập nhật đơn hàng: ', error);
@@ -170,36 +179,41 @@ const OrderPending = () => {
         </Menu>
     );
     const [centredModal2, setCentredModal2] = useState(false);
-
+    const [orderShippingFee, setOrderShippingFee] = useState(0);
     const toggleOpen2 = (order) => {
         setOrderCode(order.orderCode)
         setSelectedOrderItems(order.items);
         setOrderVoucher(order.voucher)
         setOrderSubtotal(order.subTotal)
         setOrderTotalPay(order.totalPay)
+        setOrderShippingFee(order.shippingFee)
         setCentredModal2(true);
     };
     const closeModal2 = () => {
         setCentredModal2(false);
     };
-
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            setCurrentPage(1);
+            setTriggerSearch(true);
+        }
+    };
     return (
         <div>
             <WrapperHeader>Danh sách đơn hàng</WrapperHeader>
             <div style={{ display: 'flex' }}>
-                <div style={{ width: '50%' }}>
-                    <Search style={{ width: '100%' }}
+                <div style={{ width: '50%', marginRight: '10px' }}>
+                    <Input style={{ width: '100%' }}
                         placeholder="Tìm kiếm đơn hàng"
                         enterButton
-                        onSearch={handleSearch}
+                        onChange={handleSearchInputChange}
+                        onKeyDown={handleKeyDown}
+                        size="large"
                     />
                 </div>
-            </div>
-            <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
                 <div style={{ marginRight: '10px' }}>
-
                     <select
-                        style={{ padding: '5px', borderRadius: '5px', border: '1px solid #ccc', backgroundColor: '#fff' }}
+                        style={{ padding: '5px', borderRadius: '5px', border: '1px solid #ccc', backgroundColor: '#fff', height:'40px' }}
                         onChange={handleShippingMethodChange}
                     >
                         <option value="">Tất cả đơn hàng</option>
@@ -207,13 +221,26 @@ const OrderPending = () => {
                         <option value="Nhận tại cửa hàng">Nhận tại cửa hàng</option>
                     </select>
                 </div>
-                <div>
-                    <MDBBtn rounded style={{ backgroundColor: '#0000FF' }} onClick={handleConfirm}>
+                <div style={{ justifyContent: 'start', width: '50%', display: 'flex', gap: "20px" }}>
+                    <MDBBtn
+                        style={{ backgroundColor: '#B63245' }}
+                        onClick={() => {
+                            setCurrentPage(1);
+                            setTriggerSearch(true);
+                        }}
+                    >
                         Xác nhận
                     </MDBBtn>
-                </div>
-            </div>
+                    <MDBBtn
+                        style={{ backgroundColor: '#B63245' }}
+                        onClick={handleReset}
+                    >
+                        Đặt lại
+                    </MDBBtn>
 
+                </div>
+
+            </div>
             <div style={{ marginTop: '15px', overflowY: 'auto', overflowX: 'auto', scrollbarWidth: 'thin' }}>
                 <Loading isLoading={loading}>
                     <MDBTable bordered align='middle' className='floating-table'>
@@ -234,34 +261,36 @@ const OrderPending = () => {
                         </MDBTableHead>
                         <MDBTableBody>
 
-                            {(!searchResults && orderData.length === 0) ? (
+                            {(searchResults && searchResults.length === 0 || !searchResults && orderData.length === 0) ? (
                                 <tr style={{ textAlign: 'center' }}>
                                     <td colSpan="10">Không có đơn hàng</td>
                                 </tr>
                             ) : searchResults ? (
-                                <tr style={{ textAlign: 'center' }}>
-                                    <td><p className='fw-bold mb-1'>{searchResults.orderCode}</p></td>
-                                    <td>{searchResults.userName}</td>
-                                    <td><p className='fw-normal mb-1'>   {searchResults.userPhone}</p></td>
-                                    <td>{searchResults.address}</td>
-                                    <td><MDBBadge color='primary' pill style={{ fontSize: '13px' }}>{searchResults.shippingMethod}</MDBBadge></td>
-                                    <td><MDBBadge color='warning' pill style={{ fontSize: '13px' }}>{searchResults.status}</MDBBadge></td>
-                                    <td><MDBBadge color='success' pill style={{ fontSize: '13px' }}>{searchResults.isPay}</MDBBadge></td>
-                                    <td>{searchResults.paymentMethod}</td>
-                                    <td>{searchResults.createDate}</td>
-                                    <td>
-                                        <Tooltip title="Danh sách sản phẩm của đơn hàng">
-                                            <AppstoreFilled onClick={() => toggleOpen2(searchResults)} />
-                                        </Tooltip>
-                                    </td>
-                                    <td>
-                                        <Dropdown overlay={menu(searchResults)} >
-                                            <Tooltip title="Thực hiện thao tác">
-                                                <CaretDownOutlined />
+                                searchResults.map((result) => (
+                                    <tr key={result.orderCode} style={{ textAlign: 'center' }}>
+                                        <td><p className='fw-bold mb-1'>{result.orderCode}</p></td>
+                                        <td>{result.userName}</td>
+                                        <td><p className='fw-normal mb-1'>{result.userPhone}</p></td>
+                                        <td>{result.address}</td>
+                                        <td><MDBBadge color='primary' pill style={{ fontSize: '13px' }}>{result.shippingMethod}</MDBBadge></td>
+                                        <td><MDBBadge color='warning' pill style={{ fontSize: '13px' }}>{result.status}</MDBBadge></td>
+                                        <td><MDBBadge color='success' pill style={{ fontSize: '13px' }}>{result.isPay}</MDBBadge></td>
+                                        <td>{result.paymentMethod}</td>
+                                        <td>{result.createDate}</td>
+                                        <td>
+                                            <Tooltip title="Danh sách sản phẩm của đơn hàng">
+                                                <AppstoreFilled onClick={() => toggleOpen2(result)} />
                                             </Tooltip>
-                                        </Dropdown>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td>
+                                            <Dropdown overlay={menu(result)} >
+                                                <Tooltip title="Thực hiện thao tác">
+                                                    <CaretDownOutlined />
+                                                </Tooltip>
+                                            </Dropdown>
+                                        </td>
+                                    </tr>
+                                ))
                             ) : (
                                 orderData.map(order => (
                                     <tr key={order._id} style={{ textAlign: 'center' }}>
@@ -295,43 +324,43 @@ const OrderPending = () => {
                 </Loading>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-                    <nav aria-label='Page navigation example'>
-                        <MDBPagination className='mb-0' style={{ padding: '10px 20px' }}>
-                            <MDBPaginationItem disabled={currentPage === 1}>
+                <nav aria-label='Page navigation example'>
+                    <MDBPagination className='mb-0' style={{ padding: '10px 20px' }}>
+                        <MDBPaginationItem disabled={currentPage === 1}>
+                            <MDBPaginationLink
+                                href='#'
+                                style={{ fontSize: '15px' }}
+                                onClick={() => setCurrentPage(currentPage - 1)}
+                                aria-label='Previous'
+                            >
+                                <span aria-hidden='true'>«</span>
+                            </MDBPaginationLink>
+                        </MDBPaginationItem>
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            <MDBPaginationItem active={currentPage === page} key={page}>
                                 <MDBPaginationLink
                                     href='#'
                                     style={{ fontSize: '15px' }}
-                                    onClick={() => setCurrentPage(currentPage - 1)}
-                                    aria-label='Previous'
+                                    onClick={() => setCurrentPage(page)}
                                 >
-                                    <span aria-hidden='true'>«</span>
+                                    {page}
                                 </MDBPaginationLink>
                             </MDBPaginationItem>
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                <MDBPaginationItem active={currentPage === page} key={page}>
-                                    <MDBPaginationLink
-                                        href='#'
-                                        style={{ fontSize: '15px' }}
-                                        onClick={() => setCurrentPage(page)}
-                                    >
-                                        {page}
-                                    </MDBPaginationLink>
-                                </MDBPaginationItem>
-                            ))}
+                        ))}
 
-                            <MDBPaginationItem disabled={currentPage === totalPages}>
-                                <MDBPaginationLink
-                                    href='#'
-                                    style={{ fontSize: '15px' }}
-                                    onClick={() => setCurrentPage(currentPage + 1)}
-                                    aria-label='Next'
-                                >
-                                    <span aria-hidden='true'>»</span>
-                                </MDBPaginationLink>
-                            </MDBPaginationItem>
-                        </MDBPagination>
-                    </nav>
-                </div>
+                        <MDBPaginationItem disabled={currentPage === totalPages}>
+                            <MDBPaginationLink
+                                href='#'
+                                style={{ fontSize: '15px' }}
+                                onClick={() => setCurrentPage(currentPage + 1)}
+                                aria-label='Next'
+                            >
+                                <span aria-hidden='true'>»</span>
+                            </MDBPaginationLink>
+                        </MDBPaginationItem>
+                    </MDBPagination>
+                </nav>
+            </div>
 
             <>
                 <Modal
@@ -341,7 +370,7 @@ const OrderPending = () => {
                     width={1400}
                     maskClosable={false}
                 >
-                    <ProductOrder closeModal={closeModal2} items={selectedOrderItems} orderCode={orderCode} orderVoucher={orderVoucher} orderSubtotal={orderSubtotal} ordertotalPay={ordertotalPay} />
+                    <ProductOrder closeModal={closeModal2} items={selectedOrderItems} orderCode={orderCode} orderVoucher={orderVoucher} orderSubtotal={orderSubtotal} ordertotalPay={ordertotalPay} orderShippingFee={orderShippingFee} />
                 </Modal>
             </>
             {selectedOrder && (

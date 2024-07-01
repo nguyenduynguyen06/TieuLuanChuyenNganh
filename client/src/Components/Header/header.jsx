@@ -153,13 +153,35 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     }
   }, [user]);
   const [data, setData] = useState(null);
+  const [logo, setLogo] = useState({ image: '', link: '' });
+  useEffect(() => {
+    const fetchLogo = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/banner/getBannerByLocation/header/logo`);
+        if (response.data.success) {
+          const bannerData = response.data.data[0]; 
+          setLogo({
+            image: bannerData.image,
+            link: bannerData.link,
+          });
+        } else {
+          console.error('No logo found');
+        }
+      } catch (error) {
+        console.error('Error fetching logo:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLogo();
+  }, []);
   return (
-    <>
       <WrapperSuperHeader >
         <div className="header-container" >
           <div className="first-com">
-            <NavLink to={`/`} className="ant-image" >
-              <img className="logo" src="../../image/didong4.png" alt="blink" />
+            <NavLink  to={logo.link} className="ant-image" >
+              <img className="logo" src={logo.image} alt="logo" />
             </NavLink>
           </div>
           <div className="second-com">
@@ -250,7 +272,6 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         </div>
       </WrapperSuperHeader>
 
-    </>
   )
 }
 export default Header

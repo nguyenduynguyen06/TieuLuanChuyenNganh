@@ -4,7 +4,7 @@ import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
 import { UploadOutlined } from '@ant-design/icons';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { message, Upload, Collapse, Table } from 'antd';
+import { message, Upload, Collapse, Table, Modal } from 'antd';
 import {
   Button,
   Form,
@@ -89,6 +89,19 @@ const AddAttributes = ({ closeModal, variantId }) => {
     closeModal();
     form.resetFields();
   };
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  const showConfirmModal = () => {
+    setConfirmModalVisible(true);
+  };
+
+  const handleConfirm = () => {
+    setConfirmModalVisible(false);
+    handleCloseModal();
+  };
+
+  const handleCancel = () => {
+    setConfirmModalVisible(false);
+  };
   const onFinish = async (values) => {
     const headers = {
       token: `Bearer ${user.access_token}`,
@@ -103,6 +116,7 @@ const AddAttributes = ({ closeModal, variantId }) => {
       );
       if (response.status === 200) {
         message.success('Thêm thuộc tính thành công');
+        closeModal();
         form.resetFields();
       } else {
 
@@ -132,11 +146,11 @@ const AddAttributes = ({ closeModal, variantId }) => {
           <>
             {fields.map(({ key, name, fieldKey, ...restField }) => (
               <Collapse key={key}>
-                <Collapse.Panel header={`Thuộc tính ${key + 1}`} key={key}>
+                <Collapse.Panel header={`Thuộc tính ${name + 1}`} key={key}>
                   <Form.Item
                     {...restField}
                     name={[name, 'color']}
-                    fieldKey={[fieldKey, 'color']}
+                    fieldKey={[name, 'color']}
                     label="Màu sắc"
                     rules={[
                       {
@@ -150,7 +164,7 @@ const AddAttributes = ({ closeModal, variantId }) => {
                   <Form.Item
                     {...restField}
                     name={[name, 'quantity']}
-                    fieldKey={[fieldKey, 'quantity']}
+                    fieldKey={[name, 'quantity']}
                     label="Số lượng"
                     rules={[
                       {
@@ -164,7 +178,7 @@ const AddAttributes = ({ closeModal, variantId }) => {
                   <Form.Item
                     {...restField}
                     name={[name, 'pictures']}
-                    fieldKey={[fieldKey, 'pictures']}
+                    fieldKey={[name, 'pictures']}
                     label="Hình ảnh"
                     rules={[
                       {
@@ -173,14 +187,14 @@ const AddAttributes = ({ closeModal, variantId }) => {
                       },
                     ]}
                   >
-                    <Upload {...props(fieldKey)}>
+                    <Upload {...props(name)}>
                       <Button icon={<UploadOutlined />}>Ảnh</Button>
                     </Upload>
                   </Form.Item>
                   <Form.Item
                     {...restField}
                     name={[name, 'sku']}
-                    fieldKey={[fieldKey, 'sku']}
+                    fieldKey={[name, 'sku']}
                     label="SKU"
                     rules={[
                       {
@@ -191,7 +205,7 @@ const AddAttributes = ({ closeModal, variantId }) => {
                   >
                     <Input />
                   </Form.Item>
-                  <MinusCircleOutlined onClick={() => { remove(name); }} />
+                  <MinusCircleOutlined onClick={() => { remove(name) }} />
                 </Collapse.Panel>
               </Collapse>
             ))}
@@ -208,15 +222,27 @@ const AddAttributes = ({ closeModal, variantId }) => {
         )}
       </Form.List>
       <Form.Item>
-      <div style={{ display: 'flex', gap: '20px', justifyContent: 'end' }}>
+        <div style={{ display: 'flex', gap: '20px', justifyContent: 'end' }}>
           <Button type="primary" size="large" htmlType="submit">
             Thêm thuộc tính
           </Button>
-          <Button type="primary" size="large" danger onClick={handleCloseModal}>
+          <Button type="primary" size="large" danger onClick={showConfirmModal}>
             Huỷ bỏ
           </Button>
         </div>
       </Form.Item>
+      <>
+      <Modal
+        title="Xác nhận huỷ"
+        visible={confirmModalVisible}
+        onOk={handleConfirm}
+        onCancel={handleCancel}
+        okText="Xác nhận"
+        cancelText="Huỷ bỏ"
+      >
+        <p>Bạn có chắc chắn muốn huỷ không?</p>
+      </Modal>
+      </>
     </Form>
   );
 };

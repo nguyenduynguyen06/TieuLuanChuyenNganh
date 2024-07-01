@@ -79,6 +79,7 @@ const NewProduct = ({ closeModal }) => {
         console.log(info.file, info.fileList);
       }
       if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
         const uploadedFilePath = info.file.response.imageUrl;
         if (typeof uploadedFilePath === 'string') {
           form.setFieldsValue({
@@ -150,8 +151,21 @@ const NewProduct = ({ closeModal }) => {
   };
   const closeModal2 = () => {
     setCentredModal(false);
-    setFormProperties([])
+    setFormProperties([]);
     setInitialProperty({ label: '', value: '' });
+  };
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  const showConfirmModal = () => {
+    setConfirmModalVisible(true);
+  };
+
+  const handleConfirm = () => {
+    setConfirmModalVisible(false);
+    closeModal2();
+  };
+
+  const handleCancel = () => {
+    setConfirmModalVisible(false);
   };
   useEffect(() => {
     if (categories) {
@@ -181,7 +195,7 @@ const NewProduct = ({ closeModal }) => {
       });
     }
     setInitialProperty({ label: '', value: '' });
-    };
+  };
 
   const handleRemoveProperty = (labelToRemove) => {
     const updatedProperties = { ...formProperties };
@@ -201,7 +215,7 @@ const NewProduct = ({ closeModal }) => {
 
   const handleCategoryChange = async (value) => {
     setSelectedCategory(value);
-
+    form.setFieldsValue({ brandName: undefined });
     try {
       const category = categories.find((cat) => cat.name === value);
       if (category) {
@@ -219,6 +233,18 @@ const NewProduct = ({ closeModal }) => {
     setFormProperties([]);
     setInitialProperty({ label: '', value: '' });
   };
+  const [confirmModalVisible1, setConfirmModalVisible1] = useState(false);
+  const showConfirmModal1 = () => {
+    setConfirmModalVisible1(true);
+  };
+
+  const handleConfirm1 = () => {
+    setConfirmModalVisible1(false);
+    handleCloseModal();
+  };
+  const handleCancel1 = () => {
+    setConfirmModalVisible1(false);
+  };
   const onFinish = async (values) => {
     const headers = {
       token: `Bearers ${user.access_token}`,
@@ -231,6 +257,7 @@ const NewProduct = ({ closeModal }) => {
       );
 
       if (response.data.success) {
+        closeModal();
         message.success('Thêm sản phẩm thành công');
         form.resetFields();
         setSelectedCategory(null);
@@ -241,7 +268,7 @@ const NewProduct = ({ closeModal }) => {
     } catch (error) {
       message.error('Thêm sản phẩm thất bại: ' + error.response.data.error);
     }
-};
+  };
   const columns = [
     {
       title: 'Thuộc tính',
@@ -351,7 +378,7 @@ const NewProduct = ({ closeModal }) => {
           },
         ]}
       >
-        <DatePicker />
+        <DatePicker format="DD/MM/YYYY" />
       </Form.Item>
       <Form.Item
         name="include"
@@ -394,28 +421,46 @@ const NewProduct = ({ closeModal }) => {
             <>
               {fields.map(({ key, name, fieldKey, ...restField }) => (
                 <Collapse key={key}>
-                  <Collapse.Panel header={`Variant ${key + 1}`} key={key}>
+                  <Collapse.Panel header={`Variant ${name + 1}`} key={key}>
                     <Form.Item
                       {...restField}
                       name={[name, 'memory']}
-                      fieldKey={[fieldKey, 'memory']}
+                      fieldKey={[name, 'memory']}
                       label="Bộ nhớ"
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Vui lòng điền bộ nhớ!',
+                        },
+                      ]}
                     >
                       <Input />
                     </Form.Item>
                     <Form.Item
                       {...restField}
                       name={[name, 'imPrice']}
-                      fieldKey={[fieldKey, 'imPrice']}
+                      fieldKey={[name, 'imPrice']}
                       label="Giá nhập"
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Vui lòng điền Giá nhập!',
+                        },
+                      ]}
                     >
                       <InputNumber style={{ width: '100%' }} />
                     </Form.Item>
                     <Form.Item
                       {...restField}
                       name={[name, 'newPrice']}
-                      fieldKey={[fieldKey, 'newPrice']}
+                      fieldKey={[name, 'newPrice']}
                       label="Giá bán"
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Vui lòng điền Giá bán!',
+                        },
+                      ]}
                     >
                       <InputNumber style={{ width: '100%' }} />
                     </Form.Item>
@@ -427,11 +472,11 @@ const NewProduct = ({ closeModal }) => {
                         <>
                           {attributeFields.map(({ key: attrKey, name: attrName, fieldKey: attrFieldKey, ...attrRestField }) => (
                             <Collapse key={attrKey}>
-                              <Collapse.Panel header={`Thuộc tính ${attrKey + 1}`} key={attrKey}>
+                              <Collapse.Panel header={`Thuộc tính ${attrName + 1}`} key={attrKey}>
                                 <Form.Item
                                   label="Màu sắc"
                                   name={[attrName, 'color']}
-                                  fieldKey={[attrFieldKey, 'color']}
+                                  fieldKey={[attrName, 'color']}
                                   {...attrRestField}
                                   rules={[
                                     {
@@ -445,7 +490,7 @@ const NewProduct = ({ closeModal }) => {
                                 <Form.Item
                                   label="Số lượng"
                                   name={[attrName, 'quantity']}
-                                  fieldKey={[attrFieldKey, 'quantity']}
+                                  fieldKey={[attrName, 'quantity']}
                                   {...attrRestField}
                                   rules={[
                                     {
@@ -459,7 +504,7 @@ const NewProduct = ({ closeModal }) => {
                                 <Form.Item
                                   label="Hình ảnh"
                                   name={[attrName, 'pictures']}
-                                  fieldKey={[attrFieldKey, 'pictures']}
+                                  fieldKey={[attrName, 'pictures']}
                                   {...attrRestField}
                                   rules={[
                                     {
@@ -468,14 +513,14 @@ const NewProduct = ({ closeModal }) => {
                                     },
                                   ]}
                                 >
-                                  <Upload {...props(attrFieldKey, key)}>
+                                  <Upload {...props(attrName, name)}>
                                     <Button icon={<UploadOutlined />}>Ảnh</Button>
                                   </Upload>
                                 </Form.Item>
                                 <Form.Item
                                   label="SKU"
                                   name={[attrName, 'sku']}
-                                  fieldKey={[attrFieldKey, 'sku']}
+                                  fieldKey={[attrName, 'sku']}
                                   {...attrRestField}
                                   rules={[
                                     {
@@ -486,7 +531,7 @@ const NewProduct = ({ closeModal }) => {
                                 >
                                   <Input />
                                 </Form.Item>
-                            
+
                                 <MinusCircleOutlined onClick={() => { attributeOperations.remove(attrName); }} />
                               </Collapse.Panel>
                             </Collapse>
@@ -527,11 +572,11 @@ const NewProduct = ({ closeModal }) => {
         <Button onClick={toggleOpen}>Thêm thuộc tính</Button>
       </Form.Item>
       <Form.Item >
-      <div style={{ display: 'flex', gap: '20px', justifyContent: 'end' }}>
+        <div style={{ display: 'flex', gap: '20px', justifyContent: 'end' }}>
           <Button type="primary" size="large" htmlType="submit">
             Thêm sản phẩm
           </Button>
-          <Button type="primary" size="large" danger onClick={handleCloseModal}>
+          <Button type="primary" size="large" danger onClick={showConfirmModal1}>
             Huỷ bỏ
           </Button>
         </div>
@@ -558,7 +603,7 @@ const NewProduct = ({ closeModal }) => {
             />
           </div>
           <div style={{ display: 'flex', gap: '20px', justifyContent: 'end', marginTop: '10px' }}>
-            <Button onClick={handleAddProperty} icon={<PlusOutlined />}>
+            <Button type="primary" onClick={handleAddProperty} icon={<PlusOutlined />}>
               Thêm thuộc tính
             </Button>
           </div>
@@ -566,11 +611,36 @@ const NewProduct = ({ closeModal }) => {
             <Button onClick={closeModal1} >
               Xác nhận
             </Button>
-            <Button danger onClick={closeModal2} >
+            <Button danger onClick={showConfirmModal} >
               Huỷ bỏ
             </Button>
           </div>
         </Modal>
+      </>
+      <>
+      <Modal
+        title="Xác nhận huỷ"
+        visible={confirmModalVisible}
+        onOk={handleConfirm}
+        onCancel={handleCancel}
+        okText="Xác nhận"
+        cancelText="Huỷ bỏ"
+      >
+        <p>Bạn có chắc chắn muốn huỷ không?</p>
+      </Modal>
+      </>
+      <>
+
+      <Modal
+        title="Xác nhận huỷ"
+        visible={confirmModalVisible1}
+        onOk={handleConfirm1}
+        onCancel={handleCancel1}
+        okText="Xác nhận"
+        cancelText="Huỷ bỏ"
+      >
+        <p>Bạn có chắc chắn muốn huỷ không?</p>
+      </Modal>
       </>
     </Form>
 

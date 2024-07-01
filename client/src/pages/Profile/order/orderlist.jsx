@@ -37,7 +37,7 @@ const OrderList = ({ status }) => {
         console.error('Lỗi khi gọi API: ', error);
         setLoading(false);
       });
-  }, [user, status]);
+  }, [user._id, status]);
   const handleCompleteOrder = async (orderId) => {
     try {
       const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/completeOrderUser/${orderId}?userId=${user._id}`);
@@ -78,7 +78,7 @@ const OrderList = ({ status }) => {
   return (
     <WrapperList>
       <Loading isLoading={loading}>
-        {orders.length === 0 ? (
+        {!orders || orders.length === 0  ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '30px' }}>
             <i style={{ fontSize: '100px', color: '#C13346' }} class="fas fa-box-open"></i>
             <p style={{ fontSize: '18px', fontWeight: 'bold' }}>Bạn không có đơn hàng nào.</p>
@@ -181,12 +181,12 @@ const OrderList = ({ status }) => {
         )}
       </Loading>
       <div className="pagination">
-        <Pagination
+        {/* <Pagination
           current={currentPage}
           // total={orders.length}
           // defaultPageSize={itemsPerPage}
           onChange={handlePageChange}
-        />
+        /> */}
       </div>
     </WrapperList>
   )

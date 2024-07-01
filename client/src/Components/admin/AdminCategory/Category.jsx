@@ -25,9 +25,9 @@ const Category = () => {
     const toggleDeleteConfirmationModal = (categoryId) => {
         setDeleteConfirmationCategoryId(categoryId);
     };
-
-    useEffect(() => {
-        axios
+    const fetchData = async () => {
+        try {
+            axios
             .get(`${process.env.REACT_APP_API_URL}/category/getAll`)
             .then((response) => {
                 setCategoryData(response.data.data);
@@ -35,7 +35,14 @@ const Category = () => {
             .catch((error) => {
                 console.error('Lỗi khi gọi API: ', error);
             });
-    }, []);
+        } catch (error) {
+            console.error('Lỗi khi gọi API: ', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+        }, []);
 
     const handleToggleHide = (categoryId, checked) => {
         axios.put(`${process.env.REACT_APP_API_URL}/category/updateCategory/${categoryId}`, { isHide: checked }, { headers })
@@ -62,6 +69,7 @@ const Category = () => {
         setCentredModal(false);
         setReloadCategoryData(!reloadCategoryData);
         form.resetFields();
+        fetchData();
     };
     const [centredModal1, setCentredModal1] = useState(false);
 
@@ -71,6 +79,7 @@ const Category = () => {
     };
     const closeModal1 = () => {
         setCentredModal1(false);
+        fetchData();
     };
 
     const handleDeleteCategory = (categoryId) => {
@@ -89,20 +98,15 @@ const Category = () => {
     return (
         <div>
             <WrapperHeader>Danh sách danh mục</WrapperHeader>
-            <div style={{ display: 'flex' }}>
-                <div style={{ width: '50%' }}>
-                    <Search style={{ width: '100%' }}
-                        placeholder="Tìm kiếm danh mục"
-                        enterButton />
-                </div>
-                <div style={{ justifyContent: 'end', width: '50%', display: 'flex' }}>
+            <div style={{ display: 'flex', justifyContent:'end' }}>
+                        
                     <MDBBtn rounded style={{ backgroundColor: '#B63245' }} onClick={toggleOpen}>
                         Thêm danh mục
                     </MDBBtn>
-                </div>
+           
             </div>
 
-            <div style={{ marginTop: '15px' }}>
+            <div style={{ marginTop: '15px', overflowY: 'auto', overflowX: 'auto'  }}>
                 <MDBTable bordered align='middle' className='floating-table'>
 
                     <MDBTableHead>

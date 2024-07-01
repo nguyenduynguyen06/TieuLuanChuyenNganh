@@ -24,12 +24,13 @@ import { updateUser } from "../../redux/Slide/userSlice";
 import Forget from "./forget";
 import Header from "./header";
 import { Button, Modal } from "antd";
+import ErrorMessage from "../error";
 
 
 function Login({ onClose }) {
   const [message, setMessage] = useState('');
   const axiosJWT = axios.create();
-  const [showModal, setShowModal] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -41,8 +42,6 @@ function Login({ onClose }) {
     event.preventDefault();
     setUser({ ...user, [event.target.name]: event.target.value });
   }
-  const handleCloseModal = () => setShowModal(false);
-
   const [centredModal, setCentredModal] = useState(false);
 
   const toggleShow = () => setCentredModal(!centredModal);
@@ -59,7 +58,7 @@ function Login({ onClose }) {
       const { isBlocked } = response.data;
       if (isBlocked) {
         setMessage('Tài khoản của bạn đã bị khoá. Vui lòng liên hệ với quản trị viên.');
-        setShowModal(true);
+        setSuccess(false);
       } else {
         axios
           .post(`${process.env.REACT_APP_API_URL}/user/Login`, user, {
@@ -78,12 +77,12 @@ function Login({ onClose }) {
           })
           .catch((err) => {
             setMessage('Hãy kiểm tra lại email hoặc password');
-            setShowModal(true);
+            setSuccess(false);
           });
       }
     } catch (error) {
       setMessage('Hãy kiểm tra lại email');
-      setShowModal(true);
+      setSuccess(false);
     }
   };
 
@@ -100,6 +99,9 @@ function Login({ onClose }) {
     }
   }
 
+  const handleClose = () => {
+    setMessage('');
+  };
 
 
   return (
@@ -111,27 +113,11 @@ function Login({ onClose }) {
               alt="Login image" className="w-100" style={{ objectFit: 'cover', objectPosition: 'left' }} />
           </MDBCol>
           <MDBCol sm='7' style={{ alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
-            {message && (
-              <Modal
-                title={showModal ? "Lỗi!" : "Thành công"}
-                visible={true}
-                footer={null}
-                onCancel={() => setMessage('')} // Đóng modal khi người dùng nhấn nút đóng
-              >
-                <h2 style={{ fontSize: '20px' }}>
-                  {showModal ? (
-                    <i className="fas fa-times-circle" style={{ color: 'red' }}>&nbsp;</i>
-                  ) : (
-                    <i className="fas fa-check-circle" style={{ color: 'green' }}>&nbsp;</i>
-                  )}
-                  {message}
-                </h2>
-              </Modal>
-            )}
+          <ErrorMessage message={message} success={success} onClose={handleClose} />
 
 
             <div className='d-flex flex-row' style={{ paddingTop: '20px' }}>
-              <img className="logo" src="../../image/didong3.png" alt="" style={{ maxWidth: '100%' }} />
+              <img className="logo" src="../../image/home-logo1.png" alt="" style={{ maxWidth: '100%' }} />
             </div>
             <h3 className="fw-normal" style={{ letterSpacing: '1px', color: '#B63245' }}>Đăng nhập</h3>
             <div className='d-flex flex-column justify-content-center h-custom-2 w-75 pt-4'>
@@ -173,18 +159,6 @@ function Login({ onClose }) {
           </MDBModalContent>
         </MDBModalDialog>
       </MDBModal>
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Error</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{message}</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
     </div>
   );
 }

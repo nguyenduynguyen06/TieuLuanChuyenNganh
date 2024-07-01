@@ -4,8 +4,10 @@ import { NavLink } from 'react-router-dom';
 
 import { Button, Popover, Rate, Skeleton, Tooltip, message } from 'antd';
 import { ProductHPStyle } from './ProductHPcss';
+import { useSelector } from 'react-redux';
 
 function ProductHP() {
+    const user = useSelector((state) => state.user);
     const [products, setProducts] = useState([]);
     const [selectedMemories, setSelectedMemories] = useState({});
     const [loading, setLoading] = useState(true);
@@ -13,12 +15,13 @@ function ProductHP() {
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [initialScrollLeft, setInitialScrollLeft] = useState(0);
+    const [banners, setBanners] = useState({});
 
     const handleMouseDown = (e) => {
         setIsDragging(true);
         setStartX(e.pageX - containerRef.current.getBoundingClientRect().left);
         setInitialScrollLeft(containerRef.current.scrollLeft);
-        e.preventDefault(); // Ngăn chặn sự kiện mặc định
+        e.preventDefault();
     };
 
     const calculateDiscountPercentage = (newPrice, oldPrice) => {
@@ -41,7 +44,20 @@ function ProductHP() {
         const walk = currentX - startX; // Khoảng cách chuột di chuyển
         containerRef.current.scrollLeft = initialScrollLeft - walk; // Điều chỉnh vị trí cuộn
     };
-
+    const fetchBanners = async (productIds) => {
+        try {
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/banner/getBannersByProductIds`, { productIds });
+            const bannerData = res.data.data.reduce((acc, banner) => {
+                banner.products.forEach(product => {
+                    acc[product.productId] = banner;
+                });
+                return acc;
+            }, {});
+            setBanners(bannerData);
+        } catch (error) {
+            console.error('Lỗi:', error);
+        }
+    };
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -63,6 +79,8 @@ function ProductHP() {
                 });
 
                 setSelectedMemories(initialMemories);
+                const productIds = productsData.map(product => product._id);
+                await fetchBanners(productIds);
                 setLoading(false);
             } catch (error) {
                 console.error('Lỗi:', error);
@@ -80,7 +98,6 @@ function ProductHP() {
         const totalRating = ratings.reduce((total, item) => total + item.rating, 0);
         return totalRating / ratings.length;
     };
-
     const handleAddToCart = async (productName, memory) => {
         // try {
         //     const selectedVariant = productDetails.variant.find((variant) => variant.memory === memory);
@@ -108,6 +125,19 @@ function ProductHP() {
         //     message.error('Đã xảy ra lỗi khi thực hiện thanh toán');
         // }
     };
+    const handleProductClick = async (productId) => {
+        try {
+            await axios.post(`${process.env.REACT_APP_API_URL}/recommend/saveAccess`, {
+                userId: user._id,
+                productId: productId
+            });
+        } catch (error) {
+            console.error('Lỗi khi lưu thông tin truy cập:', error);
+        }
+    };
+    const calculateTotalRatings = (product) => {
+        return product.ratings.length;
+    };
 
     return (
         <ProductHPStyle>
@@ -126,19 +156,21 @@ function ProductHP() {
                         .map((product) => (
                             <div className='card' key={product._id}>
                                 <Tooltip title={product.name} mouseEnterDelay={0.5}>
-                                    <NavLink to={`/product/${product.name}/${selectedMemories[product._id]}`}>
+                                    <NavLink to={`/product/${product.name}/${selectedMemories[product._id]}`}
+                                        onClick={() => handleProductClick(product._id)}
+                                    >
                                         {product.variant
                                             .filter((variant) => variant.memory === selectedMemories[product._id])
                                             .map((variant) => (
                                                 <div key={variant._id} className='item-label'>
-                                                    {variant.oldPrice && (
+                                                    {variant.oldPrice && variant.oldPrice > variant.newPrice && (
                                                         <span className='lb-dis'>
                                                             Giảm {calculateDiscountPercentage(variant.newPrice, variant.oldPrice)}%
                                                         </span>
                                                     )}
                                                 </div>
                                             ))}
-                                        <div className='image'>
+                                        <div className='image' style={{marginTop:'10px'}}>
                                             <img src={product.thumnails[0]} alt={product.name} loading='lazy' />
                                         </div>
                                         <div className='desc'>
@@ -162,20 +194,32 @@ function ProductHP() {
                                                 {product.ratings.length > 0 ? (
                                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                                         <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
+                                                        <span style={{ margin: 0, height: '25px', fontSize: '13px' }}>{calculateTotalRatings(product)} đánh giá</span>
+
                                                     </div>
                                                 ) : null}
-                                                <div style={{ fontWeight: 700, height: '20px', margin: 0 }}>
-                                                    <p>
+                                                <div style={{ height: '20px', margin: 0 }}>
+                                                    <p style={{ fontWeight: 'bold', }}>
                                                         {product.variant.find((variant) => variant.memory === selectedMemories[product._id]).newPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                                                     </p>
                                                 </div>
-                                                <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
-
+                                                {product.variant
+                                                    .filter((variant) => variant.memory === selectedMemories[product._id])
+                                                    .map((variant) => (
+                                                        <>
+                                                            {variant.oldPrice && variant.oldPrice > variant.newPrice && (
+                                                                <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+                                                            )}
+                                                        </>
+                                                    ))}
                                             </div>
                                             <div className='div-img'>
-                                                <img className='image' src='https://res.cloudinary.com/doq4spvys/image/upload/v1713004455/e5zupd8flydfe2bslrvb.png' alt='promo' />
-                                            </div>
+                                                {banners[product._id] && (
 
+                                                    <img className='image' src={banners[product._id].image} alt='promo' />
+
+                                                )}
+                                            </div>
                                         </div>
                                     </NavLink>
                                 </Tooltip>

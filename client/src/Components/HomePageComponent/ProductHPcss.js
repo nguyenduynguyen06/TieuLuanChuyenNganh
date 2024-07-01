@@ -14,6 +14,8 @@ export const ProductHPStyle = styled.div`
       height: 22px;
       text-align: left;
       margin-bottom: 20px;
+      position:absolute;
+      z-index:1;
     }
     .lb-dis {
       background-color: #980300;
@@ -36,6 +38,8 @@ export const ProductHPStyle = styled.div`
         max-width: 100%; 
         overflow: hidden;
         white-space: nowrap;
+        color: #000;
+        font-size: 14px;
     }
     .card-wrapper {
       margin-right: 16px;
@@ -81,6 +85,23 @@ export const ProductHPStyle = styled.div`
     transition: .3s ease-in-out;
     cursor: pointer;
   }
+  .singlecard .image {
+    padding: 5%;
+    width:40%;
+    position: relative;
+  }
+
+  .singlecard .image:hover img {
+    transform: scale(1.1);
+    z-index:1;
+  }
+
+  .singlecard .image img {
+    width: 100%;
+    transition: .3s ease-in-out;
+    cursor: pointer;
+  }
+
   .memory-button.selected {
     border: 1px solid #00BFFF	;
   }
@@ -100,11 +121,11 @@ export const ProductHPStyle = styled.div`
   }
 
   .card .desc p {
-    font-size: 15px;
+    font-size: 20px;
   }
 
   .card span {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   .btn {
@@ -124,6 +145,46 @@ export const ProductHPStyle = styled.div`
   }
 
   .card p {
+    color: #ff3300;
+    font-size: 15px;
+  }
+
+  .singlecard .desc {
+    width: 60%;
+    margin: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal
+  }
+
+  .singlecard .desc h1 {
+    font-size: 15px;
+    text-transform: uppercase;
+    text-align: justify;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    position: relative; 
+    color:#000;
+    padding: 0 20px 0 0;
+
+  }
+
+  .singlecard .desc p {
+    font-size: 20px;
+  }
+
+  .singlecard span {
+    font-size: 17px;
+  }
+  .singlecard .btn,
+  .singlecard .image::before {
+    background: #ff3300;
+  }
+
+  .singlecard p {
     color: #ff3300;
     font-size: 15px;
   }

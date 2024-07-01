@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export const WrapperSuperHeader = styled.div`
+positon: sticky;
 width: 100%;
   .header-container {
     width: 100%;

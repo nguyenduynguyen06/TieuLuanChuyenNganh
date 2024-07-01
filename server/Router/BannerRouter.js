@@ -6,7 +6,11 @@ const { authMiddleware } = require('../middleware/authMiddleware');
 
 
 router.post('/addBanner',authMiddleware, bannerController.addBanner);
-router.get('/getBanner',bannerController.getAllBanners);
-router.put('/editBanner',authMiddleware,bannerController.editBanner);
-router.delete('/deleteBanner',authMiddleware,bannerController.deleteBanner);
+router.get('/getBanner',authMiddleware,bannerController.getAllBanners);
+router.get('/getBannerByLocation/:page/:location',bannerController.getBannerByTitle);
+router.get('/getBannerId/:id',bannerController.getBannerDetails);
+router.get('/searchBanner',authMiddleware,bannerController.searchBanner);
+router.put('/editBanner/:id',authMiddleware,bannerController.editBanner);
+router.delete('/deleteBanner/:id',authMiddleware,bannerController.deleteBanner);
+router.post('/getBannersByProductIds', bannerController.getBannersByProductIds);
 module.exports = router;

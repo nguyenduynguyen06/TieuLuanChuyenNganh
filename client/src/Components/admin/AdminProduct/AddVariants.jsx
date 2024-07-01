@@ -4,7 +4,7 @@ import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
 import { UploadOutlined } from '@ant-design/icons';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { message, Upload, Collapse, Table } from 'antd';
+import { message, Upload, Collapse, Table, Modal } from 'antd';
 import {
   Button,
   Form,
@@ -51,7 +51,7 @@ const tailFormItemLayout = {
 const AddVariant = ({ closeModal, productId }) => {
   const user = useSelector((state) => state.user);
   const [form] = Form.useForm();
-  const props = (fieldKey) => ({
+  const props = (name) => ({
     name: 'image',
     action: `${process.env.REACT_APP_API_URL}/upload`,
     headers: {
@@ -74,7 +74,7 @@ const AddVariant = ({ closeModal, productId }) => {
         const uploadedFilePath = info.file.response.imageUrl;
         if (typeof uploadedFilePath === 'string') {
           const updatedAttributes = form.getFieldValue('attributes');
-          updatedAttributes[fieldKey].pictures = uploadedFilePath;
+          updatedAttributes[name].pictures = uploadedFilePath;
           form.setFieldsValue({ attributes: updatedAttributes });
         } else {
           console.error('uploadedFilePath is not a string:', uploadedFilePath);
@@ -89,6 +89,19 @@ const AddVariant = ({ closeModal, productId }) => {
     closeModal();
     form.resetFields();
   };
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  const showConfirmModal = () => {
+    setConfirmModalVisible(true);
+  };
+
+  const handleConfirm = () => {
+    setConfirmModalVisible(false);
+    handleCloseModal();
+  };
+
+  const handleCancel = () => {
+    setConfirmModalVisible(false);
+  };
   const onFinish = async (values) => {
     const headers = {
       token: `Bearer ${user.access_token}`,
@@ -101,7 +114,7 @@ const AddVariant = ({ closeModal, productId }) => {
       );
 
       if (response.status === 201) {
-
+        closeModal();
         message.success('Thêm biến thể thành công');
         form.resetFields();
       } else {
@@ -167,11 +180,11 @@ const AddVariant = ({ closeModal, productId }) => {
           <>
             {fields.map(({ key, name, fieldKey, ...restField }) => (
               <Collapse key={key}>
-                <Collapse.Panel header={`Thuộc tính ${key + 1}`} key={key}>
+                <Collapse.Panel header={`Thuộc tính ${name + 1}`} key={key}>
                   <Form.Item
                     {...restField}
                     name={[name, 'color']}
-                    fieldKey={[fieldKey, 'color']}
+                    fieldKey={[name, 'color']}
                     label="Màu sắc"
                     rules={[
                       {
@@ -185,7 +198,7 @@ const AddVariant = ({ closeModal, productId }) => {
                   <Form.Item
                     {...restField}
                     name={[name, 'quantity']}
-                    fieldKey={[fieldKey, 'quantity']}
+                    fieldKey={[name, 'quantity']}
                     label="Số lượng"
                     rules={[
                       {
@@ -199,7 +212,7 @@ const AddVariant = ({ closeModal, productId }) => {
                   <Form.Item
                     {...restField}
                     name={[name, 'pictures']}
-                    fieldKey={[fieldKey, 'pictures']}
+                    fieldKey={[name, 'pictures']}
                     label="Hình ảnh"
                     rules={[
                       {
@@ -208,14 +221,14 @@ const AddVariant = ({ closeModal, productId }) => {
                       },
                     ]}
                   >
-                    <Upload {...props(fieldKey)}>
+                    <Upload {...props(name)}>
                       <Button icon={<UploadOutlined />}>Ảnh</Button>
                     </Upload>
                   </Form.Item>
                   <Form.Item
                     {...restField}
                     name={[name, 'sku']}
-                    fieldKey={[fieldKey, 'sku']}
+                    fieldKey={[name, 'sku']}
                     label="SKU"
                     rules={[
                       {
@@ -247,11 +260,23 @@ const AddVariant = ({ closeModal, productId }) => {
           <Button type="primary" size="large" htmlType="submit">
             Thêm biến thể
           </Button>
-          <Button type="primary" size="large" danger onClick={handleCloseModal}>
+          <Button type="primary" size="large" danger onClick={showConfirmModal}>
             Huỷ bỏ
           </Button>
         </div>
       </Form.Item>
+      <>
+      <Modal
+        title="Xác nhận huỷ"
+        visible={confirmModalVisible}
+        onOk={handleConfirm}
+        onCancel={handleCancel}
+        okText="Xác nhận"
+        cancelText="Huỷ bỏ"
+      >
+        <p>Bạn có chắc chắn muốn huỷ không?</p>
+      </Modal>
+      </>
     </Form>
   );
 };

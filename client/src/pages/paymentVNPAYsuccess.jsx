@@ -2,25 +2,30 @@ import React, { useEffect, useState } from 'react';
 import { CloseCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { Button, Row } from 'antd';
 import { NavLink, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import { useSelector } from 'react-redux';
 
 const PaymentSuccess = () => {
     const user = useSelector((state) => state.user);
     const headers = {
-        token: `Bearers ${user.access_token}`,
+        token: `Bearer ${user.access_token}`,
     };
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const [transactionData, setTransactionData] = useState(null);
+    const [invalidResponse, setInvalidResponse] = useState(false);
+
     useEffect(() => {
-        fetch(`/api/VNPAY/vnpay_return?${params}`)
+        fetch(`/api/VNPAY/vnpay_return?${params}`, { headers })
             .then(response => response.json())
-            .then(data => 
-                setTransactionData(data)
-                )
+            .then(data => {
+                if (data.code === "97") {
+                    setInvalidResponse(true);
+                } else {
+                    setTransactionData(data);
+                }
+            })
             .catch(error => console.error('Lỗi khi lấy dữ liệu từ server:', error));
-    }, [user]);
+    }, [params]);
 
     const containerStyle = {
         height: '100vh',
@@ -42,7 +47,7 @@ const PaymentSuccess = () => {
         fontSize: '4rem',
     };
 
-    if (!transactionData) {
+    if (!transactionData && !invalidResponse) {
         return (
             <div className="container" style={containerStyle}>
                 <div style={contentStyle}>
@@ -51,7 +56,24 @@ const PaymentSuccess = () => {
             </div>
         );
     }
-    const colors1 = ['#B63245', '#A45865'];
+
+    if (invalidResponse) {
+        return (
+            <div className="container" style={containerStyle}>
+                <Row>
+                    <CloseCircleOutlined style={{ ...iconStyle, color: 'red' }} />
+                </Row>
+                <p style={{ fontSize: '2rem', color: 'red' }}>Dữ liệu không hợp lệ</p>
+                <div style={contentStyle}>
+                    <p style={{ fontSize: '1.25rem' }}>Mã lỗi: 97</p>
+                    <p style={{ fontSize: '1.25rem' }}>Vui lòng thử lại sau hoặc liên hệ hỗ trợ.</p>
+                </div>
+                <NavLink to={'/profile/orders'}>
+                    <Button>Quay lại đơn hàng</Button>
+                </NavLink>
+            </div>
+        );
+    }
 
     return (
         <div className="container" style={containerStyle}>
@@ -69,14 +91,17 @@ const PaymentSuccess = () => {
             <div style={contentStyle}>
                 <p style={{ fontSize: '1.25rem' }}>Mã giao dịch: {transactionData.vnp_TransactionNo}</p>
                 <p style={{ fontSize: '1.25rem' }}>Nội dung thanh toán: {transactionData.vnp_OrderInfoFormatted}</p>
-                <p style={{ fontSize: '1.25rem' }}>Số tiền giao dịch: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(transactionData.vnp_Amount / 100)}</p>
+                <p style={{ fontSize: '1.25rem' }}>
+                    Số tiền giao dịch: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(transactionData.vnp_Amount / 100)}
+                </p>
                 <p style={{ fontSize: '1.25rem' }}>Ngân hàng giao dịch: {transactionData.vnp_BankCode}</p>
                 <p style={{ fontSize: '1.25rem' }}>Ngày tạo hoá đơn: {transactionData.vnp_PayDate}</p>
             </div>
-            <Button href='/profile'>Xem đơn hàng
-            </Button>
+            <NavLink to={'/profile/orders'}>
+                <Button>Xem đơn hàng</Button>
+            </NavLink>
         </div>
     );
-}
+};
 
 export default PaymentSuccess;

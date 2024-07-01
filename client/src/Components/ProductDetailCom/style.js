@@ -174,7 +174,26 @@ export const WrapperCommentNew = styled.div`
         margin-top: 15px;
         padding: 10px;
         width: 100%;
+        position: relative;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+
     }
+    .comment-container.expanded {
+        max-height: none; 
+    }
+
+    .show-more, .show-less {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        background: linear-gradient(to top, white, rgba(255, 255, 255, 0));
+        cursor: pointer;
+        padding: 10px 60px;
+    }
+
     .error-msg {
         color: red;
         font-size: 14px;
@@ -576,7 +595,7 @@ width: 100%;
       }
       
       progress::-webkit-progress-value {
-        background: #5f2b89;
+        background: #B63245;
       }
       
       progress::-webkit-progress-bar {
@@ -600,7 +619,7 @@ width: 100%;
         display: flex;!important;
     }
     .filter-item.active{
-        background-color: #5f2b89;
+        background-color: #B63245;
         border: none;
 
     }
@@ -611,9 +630,9 @@ width: 100%;
     .filter-item{
         align-items: center;
         background-color: #fff;
-        border: 1px solid #637381;
+        border: 1px solid #B63245;
         border-radius: 15px;
-        color: #637381;
+        color: #B63245;
         cursor: pointer;
         display: flex;
         font-size: 14px;

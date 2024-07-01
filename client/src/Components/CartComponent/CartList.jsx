@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Button, Input, Modal, message, Skeleton } from 'antd';
+import { Space, Table, Button, Input, Modal, message, Skeleton, Checkbox } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -16,6 +16,7 @@ function CartList() {
   const [total, setTotal] = useState(0);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [loading, setLoading] = useState(true);
+  const [selectAll, setSelectAll] = useState(false);
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -38,26 +39,104 @@ function CartList() {
     const totalPrice = calculateTotalPrice(cartData);
     setTotal(totalPrice);
   };
+  const checkAllChecked = () => {
+    if (data && data.length > 0) {
+      return data.every(item => item.checked);
+    }
+    return false;
+  };
+
+  const handleItemCheckedChange = (index) => {
+    const updatedData = [...data];
+    updatedData[index].checked = !updatedData[index].checked;
+    setData(updatedData);
+    axios.put(`${process.env.REACT_APP_API_URL}/cart/updateChecked/${updatedData[index]._id}/${user._id}`, { checked: updatedData[index].checked })
+      .then((response) => {
+        const filteredItems = response.data.data.items.filter(item => item.checked);
+        updateTotalPrice(filteredItems)
+        setSelectAll(checkAllChecked());
+      })
+      .catch((error) => {
+        console.error('Lỗi khi cập nhật trạng thái checked:', error);
+      });
+  };
+
+  const handleSelectAll = (e) => {
+    const checked = e.target.checked;
+    setSelectAll(checked);
+
+    const updatedData = data.map((item) => {
+      return { ...item, checked };
+    });
+    setData(updatedData);
+
+    axios.put(`${process.env.REACT_APP_API_URL}/cart/updateCheckedAll/${user._id}`, { checked })
+      .then((response) => {
+        const filteredItems = response.data.data.items.filter(item => item.checked);
+        updateTotalPrice(filteredItems)
+      })
+      .catch((error) => {
+        console.error('Lỗi khi cập nhật tất cả trạng thái checked:', error);
+      });
+  };
   const columns = [
     {
-      title: 'Tên sản phẩm',
+      title: (
+        <div style={{ textAlign: 'center', minWidth: 100, fontWeight:'bold'}}>
+          Chọn tất cả
+          <div>
+          <Checkbox checked={selectAll} onChange={handleSelectAll} />
+
+          </div>
+        </div>
+      ),
+      dataIndex: 'checked',
+      render: (text, record, index) => (
+        <div style={{ textAlign: 'center' }}>
+          <Checkbox
+            checked={record.checked}
+            onChange={() => handleItemCheckedChange(index)}
+          />
+        </div>
+      ),
+    },
+    {
+      title: (
+        <div style={{ textAlign: 'center', minWidth: 350, fontWeight:'bold' }}>
+          Tên sản phẩm
+        </div>
+      ),
       dataIndex: 'product',
       render: (product, record) => (
         <div>
-          <img src={record.pictures} alt={record.product} style={{ width: '100px', marginRight: '100px' }} />
+          <img src={record.pictures} alt={record.product} style={{ width: '100px', marginRight: '10px' }} />
           <span style={{ fontSize: "15px" }}><NavLink to={`/product/${product.name}/${record?.memory}`}>{product.name} - {record?.memory}</NavLink></span>
         </div>
       ),
     },
     {
-      title: 'Màu',
+      title: (
+        <div style={{ textAlign: 'center', minWidth: 50, fontWeight:'bold' }}>
+          Màu
+        </div>
+      ),
       dataIndex: 'color',
+      render: color => (
+        <div style={{ textAlign: 'center' }}>
+          {color}
+        </div>
+      ),
+  
     },
     {
-      title: 'Đơn giá',
+      title: (
+        <div style={{ textAlign: 'center', minWidth: 100, fontWeight:'bold'}}>
+          Đơn giá
+        </div>
+      ),
       dataIndex: 'price',
       render: price => (
-        <span style={{ fontSize: '17px', fontWeight: 'bold' }}>
+        <span style={{ fontSize: '17px', fontWeight: 'bold',display:'flex', justifyContent:'center' }}>
           {new Intl.NumberFormat('vi-VN', {
             style: 'currency',
             currency: 'VND',
@@ -66,11 +145,15 @@ function CartList() {
       ),
     },
     {
-      title: 'Số lượng',
+      title: (
+        <div style={{ textAlign: 'center', minWidth: 100, fontWeight:'bold' }}>
+          Số lượng
+        </div>
+      ),
       dataIndex: 'quantity',
       render: (text, record, index) => {
         return (
-          <div>
+          <div style={{display:'flex', justifyContent:'center'}}>
             <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={() => handleDecreaseQuantity(index)}>-</Button>
             <Input
               value={quantities[index]}
@@ -83,10 +166,14 @@ function CartList() {
       }
     },
     {
-      title: 'Tổng tiền',
+      title: (
+        <div style={{ textAlign: 'center', minWidth: 150, fontWeight:'bold' }}>
+          Tổng tiền
+        </div>
+      ),
       dataIndex: 'subtotal',
       render: subtotal => (
-        <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300' }}>
+        <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300',display:'flex', justifyContent:'center' }}>
           {new Intl.NumberFormat('vi-VN', {
             style: 'currency',
             currency: 'VND',
@@ -95,11 +182,15 @@ function CartList() {
       ),
     },
     {
-      title: 'Thao tác',
+      title: (
+        <div style={{ textAlign: 'center', minWidth: 50, fontWeight:'bold' }}>
+          Thao tác
+        </div>
+      ),
       key: 'action',
       render: (record) => {
         return (
-          <div>
+          <div style={{textAlign: 'center'}}>
             <a onClick={() => { setModalDelete(true); setCurrentCartId(record._id) }}> <DeleteOutlined /></a>
             <Modal
               title="Xoá giỏ hàng"
@@ -124,8 +215,10 @@ function CartList() {
           axios.get(`${process.env.REACT_APP_API_URL}/cart/getToCart/${user._id}`)
             .then((response) => {
               const cartData = response.data.data;
+              const filteredCartData = cartData.filter(item => item.checked === true);
+              const totalPrice = calculateTotalPrice(filteredCartData);
+              setTotal(totalPrice);
               setData(cartData);
-              updateTotalPrice(cartData);
               setLoading(false);
             })
             .catch((error) => {
@@ -138,13 +231,15 @@ function CartList() {
       });
   };
   useEffect(() => {
+    localStorage.removeItem('cartItems');
     axios.get(`${process.env.REACT_APP_API_URL}/cart/getToCart/${user._id}`)
       .then((response) => {
         const cartData = response.data.data;
         setData(cartData);
         const initialQuantities = cartData.map((item) => item.quantity);
         setQuantities(initialQuantities);
-        const totalPrice = calculateTotalPrice(cartData);
+        const filteredCartData = cartData.filter(item => item.checked === true);
+        const totalPrice = calculateTotalPrice(filteredCartData);
         setTotal(totalPrice);
         setLoading(false);
       })
@@ -166,6 +261,9 @@ function CartList() {
           axios.get(`${process.env.REACT_APP_API_URL}/cart/getToCart/${user._id}`)
             .then((response) => {
               const cartData = response.data.data;
+              const filteredCartData = cartData.filter(item => item.checked === true);
+              const totalPrice = calculateTotalPrice(filteredCartData);
+              setTotal(totalPrice);
               setData(cartData);
             })
             .catch((error) => {
@@ -191,8 +289,10 @@ function CartList() {
           axios.get(`${process.env.REACT_APP_API_URL}/cart/getToCart/${user._id}`)
             .then((response) => {
               const cartData = response.data.data;
+              const filteredCartData = cartData.filter(item => item.checked === true);
+              const totalPrice = calculateTotalPrice(filteredCartData);
+              setTotal(totalPrice);
               setData(cartData);
-              updateTotalPrice(cartData);
             })
             .catch((error) => {
               console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
@@ -215,8 +315,10 @@ function CartList() {
             axios.get(`${process.env.REACT_APP_API_URL}/cart/getToCart/${user._id}`)
               .then((response) => {
                 const cartData = response.data.data;
+                const filteredCartData = cartData.filter(item => item.checked === true);
+                const totalPrice = calculateTotalPrice(filteredCartData);
+                setTotal(totalPrice);
                 setData(cartData);
-                updateTotalPrice(cartData);
               })
               .catch((error) => {
                 console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
@@ -265,103 +367,30 @@ function CartList() {
       );
     }
 
-    if (isMobile) {
+    else {
       return (
-        <>
-          <Loading isLoading={loading}>
-            {data && data.map((item, index) => (
-              <WrapperPhoneCart>
-                <div className='img-col'>
-                  <img className='img-prod' src={item.pictures} loading='lazy'></img>
-                </div>
-                <div className='inf-col'>
-                  <div className='pd-name'>{item.product.name} {item.memory}</div>
-                  <div className='pd-color'>Phân loại:&nbsp;
-                    <span>{item.color}</span>
-                  </div>
-                  <div className='pd-dongia'>Đơn giá:&nbsp;
-                    <span>{new Intl.NumberFormat('vi-VN', {
-                      style: 'currency',
-                      currency: 'VND',
-                    }).format(item.price)}</span>
-                  </div>
-                  <div className='pd-total'>Tổng tiền:&nbsp;
-                    <span>{new Intl.NumberFormat('vi-VN', {
-                      style: 'currency',
-                      currency: 'VND',
-                    }).format(item.subtotal)}</span>
-                  </div>
-                  <div className='quantity'>
-                    <div>
-                      <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={() => handleDecreaseQuantity(index)}>-</Button>
-                      <Input
-                        value={quantities[index]}
-                        style={{ width: '50px', fontWeight: 'bold' }}
-                        onChange={(e) => handleQuantityChange(index, parseInt(e.target.value, 10))}
-                      />
-                      <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={() => handleIncreaseQuantity(index)}>+</Button>
-                    </div>
-                    <div className='pd-action'>
-                      <a onClick={() => { setModalDelete(true); setCurrentCartId(item._id) }}> <DeleteOutlined style={{ color: '#ff3300' }} /></a>
-                      <Modal
-                        title="Xoá giỏ hàng"
-                        visible={modalDelete}
-                        onOk={() => {
-                          handleDeleteCartItem(currentCartId);
-                          setModalDelete(false);
-                        }}
-                        onCancel={() => setModalDelete(false)}
-                      >
-                        <p>Bạn có chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng?</p>
-                      </Modal>
-                    </div>
-                  </div>
-                </div>
-              </WrapperPhoneCart>
-            ))}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
-              <div>
-                <span style={{ fontWeight: 600 }}>Tổng giá:&nbsp;</span>
-                <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300' }}>
-                  {new Intl.NumberFormat('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND',
-                  }).format(total)}
-                </span>
-              </div>
+        <Loading isLoading={loading}>
+          <Table
+            columns={tableColumns}
+            dataSource={data}
+            scroll={{ x: '100vw' }}
+            pagination={false}
+          />
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px', alignItems: 'center' }}>
+              <span style={{ fontWeight: 600 }}>Tổng giá:&nbsp;</span>
+              <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300' }}>
+                {new Intl.NumberFormat('vi-VN', {
+                  style: 'currency',
+                  currency: 'VND',
+                }).format(total)}
+              </span>
               <Link to="/payment-infor">
-                <Button size='large' style={{ background: '#B63245', color: '#fff' }} disabled={isCartEmpty} >Mua hàng</Button>
+                <Button size='large' style={{ marginLeft: '100px', background: '#B63245', color: '#fff' }} disabled={isCartEmpty} >Mua hàng</Button>
               </Link>
             </div>
-          </Loading>
-        </>
-      );
-    } else if(!isMobile){
-      return (
-        <>
-          <Loading isLoading={loading}>
-            <Table
-              columns={tableColumns}
-              dataSource={data}
-              scroll={scroll}
-              pagination={false}
-            />
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px', alignItems: 'center' }}>
-                <span style={{ fontWeight: 600 }}>Tổng giá:&nbsp;</span>
-                <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300' }}>
-                  {new Intl.NumberFormat('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND',
-                  }).format(total)}
-                </span>
-                <Link to="/payment-infor">
-                  <Button size='large' style={{ marginLeft: '100px', background: '#B63245', color: '#fff' }} disabled={isCartEmpty} >Mua hàng</Button>
-                </Link>
-              </div>
-            </div>
-          </Loading>
-        </>
+          </div>
+        </Loading>
       );
     }
 

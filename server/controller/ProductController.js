@@ -36,10 +36,12 @@ const addProduct = async (req, res) => {
 
     for (const variantData of variants) {
       const { memory, imPrice, oldPrice, newPrice, attributes } = variantData;
-      const duplicateSku = await ProductVariant.findOne({ "attributes.sku": { $in: attributes.map(attr => attr.sku) } });
-      if (duplicateSku) {
-        await Product.deleteOne({ _id: newProduct._id });
-        return res.status(400).json({ success: false, error: 'Thuộc tính SKU đã tồn tại' });
+      if (attributes) {
+        const duplicateSku = await ProductVariant.findOne({ "attributes.sku": { $in: attributes.map(attr => attr.sku) } });
+        if (duplicateSku) {
+          await Product.deleteOne({ _id: newProduct._id });
+          return res.status(400).json({ success: false, error: 'Thuộc tính SKU đã tồn tại' });
+        }
       }
 
       const productVariant = new ProductVariant({
@@ -58,11 +60,18 @@ const addProduct = async (req, res) => {
 
     res.status(201).json({ success: true, data: newProduct });
   } catch (error) {
-    variantsAddedSuccessfully = false; 
-    if (newProduct) {
+
+    variantsAddedSuccessfully = false;
+    if (newProduct && error.code === 11000 && error.keyPattern && error.keyPattern["attributes.sku"]) {
+      await ProductVariant.deleteMany({ productName: newProduct._id });
       await Product.deleteOne({ _id: newProduct._id });
+      res.status(500).json({ success: false, error: 'Vui lòng thêm thuộc tính cho các biến thể' });
     }
-    res.status(500).json({ success: false, error: error.message });
+    else if (newProduct) {
+      await ProductVariant.deleteMany({ productName: newProduct._id });
+      await Product.deleteOne({ _id: newProduct._id });
+      res.status(500).json({ success: false, error: error.message });
+    }
   }
 };
 
@@ -75,14 +84,14 @@ const getProductsByCategory = async (req, res) => {
   try {
     const categoryId = req.params.categoryId;
     const page = parseInt(req.query.page) || 1;
-    const pageSize = 10; 
+    const pageSize = 10;
 
-    
+
     const skip = (page - 1) * pageSize;
 
     const totalProducts = await Product.countDocuments({ category: categoryId });
 
-    
+
     const products = await Product.find({ category: categoryId })
       .select('-desc  -views -include -promotion ')
       .populate('brand')
@@ -177,7 +186,7 @@ const editProduct = async (req, res) => {
         },
       })
       .lean();
-      
+
     res.status(200).json({ success: true, data: updatedProduct });
   } catch (error) {
     console.log(error)
@@ -218,18 +227,17 @@ const searchProductAdmin = async (req, res) => {
     const regex = new RegExp(keyword, 'i');
 
     const products = await Product.find({
-      name: { $regex: regex },
-      isHide: false
+      name: { $regex: regex }
     })
-    .select('-desc -views -include -promotion')
-    .populate('brand')
-    .populate({
-      path: 'variant',
-      populate: {
-        path: 'attributes',
-      },
-    })
-    .lean();
+      .select('-desc -views -include -promotion')
+      .populate('brand')
+      .populate({
+        path: 'variant',
+        populate: {
+          path: 'attributes',
+        },
+      })
+      .lean();
     res.status(200).json({
       success: true,
       data: products,
@@ -288,7 +296,7 @@ const IdProduct = async (req, res) => {
 const getAllProduct = async (req, res) => {
   try {
     const products = await Product.find()
-      .select('_id') 
+      .select('_id name')
       .exec();
 
     res.status(200).json({ success: true, data: products });
@@ -340,7 +348,7 @@ const getProductRating = async (req, res) => {
 const getAllProductsWithTotalSold = async (req, res) => {
   try {
     const products = await Product.find().populate('variant');
-    
+
     const productList = products.map((product) => {
       const totalSold = product.variant.reduce((total, variant) => {
         return total + variant.attributes.reduce((attrTotal, attr) => {
@@ -362,4 +370,44 @@ const getAllProductsWithTotalSold = async (req, res) => {
   }
 };
 
-module.exports = {searchProductAdmin,IdProduct,getAllProductsWithTotalSold, addProduct, getProductRating, getProductsByCategory, editProduct, deleteProduct, getAllProduct, detailsProduct };
+const getRandomProduct = async (req, res) => {
+  try {
+    // Lấy ngẫu nhiên một sản phẩm
+    const products = await Product.aggregate([{ $sample: { size: 1 } }]);
+
+    if (products.length === 0) {
+      return res.status(404).json({ success: false, message: 'Không có sản phẩm nào' });
+    }
+
+    const product = products[0];
+
+    // Lấy thông tin variant của sản phẩm đó
+    const productVariant = await ProductVariant.findOne({ productName: product._id }).exec();
+
+    if (!productVariant || productVariant.attributes.length === 0) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy variant của sản phẩm' });
+    }
+
+    // Lấy variant đầu tiên
+    const firstVariant = productVariant.attributes[0];
+
+    const productInfo = {
+      _id: product._id,
+      name: product.name,
+      memory: productVariant.memory, // Lấy memory của variant đầu tiên
+      newPrice: productVariant.newPrice,
+      oldPrice: productVariant.oldPrice,
+      thumnails: product.thumnails,
+      ratings: product.ratings,
+      properties: product.properties,
+    };
+
+    res.status(200).json({ success: true, data: productInfo });
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+
+
+module.exports = {getRandomProduct, searchProductAdmin, IdProduct, getAllProductsWithTotalSold, addProduct, getProductRating, getProductsByCategory, editProduct, deleteProduct, getAllProduct, detailsProduct };

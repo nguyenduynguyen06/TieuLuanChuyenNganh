@@ -2,17 +2,18 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const routerUser = require('./Router/UserRouter');
-const routerUpload = require('./Router/UploadRouter')
-const routerProduct = require('./Router/ProductRouter')
-const routerBrand = require('./Router/BrandRouter')
-const routerCart = require('./Router/CartRouter')
-const routerComment = require('./Router/CommentRouter')
-const routerOrder = require('./Router/OrderRouter')
-const routerProvince = require('./Router/ProvinceRouter')
-const routerRecommend = require('./Router/RecommendRouter')
-const routerVoucher = require('./Router/VoucherRouter')
-const routerBanner = require('./Router/BannerRouter')
+const routerUpload = require('./Router/UploadRouter');
+const routerProduct = require('./Router/ProductRouter');
+const routerBrand = require('./Router/BrandRouter');
+const routerCart = require('./Router/CartRouter');
+const routerComment = require('./Router/CommentRouter');
+const routerOrder = require('./Router/OrderRouter');
+const routerProvince = require('./Router/ProvinceRouter');
+const routerRecommend = require('./Router/RecommendRouter');
+const routerVoucher = require('./Router/VoucherRouter');
+const routerBanner = require('./Router/BannerRouter');
 const routerVNPAY = require('./Router/RouterVNPAY');
+const routerNews = require('./Router/NewsRouter');
 const bodyParser = require('body-parser');
 const path = require('path')
 const routerCategory = require('./Router/CategoryRouter')
@@ -46,6 +47,8 @@ app.use('/api/voucher',routerVoucher)
 app.use('/api/voucher',routerVoucher)
 app.use('/api/province',routerProvince)
 app.use('/api/recommend',routerRecommend)
+app.use('/api/news', routerNews);
+
 app.use(express.static(path.join(__dirname,'../client/build')))
 app.get('*',(req,res) =>{
     res.sendFile(path.join(__dirname,'../client/build/index.html'))

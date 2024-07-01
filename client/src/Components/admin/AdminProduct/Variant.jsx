@@ -6,7 +6,7 @@ import "./admin.css"
 import { Modal, Switch, Tooltip, message } from 'antd';
 import axios from "axios";
 import { AppstoreAddOutlined, DeleteOutlined, EditOutlined, AppstoreOutlined } from '@ant-design/icons';
-import AddVariant from "./AddVariants";
+import AddVariant from "./addVariants";
 import EditVariant from "./EditVariants";
 import { useSelector } from "react-redux";
 import AttributesVariant from "./AttributesVariants";

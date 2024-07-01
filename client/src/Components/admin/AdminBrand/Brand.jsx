@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { WrapperHeader } from "../AdminUser/style";
-import {  MDBBtn, MDBTable, MDBTableHead, MDBTableBody, MDBIcon } from 'mdb-react-ui-kit';
+import { MDBBtn, MDBTable, MDBTableHead, MDBTableBody, MDBIcon } from 'mdb-react-ui-kit';
 import "../AdminProduct/admin.css"
 import { Modal, Switch, Tooltip, message } from 'antd';
 import axios from "axios";
@@ -51,19 +51,23 @@ const Brand = () => {
                 message.error('Lỗi khi xóa thương hiệu');
             });
     };
+    const fetchData = async () => {
+        try {
+            axios
+                .get(`${process.env.REACT_APP_API_URL}/category/getAll`)
+                .then((response) => {
+                    setCategory(response.data.data);
+                    if (response.data.data.length > 0) {
+                        handleCategoryClick(response.data.data[0]._id);
+                    }
+                })
+        } catch (error) {
+            console.error('Lỗi khi gọi API: ', error);
+        }
+    };
 
     useEffect(() => {
-        axios
-            .get(`${process.env.REACT_APP_API_URL}/category/getAll`)
-            .then((response) => {
-                setCategory(response.data.data);
-                if (response.data.data.length > 0) {
-                    handleCategoryClick(response.data.data[0]._id);
-                }
-            })
-            .catch((error) => {
-                console.error('Lỗi khi gọi API: ', error);
-            });
+        fetchData();
     }, [reloadBrandData]);
 
     const handlePageChange = (page) => {
@@ -112,6 +116,7 @@ const Brand = () => {
         setCentredModal(false);
         setReloadBrandData(!reloadBrandData);
         form.resetFields();
+        fetchData();
     };
     const [centredModal1, setCentredModal1] = useState(false);
 
@@ -122,6 +127,7 @@ const Brand = () => {
     const closeModal1 = () => {
         setCentredModal1(false);
         setReloadBrandData(!reloadBrandData);
+        fetchData();
     };
     const [centredModal2, setCentredModal2] = useState(false);
 
@@ -135,34 +141,28 @@ const Brand = () => {
     return (
         <div>
             <WrapperHeader>Danh sách thương hiệu</WrapperHeader>
-            <div style={{ display: 'flex' }}>
-                <div style={{ width: '50%' }}>
-                    <Search style={{ width: '100%' }}
-                        placeholder="Tìm kiếm thương hiệu"
-                        enterButton />
-                </div>
-                <div style={{ justifyContent: 'end', width: '50%', display: 'flex' }}>
+            <div style={{ display: 'flex', justifyContent: 'end' }}>
                     <MDBBtn rounded style={{ backgroundColor: '#B63245' }} onClick={toggleOpen}>
                         Thêm thương hiệu
                     </MDBBtn>
                 </div>
-            </div>
 
-            <div style={{ marginTop: '10px' }}>
+            <div style={{ marginTop: '10px', display:'flex', gap:'10px', flexWrap:'nowrap', overflow:'auto'}}>
                 {category.map((category) => (
-                    <MDBBtn
-                        outline color='secondary'
-                        key={category._id}
-                        style={{ marginRight: '10px' }}
-                        onClick={() => handleCategoryClick(category._id)}
-                        className={`memory-button ${selectedCategory === category._id ? 'selected' : ''}`}
-                    >
-                        {category.name}
-                    </MDBBtn>
+                        <MDBBtn
+                            
+                            outline color='secondary'
+                            key={category._id}
+                            style={{ minWidth:'150px' }}
+                            onClick={() => handleCategoryClick(category._id)}
+                            className={`memory-button ${selectedCategory === category._id ? 'selected' : ''}`}
+                        >
+                            {category.name}
+                        </MDBBtn>
                 ))}
             </div>
 
-            <div style={{ marginTop: '15px' }}>
+            <div style={{ marginTop: '15px', overflowY: 'auto', overflowX: 'auto' }}>
                 <MDBTable bordered align='middle' className='floating-table'>
 
                     <MDBTableHead>

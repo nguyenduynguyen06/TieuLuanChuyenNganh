@@ -8,42 +8,29 @@ import { NavLink, useParams } from 'react-router-dom';
 
 import { Button, Rate, Skeleton, Tooltip } from 'antd';
 import { CardProd, WrapperCardProd } from '../../pages/HomePage/styled';
-import Loading from '../LoadingComponents/Loading';
+import { useSelector } from 'react-redux';
 
-function SaleProduct() {
-  const [products, setProducts] = useState([]);
-  const [selectedMemories, setSelectedMemories] = useState({});
+function SaleProduct({ userId }) {
+  const [products, setProducts] = useState([]);;
   const [loading, setLoading] = useState(true);
 
+
+
   useEffect(() => {
-    const fetchData = async () => {
+    const recommendProduct = async () => {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
-        const categories = res.data.data;
-        const categoryName = 'Điện thoại';
-        const category = categories.find((cat) => cat.name === categoryName);
-        if (!category) {
-          console.error('Không tìm thấy danh mục');
-          return;
-        }
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/product/getIdByCategory/${category._id}`);
-        const productsData = response.data.data;
-        setProducts(productsData);
-
-        const initialMemories = {};
-        productsData.forEach((product) => {
-          initialMemories[product._id] = product.variant[0]?.memory;
-        });
-
-        setSelectedMemories(initialMemories);
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/recommend/recommendProduct`, { userId: userId, limit: 10 });
+        const recommendedProducts = res.data.data;
+        console.log(recommendedProducts)
+        setProducts(recommendedProducts);
         setLoading(false);
       } catch (error) {
         console.error('Lỗi:', error);
         setLoading(false);
       }
     };
-    fetchData();
-  }, []);
+    recommendProduct();
+  }, [userId]);
 
   const calculateAverageRating = (ratings) => {
     if (ratings.length === 0) {
@@ -57,9 +44,10 @@ function SaleProduct() {
   const settings = {
     dots: false,
     infinite: true,
-    speed: 500,
+    speed: 1000,
     slidesToShow: 5,
     slidesToScroll: 1,
+    autoplay: true,
     responsive: [
       {
         breakpoint: 1224,
@@ -107,71 +95,67 @@ function SaleProduct() {
       return 0;
     }
   };
+
+  const calculateTotalRatings = (product) => {
+    return product.ratings.length;
+  };
+  const user = useSelector((state) => state.user);
+  const handleProductClick = async (productId) => {
+    try {
+      await axios.post(`${process.env.REACT_APP_API_URL}/recommend/saveAccess`, {
+        userId: user._id,
+        productId: productId
+      });
+          } catch (error) {
+      console.error('Lỗi khi lưu thông tin truy cập:', error);
+    }
+  };
   return (
     <CardProd>
       {loading ? (
         <Skeleton style={{ padding: 10, minHeight: '395px' }} active={true} />
       ) : (
         <Slider {...settings} prevArrow={<PrevArrow />} nextArrow={<NextArrow />}>
-          {products
-            .filter((product) => !product.isHide)
-            .map((product) => (
-              <div className='card' key={product._id}>
-                <Tooltip title={product.name} mouseEnterDelay={0.5}>
-                  <NavLink to={`/product/${product.name}/${selectedMemories[product._id]}`}>
-                    {product.variant
-                      .filter((variant) => variant.memory === selectedMemories[product._id])
-                      .map((variant) => (
-                        <div key={variant._id} className='item-label'>
-                          {variant.oldPrice && (
-                            <span className='lb-dis'>
-                              Giảm {calculateDiscountPercentage(variant.newPrice, variant.oldPrice)}%
-                            </span>
-                          )}
+          {products.filter((product) => !product.isHide).map((product) => (
+            <div className='card' key={product._id + product.memory}>
+              <Tooltip title={product.productName} mouseEnterDelay={0.5}>
+                <a className='card' href={`/product/${product.productName}/${product?.memory || undefined
+}`} onClick={() => handleProductClick(product.productId)}>
+                  <div key={product._id} className='item-label'>
+                    {product.oldPrice && (
+                      <span className='lb-dis'>
+                        Giảm {calculateDiscountPercentage(product.newPrice, product.oldPrice)}%
+                      </span>
+                    )}
+                  </div>
+                  <div className='image' >
+                    <img src={product.thumnails[0]} loading="lazy" alt={product.productName} />
+                  </div>
+                  <div className='desc'>
+                    <h1 className='name' style={{fontSize:"14px"}}>{product.productName} - {product.memory}</h1>
+                    <div>
+                      {product.ratings && product.ratings.length > 0 ? (
+                        <div style={{ display: "flex", flexDirection: 'column', alignItems: 'center' }}>
+                          <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
+                          <span style={{ margin: 0, height: '25px', fontSize: '13px' }}>{calculateTotalRatings(product)} đánh giá</span>
                         </div>
-                      ))}
-                    <div className='image'>
-                      <img src={product.thumnails[0]} alt={product.name} loading='lazy' />
-                    </div>
-                    <div className='desc'>
-                      <h1 className='name'>{product.name}</h1>
-                      <div>
-                        {product?.variant.map((variant) => (
-                          <Button classNames={'memory'} className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setSelectedMemories((prevSelected) => ({
-                                ...prevSelected,
-                                [product._id]: variant.memory,
-                              }));
-                            }}
-                            style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
-                          >
-                            {variant.memory}
-                          </Button>
-                        ))}
-
-                        {product.ratings.length > 0 ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
-                          </div>
-                        ) : null}
-                        <div style={{ fontWeight: 700, height: '20px', margin: 0 }}>
-                          <p>
-                            {product.variant.find((variant) => variant.memory === selectedMemories[product._id]).newPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                          </p>
-                        </div>
-                        <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>{product?.variant.find((variant) => variant.memory === selectedMemories[product._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
-
-                      </div>
-                      <div className='div-img'>
-                        <img className='image' src='https://res.cloudinary.com/doq4spvys/image/upload/v1713004455/e5zupd8flydfe2bslrvb.png' alt='promo' />
+                      ) : (
+                        null
+                      )}
+                      <div className='price-box'>
+                        <p style={{ fontWeight: 700, height: '20px', fontSize:'20px' }}>
+                          {product.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                        </p>
+                        <p style={{ color: '#000', textDecoration: 'line-through', height: '20px',fontSize:'20px' }}>
+                          {product.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                        </p>
                       </div>
                     </div>
-                  </NavLink>
-                </Tooltip>
-              </div>
-            ))}
+                  </div>
+                </a>
+              </Tooltip>
+            </div>
+          ))}
         </Slider>
       )}
     </CardProd>

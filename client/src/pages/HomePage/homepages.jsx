@@ -15,8 +15,12 @@ import CaseHP from "../../Components/HomePageComponent/CaseHPCom";
 import ChargerHP from "../../Components/HomePageComponent/ChargerHPCom";
 import PinHP from "../../Components/HomePageComponent/PinHPCom";
 import HeadphoneHP from "../../Components/HomePageComponent/HeadphoneHPCom";
+import { useSelector } from "react-redux";
+import NewsSlide from "../../Components/Slider/NewsSlide";
+import AdBanner from "../../Components/AdComponents/AdBanner";
 
 const HomePage = () => {
+  const user = useSelector((state) => state.user);
   const [brands, setBrands] = useState({});
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -91,11 +95,93 @@ const HomePage = () => {
   const handleCategoryMouseLeave = () => {
     setCurrentCategoryId(null);
   };
+  const [adBanner, setAdBanner] = useState([]);
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/banner/getBannerByLocation/homepage/adbanner`);
+        if (response.data.success) {
+          const adBanner = response.data.data;
+          const activeBanners = adBanner.filter(banner => banner.isActive);
+          const bannerData = activeBanners.map(banner => ({
+            image: banner.image,
+            link: banner.link,
+          }));
+          setAdBanner(bannerData);
+          console.log(bannerData);
+        } else {
+          console.error('No banners found');
+        }
+      } catch (error) {
+        console.error('Error fetching banners:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBanners();
+  }, []);
+
+  const [bannersLarge, setBannersLarge] = useState([]);
+
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/banner/getBannerByLocation/homepage/mainBanner`);
+        if (response.data.success) {
+          const banners = response.data.data;
+          const activeBanners = banners.filter(banner => banner.isActive);
+          const bannerData = activeBanners.map(banner => ({
+            image: banner.image,
+            link: banner.link,
+          }));
+          setBannersLarge(bannerData);
+        } else {
+          console.error('No banners found');
+        }
+      } catch (error) {
+        console.error('Error fetching banners:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBanners();
+  }, []);
+  const [bannersSmall, setBannersSmall] = useState([]);
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/banner/getBannerByLocation/homepage/productSuggestionBanner`);
+        if (response.data.success) {
+          const banners = response.data.data;
+          const activeBanners = banners.filter(banner => banner.isActive);
+          const bannerData = activeBanners.map(banner => ({
+            image: banner.image,
+            link: banner.link,
+          }));
+          setBannersSmall(bannerData);
+        } else {
+          console.error('No banners found');
+        }
+      } catch (error) {
+        console.error('Error fetching banners:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBanners();
+  }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', background: '#eee', alignItems: 'center' }}>
       <Header></Header>
       <WrapperHome>
+        {loading ? (
+          <Skeleton style={{ padding: 10, minHeight: '50vh' }} active={true} />
+        ) : (
+          <AdBanner banners={adBanner}/>)}
         <div className="first-containter" >
           <div className="menu-tab" >
             {loading ? (
@@ -133,9 +219,9 @@ const HomePage = () => {
           </div>
           <div className="banner-tab">
             {loading ? (
-              <Skeleton style={{ padding: 10 , minHeight: '50vh' }} active={true} />
+              <Skeleton style={{ padding: 10, minHeight: '50vh' }} active={true} />
             ) : (
-              <Slide borderRadius="4px" />)}
+              <Slide borderRadius="4px" banners={bannersLarge} />)}
           </div>
         </div>
         <WrapperHomePage style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingTop: '1%' }}>
@@ -146,10 +232,16 @@ const HomePage = () => {
                 {loading ? (
                   <Skeleton style={{ padding: 10 }} active={true} />
                 ) : (
-                  <SmallSlide borderRadius="4px" />
+                  <SmallSlide borderRadius="4px" banners={bannersSmall} />
                 )}
               </div>
-              <SaleProduct></SaleProduct>
+              <div className="cate-bound" >
+                <h3 style={{ margin: '0 10px 10px 0', color: '#fff', fontWeight: 'bold' }}>
+                  {user._id ? 'Sản phẩm dành cho bạn:' : 'Có thể bạn quan tâm:'}
+                </h3>
+                <SaleProduct userId={user._id}></SaleProduct>
+
+              </div>
             </div>
             <hr></hr>
             <div className="cate-bound" >
@@ -170,7 +262,6 @@ const HomePage = () => {
             </div>
             <hr></hr>
             <div className="cate-bound" >
-
               <h3 style={{ margin: '0 10px 10px 10px', color: '#fff', fontWeight: 'bold' }}><MDBIcon fas icon="battery-full" /> PIN DỰ PHÒNG</h3>
               <PinHP></PinHP>
             </div>
@@ -178,6 +269,11 @@ const HomePage = () => {
             <div className="cate-bound" >
               <h3 style={{ margin: '0 10px 10px 10px', color: '#fff', fontWeight: 'bold' }}><MDBIcon fas icon="headphones" /> TAI NGHE</h3>
               <HeadphoneHP></HeadphoneHP>
+            </div>
+            <hr></hr>
+            <div className="cate-bound" >
+              <h3 style={{ margin: '0 10px 10px 10px', color: '#fff', fontWeight: 'bold' }}>TIN TỨC</h3>
+              <NewsSlide />
             </div>
           </div>
         </WrapperHomePage>

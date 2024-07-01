@@ -55,6 +55,7 @@ const NewVoucher = ({ closeModal }) => {
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/voucher/addVoucher`, values, { headers });
       if (response.data.success) {
+        closeModal();
         message.success('Thêm voucher thành công');
         form.resetFields();
       } else {
@@ -142,7 +143,7 @@ const NewVoucher = ({ closeModal }) => {
           },
         ]}
       >
-        <DatePicker />
+        <DatePicker format="DD/MM/YYYY"/>
       </Form.Item>
       <Form.Item
         name="endDate"
@@ -154,7 +155,7 @@ const NewVoucher = ({ closeModal }) => {
           },
         ]}
       >
-        <DatePicker />
+        <DatePicker format="DD/MM/YYYY"/>
       </Form.Item>
       <Form.Item
         name="maxPrice"

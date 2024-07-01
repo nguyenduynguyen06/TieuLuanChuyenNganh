@@ -3,7 +3,8 @@ const moment = require('moment');
 const { format } = require('date-fns');
 const { parse, isAfter, isBefore } = require('date-fns');
 const vi = require('date-fns/locale/vi');
-const Cart = require('../Model/CartModel');
+const Product = require('../Model/ProductModel');
+const Order = require('../Model/OrderModel');
 const addVoucher = async (req, res) => {
   try {
     const { name, code, quantity, discount, maxPrice, applicablePaymentMethod, applicableProductTypes } = req.body;
@@ -46,14 +47,17 @@ const addVoucher = async (req, res) => {
 
 const useVoucher = async (req, res) => {
   try {
-    const { code } = req.body;
+    const { code, items } = req.body;
     const { userId } = req.query
     const voucher = await Voucher.findOne({ code });
 
     if (!voucher) {
       return res.status(400).json({ success: false, error: 'Mã voucher không tồn tại.' });
     }
-
+    const usedVoucher = await Order.findOne({ user: userId, voucher: voucher._id, status: { $ne: 'Đã huỷ' } });
+    if (usedVoucher) {
+      return res.status(200).json({ success: false, error: 'Bạn đã hết lượt sử dụng voucher.' });
+    }
     const currentDate = new Date();
 
     const startDateParts = voucher.startDate.split('/');
@@ -77,19 +81,15 @@ const useVoucher = async (req, res) => {
       return res.status(200).json({ success: false, error: `Voucher chỉ áp dụng cho phương thức ${applicablePaymentMethod}` });
     }
     const applicableProductTypes = voucher.applicableProductTypes;
-    const cart = await Cart.findOne({ user: userId })
-      .populate({
-        path: 'items.product',
-        populate: {
-          path: 'category',
-          select: 'name'
-        }
-      });
+    const populatedItems = await Promise.all(items.map(async (item) => {
+      const product = await Product.findById(item.product).populate('category', 'name');
+      return { ...item, product };
+    }));
 
-    if (!cart || !cart.items || cart.items.length === 0) {
+    if (!populatedItems || populatedItems.length === 0) {
       return res.status(400).json({ success: false, error: 'Giỏ hàng không tồn tại hoặc trống' });
     }
-    const cartProductCategories = cart.items.map(item => item.product.category.name);
+    const cartProductCategories = populatedItems.map(item => item.product.category.name);
     const isValidCart = cartProductCategories.every(category => applicableProductTypes.includes(category));
     if (!isValidCart) {
       return res.status(200).json({ success: false, error: `Voucher chỉ áp dụng cho đơn hàng có sản phẩm thuộc các loại sau: ${applicableProductTypes.join(', ')}` });
@@ -130,6 +130,34 @@ const updateVoucher = async (req, res) => {
       }
 
       updateFields.startDate = formatStartDate;
+      updateFields.endDate = formatEndDate;
+    }
+    else if (startDate && !endDate) {
+      const voucher = await Voucher.findById(id)
+      const endDateCSDL = voucher.endDate
+      const formatStartDate = format(new Date(startDate), 'dd/MM/yyyy', { locale: vi });
+      const startDateParts = formatStartDate.split('/');
+      const endDateParts = endDateCSDL.split('/');
+
+      const startDateToUpdate = parse(`${startDateParts[2]}-${startDateParts[1]}-${startDateParts[0]}`, 'yyyy-MM-dd', new Date(), { locale: vi });
+      const endDateToUpdate = parse(`${endDateParts[2]}-${endDateParts[1]}-${endDateParts[0]}`, 'yyyy-MM-dd', new Date(), { locale: vi });
+      if (isAfter(startDateToUpdate, endDateToUpdate)) {
+        return res.status(404).json({ success: false, error: 'Ngày bắt đầu phải trước ngày kết thúc' });
+      }
+      updateFields.startDate = formatStartDate;
+
+    }
+    else if (!startDate && endDate) {
+      const voucher = await Voucher.findById(id)
+      const startDateCSDL = voucher.startDate
+      const formatEndDate = format(new Date(endDate), 'dd/MM/yyyy', { locale: vi });
+      const startDateParts = startDateCSDL.split('/');
+      const endDateParts = formatEndDate.split('/');
+      const startDateToUpdate = parse(`${startDateParts[2]}-${startDateParts[1]}-${startDateParts[0]}`, 'yyyy-MM-dd', new Date(), { locale: vi });
+      const endDateToUpdate = parse(`${endDateParts[2]}-${endDateParts[1]}-${endDateParts[0]}`, 'yyyy-MM-dd', new Date(), { locale: vi });
+      if (isAfter(startDateToUpdate, endDateToUpdate)) {
+        return res.status(404).json({ success: false, error: 'Ngày kết thúc phải sau ngày bắt đầu' });
+      }
       updateFields.endDate = formatEndDate;
     }
 
@@ -203,6 +231,39 @@ const getVoucherDetail = async (req, res) => {
     res.status(500).json({ success: false, error: 'Server error' });
   }
 };
+const searchVoucher = async (req, res) => {
+  try {
+    const { keyword, page = 1, limit = 10 } = req.query;
 
-module.exports = { addVoucher, updateVoucher, deleteVoucher, getVouchers, useVoucher, getVoucherDetail }
+   
+    const regex = new RegExp(keyword, 'i');
+
+
+    const skip = (page - 1) * limit;
+
+
+    const vouchers = await Voucher.find({ $or: [{ code: regex }, { name: regex }] })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+   
+    const totalVouchers = await Voucher.countDocuments({ $or: [{ code: regex }, { name: regex }] });
+
+    res.status(200).json({
+      success: true,
+      data: vouchers,
+      pagination: {
+        totalVouchers,
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(totalVouchers / limit),
+        pageSize: parseInt(limit)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+
+module.exports = { searchVoucher, addVoucher, updateVoucher, deleteVoucher, getVouchers, useVoucher, getVoucherDetail }
 

@@ -10,12 +10,14 @@ import { DownOutlined, FallOutlined, RiseOutlined } from '@ant-design/icons';
 import axios from "axios";
 import { Breadcrumb } from 'antd';
 import ListProductNew from "../../Components/CardComponent/ListProductNew";
+import { MDBBtn } from "mdb-react-ui-kit";
 
 const ProductPage = () => {
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: "instant" })
     }, [])
     const location = useLocation();
+    const searchKeyword = new URLSearchParams(location.search).get('keyword');
     const { nameCategory, nameBrand } = useParams();
     const [selectedPriceRange, setSelectedPriceRange] = useState(null);
     const [sort, setSort] = useState('')
@@ -50,6 +52,7 @@ const ProductPage = () => {
         setIncludeOldPrice('');
         setNameProduct('');
         clearPriceSelection();
+        setSort('')
     };
     const clearPriceSelection = () => {
         setMinPrice(null);
@@ -64,7 +67,7 @@ const ProductPage = () => {
         switch (type) {
             case 'categories':
                 return categories.map((category) => (
-                    <NavLink to={`/products/${category.name}`} key={category._id}>
+                    <NavLink  to={`/products/${category.name}${searchKeyword ? `?keyword=${searchKeyword}` : ''}`}>
                         <WrapperTextValue active={nameCategory === category.name}>
                             <div onClick={handle}>{category.name}</div>
                         </WrapperTextValue>
@@ -236,11 +239,8 @@ const ProductPage = () => {
             setNameProduct(productName);
         }
     };
-
-
     return (
         <WrapperType>
-            <Header />
             <div className="container" style={{ width: '80%', paddingLeft: '10px', paddingRight: '10px', marginTop: '15px' }}>
                 <div className="navi" style={{ width: '100%' }}>
                     <Breadcrumb style={{ marginTop: '10px' }}>
@@ -261,7 +261,7 @@ const ProductPage = () => {
                     <WrapperContent>
                         {renderContent('categories', categories)}
                     </WrapperContent>
-                    <ListBrand />
+                    <ListBrand nameCategory={nameCategory} nameBrand={nameBrand}/>
                     <WrapperContent>
                         {nameCategory === `Cáp sạc` && (
                             <WrapperTextValue
@@ -281,65 +281,65 @@ const ProductPage = () => {
                             </WrapperTextValue>
                         )}
                     </WrapperContent>
-                    {nameCategory ? (
-                        <WrapperFilterList>
-                            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                                <Button style={{ display: 'inline-flex', alignItems: 'center' }} className={sort === '' ? 'memory-button selected' : 'memory-button'} onClick={() => handleSort('')}>
-                                    <RiseOutlined style={{ verticalAlign: 'middle', marginRight: '5px' }} />Tất cả sản phẩm
-                                </Button>
-                                <Button style={{ display: 'inline-flex', alignItems: 'center' }} className={sort === 'asc' ? 'memory-button selected' : 'memory-button'} onClick={() => handleSort('asc')}>
-                                    <RiseOutlined style={{ verticalAlign: 'middle', marginRight: '5px' }} />Giá Thấp - Cao
-                                </Button>
-                                <Button style={{ display: 'inline-flex', alignItems: 'center' }} className={sort === 'desc' ? 'memory-button selected' : 'memory-button'} onClick={() => handleSort('desc')}>
-                                    <FallOutlined style={{ verticalAlign: 'middle', marginRight: '5px' }} />Giá Cao - Thấp
-                                </Button>
-                            </div>
-                            {nameCategory === `Tai nghe` && (
-                                <Dropdown overlay={menu5} placement="bottomLeft">
-                                    <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                                        {selectedPriceRange ? selectedPriceRange : 'Giá'} <DownOutlined />
-                                    </a>
-                                </Dropdown>
-                            )}
-                            {nameCategory === `Cáp sạc` && (
-                                <Dropdown overlay={menu3} placement="bottomLeft">
-                                    <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                                        {selectedPriceRange ? selectedPriceRange : 'Giá'} <DownOutlined />
-                                    </a>
-                                </Dropdown>
-                            )}
-                            {nameCategory === `Ốp lưng` && (
-                                <Dropdown overlay={menu3} placement="bottomLeft">
-                                    <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                                        {selectedPriceRange ? selectedPriceRange : 'Giá'} <DownOutlined />
-                                    </a>
-                                </Dropdown>
-                            )}
-                            {nameCategory === `Pin dự phòng` && (
-                                <Dropdown overlay={menu4} placement="bottomLeft">
-                                    <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                                        {selectedPriceRange ? selectedPriceRange : 'Giá'} <DownOutlined />
-                                    </a>
-                                </Dropdown>
-                            )}
-                            {nameCategory === `Điện thoại` && (
-                                <Dropdown overlay={menu1} placement="bottomLeft">
-                                    <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                                        {selectedPriceRange ? selectedPriceRange : 'Giá'} <DownOutlined />
-                                    </a>
-                                </Dropdown>
-                            )}
-                            {nameCategory === `Điện thoại` && (
-                                <Dropdown overlay={menu2} placement="bottomLeft">
-                                    <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                                        {selectedMemory ? selectedMemory : 'Bộ nhớ'} <DownOutlined />
-                                    </a>
-                                </Dropdown>
-                            )}
-                        </WrapperFilterList>
-                    ) : (
-                        null
-                    )}
+
+                    <WrapperFilterList>
+                        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                            <Button style={{ display: 'inline-flex', alignItems: 'center' }} className={sort === '' ? 'memory-button selected' : 'memory-button'} onClick={() => handleSort('')}>
+                                Tất cả sản phẩm
+                            </Button>
+                            <Button style={{ display: 'inline-flex', alignItems: 'center' }} className={sort === 'asc' ? 'memory-button selected' : 'memory-button'} onClick={() => handleSort('asc')}>
+                                <RiseOutlined style={{ verticalAlign: 'middle', marginRight: '5px' }} />Giá Thấp - Cao
+                            </Button>
+                            <Button style={{ display: 'inline-flex', alignItems: 'center' }} className={sort === 'desc' ? 'memory-button selected' : 'memory-button'} onClick={() => handleSort('desc')}>
+                                <FallOutlined style={{ verticalAlign: 'middle', marginRight: '5px' }} />Giá Cao - Thấp
+                            </Button>
+                            <a href={'/products'}>
+                            <Button style={{ marginLeft: '10px' }} onClick={handle}>Đặt lại</Button>
+                            </a>
+                        </div>
+                        {nameCategory === `Tai nghe` && (
+                            <Dropdown overlay={menu5} placement="bottomLeft">
+                                <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                                    {selectedPriceRange ? selectedPriceRange : 'Giá'} <DownOutlined />
+                                </a>
+                            </Dropdown>
+                        )}
+                        {nameCategory === `Cáp sạc` && (
+                            <Dropdown overlay={menu3} placement="bottomLeft">
+                                <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                                    {selectedPriceRange ? selectedPriceRange : 'Giá'} <DownOutlined />
+                                </a>
+                            </Dropdown>
+                        )}
+                        {nameCategory === `Ốp lưng` && (
+                            <Dropdown overlay={menu3} placement="bottomLeft">
+                                <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                                    {selectedPriceRange ? selectedPriceRange : 'Giá'} <DownOutlined />
+                                </a>
+                            </Dropdown>
+                        )}
+                        {nameCategory === `Pin dự phòng` && (
+                            <Dropdown overlay={menu4} placement="bottomLeft">
+                                <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                                    {selectedPriceRange ? selectedPriceRange : 'Giá'} <DownOutlined />
+                                </a>
+                            </Dropdown>
+                        )}
+                        {nameCategory === `Điện thoại` && (
+                            <Dropdown overlay={menu1} placement="bottomLeft">
+                                <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                                    {selectedPriceRange ? selectedPriceRange : 'Giá'} <DownOutlined />
+                                </a>
+                            </Dropdown>
+                        )}
+                        {nameCategory === `Điện thoại` && (
+                            <Dropdown overlay={menu2} placement="bottomLeft">
+                                <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                                    {selectedMemory ? selectedMemory : 'Bộ nhớ'} <DownOutlined />
+                                </a>
+                            </Dropdown>
+                        )}
+                    </WrapperFilterList>
                 </div>
                 <div style={{ width: '100%', background: '#fff', borderRadius: '6px' }}>
                     <ListProductNew

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { WrapperBrandList } from "./style";
 import axios from "axios";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useLocation, useParams } from "react-router-dom";
 import Loading from "../LoadingComponents/Loading";
 
-const ListBrand = () => {
-    const { nameCategory, nameBrand } = useParams();
+const ListBrand = ({nameCategory , nameBrand}) => {
+    const location = useLocation();
+    const searchKeyword = new URLSearchParams(location.search).get('keyword');
     const [brands, setBrands] = useState([]);
     const [categories, setCategories] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -23,7 +24,7 @@ const ListBrand = () => {
             }
         };
         fetchCategoryByName();
-    }, []);
+    }, [nameCategory]);
 
     useEffect(() => {
         if (categories) {
@@ -56,7 +57,7 @@ const ListBrand = () => {
                         <NavLink 
                             key={brand.name}
                             className={`list-brand-item ${nameBrand === brand.name ? 'bordered' : ''}`}
-                            to={`/products/${nameCategory}/${brand.name}`}>
+                            to={`/products/${nameCategory}/${brand.name}${searchKeyword ? `?keyword=${searchKeyword}` : ''}`}>
                             <img className="brand-img" src={brand.picture} alt={brand.name} />
                         </NavLink>
                     ))}

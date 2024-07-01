@@ -1,4 +1,15 @@
 const mongoose = require('mongoose');
+const AddressSchema = new mongoose.Schema({
+    address: {
+        type: String,
+        required: true
+    },
+    isDefault: {
+        type: Boolean,
+        default: false
+    }
+});
+
 const UserSchema = new mongoose.Schema({
     fullName: {
         type: String,
@@ -27,10 +38,7 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    addRess: {
-        type: String,
-        required: true
-    },
+    addRess: [AddressSchema],
     isBlocked: {
         type: Boolean,
         required: true
@@ -40,6 +48,10 @@ const UserSchema = new mongoose.Schema({
     },
     birthDay:{
         type: String
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 }, { validateBeforeSave: true });
 const User = mongoose.model('User', UserSchema);

@@ -29,4 +29,12 @@ router.get('/searchUser', authMiddleware,userAuthenticate.searchUser)
 router.put('/changepassword/:id',authUserMiddleware,userAuthenticate.changePassword)
 
 router.get('/checkAcc/:email',userAuthenticate.checkAcc)
+
+router.get('/getAdmin',authMiddleware,userAuthenticate.getAdmin)
+router.post('/addAddress/:id', authUserMiddleware,userAuthenticate.addAddress)
+router.delete('/deleteAddress/:id/:addressId', authUserMiddleware, userAuthenticate.deleteAddress);
+router.get('/getAddresses/:id',authUserMiddleware,userAuthenticate.getAddresses)
+router.put('/updateAddress/:id/:addressId', authUserMiddleware, userAuthenticate.updateAddress);
+router.post('/setDefault/:id', authUserMiddleware,userAuthenticate.setDefaultAddress)
+router.post('/createAdmin', authMiddleware,userAuthenticate.createAdmin)
 module.exports = router

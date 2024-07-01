@@ -7,11 +7,12 @@ import { Modal, Switch, Tooltip, message } from 'antd';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import NewProduct from "./NewProduct";
-import { AppstoreAddOutlined, DeleteOutlined, EditOutlined,AppstoreOutlined } from '@ant-design/icons';
+import { AppstoreAddOutlined, DeleteOutlined, EditOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { useSelector } from "react-redux";
 import EditProduct from "./EditProduct";
 import { Form } from 'antd';
 import Variant from "./Variant";
+import Loading from "../../LoadingComponents/Loading";
 
 const Product = () => {
     const user = useSelector((state) => state.user)
@@ -30,23 +31,32 @@ const Product = () => {
     const [deleteConfirmationProductId, setDeleteConfirmationProductId] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const [loading, setLoading] = useState(true)
+
+    const [triggerSearch, setTriggerSearch] = useState(false);
     const handleSearch = (query) => {
+        setLoading(true)
         setSearchQuery(query);
+        setTriggerSearch(!triggerSearch);
     };
     useEffect(() => {
         if (searchQuery.trim() !== '') {
             axios.get(`${process.env.REACT_APP_API_URL}/product/searchProductAdmin?keyword=${searchQuery}`)
                 .then((response) => {
                     setSearchResults(response.data.data);
+                    setProductData([])
                     setSelectedCategory(null)
+                    setLoading(false)
                 })
                 .catch((error) => {
                     console.error('Error searching products:', error);
+                    setLoading(false)
                 });
         } else {
             setSearchResults([]);
+            setLoading(false)
         }
-    }, [searchQuery]);
+    }, [searchQuery, triggerSearch,reloadProductData]);
     const toggleDeleteConfirmationModal = (productId) => {
         setDeleteConfirmationProductId(productId);
     };
@@ -54,15 +64,21 @@ const Product = () => {
         axios
             .delete(`${process.env.REACT_APP_API_URL}/product/delete/${productId}`, { headers })
             .then((response) => {
+                if (searchResults) {
+                    const updatedProducts = searchResults.filter(product => product._id !== productId);
+                    setSearchResults(updatedProducts)
+                }
                 const updatedProducts = productData.filter(product => product._id !== productId);
                 message.success('Xoá sản phẩm thành công')
                 setProductData(updatedProducts);
+
             })
             .catch((error) => {
                 console.error('Lỗi khi xóa sản phẩm: ', error);
             });
     };
     useEffect(() => {
+        if (searchQuery.trim() === '') {
         axios
             .get(`${process.env.REACT_APP_API_URL}/category/getAll`)
             .then((response) => {
@@ -70,15 +86,19 @@ const Product = () => {
                 if (response.data.data.length > 0) {
                     handleCategoryClick(response.data.data[0]._id);
                 }
+                setLoading(false)
             })
             .catch((error) => {
                 console.error('Lỗi khi gọi API: ', error);
             });
+        }
     }, [reloadProductData]);
     const handlePageChange = (page) => {
+        setLoading(true)
         handleCategoryClick(selectedCategory, page);
     };
     const handleCategoryClick = (categoryId, page = 1) => {
+        setLoading(true)
         axios
             .get(`${process.env.REACT_APP_API_URL}/product/getIdByCategory/${categoryId}?page=${page}`)
             .then((response) => {
@@ -89,9 +109,11 @@ const Product = () => {
                 setCurrentPage(response.data.pageInfo.currentPage);
                 setTotalPages(response.data.pageInfo.totalPages);
                 setTotalProduct(response.data.pageInfo.totalProducts)
+                setLoading(false)
             })
             .catch((error) => {
                 console.error('Lỗi khi gọi API: ', error);
+                setLoading(false)
             });
     };
     const handleToggleHide = (productId, checked) => {
@@ -99,6 +121,16 @@ const Product = () => {
             isHide: checked,
         }, { headers })
             .then((response) => {
+                if (searchResults) {
+                    const updatedProduct = {
+                        ...searchResults.find(product => product._id === productId),
+                        isHide: checked,
+                    };
+                    const updatedProducts = searchResults.map(product =>
+                        product._id === productId ? updatedProduct : product
+                    );
+                    setSearchResults(updatedProducts)
+                }
                 const updatedProduct = {
                     ...productData.find(product => product._id === productId),
                     isHide: checked,
@@ -118,6 +150,7 @@ const Product = () => {
         setCentredModal(true);
     };
     const closeModal = () => {
+        setLoading(true)
         setCentredModal(false);
         setReloadProductData(!reloadProductData);
         form.resetFields();
@@ -129,6 +162,7 @@ const Product = () => {
         setProductId(productId);
     };
     const closeModal1 = () => {
+        setLoading(true)
         setCentredModal1(false);
         setReloadProductData(!reloadProductData);
     };
@@ -149,7 +183,8 @@ const Product = () => {
                     <Search style={{ width: '100%' }}
                         placeholder="Tìm kiếm sản phẩm"
                         onSearch={handleSearch}
-                        enterButton />
+                        enterButton
+                        size="large" />
                 </div>
                 <div style={{ justifyContent: 'end', width: '50%', display: 'flex' }}>
                     <MDBBtn rounded style={{ backgroundColor: '#B63245' }} onClick={toggleOpen}>
@@ -157,13 +192,12 @@ const Product = () => {
                     </MDBBtn>
                 </div>
             </div>
-
-            <div style={{ marginTop: '10px' }}>
+            <div style={{ marginTop: '10px', display:'flex', gap:'10px', flexWrap:'nowrap', overflow:'auto'}}>
                 {category.map((category) => (
                     <MDBBtn
                         outline color='secondary'
                         key={category._id}
-                        style={{ marginRight: '10px' }}
+                        style={{ minWidth:'150px' }}
                         onClick={() => handleCategoryClick(category._id)}
                         className={`memory-button ${selectedCategory === category._id ? 'selected' : ''}`}
                     >
@@ -171,147 +205,152 @@ const Product = () => {
                     </MDBBtn>
                 ))}
             </div>
+            <div style={{ marginTop: '15px', overflowY: 'auto', overflowX: 'auto' }}>
+                <Loading isLoading={loading}>
+                    <MDBTable bordered align='middle' className='floating-table'>
 
-            <div style={{ marginTop: '15px' }}>
-                <MDBTable bordered align='middle' className='floating-table'>
-
-                    <MDBTableHead>
-                        <tr style={{ textAlign: 'center', color: '#fff', backgroundColor: '#B63245' }}>
-                            <th scope='col' >Sản phẩm</th>
-                            <th scope='col'>Thương hiệu</th>
-                            <th scope='col'>Ngày ra mắt</th>
-                            <th scope='col'>Bảo hành/tháng</th>
-                            <th scope='col'>Ẩn/Hiện</th>
-                            <th scope='col'>Thao tác</th>
-                        </tr>
-                    </MDBTableHead>
-                    <MDBTableBody>
-                        {searchResults.length > 0 ? (
-                            searchResults.map(product => (
-                                <tr key={product._id} style={{ textAlign: 'center' }}>
-                                    <td>
-                                        <div className='d-flex align-items-center'>
-                                            <img
-                                                src={product.thumnails[0]}
-                                                alt={product.name}
-                                                style={{ width: '45px', height: '45px' }}
-                                            />
-                                            <div className='ms-3'>
-                                                <p className='fw-bold mb-1'>{product.name}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <MDBBadge color='success' pill>
-                                            {product.brand.name}
-                                        </MDBBadge>
-                                    </td>
-                                    <td>
-                                        <p className='fw-normal mb-1'>{product.releaseTime}</p>
-                                    </td>
-                                    <td>{product.warrantyPeriod}</td>
-                                    <td>
-                                        <MDBBtn color='link' rounded size='sm'>
-                                            <Switch checked={!product.isHide} onChange={(checked) => handleToggleHide(product._id, !checked)} />
-                                        </MDBBtn>
-                                    </td>
-                                    <td>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                        <Tooltip title="Danh sách biến thể">
-                                                <div style={{ marginRight: '10px' }}>
-                                                    <AppstoreOutlined onClick={() => toggleOpen2(product._id)} />
-                                                </div>
-                                            </Tooltip>
-                                            <Tooltip title="Chỉnh sửa">
-                                                <div style={{ marginRight: '10px' }}>
-                                                    <EditOutlined onClick={() => toggleOpen1(product._id)} />
-                                                </div>
-                                            </Tooltip>
-                                            <Tooltip title="Xóa">
-                                                <div>
-                                                    <DeleteOutlined onClick={() => toggleDeleteConfirmationModal(product._id)} />
-                                                    <Modal
-                                                        title="Xác nhận xoá sản phẩm"
-                                                        visible={deleteConfirmationProductId === product._id}
-                                                        onOk={() => {
-                                                            handleDeleteProduct(product._id);
-                                                            setDeleteConfirmationProductId(null);
-                                                        }}
-                                                        onCancel={() => setDeleteConfirmationProductId(null)}
-                                                    >
-                                                        <p>Bạn có chắc chắn muốn xoá sản phẩm {product.name} này?</p>
-                                                    </Modal>
-                                                </div>
-                                            </Tooltip>
-                                        </div>
-                                    </td>
+                        <MDBTableHead>
+                            <tr style={{ textAlign: 'center', color: '#fff', backgroundColor: '#B63245' }}>
+                                <th scope='col' >Sản phẩm</th>
+                                <th scope='col'>Thương hiệu</th>
+                                <th scope='col'>Ngày ra mắt</th>
+                                <th scope='col'>Bảo hành/tháng</th>
+                                <th scope='col'>Ẩn/Hiện</th>
+                                <th scope='col'>Thao tác</th>
+                            </tr>
+                        </MDBTableHead>
+                        <MDBTableBody>
+                            {(searchResults && searchResults.length === 0 && productData.length === 0) ? (
+                                <tr style={{ textAlign: 'center' }}>
+                                    <td colSpan="10">Không có sản phẩm tìm kiếm</td>
                                 </tr>
-                            ))
-                        ) : (
-                            productData.map(product => (
-                                <tr key={product._id} style={{ textAlign: 'center' }}>
-                                    <td>
-                                        <div className='d-flex align-items-center'>
-                                            <img
-                                                src={product.thumnails[0]}
-                                                alt={product.name}
-                                                style={{ width: '45px', height: '45px' }}
-                                            />
-                                            <div className='ms-3'>
-                                                <p className='fw-bold mb-1'>{product.name}</p>
+                            ) : searchResults.length > 0 ? (
+                                searchResults.map(product => (
+                                    <tr key={product._id} style={{ textAlign: 'center' }}>
+                                        <td>
+                                            <div className='d-flex align-items-center'>
+                                                <img
+                                                    src={product.thumnails[0]}
+                                                    alt={product.name}
+                                                    style={{ width: '45px', height: '45px' }}
+                                                />
+                                                <div className='ms-3'>
+                                                    <p className='fw-bold mb-1'>{product.name}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <MDBBadge color='success' pill>
-                                            {product.brand.name}
-                                        </MDBBadge>
-                                    </td>
-                                    <td>
-                                        <p className='fw-normal mb-1'>{product.releaseTime}</p>
-                                    </td>
-                                    <td>{product.warrantyPeriod}</td>
-                                    <td>
-                                        <MDBBtn color='link' rounded size='sm'>
-                                            <Switch checked={!product.isHide} onChange={(checked) => handleToggleHide(product._id, !checked)} />
-                                        </MDBBtn>
-                                    </td>
-                                    <td>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <Tooltip title="Danh sách biến thể">
-                                                <div style={{ marginRight: '10px' }}>
-                                                    <AppstoreOutlined onClick={() => toggleOpen2(product._id)} />
+                                        </td>
+                                        <td>
+                                            <MDBBadge color='success' pill>
+                                                {product.brand.name}
+                                            </MDBBadge>
+                                        </td>
+                                        <td>
+                                            <p className='fw-normal mb-1'>{product.releaseTime}</p>
+                                        </td>
+                                        <td>{product.warrantyPeriod}</td>
+                                        <td>
+                                            <MDBBtn color='link' rounded size='sm'>
+                                                <Switch checked={!product.isHide} onChange={(checked) => handleToggleHide(product._id, !checked)} />
+                                            </MDBBtn>
+                                        </td>
+                                        <td>
+                                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                                <Tooltip title="Danh sách biến thể">
+                                                    <div style={{ marginRight: '10px' }}>
+                                                        <AppstoreOutlined onClick={() => toggleOpen2(product._id)} />
+                                                    </div>
+                                                </Tooltip>
+                                                <Tooltip title="Chỉnh sửa">
+                                                    <div style={{ marginRight: '10px' }}>
+                                                        <EditOutlined onClick={() => toggleOpen1(product._id)} />
+                                                    </div>
+                                                </Tooltip>
+                                                <Tooltip title="Xóa">
+                                                    <div>
+                                                        <DeleteOutlined onClick={() => toggleDeleteConfirmationModal(product._id)} />
+                                                        <Modal
+                                                            title="Xác nhận xoá sản phẩm"
+                                                            visible={deleteConfirmationProductId === product._id}
+                                                            onOk={() => {
+                                                                handleDeleteProduct(product._id);
+                                                                setDeleteConfirmationProductId(null);
+                                                            }}
+                                                            onCancel={() => setDeleteConfirmationProductId(null)}
+                                                        >
+                                                            <p>Bạn có chắc chắn muốn xoá sản phẩm {product.name} này?</p>
+                                                        </Modal>
+                                                    </div>
+                                                </Tooltip>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                productData.map(product => (
+                                    <tr key={product._id} style={{ textAlign: 'center' }}>
+                                        <td>
+                                            <div className='d-flex align-items-center'>
+                                                <img
+                                                    src={product.thumnails[0]}
+                                                    alt={product.name}
+                                                    style={{ width: '45px', height: '45px' }}
+                                                />
+                                                <div className='ms-3'>
+                                                    <p className='fw-bold mb-1'>{product.name}</p>
                                                 </div>
-                                            </Tooltip>
-                                            <Tooltip title="Chỉnh sửa">
-                                                <div style={{ marginRight: '10px' }}>
-                                                    <EditOutlined onClick={() => toggleOpen1(product._id)} />
-                                                </div>
-                                            </Tooltip>
-                                            <Tooltip title="Xóa">
-                                                <div>
-                                                    <DeleteOutlined onClick={() => toggleDeleteConfirmationModal(product._id)} />
-                                                    <Modal
-                                                        title="Xác nhận xoá sản phẩm"
-                                                        visible={deleteConfirmationProductId === product._id}
-                                                        onOk={() => {
-                                                            handleDeleteProduct(product._id);
-                                                            setDeleteConfirmationProductId(null);
-                                                        }}
-                                                        onCancel={() => setDeleteConfirmationProductId(null)}
-                                                    >
-                                                        <p>Bạn có chắc chắn muốn xoá sản phẩm <strong>{product.name}</strong> này?</p>
-                                                    </Modal>
-                                                </div>
-                                            </Tooltip>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </MDBTableBody>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <MDBBadge color='success' pill>
+                                                {product.brand.name}
+                                            </MDBBadge>
+                                        </td>
+                                        <td>
+                                            <p className='fw-normal mb-1'>{product.releaseTime}</p>
+                                        </td>
+                                        <td>{product.warrantyPeriod}</td>
+                                        <td>
+                                            <MDBBtn color='link' rounded size='sm'>
+                                                <Switch checked={!product.isHide} onChange={(checked) => handleToggleHide(product._id, !checked)} />
+                                            </MDBBtn>
+                                        </td>
+                                        <td>
+                                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                                <Tooltip title="Danh sách biến thể">
+                                                    <div style={{ marginRight: '10px' }}>
+                                                        <AppstoreOutlined onClick={() => toggleOpen2(product._id)} />
+                                                    </div>
+                                                </Tooltip>
+                                                <Tooltip title="Chỉnh sửa">
+                                                    <div style={{ marginRight: '10px' }}>
+                                                        <EditOutlined onClick={() => toggleOpen1(product._id)} />
+                                                    </div>
+                                                </Tooltip>
+                                                <Tooltip title="Xóa">
+                                                    <div>
+                                                        <DeleteOutlined onClick={() => toggleDeleteConfirmationModal(product._id)} />
+                                                        <Modal
+                                                            title="Xác nhận xoá sản phẩm"
+                                                            visible={deleteConfirmationProductId === product._id}
+                                                            onOk={() => {
+                                                                handleDeleteProduct(product._id);
+                                                                setDeleteConfirmationProductId(null);
+                                                            }}
+                                                            onCancel={() => setDeleteConfirmationProductId(null)}
+                                                        >
+                                                            <p>Bạn có chắc chắn muốn xoá sản phẩm <strong>{product.name}</strong> này?</p>
+                                                        </Modal>
+                                                    </div>
+                                                </Tooltip>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </MDBTableBody>
 
-                </MDBTable>
+                    </MDBTable>
+                </Loading>
                 {searchResults.length === 0 && (
                     <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
                         <nav aria-label='Page navigation example'>

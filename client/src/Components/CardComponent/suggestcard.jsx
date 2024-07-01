@@ -17,7 +17,7 @@ function SuggestCard({ searchKeyword }) {
       }
       setLoading(true);
       const timeout = setTimeout(() => {
-        getCategoryByName(searchKeyword);
+        performSearch(searchKeyword);
       }, 500);
       setTypingTimeout(timeout);
     } else {
@@ -25,17 +25,22 @@ function SuggestCard({ searchKeyword }) {
     }
   }, [searchKeyword]);
 
-  const getCategoryByName = async (keyword) => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${keyword}`);
-      const productsData = response.data;
-      setSearchedProducts(productsData);
-      setLoading(false);
-    } catch (error) {
-      console.error('Lỗi:', error);
-      setLoading(false);
-    }
-  };
+  const performSearch = (keyword) => {
+    const params = {
+        keyword,
+    };
+
+    axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct`, { params })
+        .then((response) => {
+            const { productVariants, totalCount, totalPages } = response.data;
+            setSearchedProducts(productVariants);
+            setLoading(false);
+        })
+        .catch((error) => {
+            console.error('Lỗi khi gọi API tìm kiếm: ', error);
+            setLoading(false);
+        });
+};
 
   const handleNavLinkClick = () => {
     setSearchedProducts([]);

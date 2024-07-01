@@ -5,6 +5,7 @@ import { Pagination, Rate } from 'antd';
 import { WrapperFilterCard } from './styled';
 import Loading from '../LoadingComponents/Loading';
 import SaleProduct from '../Slider/saleProduct';
+import { useSelector } from 'react-redux';
 
 function ListProductNew({ minPrice, maxPrice, selectedMemory, nameProduct, sort }) {
     const { nameCategory, nameBrand } = useParams();
@@ -18,19 +19,34 @@ function ListProductNew({ minPrice, maxPrice, selectedMemory, nameProduct, sort 
     const [totalPages, setTotalPages] = useState(1);
     const [categoryId, setCategoryId] = useState(null);
     const [brandId, setBrandId] = useState(null);
-    useEffect(() => {
-        setLoading(true);
-        if (searchKeyword) {
-            performSearch(searchKeyword);
-        }
-    }, [searchKeyword]);
+    const pageSize = 10;
 
-    const performSearch = (keyword) => {
-        axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${keyword}`)
+    useEffect(() => {
+        fetchCategoryAndBrandIds();
+    }, [nameCategory, nameBrand, searchKeyword]);
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [minPrice, maxPrice, selectedMemory, nameProduct, sort, categoryId, brandId, searchKeyword]);
+
+    const performSearch = (keyword, page) => {
+        const params = {
+            keyword,
+            minPrice,
+            maxPrice,
+            memory: selectedMemory,
+            sort,
+            page,
+            limit: pageSize,
+            categoryId,
+            brandId,
+        };
+
+        axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct`, { params })
             .then((response) => {
-                const productsData = response.data;
-                setProducts(productsData);
-                console.log(productsData)
+                const { productVariants, totalCount, totalPages } = response.data;
+                setProducts(productVariants);
+                setTotalPages(totalPages);
+                setNoProductFound(productVariants.length === 0);
                 setLoading(false);
             })
             .catch((error) => {
@@ -38,31 +54,14 @@ function ListProductNew({ minPrice, maxPrice, selectedMemory, nameProduct, sort 
                 setLoading(false);
             });
     };
-    const pageSize = 10;
-
     useEffect(() => {
-        let shouldFetchIds = false;
-
-        if (nameCategory || (nameBrand && nameCategory)) {
-            shouldFetchIds = true;
+        setLoading(true);
+        if (searchKeyword) {
+            performSearch(searchKeyword, currentPage);
+        } else {
+            fetchProducts(currentPage);
         }
-
-        if (shouldFetchIds) {
-            fetchCategoryAndBrandIds();
-        }
-    }, [nameCategory, nameBrand]);
-
-    useEffect(() => {
-        let shouldFetchIds = false;
-
-        if (nameCategory || (nameBrand && nameCategory)) {
-            shouldFetchIds = true;
-        }
-
-        if (shouldFetchIds) {
-            fetchProducts();
-        }
-    }, [minPrice, maxPrice, selectedMemory, nameProduct, categoryId, brandId, sort, currentPage]);
+    }, [minPrice, maxPrice, selectedMemory, nameProduct, categoryId, brandId, sort, currentPage, searchKeyword]);
 
 
     const fetchCategoryAndBrandIds = async () => {
@@ -84,16 +83,16 @@ function ListProductNew({ minPrice, maxPrice, selectedMemory, nameProduct, sort 
         setLoading(false);
     };
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (page) => {
         setLoading(true);
         try {
             const params = {
                 minPrice,
                 maxPrice,
                 memory: selectedMemory,
-                page: currentPage,
+                page,
                 limit: pageSize,
-                sort: sort,
+                sort,
                 categoryId,
                 brandId,
             };
@@ -128,7 +127,17 @@ function ListProductNew({ minPrice, maxPrice, selectedMemory, nameProduct, sort 
     const calculateTotalRatings = (product) => {
         return product.ratings.length;
     };
-
+    const user = useSelector((state) => state.user);
+    const handleProductClick = async (productId) => {
+        try {
+            await axios.post(`${process.env.REACT_APP_API_URL}/recommend/saveAccess`, {
+                userId: user._id,
+                productId: productId
+            });
+        } catch (error) {
+            console.error('Lỗi khi lưu thông tin truy cập:', error);
+        }
+    };
     return (
         <Loading isLoading={loading}>
             <div style={{ width: '100%' }}>
@@ -154,7 +163,7 @@ function ListProductNew({ minPrice, maxPrice, selectedMemory, nameProduct, sort 
                                 })
                                 .map((product) => (
                                     <li className='box' key={product._id + product.memory} style={{ padding: '0' }}>
-                                        <NavLink className='card' to={`/product/${product.productName.name}/${product.memory}`}>
+                                        <NavLink className='card' to={`/product/${product.productName.name}/${product.memory}`} onClick={() => handleProductClick(product.productName)}>
                                             <div key={product._id} className='item-label'>
                                                 {product.oldPrice && (
                                                     <span className='lb-dis'>

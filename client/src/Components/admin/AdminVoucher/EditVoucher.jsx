@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
-import { DatePicker, message, Upload } from 'antd';
+import { message, Upload } from 'antd';
 import {
   Button,
   Form,
@@ -8,8 +8,11 @@ import {
   Select
 } from 'antd';
 import axios from 'axios';
-import moment from 'moment';  
+import moment from 'moment';
 import { useSelector } from 'react-redux';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import '../AdminNews/datepicker.css'
 const { Option } = Select
 const formItemLayout = {
   labelCol: {
@@ -42,7 +45,7 @@ const tailFormItemLayout = {
   },
 };
 
-const EditVoucher = ({closeModal,voucherId}) => {
+const EditVoucher = ({ closeModal, voucherId }) => {
   const user = useSelector((state) => state.user)
   const headers = {
     token: `Bearers ${user.access_token}`,
@@ -50,47 +53,55 @@ const EditVoucher = ({closeModal,voucherId}) => {
   const [form] = Form.useForm();
   const handleCloseModal = () => {
     closeModal();
+    setReload(!reload)
   };
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [reload, setReload] = useState(false);
+
   useEffect(() => {
     if (voucherId) {
-        axios.get(`${process.env.REACT_APP_API_URL}/voucher/getDetails/${voucherId}`, { headers })
-            .then((response) => {
-                const voucherData = response.data.data;
-                const startDateParts = voucherData.startDate.split('/');
-                const endDateParts = voucherData.endDate.split('/');
-                const startDate = moment(`${startDateParts[2]}-${startDateParts[1]}-${startDateParts[0]}`, 'YYYY-MM-DD');
-                const endDate = moment(`${endDateParts[2]}-${endDateParts[1]}-${endDateParts[0]}`, 'YYYY-MM-DD');
-                form.setFieldsValue({
-                    name: voucherData.name,
-                    code: voucherData.code,
-                    quantity: voucherData.quantity,
-                    discount: voucherData.discount * 100,
-                    maxPrice: voucherData.maxPrice,
-                    startDate, 
-                    endDate,
-                    applicablePaymentMethod: voucherData.applicablePaymentMethod,
-                    applicableProductTypes: voucherData.applicableProductTypes
-                });
-            })
-            .catch((error) => {
-                console.error('Error fetching product:', error);
-            });
+      axios.get(`${process.env.REACT_APP_API_URL}/voucher/getDetails/${voucherId}`, { headers })
+        .then((response) => {
+          const voucherData = response.data.data;
+          const startDateData = voucherData.startDate.split('/');
+          const starDateFormat = moment(`${startDateData[2]}-${startDateData[1]}-${startDateData[0]} ${voucherData.startDate}`, 'YYYY-MM-DD').toDate();
+          const endDateData = voucherData.endDate.split('/');
+          const endDateFormat = moment(`${endDateData[2]}-${endDateData[1]}-${endDateData[0]} ${voucherData.endDate}`, 'YYYY-MM-DD').toDate();
+          form.setFieldsValue({
+            name: voucherData.name,
+            code: voucherData.code,
+            quantity: voucherData.quantity,
+            discount: voucherData.discount * 100,
+            maxPrice: voucherData.maxPrice,
+            // startDate: moment(voucherData.startDate, 'dd/MM/yyyy').format('yyyy-MM-dd'),
+            // endDate: moment(voucherData.endDate, 'dd/MM/yyyy').format('yyyy-MM-dd'),
+            applicablePaymentMethod: voucherData.applicablePaymentMethod,
+            applicableProductTypes: voucherData.applicableProductTypes
+          });
+          setStartDate(starDateFormat);
+          setEndDate(endDateFormat);
+        })
+        .catch((error) => {
+          console.error('Error fetching product:', error);
+        });
     }
-}, [voucherId, form]);
-const [categories, setCategories] = useState([]);
-useEffect(() => {
-  axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`)
-    .then((response) => {
-      setCategories(response.data.data);
-    })
-    .catch((error) => {
-      console.error('Error fetching categories:', error);
-    });
-}, []);
-const onFinish = async (values) => {
+  }, [voucherId, form, reload]);
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`)
+      .then((response) => {
+        setCategories(response.data.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching categories:', error);
+      });
+  }, []);
+  const onFinish = async (values) => {
     try {
       const response = await axios.put(`${process.env.REACT_APP_API_URL}/voucher/updateVoucher/${voucherId}`, values, { headers });
       if (response.data.success) {
+        closeModal();
         message.success('Chỉnh sửa thành công');
       } else {
         message.error(response.data.error || 'Đã xảy ra lỗi khi cập nhật voucher');
@@ -98,7 +109,7 @@ const onFinish = async (values) => {
     } catch (error) {
       message.error(error.response.data.error);
     }
-  };  
+  };
   return (
     <Form
       {...formItemLayout}
@@ -160,26 +171,25 @@ const onFinish = async (values) => {
       <Form.Item
         name="startDate"
         label="Ngày bắt đầu"
-        rules={[
-          {
-            required: true,
-            message: 'Chọn ngày bắt đầu',
-          },
-        ]}
+
       >
-        <DatePicker locale={{ momentLocale: 'vi' }} />
+        <DatePicker
+          selected={startDate}
+          onChange={(date) => setStartDate(date)}
+          dateFormat="dd/MM/yyyy"
+          showYearDropdown
+        />
       </Form.Item>
       <Form.Item
         name="endDate"
         label="Ngày kết thúc"
-        rules={[
-          {
-            required: true,
-            message: 'Chọn ngày kết thúc',
-          },
-        ]}
       >
-        <DatePicker />
+        <DatePicker
+          selected={endDate}
+          onChange={(date) => setEndDate(date)}
+          dateFormat="dd/MM/yyyy"
+          showYearDropdown
+        />
       </Form.Item>
       <Form.Item
         name="maxPrice"
@@ -228,7 +238,7 @@ const onFinish = async (values) => {
         </Select>
       </Form.Item>
       <Form.Item {...tailFormItemLayout}>
-      <div style={{ display: 'flex', gap: '20px' }}>
+        <div style={{ display: 'flex', gap: '20px' }}>
           <Button type="primary" size="large" htmlType="submit">
             Sửa voucher
           </Button>

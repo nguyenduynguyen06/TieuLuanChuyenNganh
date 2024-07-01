@@ -1,16 +1,13 @@
-import React, { useEffect,useState } from 'react';
-import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
-import { UploadOutlined } from '@ant-design/icons';
-import { message, Select, Upload } from 'antd';
-import {
-    Button,
-    Form,
-    Input,
-} from 'antd';
+import 'react-quill/dist/quill.snow.css';
 import { useSelector } from 'react-redux';
-const { Option } = Select;
+import AvatarEditor from 'react-avatar-editor';
+import { UploadOutlined } from '@ant-design/icons';
+import React, { useState, useEffect, useRef } from 'react';
+import { message, Upload, Button, Form, Input, Select, Modal, Slider } from 'antd';
 
+
+const { Option } = Select;
 const formItemLayout = {
     labelCol: {
         xs: {
@@ -34,62 +31,104 @@ const EditBrand = ({ closeModal, brandId }) => {
     const user = useSelector((state) => state.user);
     const [form] = Form.useForm();
     const [categories, setCategories] = useState([]);
+    const headers = {
+        token: `Bearer ${user.access_token}`,
+    };
+    const [reload, setReload] = useState(false);
+    const [uploadedFileName, setUploadedFileName] = useState(null);
+    const [preview, setPreview] = useState(null);
+    const [cropModalVisible, setCropModalVisible] = useState(false);
+    const [file, setFile] = useState(null);
+    const [scale, setScale] = useState(1);
+    const [uploading, setUploading] = useState(false);
+    const editorRef = useRef(null);
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`)
-          .then((response) => {
-            setCategories(response.data.data);
-          })
-          .catch((error) => {
-            console.error('Error fetching categories:', error);
-          });
-      }, []);
-    
+            .then((response) => {
+                setCategories(response.data.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching categories:', error);
+            });
+    }, []);
+
+    const handleCloseModal = () => {
+        closeModal();
+        setReload(!reload)
+    };
+
     useEffect(() => {
         if (brandId) {
-            axios.get(`${process.env.REACT_APP_API_URL}/brand/getAll`)
+            axios.get(`${process.env.REACT_APP_API_URL}/brand/getSingleBrand/${brandId}`, { headers })
                 .then((response) => {
                     const brandData = response.data.data;
                     form.setFieldsValue({
                         name: brandData.name,
+                        categoryName: brandData.categoryId.name,
+                        country: brandData.country
                     });
                 })
                 .catch((error) => {
-                    console.error('Error fetching categories:', error);
+                    console.error('Error fetching brands:', error);
                 });
         }
-    }, [brandId, form]);
+    }, [brandId, form, reload]);
 
+    const handleBeforeUpload = (file) => {
+        if (checkFile(file)) {
+            const reader = new FileReader();
+            reader.addEventListener('load', () => setPreview(reader.result));
+            reader.readAsDataURL(file);
+            setFile(file);
+            setCropModalVisible(true);
+        }
+        return false; // Prevent immediate upload
+    };
 
-
-    const props = {
-        name: 'image',
-        action: `${process.env.REACT_APP_API_URL}/upload`,
-        headers: {
-            authorization: 'authorization-text',
-        },
-        accept: '.jpg, .jpeg, .png',
-        beforeUpload: (file) => {
-            const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-            if (!isJpgOrPng) {
-                message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
-            }
-            return isJpgOrPng;
-        },
-        onChange(info) {
-            if (info.file.status !== 'uploading') {
-                console.log(info.file);
-            }
-            if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
-                const uploadedFilePaths = info.file.response.imageUrl
-                console.log('uploadedFilePaths', uploadedFilePaths)
-                form.setFieldsValue({ picture: uploadedFilePaths });
-            } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
+    const checkFile = (file) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        if (!isJpgOrPng) {
+            message.error('Bạn chỉ có thể tải lên tệp tin JPG/PNG!');
+        }
+        return isJpgOrPng;
+    };
+    const handleCrop = async () => {
+        if (editorRef.current) {
+            const canvas = editorRef.current.getImageScaledToCanvas().toDataURL();
+            const blob = await (await fetch(canvas)).blob();
+            const formData = new FormData();
+            formData.append('image', blob, file.name);
+            setUploading(true);
+            try {
+                const response = await axios.post(`${process.env.REACT_APP_API_URL}/upload`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                if (response.status === 200) {
+                    message.success('Tải ảnh lên thành công!');
+                    setUploadedFileName(file.name); // Set the uploaded file name
+                    form.setFieldsValue({ picture: response.data.imageUrl });
+                    setCropModalVisible(false);
+                } else {
+                    message.error('Tải ảnh lên thất bại.');
+                }
+            } catch (error) {
+                message.error('Tải ảnh lên thất bại.');
+            } finally {
+                setUploading(false);
             }
         }
     };
+    const handleChangeImage = () => {
+        setCropModalVisible(false);
+        setTimeout(() => {
+            fileInputRef.current.click();
+        }, 100);
+    };
+
 
     const onFinish = (values) => {
         const headers = {
@@ -155,9 +194,14 @@ const EditBrand = ({ closeModal, brandId }) => {
                     },
                 ]}
             >
-                <Upload {...props}>
+                <Upload
+                    beforeUpload={handleBeforeUpload}
+                    showUploadList={false}
+                >
                     <Button icon={<UploadOutlined />}>Ảnh</Button>
                 </Upload>
+                                {uploadedFileName && <div>Tệp đã tải lên: {uploadedFileName}</div>}
+
             </Form.Item>
             <Form.Item
                 name="country"
@@ -176,11 +220,55 @@ const EditBrand = ({ closeModal, brandId }) => {
                     <Button type="primary" size="large" htmlType="submit">
                         Sửa thương hiệu
                     </Button>
-                    <Button type="primary" size="large" danger onClick={closeModal}>
+                    <Button type="primary" size="large" danger onClick={handleCloseModal}>
                         Huỷ bỏ
                     </Button>
                 </div>
             </Form.Item>
+            <Modal
+                title="Thêm ảnh nền tin tức"
+                width={700}
+                maskClosable={false}
+                visible={cropModalVisible}
+                onCancel={() => setCropModalVisible(false)}
+                footer={[
+                    <Button key="change" onClick={handleChangeImage}>
+                        Đổi ảnh khác
+                    </Button>,
+                    <Button key="cancel" onClick={() => setCropModalVisible(false)}>
+                        Hủy
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={handleCrop} style={{ backgroundColor: '#C13346', borderColor: '#C13346', color: '#fff' }} disabled={uploading}>
+                        {uploading ? 'Đang tải lên...' : 'Tải lên'}
+                    </Button>,
+                ]}
+            >
+                {preview && (
+                    <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                            <AvatarEditor
+                                ref={editorRef}
+                                image={preview}
+                                width={635.5}
+                                height={217.75}
+                                border={10}
+                                scale={scale}
+                                rotate={0}
+                            />
+                        </div>
+                        <Slider
+                            min={1}
+                            max={10}
+                            step={0.1}
+                            value={scale}
+                            onChange={(value) => setScale(value)}
+                        />
+                    </div>
+                )}
+            </Modal>
+
+            <input type="file" accept="image/*" ref={fileInputRef} onChange={(e) => handleBeforeUpload(e.target.files[0])} style={{ display: 'none' }} />
+
         </Form>
     );
 };

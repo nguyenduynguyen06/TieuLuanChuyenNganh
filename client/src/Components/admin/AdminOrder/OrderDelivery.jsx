@@ -33,48 +33,58 @@ const OrderDelivery = () => {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [loading, setLoading] = useState(true)
     const [reason, setReason] = useState('');
+    const [triggerSearch, setTriggerSearch] = useState(false);
     const handleChangeReason = (e) => {
         setReason(e.target.value);
     };
 
     useEffect(() => {
-        setLoading(true);
-        fetchOrders(currentPage);
-    }, [currentPage]);
-
-    const [triggerSearch, setTriggerSearch] = useState(false);
-
-    const handleSearch = (query) => {
-        setLoading(true);
-        setSearchQuery(query);
-        setTriggerSearch(!triggerSearch);
-    };
-
-    useEffect(() => {
-        if (searchQuery.trim() !== '') {
-            axios.get(`${process.env.REACT_APP_API_URL}/order/searchOrderDelivery?orderCode=${searchQuery}`, { headers })
-                .then((response) => {
-                    setSearchResults(response.data.data);
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    setSearchResults(null);
-                    setOrderData([]);
-                    console.error('Error searching products:', error);
-                    setLoading(false);
-                });
+        if (!searchResults) {
+            setLoading(true);
+            fetchOrders(currentPage);
         } else {
-            setSearchResults(null);
-            setLoading(false);
+            handleSearch(searchQuery, selectedShippingMethod, currentPage)
         }
-    }, [searchQuery, triggerSearch]);
+    }, [currentPage]);
+    useEffect(() => {
+        if (triggerSearch) {
+            const delayDebounceFn = setTimeout(() => {
+                handleSearch(searchQuery, selectedShippingMethod);
+                setTriggerSearch(false);
+            }, 400);
 
-    const fetchOrders = (page) => {
+            return () => clearTimeout(delayDebounceFn);
+        }
+    }, [triggerSearch]);
+
+    const handleSearch = (query, shippingMethod, page = 1) => {
+        setLoading(true);
+        axios.get(`${process.env.REACT_APP_API_URL}/order/searchOrderDelivery?q=${query}&page=${page}&shippingMethod=${shippingMethod}`, { headers })
+            .then((response) => {
+                setSearchResults(response.data.data);
+                setTotalPages(response.data.pageInfo.totalPages)
+                if (response.data.data.length === 0 && currentPage > 1) {
+                    setCurrentPage(currentPage - 1)
+                }
+                setLoading(false);
+            })
+            .catch((error) => {
+                setSearchResults(null);
+                setOrderData([]);
+                console.error('Error searching products:', error);
+                setLoading(false);
+            });
+    };
+    const fetchOrders = (page = 1) => {
         axios
             .get(`${process.env.REACT_APP_API_URL}/order/getAllOrdersDelivery?page=${page}`, { headers })
             .then((response) => {
+                setSearchResults(null);
                 setOrderData(response.data.data);
                 setTotalPages(response.data.pageInfo.totalPages);
+                if (response.data.data.length === 0 && currentPage > 1) {
+                    setCurrentPage(currentPage - 1)
+                }
                 setLoading(false)
             })
             .catch((error) => {
@@ -86,27 +96,15 @@ const OrderDelivery = () => {
     const handleShippingMethodChange = (e) => {
         setSelectedShippingMethod(e.target.value);
     };
-
-    const handleConfirm = () => {
-        setLoading(true);
-        fetchOrdersWithShippingMethod(selectedShippingMethod, currentPage);
+    const handleSearchInputChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+    const handleReset = () => {
+        setLoading(true)
+        setCurrentPage(1)
+        fetchOrders(currentPage)
     };
 
-    const fetchOrdersWithShippingMethod = (shippingMethod, page) => {
-        axios
-            .get(`${process.env.REACT_APP_API_URL}/order/getAllOrdersDelivery?page=${page}&shippingMethod=${shippingMethod}`, { headers })
-            .then((response) => {
-                setOrderData(response.data.data);
-                setTotalPages(response.data.pageInfo.totalPages);
-                setSearchResults(null);
-                setSearchQuery('');
-                setLoading(false)
-            })
-            .catch((error) => {
-                setLoading(false)
-                console.error('Lỗi khi gọi API: ', error);
-            });
-    };
 
     const handleMenuClick = (e, order) => {
         if (order.status === 'Đang giao hàng') {
@@ -161,8 +159,14 @@ const OrderDelivery = () => {
         axios
             .put(`${process.env.REACT_APP_API_URL}/order/completeOrder/${orderId}`, null, { headers })
             .then((response) => {
+                setLoading(true)
                 message.success('Xác nhận thành công')
-                fetchOrders(currentPage);
+                if (!searchResults) {
+                    fetchOrders(currentPage);
+                }
+                else {
+                    handleSearch(searchQuery, selectedShippingMethod, currentPage)
+                }
             })
             .catch((error) => {
                 console.error('Lỗi khi cập nhật đơn hàng: ', error);
@@ -173,8 +177,14 @@ const OrderDelivery = () => {
         axios
             .put(`${process.env.REACT_APP_API_URL}/order/cancelOrderWithReason/${orderId}`, { reason }, { headers })
             .then((response) => {
+                setLoading(true)
                 message.success('Huỷ thành công')
-                fetchOrders(currentPage);
+                if (!searchResults) {
+                    fetchOrders(currentPage);
+                }
+                else {
+                    handleSearch(searchQuery, selectedShippingMethod, currentPage)
+                }
             })
             .catch((error) => {
                 console.error('Lỗi khi huỷ đơn hàng: ', error);
@@ -184,8 +194,14 @@ const OrderDelivery = () => {
         axios
             .put(`${process.env.REACT_APP_API_URL}/order/deliveredOrder/${orderId}`, {}, { headers })
             .then((response) => {
+                setLoading(true)
                 message.success('Xác nhận thành công')
-                fetchOrders(currentPage);
+                if (!searchResults) {
+                    fetchOrders(currentPage);
+                }
+                else {
+                    handleSearch(searchQuery, selectedShippingMethod, currentPage)
+                }
             })
             .catch((error) => {
                 console.error('Lỗi khi cập nhật đơn hàng: ', error);
@@ -209,36 +225,42 @@ const OrderDelivery = () => {
         }
     };
     const [centredModal2, setCentredModal2] = useState(false);
-
+    const [orderShippingFee, setOrderShippingFee] = useState(0);
     const toggleOpen2 = (order) => {
         setOrderCode(order.orderCode)
         setSelectedOrderItems(order.items);
         setOrderVoucher(order.voucher)
         setOrderSubtotal(order.subTotal)
         setOrderTotalPay(order.totalPay)
+        setOrderShippingFee(order.shippingFee)
         setCentredModal2(true);
     };
     const closeModal2 = () => {
         setCentredModal2(false);
     };
-
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            setCurrentPage(1);
+            setTriggerSearch(true);
+        }
+    };
     return (
         <div>
             <WrapperHeader>Danh sách đơn hàng</WrapperHeader>
             <div style={{ display: 'flex' }}>
-                <div style={{ width: '50%' }}>
-                    <Search style={{ width: '100%' }}
+                <div style={{ width: '50%', marginRight: '10px' }}>
+                    <Input style={{ width: '100%' }}
                         placeholder="Tìm kiếm đơn hàng"
                         enterButton
-                        onSearch={handleSearch}
+                        onChange={handleSearchInputChange}
+                        onKeyDown={handleKeyDown}
+                        size="large"
                     />
                 </div>
-            </div>
-            <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
                 <div style={{ marginRight: '10px' }}>
 
                     <select
-                        style={{ padding: '5px', borderRadius: '5px', border: '1px solid #ccc', backgroundColor: '#fff' }}
+                        style={{ padding: '5px', borderRadius: '5px', border: '1px solid #ccc', backgroundColor: '#fff',height:'40px' }}
                         onChange={handleShippingMethodChange}
                     >
                         <option value="">Tất cả đơn hàng</option>
@@ -246,9 +268,21 @@ const OrderDelivery = () => {
                         <option value="Nhận tại cửa hàng">Nhận tại cửa hàng</option>
                     </select>
                 </div>
-                <div>
-                    <MDBBtn rounded style={{ backgroundColor: '#0000FF' }} onClick={handleConfirm}>
+                <div style={{ justifyContent: 'start', width: '50%', display: 'flex', gap: "20px" }}>
+                    <MDBBtn
+                        style={{ backgroundColor: '#B63245' }}
+                        onClick={() => {
+                            setCurrentPage(1);
+                            setTriggerSearch(true);
+                        }}
+                    >
                         Xác nhận
+                    </MDBBtn>
+                    <MDBBtn
+                        style={{ backgroundColor: '#B63245' }}
+                        onClick={handleReset}
+                    >
+                        Đặt lại
                     </MDBBtn>
                 </div>
             </div>
@@ -258,7 +292,7 @@ const OrderDelivery = () => {
                     <MDBTable bordered align='middle' className='floating-table'>
                         <MDBTableHead>
                             <tr style={{ textAlign: 'center', color: '#fff', backgroundColor: '#B63245' }}>
-                            <th scope='col' style={{ verticalAlign: 'middle', minWidth: '150px' }}>Mã đơn hàng</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '150px' }}>Mã đơn hàng</th>
                                 <th scope='col' style={{ verticalAlign: 'middle', minWidth: '200px' }}>Khách hàng</th>
                                 <th scope='col' style={{ verticalAlign: 'middle', minWidth: '150px' }}>Số điện thoại</th>
                                 <th scope='col' style={{ verticalAlign: 'middle', minWidth: '250px' }}>Địa chỉ</th>
@@ -273,34 +307,36 @@ const OrderDelivery = () => {
                         </MDBTableHead>
                         <MDBTableBody>
 
-                            {(!searchResults && orderData.length === 0) ? (
+                            {( searchResults && searchResults.length === 0 || !searchResults && orderData.length === 0) ? (
                                 <tr style={{ textAlign: 'center' }}>
                                     <td colSpan="10">Không có đơn hàng</td>
                                 </tr>
                             ) : searchResults ? (
-                                <tr style={{ textAlign: 'center' }}>
-                                    <td><p className='fw-bold mb-1'>{searchResults.orderCode}</p></td>
-                                    <td>{searchResults.userName}</td>
-                                    <td><p className='fw-normal mb-1'>   {searchResults.userPhone}</p></td>
-                                    <td>{searchResults.address}</td>
-                                    <td><MDBBadge color='primary' pill style={{ fontSize: '13px' }}>{searchResults.shippingMethod}</MDBBadge></td>
-                                    <td><MDBBadge color='warning' pill style={{ fontSize: '13px' }}>{searchResults.status}</MDBBadge></td>
-                                    <td><MDBBadge color='success' pill style={{ fontSize: '13px' }}>{searchResults.isPay}</MDBBadge></td>
-                                    <td>{searchResults.paymentMethod}</td>
-                                    <td>{searchResults.createDate}</td>
-                                    <td>
-                                        <Tooltip title="Danh sách sản phẩm của đơn hàng">
-                                            <AppstoreFilled onClick={() => toggleOpen2(searchResults)} />
-                                        </Tooltip>
-                                    </td>
-                                    <td>
-                                        <Dropdown overlay={menu(searchResults)} >
-                                            <Tooltip title="Thực hiện thao tác">
-                                                <CaretDownOutlined />
+                                searchResults.map((result) => (
+                                    <tr style={{ textAlign: 'center' }}>
+                                        <td><p className='fw-bold mb-1'>{result.orderCode}</p></td>
+                                        <td>{result.userName}</td>
+                                        <td><p className='fw-normal mb-1'>   {result.userPhone}</p></td>
+                                        <td>{result.address}</td>
+                                        <td><MDBBadge color='primary' pill style={{ fontSize: '13px' }}>{result.shippingMethod}</MDBBadge></td>
+                                        <td><MDBBadge color='warning' pill style={{ fontSize: '13px' }}>{result.status}</MDBBadge></td>
+                                        <td><MDBBadge color='success' pill style={{ fontSize: '13px' }}>{result.isPay}</MDBBadge></td>
+                                        <td>{result.paymentMethod}</td>
+                                        <td>{result.createDate}</td>
+                                        <td>
+                                            <Tooltip title="Danh sách sản phẩm của đơn hàng">
+                                                <AppstoreFilled onClick={() => toggleOpen2(result)} />
                                             </Tooltip>
-                                        </Dropdown>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td>
+                                            <Dropdown overlay={menu(result)} >
+                                                <Tooltip title="Thực hiện thao tác">
+                                                    <CaretDownOutlined />
+                                                </Tooltip>
+                                            </Dropdown>
+                                        </td>
+                                    </tr>
+                                ))
                             ) : (
                                 orderData.map(order => (
                                     <tr key={order._id} style={{ textAlign: 'center' }}>
@@ -380,7 +416,7 @@ const OrderDelivery = () => {
                     width={'70%'}
                     maskClosable={false}
                 >
-                    <ProductOrder closeModal={closeModal2} items={selectedOrderItems} orderCode={orderCode} orderVoucher={orderVoucher} orderSubtotal={orderSubtotal} ordertotalPay={ordertotalPay} />
+                    <ProductOrder closeModal={closeModal2} items={selectedOrderItems} orderCode={orderCode} orderVoucher={orderVoucher} orderSubtotal={orderSubtotal} ordertotalPay={ordertotalPay} orderShippingFee={orderShippingFee}/>
                 </Modal>
             </>
             {selectedOrder && (

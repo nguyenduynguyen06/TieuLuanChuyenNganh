@@ -9,6 +9,8 @@ const ReviewModal = ({  onClose, productId,orderCode }) => {
     const [content, setContent] = useState('');
     const [thumbnails, setThumbnails] = useState([]);
     const user = useSelector((state)=> state.user)
+    console.log('User:', user);
+
     const props = {
         name: 'images',
         action: `${process.env.REACT_APP_API_URL}/uploads`,
@@ -51,7 +53,7 @@ const ReviewModal = ({  onClose, productId,orderCode }) => {
 
     const submitReview = async () => {
         try {
-            const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/rating?productId=${productId}&userId=${user._id}&orderCode=${orderCode}`, {
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/rating?productId=${productId._id}&userId=${user._id}&orderCode=${orderCode}`, {
                 rating: rating,
                 comment: content,
                 pictures: thumbnails,
@@ -71,8 +73,7 @@ const ReviewModal = ({  onClose, productId,orderCode }) => {
     };
 
     return (
-        <div style={{ boxShadow: 'none' }}>
-            <div className="modal-content" style={{ padding: '10px' }}>
+            <div className="modal-content" style={{ padding: '10px', boxShadow:'none' }}>
                 <h4 style={{ textAlign: 'center' }}>Đánh giá sản phẩm</h4>
                 <label>Đánh giá:</label>
                 <Rate value={rating} onChange={handleRatingChange} />
@@ -94,9 +95,8 @@ const ReviewModal = ({  onClose, productId,orderCode }) => {
                     <Button icon={<UploadOutlined />}>Ảnh</Button>
                 </Upload>
                 <br />
-                <Button style={{ background: '#C13346', color: '#fff' }} onClick={submitReview}>Gửi đánh giá</Button>
+                <Button style={{ background: '#C13346', color: '#fff' }} onClick={submitReview} disabled={rating === 0}>Gửi đánh giá</Button>
             </div>
-        </div>
     );
 };
 

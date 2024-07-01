@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Dropdown, Flex, Menu } from 'antd';
+import { Button, Dropdown, Flex, Menu, Skeleton } from 'antd';
 import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 
@@ -61,7 +61,7 @@ const ListCate = () => {
         <Menu onClick={handleMouseEnter}>
             {categories.map(category => (
                 <SubMenu key={category._id} title={category.name} onMouseEnter={() => fetchBrands(category._id)}>
-                    {loading && <Menu.Item key={`${category._id}-loading`}>Loading...</Menu.Item>}
+                    {loading && <Menu.Item key={`${category._id}-loading`}><Skeleton active/></Menu.Item>}
                     {brands[category._id] && brands[category._id].map(brand => (
                         <Menu.Item key={`${category._id}-${brand._id}`}>
                             {brand.name}
@@ -76,7 +76,7 @@ const ListCate = () => {
         <Menu onClick={handleMenuClick} style={{ width: 200 }}>
             {categories.map(category => (
                 <SubMenu key={category._id} title={<NavLink style={{ color: 'black' }} to={`/lowtoHigh/${category.name}`}>{category.name}</NavLink>} onTitleClick={() => fetchBrands(category._id)}>
-                    {loading && <Menu.Item key={`${category._id}-loading`}>Loading...</Menu.Item>}
+                    {loading && <Menu.Item key={`${category._id}-loading`}><Skeleton active/></Menu.Item>}
                     {brands[category._id] && brands[category._id].map(brand => (
                         <Menu.Item key={`${category._id}-${brand._id}`}>
                             <NavLink to={`/lowtoHigh/${category.name}/${brand.name}`}>

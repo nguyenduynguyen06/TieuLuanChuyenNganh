@@ -265,29 +265,67 @@ const getProductVariants = async (req, res) => {
 };
 const searchProductVariantsByName = async (req, res) => {
   try {
-    const keyword = req.query.keyword;
+    const { keyword, minPrice, maxPrice, memory, sort, page = 1, limit = 10, categoryId, brandId } = req.query;
     const regex = new RegExp(keyword, 'i');
+
     let productFilter = {};
     if (regex) {
       productFilter.name = regex;
     }
-    let filter = {}
+    if (categoryId) {
+      productFilter.category = categoryId;
+    }
+    if (brandId) {
+      productFilter.brand = brandId;
+    }
+
     const products = await Product.find(productFilter);
     const productIds = products.map(product => product._id);
+
+    let filter = {};
     filter.productName = { $in: productIds };
+
+    if (minPrice && maxPrice) {
+      filter.newPrice = { $gte: minPrice, $lte: maxPrice };
+    }
+    if (memory) {
+      filter.memory = memory;
+    }
+
+    let sortOrder = {};
+    if (sort === 'asc') {
+      sortOrder.newPrice = 1;
+    } else if (sort === 'desc') {
+      sortOrder.newPrice = -1;
+    }
+
+    const skip = (page - 1) * limit;
+
+    const totalCount = await ProductVariant.countDocuments(filter);
 
     const productVariants = await ProductVariant.find(filter)
       .select('-attributes')
+      .sort(sortOrder)
+      .skip(skip)
+      .limit(parseInt(limit))
       .populate({
         path: 'productName',
         select: 'name thumnails properties isHide ratings',
       });
 
-    res.status(200).json(productVariants);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    res.status(200).json({
+      productVariants,
+      totalCount,
+      totalPages,
+      currentPage: page,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 module.exports = { searchProductVariantsByName,getProductVariants, deleteAttributeById, editAttribute, getAttributeDetailsById, getAttributesByVariantId, addProductVariant, deleteProductVariant, updateProductVariant, addAttributes, getVariantsByProductId, IdVariant };

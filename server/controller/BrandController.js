@@ -82,5 +82,20 @@ const deleteBrand = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+const getSingleBrand = async (req, res) => {
+  try {
+      const { id } = req.params;
 
-module.exports = { addBrand,getAllBrand,updateBrand,deleteBrand ,getAll};
+      const brand = await Brand.findById(id).populate('categoryId');
+
+      if (!brand) {
+          return res.status(404).json({ success: false, error: 'Không tìm thấy thương hiệu!' });
+      }
+
+      res.status(200).json({ success: true, data: brand });
+  } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports = { addBrand,getAllBrand,updateBrand,deleteBrand ,getAll, getSingleBrand};

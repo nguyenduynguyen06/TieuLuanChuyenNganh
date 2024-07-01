@@ -7,7 +7,7 @@ import { Dropdown, Menu, Modal, Switch, Tooltip, message } from 'antd';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 
-import { AppstoreAddOutlined, DeleteOutlined, EditOutlined, AppstoreOutlined, CaretDownOutlined } from '@ant-design/icons';
+import { CaretDownOutlined } from '@ant-design/icons';
 import { useSelector } from "react-redux";
 import NewVoucher from "./NewVoucher";
 import Loading from "../../LoadingComponents/Loading";
@@ -26,9 +26,37 @@ const Voucher = () => {
     const [voucherId, setVoucherId] = useState(null);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        fetchData(currentPage);
-        setLoading(false)
+        setLoading(true)
+        if (searchQuery.trim() === '') {
+            fetchData(currentPage);
+        }
     }, [currentPage, reloadData]);
+    const [triggerSearch, setTriggerSearch] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState(null);
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        setTriggerSearch(!triggerSearch);
+    };
+
+    useEffect(() => {
+        if (searchQuery.trim() !== '') {
+            axios.get(`${process.env.REACT_APP_API_URL}/voucher/searchVoucher?keyword=${searchQuery}`, { headers })
+                .then((response) => {
+                    setSearchResults(response.data.data);
+                    setLoading(false)
+                })
+                .catch((error) => {
+                    setSearchResults(null);
+                    setVoucher([]);
+                    setLoading(false)
+                });
+        } else {
+            setSearchQuery('');
+            setSearchResults(null);
+            setLoading(false)
+        }
+    }, [searchQuery, triggerSearch, reloadData]);
     const fetchData = (page) => {
         axios
             .get(`${process.env.REACT_APP_API_URL}/voucher/getVoucher`, {
@@ -38,6 +66,8 @@ const Voucher = () => {
                 }
             })
             .then((response) => {
+                setSearchQuery('');
+                setSearchResults(null);
                 setVoucher(response.data.data);
                 setTotalPages(response.data.pageInfo.totalPages);
                 setLoading(false)
@@ -70,7 +100,7 @@ const Voucher = () => {
         axios
             .delete(`${process.env.REACT_APP_API_URL}/voucher/deleteVoucher/${voucherId}`, { headers })
             .then((response) => {
-                message.success('Xóa voucher thành công');
+                setLoading(true)
                 setReloadData(!reloadData);
             })
             .catch((error) => {
@@ -103,7 +133,9 @@ const Voucher = () => {
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
-
+    const handleAll = () => {
+        setSearchQuery('');
+    };
     return (
         <div>
             <WrapperHeader>Danh sách voucher</WrapperHeader>
@@ -111,54 +143,119 @@ const Voucher = () => {
                 <div style={{ width: '50%' }}>
                     <Search style={{ width: '100%' }}
                         placeholder="Tìm kiếm voucher"
-                        enterButton />
+                        enterButton
+                        onSearch={handleSearch} 
+                        size="large"/>
+                        
                 </div>
-                <div style={{ justifyContent: 'end', width: '50%', display: 'flex' }}>
+                <div style={{ justifyContent: 'start', width: '25%', display: 'flex', paddingLeft: '20px' }}>
+                    <MDBBtn style={{ backgroundColor: '#B63245' }} onClick={handleAll}>
+                        Đặt lại
+                    </MDBBtn>
+                </div>
+
+                <div style={{ justifyContent: 'end', width: '25%', display: 'flex' }}>
                     <MDBBtn rounded style={{ backgroundColor: '#B63245' }} onClick={toggleOpen}>
                         Thêm voucher
                     </MDBBtn>
                 </div>
             </div>
-            <div style={{ marginTop: '15px' }}>
+            <div style={{ marginTop: '15px', overflowX: 'auto', overflowY: 'auto' }}>
                 <Loading isLoading={loading}>
                     <MDBTable bordered align='middle' className='floating-table'>
 
                         <MDBTableHead>
                             <tr style={{ textAlign: 'center', color: '#fff', backgroundColor: '#B63245' }}>
-                                <th scope='col' >Tên voucher</th>
-                                <th scope='col'>Mã voucher</th>
-                                <th scope='col'>Ngày bắt đầu</th>
-                                <th scope='col'>Ngày kết thúc</th>
-                                <th scope='col'>Số lượng</th>
-                                <th scope='col'>Khuyến mãi/%</th>
-                                <th scope='col'>Tối đa</th>
-                                <th scope='col'>Thao tác</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '250px' }}>Tên voucher</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '150px' }}>Mã voucher</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '150px' }}>Ngày bắt đầu</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '150px' }}>Ngày kết thúc</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '150px' }}>Số lượng</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '150px' }}>Khuyến mãi/%</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '150px' }}>Tối đa</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '200px' }}>Áp dụng cho phương thức thanh toán</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '250px' }}>Áp dụng cho loại sản phẩm</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '150px' }}>Thao tác</th>
                             </tr>
                         </MDBTableHead>
                         <MDBTableBody>
-                            {voucher.map(voucherItem => (
-                                <tr key={voucherItem._id} style={{ textAlign: 'center' }}>
-                                    <td>
-                                        <p className='fw-bold mb-1'>{voucherItem.name}</p>
-                                    </td>
-                                    <td><MDBBadge color="primary" style={{ fontSize: '13px' }} pill>
-                                        {voucherItem.code}</MDBBadge></td>
-                                    <td>{voucherItem.startDate}</td>
-                                    <td>{voucherItem.endDate}</td>
-                                    <td>{voucherItem.quantity}</td>
-                                    <td>{voucherItem.discount * 100}</td>
-                                    <td>{voucherItem.maxPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
-                                    <td>  <Dropdown overlay={menu(voucherItem)} >
-                                        <Tooltip title="Thực hiện thao tác">
-                                            <CaretDownOutlined />
-                                        </Tooltip>
-                                    </Dropdown></td>
+                            {searchResults && searchResults.length === 0 ? (
+                                <tr style={{ textAlign: 'center' }}>
+                                    <td colSpan="10">Không có voucher</td>
                                 </tr>
-                            ))}
+                            ) : searchResults ? (
+                                searchResults.map(result => (
+                                    <tr key={result._id} style={{ textAlign: 'center' }}>
+                                        <td>
+                                            <p className='fw-bold mb-1'>{result.name}</p>
+                                        </td>
+                                        <td>
+                                            <MDBBadge color="primary" style={{ fontSize: '13px' }} pill>
+                                                {result.code}
+                                            </MDBBadge>
+                                        </td>
+                                        <td>{result.startDate}</td>
+                                        <td>{result.endDate}</td>
+                                        <td>{result.quantity}</td>
+                                        <td>{result.discount * 100}</td>
+                                        <td>
+                                            {result.maxPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                        </td>
+                                        <td>{result.applicablePaymentMethod}</td>
+                                        <td>
+                                            {Array.isArray(result.applicableProductTypes) ?
+                                                result.applicableProductTypes.join(", ") :
+                                                ""}
+                                        </td>
+                                        <td>
+                                            <Dropdown overlay={menu(result)} >
+                                                <Tooltip title="Thực hiện thao tác">
+                                                    <CaretDownOutlined />
+                                                </Tooltip>
+                                            </Dropdown>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                voucher.map(voucherItem => (
+                                    <tr key={voucherItem._id} style={{ textAlign: 'center' }}>
+                                        <td>
+                                            <p className='fw-bold mb-1'>{voucherItem.name}</p>
+                                        </td>
+                                        <td>
+                                            <MDBBadge color="primary" style={{ fontSize: '13px' }} pill>
+                                                {voucherItem.code}
+                                            </MDBBadge>
+                                        </td>
+                                        <td>{voucherItem.startDate}</td>
+                                        <td>{voucherItem.endDate}</td>
+                                        <td>{voucherItem.quantity}</td>
+                                        <td>{voucherItem.discount * 100}</td>
+                                        <td>
+                                            {voucherItem.maxPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                        </td>
+                                        <td>{voucherItem.applicablePaymentMethod}</td>
+                                        <td>
+                                            {Array.isArray(voucherItem.applicableProductTypes) ?
+                                                voucherItem.applicableProductTypes.join(", ") :
+                                                ""}
+                                        </td>
+                                        <td>
+                                            <Dropdown overlay={menu(voucherItem)} >
+                                                <Tooltip title="Thực hiện thao tác">
+                                                    <CaretDownOutlined />
+                                                </Tooltip>
+                                            </Dropdown>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </MDBTableBody>
 
                     </MDBTable>
                 </Loading>
+            </div>
+            {!searchResults && (
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
                     <nav aria-label='Page navigation example'>
                         <MDBPagination className='mb-0' style={{ padding: '10px 20px' }}>
@@ -182,7 +279,7 @@ const Voucher = () => {
                         </MDBPagination>
                     </nav>
                 </div>
-            </div>
+            )}
             <>
                 <Modal
                     visible={centredModal}
@@ -212,9 +309,9 @@ const Voucher = () => {
                     visible={deleteConfirmationProductId !== null}
                     onOk={() => {
                         handleDeleteVoucher(deleteConfirmationProductId);
-                        setDeleteConfirmationProductId(null); 
+                        setDeleteConfirmationProductId(null);
                     }}
-                    onCancel={() => setDeleteConfirmationProductId(null)} 
+                    onCancel={() => setDeleteConfirmationProductId(null)}
                 >
                     <p>Bạn có chắc chắn muốn xoá voucher này?</p>
                 </Modal>

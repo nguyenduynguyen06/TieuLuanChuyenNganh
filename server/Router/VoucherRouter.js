@@ -8,5 +8,6 @@ router.get('/getVoucher',authMiddleware, voucherController.getVouchers);
 router.put('/updateVoucher/:id', authMiddleware,voucherController.updateVoucher);
 router.get('/getDetails/:voucherId', authMiddleware,voucherController.getVoucherDetail);
 router.delete('/deleteVoucher/:id',authMiddleware, voucherController.deleteVoucher);
+router.get('/searchVoucher',authMiddleware, voucherController.searchVoucher);
 router.post('/useVoucher', voucherController.useVoucher);
 module.exports = router;

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react"
-import { Button, Col, Image, Row, Table, Rate, message, Breadcrumb } from 'antd'
+import { Button, Col, Image, Row, Table, Rate, message, Breadcrumb, Skeleton, notification } from 'antd'
 import {
     WrapperStyleColImage,
     WrapperStyleImageSmall,
     WrapperStyleImageBig,
     WrapperStyleTextSell,
     WrapperPriceTextProduct,
-    WrapperInputNumber,
     WrapperPropTable,
     WrapperDetail,
     WrapperPolicy,
@@ -17,19 +16,16 @@ import ProductDescription from "./productdesscription"
 import CommentBox from "./commentcomponent"
 import axios from "axios"
 import { NavLink, useParams } from "react-router-dom"
-import { ArrowLeftOutlined, CaretLeftFilled, CaretRightFilled } from "@ant-design/icons"
-
+import { ArrowLeftOutlined, MinusOutlined, PlusOutlined } from "@ant-design/icons"
 import Slider from 'react-slick';
-import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
-
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Rating from "./ratecomponent"
-import SuggestProduct from "./suggestproductcomponent"
 import ProductSale from "./productsale"
 import { useSelector } from "react-redux"
 import { MDBBtn, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalHeader } from "mdb-react-ui-kit"
 import './button.css'
+import SaleProduct from "../Slider/saleProduct"
 
 
 const { Column, ColumnGroup } = Table;
@@ -49,13 +45,14 @@ const ProductDetailComponents = () => {
     const [category, setCategory] = useState("");
     const [brand, setBrand] = useState("");
     const toggleShow = () => setCentredModal(!centredModal);
+    const [inputValue, setInputValue] = useState('');
+
     const toggleExpand = () => {
         setExpanded(!expanded);
     };
     const collapse = () => {
         setExpanded(false);
     };
-
     const calculateTotalRatings = (product) => {
         if (!product || !product.ratings) {
             return 0;
@@ -94,21 +91,13 @@ const ProductDetailComponents = () => {
                     const productDetails = response.data.data;
                     setProductDetails(productDetails);
                     const { category, brand } = productDetails;
-
-
                     setCategory(category);
                     setBrand(brand);
-
-
                     const defaultMemory = memory;
-
                     const initialMemories = {
                         [productDetails._id]: defaultMemory
                     };
-
                     setSelectedMemories(initialMemories);
-
-
                     if (productDetails && productDetails.variant) {
                         productDetails.variant.forEach((variant) => {
                             if (variant.memory === defaultMemory && variant.attributes && variant.attributes.length > 0) {
@@ -199,8 +188,6 @@ const ProductDetailComponents = () => {
                                 { message.error(response.data.error) }
                             }
                         })
-
-
                 }
             } else {
                 const selectValues = Object.values(selectedSKU);
@@ -234,35 +221,38 @@ const ProductDetailComponents = () => {
                 const selectedVariant = productDetails.variant.find((variant) => variant.memory === memory);
                 if (selectedVariant) {
                     const selectedSKUName = selectedSKU[selectedVariant._id];
-                    await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${encodedProductName}&SKU=${selectedSKUName}&quantity=${quantity}`)
+                    await axios.post(`${process.env.REACT_APP_API_URL}/cart/saveToCart?userId=${user._id}&productName=${encodedProductName}&SKU=${selectedSKUName}&quantity=${quantity}`)
                         .then((response) => {
                             if (response.data.success) {
-                                window.location.href = '/payment-infor';
-                                 message.success('Thêm vào giỏ hàng thành công') }
-                            else {
-                                { message.error(response.data.error) }
-                            }
-                        })
+                                const cartItems = response.data.data.items;
 
+                                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                                window.location.href = '/payment-infor';
+                                message.success('Thêm vào giỏ hàng thành công');
+                            } else {
+                                message.error(response.data.error);
+                            }
+                        });
                 }
             } else {
                 const selectValues = Object.values(selectedSKU);
                 const selectedColorName = selectValues[selectValues.length - 1];
-                await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${encodedProductName}&SKU=${selectedColorName}&quantity=${quantity}`)
+                await axios.post(`${process.env.REACT_APP_API_URL}/cart/saveToCart?userId=${user._id}&productName=${encodedProductName}&SKU=${selectedColorName}&quantity=${quantity}`)
                     .then((response) => {
-                        if (response.data.success) { message.success('Thêm vào giỏ hàng thành công') }
-                        else {
-                            { message.error(response.data.error) }
+                        if (response.data.success) {
+                            const cartItems = response.data.data.items;
+                            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                            message.success('Thêm vào giỏ hàng thành công');
+                            window.location.href = '/payment-infor';
+                        } else {
+                            message.error(response.data.error);
                         }
-                    })
-                window.location.href = '/payment-infor';
-
+                    });
             }
         } catch (error) {
             console.error('Lỗi:', error);
             message.error(error.response.data.error);
-        }
-        finally {
+        } finally {
             setIsAddingToCart(false);
         }
     };
@@ -279,12 +269,30 @@ const ProductDetailComponents = () => {
         }
     };
     const handleIncreaseQuantity = () => {
-        if (quantity < 3) {
+        const selectedVariant = productDetails?.variant?.find(variant => variant.memory === (memory !== 'undefined' ? memory : selectedMemories[productDetails._id]));
+        const selectedAttribute = selectedVariant?.attributes?.find(attribute => attribute.color === selectedColor[selectedVariant._id]);
+        const maxQuantity = memory !== 'undefined' ? (selectedAttribute?.quantity < 3 ? selectedAttribute?.quantity : 3) : selectedAttribute?.quantity || 1;
+
+        if (quantity < maxQuantity) {
             setQuantity(quantity + 1);
+        } else {
+            message.error(`Số lượng đã đạt tối đa: ${maxQuantity}`);
         }
     };
-    const handleChange = (value) => {
-        setQuantity(value);
+
+    const handleChange = (e) => {
+        const value = Number(e.target.value.replace(/[^0-9]/g, ''));
+        const selectedVariant = productDetails?.variant?.find(variant => variant.memory === (memory !== 'undefined' ? memory : selectedMemories[productDetails._id]));
+        const selectedAttribute = selectedVariant?.attributes?.find(attribute => attribute.color === selectedColor[selectedVariant._id]);
+        const maxQuantity = memory !== 'undefined' ? (selectedAttribute?.quantity < 3 ? selectedAttribute?.quantity : 3) : selectedAttribute?.quantity || 1;
+
+        if (value < 1) {
+            setQuantity(1);
+        } else if (value > maxQuantity) {
+            setQuantity(maxQuantity);
+        } else {
+            setQuantity(value)
+        }
     };
     const dataSource = productDetails && productDetails.properties
         ? Object.keys(productDetails.properties).map((propertyKey) => ({
@@ -326,13 +334,13 @@ const ProductDetailComponents = () => {
                         <NavLink to="/">Home</NavLink>
                     </Breadcrumb.Item>
                     <Breadcrumb.Item>
-                        <NavLink to={`/lowtoHigh/${category.name}`}>{category.name}</NavLink>
+                        <NavLink to={`/products/${category.name}`}>{category.name}</NavLink>
                     </Breadcrumb.Item>
                     <Breadcrumb.Item>
-                        <NavLink to={`/lowtoHigh/${category.name}/${brand.name}`}>{brand.name}</NavLink>
+                        <NavLink to={`/products/${category.name}/${brand.name}`}>{brand.name}</NavLink>
                     </Breadcrumb.Item>
                     <Breadcrumb.Item>{productName}</Breadcrumb.Item>
-                    {memory && memory !== 'undefined' && <Breadcrumb.Item>{memory}</Breadcrumb.Item>}
+                    {memory && memory !== 'undefined' && memory !== 'null' && <Breadcrumb.Item>{memory}</Breadcrumb.Item>}
                 </Breadcrumb>
             </div>
 
@@ -405,7 +413,7 @@ const ProductDetailComponents = () => {
                                 </div>
                             )
                         ) : (
-                            <p>Loading...</p>
+                            <Skeleton active />
                         )}
 
 
@@ -490,7 +498,6 @@ const ProductDetailComponents = () => {
                                             <WrapperStyleTextSell>
                                                 <p>SKU: {selectedSKU[variant._id]}</p>
                                                 <p>Đã bán: {selectedSold[variant._id]}</p>
-                                                <p>Số lượng còn lại: {selectedQuantity[variant._id]}</p>
                                             </WrapperStyleTextSell>
                                         </div>
                                     );
@@ -509,55 +516,109 @@ const ProductDetailComponents = () => {
                             </span>
                         </div>
                     ) : (
-                        <p>Loading...</p>
+                        <Skeleton active />
                     )}
-                    <div style={{ margin: '10px 0 20px', padding: '10px 0', borderTop: '1px solid #e5e5e5', borderBottom: '1px solid #e5e5e5' }}>
-                        <div style={{ marginBottom: '10px' }}>Số lượng:</div>
-                        <div>
-                            <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '5px' }} onClick={handleDecreaseQuantity}>-</Button>
-                            <WrapperInputNumber
-                                type="number"
-                                value={quantity}
-                                onChange={handleChange}
-                                size="middle"
-                                defaultValue={1}
-                                upHandler={null}
-                                downHandler={null}
-                                min={1}
-                                max={3}
-                            />
-                            <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '5px' }} onClick={handleIncreaseQuantity}>+</Button>
-                        </div>
-                    </div >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <ButtonComponent
-                            bordered={false}
-                            size={40}
-                            styleButton={{
-                                background: 'rgb(225,57,69)',
-                                height: '48px',
-                                width: '100%',
-                                border: 'none',
-                                borderRadius: '4px'
-                            }}
-                            onClick={handleClickNBuyNow}
-                            textButton={'Mua Ngay'}
-                            styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}>
-                        </ButtonComponent>
-                        <ButtonComponent
-                            bordered={false}
-                            size={40}
-                            styleButton={{
-                                background: 'rgb(225,57,69)',
-                                height: '48px',
-                                width: '100%',
-                                border: 'none',
-                                borderRadius: '4px'
-                            }}
-                            onClick={handleClickaddToCart}
-                            textButton={'Thêm Vào Giỏ'}
-                            styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}>
-                        </ButtonComponent>
+                    <div style={{ display: 'flex',flexDirection:'column',  gap: '12px' }}>
+                        {productDetails?.variant && productDetails.variant.map((variant) => (
+                            variant.attributes && variant.attributes.length > 0 && (
+                                <>
+                                    {variant.memory === selectedMemories[productDetails._id] && (
+                                        <>
+                                            {selectedQuantity[variant._id] > 0 ? (
+                                                <>
+                                                    <div style={{ margin: '10px 0 20px', padding: '10px 0', borderTop: '1px solid #e5e5e5', borderBottom: '1px solid #e5e5e5' }}>
+                                                        <div style={{ background: '#fff', display: 'flex', alignItems: 'center' }}>
+                                                            <h7 style={{ marginRight: '10px' }}>Số lượng:</h7>
+                                                            <button style={{
+                                                                alignItems: 'center', background: 'transparent', border: 0, border: '1px solid rgba(0, 0, 0, .09)', borderRadius: '2px', color: 'rgba(0, 0, 0, .8)', cursor: 'pointer', display: 'flex',
+                                                                fontSize: '.875rem', fontWeight: 300, height: '32px', justifyContent: 'center', letterSpacing: 0, lineHeight: 1, outline: 'none', transition: 'background-color .1s cubic-bezier(.4,0,.6,1)', width: '32px'
+                                                            }}
+                                                                onClick={handleDecreaseQuantity}><MinusOutlined /></button>
+                                                            <input style={{
+                                                                WebkitAppearance: 'none', borderLeft: 0, borderRight: 0, borderRadius: 0, boxSizing: 'border-box', cursor: 'text', fontSize: '16px', fontWeight: '400', height: '32px', textAlign: 'center', width: '50px', alignItems: 'center', background: 'transparent', border: 0, border: '1px solid rgba(0, 0, 0, .09)', color: 'rgba(0, 0, 0, .8)', display: 'flex', justifyContent: 'center', letterSpacing: 0, lineHeight: 1, outline: 'none', transition: 'background-color .1s cubic-bezier(.4,0,.6,1)'
+                                                            }}
+                                                                type="text"
+                                                                pattern="[0-9]*"
+                                                                inputmode="numeric"
+                                                                min={1}
+                                                                value={quantity}
+                                                                onChange={handleChange}></input>
+                                                            <button style={{
+                                                                alignItems: 'center', background: 'transparent', border: 0, border: '1px solid rgba(0, 0, 0, .09)', borderRadius: '2px', color: 'rgba(0, 0, 0, .8)', cursor: 'pointer', display: 'flex',
+                                                                fontSize: '.875rem', fontWeight: 300, height: '32px', justifyContent: 'center', letterSpacing: 0, lineHeight: 1, outline: 'none', transition: 'background-color .1s cubic-bezier(.4,0,.6,1)', width: '32px'
+                                                            }}
+                                                                onClick={handleIncreaseQuantity}><PlusOutlined /></button>
+                                                            <span style={{ marginLeft: '10px' }}>
+                                                                {productDetails?.variant && productDetails.variant.map((variant) => (
+                                                                    variant.attributes && variant.attributes.length > 0 && (
+                                                                        <>
+
+                                                                            {variant.memory === selectedMemories[productDetails._id] && (
+                                                                                <div>
+                                                                                    {selectedQuantity[variant._id] !== 'N/A' ? `${selectedQuantity[variant._id]} sản phẩm có sẵn` : 'Sản phẩm không có sẵn'}
+                                                                                </div>
+                                                                            )}
+                                                                        </>
+                                                                    )))}
+                                                            </span>
+
+                                                        </div>
+                                                    </div >
+                                                    <div style={{ display: 'flex',alignItems: 'center', gap: '12px' }}>
+
+                                                    <ButtonComponent
+                                                        bordered={false}
+                                                        size={40}
+                                                        styleButton={{
+                                                            background: 'rgb(225,57,69)',
+                                                            height: '48px',
+                                                            width: '100%',
+                                                            border: 'none',
+                                                            borderRadius: '4px'
+                                                        }}
+                                                        onClick={handleClickNBuyNow}
+                                                        textButton={'Mua Ngay'}
+                                                        styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
+                                                    />
+                                                    <ButtonComponent
+                                                        bordered={false}
+                                                        size={40}
+                                                        styleButton={{
+                                                            background: 'rgb(225,57,69)',
+                                                            height: '48px',
+                                                            width: '100%',
+                                                            border: 'none',
+                                                            borderRadius: '4px'
+                                                        }}
+                                                        onClick={handleClickaddToCart}
+                                                        textButton={'Thêm Vào Giỏ'}
+                                                        styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
+                                                    />
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <Button
+                                                    type="primary"
+                                                    size='medium'
+                                                    style={{
+                                                        background: '#ccc',
+                                                        border: 'none',
+                                                        color: '#000',
+                                                        boxShadow: 'none',
+                                                        borderRadius: '4px',
+                                                        width: '100%',
+                                                        height: '48px'
+                                                    }}
+                                                    disabled
+                                                >
+                                                    Hết Hàng
+                                                </Button>
+                                            )}
+                                        </>
+                                    )}
+                                </>
+                            )
+                        ))}
                     </div>
                     <br></br>
                 </Col>
@@ -618,7 +679,7 @@ const ProductDetailComponents = () => {
                 </Row>
             </Row>
             <hr className="my-4" />
-            <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px'}}>
+            <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
                 <Col className="des-col">
                     <div
                         style={{
@@ -631,33 +692,33 @@ const ProductDetailComponents = () => {
                         {productDetails ? (
                             <ProductDescription description={productDetails.desc} />
                         ) : (
-                            <p>Loading...</p>
+                            <Skeleton active />
                         )}
 
                     </div>
                     <div
-                            style={{
-                                position: 'absolute',
-                                bottom: 0,
-                                left: 0,
-                                width: '100%',
-                                background: 'linear-gradient(to bottom, transparent, white)',
-                                boxSizing: 'border-box',
-                                display: 'flex',
-                                paddingTop: '20px',
-                                justifyContent: 'center',
-                            }}
-                        >
-                            {!expanded ? (
-                                <Button onClick={toggleExpand} style={{ width: '200px', textTransform: 'uppercase', cursor: 'pointer' }}>
-                                    Xem thêm
-                                </Button>
-                            ) : (
-                                <Button onClick={collapse} style={{width: '200px', textTransform: 'uppercase', cursor: 'pointer' }}>
-                                    Thu gọn
-                                </Button>
-                            )}
-                        </div>
+                        style={{
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            width: '100%',
+                            background: 'linear-gradient(to bottom, transparent, white)',
+                            boxSizing: 'border-box',
+                            display: 'flex',
+                            paddingTop: '20px',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        {!expanded ? (
+                            <Button onClick={toggleExpand} style={{ width: '200px', textTransform: 'uppercase', cursor: 'pointer' }}>
+                                Xem thêm
+                            </Button>
+                        ) : (
+                            <Button onClick={collapse} style={{ width: '200px', textTransform: 'uppercase', cursor: 'pointer' }}>
+                                Thu gọn
+                            </Button>
+                        )}
+                    </div>
 
                 </Col>
                 <Col className="prop-col">
@@ -685,15 +746,16 @@ const ProductDetailComponents = () => {
                     )}
                 </Col>
             </Row>
-            {productDetails && memory !== "undefined" && (
-                <Row>
-                    <SuggestProduct suggested={productDetails.name.replace(/\s*\d+[GgBb]{1,2}\s*$/, '')} />
-                </Row>
-            )}
             <hr className="my-4" />
             <Row>
                 <Rating productName={productName}></Rating>
             </Row>
+            <hr className="my-4" />
+            <div style={{ background: '#B63245', padding: '10px', borderRadius: '4px' }}>
+                <h3 style={{ margin: '0 10px 10px 0', color: '#fff', fontWeight: 'bold' }}>
+                    {user._id ? 'Sản phẩm dành cho bạn:' : 'Có thể bạn quan tâm:'}
+                </h3>
+                <SaleProduct userId={user._id} ></SaleProduct></div>
             <hr className="my-4" />
             <Row >
                 <CommentBox />
@@ -727,7 +789,6 @@ const ProductDetailComponents = () => {
                     </MDBModalContent>
                 </MDBModalDialog>
             </MDBModal>
-
         </WrapperDetail>
     )
 }

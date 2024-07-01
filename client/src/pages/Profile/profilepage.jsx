@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { MDBBtn } from 'mdb-react-ui-kit';
-import { AppstoreOutlined, CameraOutlined, LockOutlined } from '@ant-design/icons';
-import { Breadcrumb, message, Upload, Menu, Modal } from 'antd';
+import { AppstoreOutlined, CameraOutlined, LockOutlined, LogoutOutlined, RadarChartOutlined } from '@ant-design/icons';
+import { Breadcrumb, message, Upload, Menu, Modal, Slider, Button } from 'antd';
 import UpdateUser from './updateUser';
-import ChangePassword from './changepass'
+import ChangePassword from './changepass';
 import { useSelector, useDispatch } from "react-redux";
 import Header from '../../Components/Header/header';
 import Orders from './order/orders';
 import axios from "axios";
 import { resetUser } from "../../redux/Slide/userSlice";
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import AvatarEditor from 'react-avatar-editor';
 
 function getItem(label, key, icon, children, type) {
   return {
@@ -21,7 +22,6 @@ function getItem(label, key, icon, children, type) {
   };
 }
 
-
 const Profilepage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,6 +29,13 @@ const Profilepage = () => {
 
   const user = useSelector((state) => state.user);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [cropModalVisible, setCropModalVisible] = useState(false);
+  const [file, setFile] = useState(null);
+  const [scale, setScale] = useState(1);
+  const [uploading, setUploading] = useState(false);
+  const editorRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const handleLogoutCancel = () => {
     setLogoutModalVisible(false);
@@ -41,24 +48,53 @@ const Profilepage = () => {
     }
     return isJpgOrPng;
   }
-  const props = {
-    name: 'image',
-    action: `${process.env.REACT_APP_API_URL}/uploadUser/${user._id}`,
-    onChange(info) {
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully.`);
-        window.location.reload();
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+
+  const handleBeforeUpload = (file) => {
+    if (checkFile(file)) {
+      const reader = new FileReader();
+      reader.addEventListener('load', () => setPreview(reader.result));
+      reader.readAsDataURL(file);
+      setFile(file);
+      setCropModalVisible(true);
+    }
+    return false; // Ngăn chặn việc upload ngay lập tức
+  };
+
+  const handleCrop = async () => {
+    if (editorRef.current) {
+      const canvas = editorRef.current.getImageScaledToCanvas().toDataURL();
+      const blob = await (await fetch(canvas)).blob();
+      const formData = new FormData();
+      formData.append('image', blob, file.name);
+
+      setUploading(true);
+
+      try {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/uploadUser/${user._id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        if (response.status === 200) {
+          message.success('Tải ảnh lên thành công!');
+          window.location.reload();
+        } else {
+          message.error('Tải ảnh lên thất bại.');
+        }
+      } catch (error) {
+        message.error('Tải ảnh lên thất bại.');
+      } finally {
+        setUploading(false);
+        setCropModalVisible(false);
       }
-    },
-    beforeUpload: checkFile,
+    }
   };
 
   const handleLogout = async () => {
     try {
       await axios.post(`${process.env.REACT_APP_API_URL}/user/Logout`, {}, { withCredentials: true });
-      dispatch(resetUser)
+      dispatch(resetUser());
       localStorage.clear();
       window.location.href = '/';
     } catch (error) {
@@ -73,10 +109,10 @@ const Profilepage = () => {
   ];
 
   if (user.role_id === 1) {
-    items.push(getItem('Quản lý', '/admin', <LockOutlined />));
+    items.push(getItem('Quản lý', '/admin', <RadarChartOutlined />));
   }
 
-  items.push(getItem('Đăng xuất', 'logout', <AppstoreOutlined />));
+  items.push(getItem('Đăng xuất', 'logout', <LogoutOutlined />));
 
   const onClick = ({ key }) => {
     if (key === 'logout') {
@@ -85,10 +121,17 @@ const Profilepage = () => {
       navigate(key);
     }
   };
+
+  const handleChangeImage = () => {
+    setCropModalVisible(false);
+    setTimeout(() => {
+      fileInputRef.current.click();
+    }, 100);
+  };
+
   useEffect(() => {
     document.title = "Di Động Gen Z | Người Dùng";
-}, []);
-
+  }, []);
 
   return (
     <section style={{ backgroundColor: '#fff' }}>
@@ -100,7 +143,7 @@ const Profilepage = () => {
           <span style={{ color: '#fff' }}>{user.fullname}</span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', width: '50%', paddingRight: '30px' }}>
-          <Upload {...props}>
+          <Upload beforeUpload={handleBeforeUpload} showUploadList={false}>
             <MDBBtn style={{ backgroundColor: '#fff', color: "black" }}  > <CameraOutlined /> Ảnh đại diện</MDBBtn>
           </Upload>
         </div>
@@ -122,8 +165,8 @@ const Profilepage = () => {
           selectedKeys={[location.pathname]}
           items={items}
         />
-        <div className='content-component' style={{minHeight:'100vh', maxHeight: '100vh', width: '100%', overflow:'auto' }}>
-          {location.pathname === '/profile' && <UpdateUser/>}
+        <div className='content-component' style={{ minHeight: '100vh', maxHeight: '100vh', width: '100%', overflow: 'auto' }}>
+          {location.pathname === '/profile' && <UpdateUser />}
           {location.pathname === '/profile/infor' && <UpdateUser />}
           {location.pathname === '/profile/changepass' && <ChangePassword />}
           {location.pathname === '/profile/orders' && <Orders />}
@@ -136,15 +179,62 @@ const Profilepage = () => {
           onOk={handleLogout}
           okText="Đăng xuất"
           cancelText="Hủy"
-          okButtonProps={{ style: { backgroundColor: '#C13346', borderColor: '#C13346', color: '#fff' } }} 
-
+          okButtonProps={{ style: { backgroundColor: '#C13346', borderColor: '#C13346', color: '#fff' } }}
         >
           <p>Bạn có chắc chắn muốn đăng xuất?</p>
         </Modal>
 
+        <Modal
+          title="Chỉnh sửa ảnh đại diện"
+          maskClosable={false}
+          visible={cropModalVisible}
+          onCancel={() => setCropModalVisible(false)}
+          footer={[
+            <Button key="change" onClick={handleChangeImage}>
+              Đổi ảnh khác
+            </Button>,
+            <Button key="cancel" onClick={() => setCropModalVisible(false)}>
+              Hủy
+            </Button>,
+            <Button key="submit" type="primary" onClick={handleCrop} style={{ backgroundColor: '#C13346', borderColor: '#C13346', color: '#fff' }} disabled={uploading}>
+              {uploading ? 'Đang tải lên...' : 'Tải lên'}
+            </Button>,
+          ]}
+        >
+          {preview && (
+            <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <AvatarEditor
+                  ref={editorRef}
+                  image={preview}
+                  width={300}
+                  height={300}
+                  border={10}
+                  borderRadius={175}
+                  scale={scale}
+                  rotate={0}
+                />
+              </div>
+              <Slider
+                min={1}
+                max={3}
+                step={0.1}
+                value={scale}
+                onChange={(value) => setScale(value)}
+                style={{ marginTop: 16 }}
+              />
+            </div>
+          )}
+        </Modal>
+        <input
+          type="file"
+          ref={fileInputRef}
+          style={{ display: 'none' }}
+          onChange={(e) => handleBeforeUpload(e.target.files[0])}
+        />
       </div>
     </section>
-  )
+  );
 }
 
-export default Profilepage
+export default Profilepage;

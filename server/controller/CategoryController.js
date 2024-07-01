@@ -52,5 +52,20 @@ const deleteCategory = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 }
+const getSingleCategory = async (req, res) => {
+  try {
+      const { id } = req.params;
 
-module.exports = { addCategory,updateCategory,getAllCategories,deleteCategory };
+      const category = await Category.findById(id);
+
+      if (!category) {
+          return res.status(404).json({ success: false, error: 'Không tìm thấy danh mục!' });
+      }
+
+      res.status(200).json({ success: true, data: category });
+  } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports = { addCategory,updateCategory,getAllCategories,deleteCategory,getSingleCategory };

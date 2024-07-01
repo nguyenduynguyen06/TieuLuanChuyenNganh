@@ -6,12 +6,14 @@ const connect2DB = async () => {
     try {
         mongoose.set('strictQuery', true);
         await mongoose.connect(db, {
-            useNewUrlParser: true
+            useNewUrlParser: true,
+            serverSelectionTimeoutMS: 30000, // Thời gian chờ chọn máy chủ lên 30 giây
+            socketTimeoutMS: 45000 // Thời gian chờ socket lên 45 giây
         });
-        console.log(db);
+        console.log(`Connected to MongoDB: ${db}`);
         console.log("MongoDB is connected...");
     } catch (err) {
-        console.log(err.message);
+        console.error(`MongoDB connection error: ${err.message}`);
         process.exit(1);
     }
 };

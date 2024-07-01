@@ -36,6 +36,10 @@ const cartItemSchema  = new mongoose.Schema({
   sku:{
     type: String,
     required: true
+  },
+  checked: {
+    type: Boolean,
+    default: false,
   }
 });
 const cartSchema = new mongoose.Schema({

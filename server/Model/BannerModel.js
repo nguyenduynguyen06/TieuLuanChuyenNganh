@@ -3,7 +3,13 @@ const mongoose = require('mongoose');
 const bannerSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    required : true
+  },
+  page: {
+    type: String
+  },
+  location: {
+    type: String
   },
   image: {
     type: String,
@@ -14,17 +20,24 @@ const bannerSchema = new mongoose.Schema({
     required: true,
   },
   startDate: {
-    type: Date,
+    type: String,
     required: true,
   },
   endDate: {
-    type: Date,
+    type: String,
     required: true,
   },
   isActive: {
     type: Boolean,
     default: false,
   },
+  products: [{
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product',
+      required: true,
+    }
+  }]
 });
 
 const Banner = mongoose.model('Banner', bannerSchema);

@@ -29,7 +29,23 @@ router.get('/user/:userId', orderController.getOrdersByUserId);
 router.get('/oderDetails/:orderCode', orderController.getOrdersDetails);
 router.delete('/delete/:orderId',authMiddleware,orderController.deleteOrder)
 router.put('/cancel/:orderCode',orderController.cancelOrderbyUser)
+router.put('/cancel1/:orderCode',orderController.cancelOrderbyUser1)
 router.put('/rating',orderController.addProductRating)
 router.put('/changeProduct/:id/:orderId', authMiddleware,orderController.changeProduct)
 router.put('/checkBH',orderController.checkBH)
+router.get('/getSoldProductsByDate', authMiddleware,orderController.getSoldProductsByDate);
+router.get('/soldProductsByCategory', authMiddleware,orderController.getSoldProductsByCategory);
+router.get('/getTotalPayByDate', authMiddleware,orderController.getTotalPayByDate);
+router.get('/get7DaysTotalPay', orderController.get7DaysTotalPay);
+router.get('/get28DaysTotalPay', orderController.get28DaysTotalPay);
+router.get('/get90DaysTotalPay', orderController.get90DaysTotalPay);
+router.get('/get365DaysTotalPay', orderController.get365DaysTotalPay);
+router.get('/getAllDaysTotalPay', orderController.getAllDaysTotalPay);
+router.post('/calculateTotalPayByDateRange', orderController.calculateTotalPayByDateRange);
+router.post('/request-item-change/:id',orderController.requestItemChange);
+router.put('/update-change-status', authMiddleware,orderController.updateChangeStatus);
+router.get('/orders-with-status',authMiddleware,orderController.getOrdersWithChangeStatus);
+router.get('/orders-with-statuss', authMiddleware,orderController.getOrdersWithoutProcessingStatus);
+router.get('/searchOrdersWithChangeStatus', authMiddleware, orderController.searchOrdersWithChangeStatus);
+router.get('/searchOrdersWithoutStatus',authMiddleware, orderController.searchOrdersWithoutStatus);
 module.exports = router;

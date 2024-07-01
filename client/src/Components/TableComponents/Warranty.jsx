@@ -19,12 +19,13 @@ const WarrantySearch = () => {
     const [sdt, setSdt] = useState(null);
     const [OTP, setOTP] = useState("");
     const [info, setInfo] = useState("");
-    const [lastCheckTime, setLastCheckTime] = useState(null);
-    const [verifiedPhoneNumber, setVerifiedPhoneNumber] = useState(null);
+    const [checked, setChecked] = useState(false);
+    const handleInputDisable = () => {
+        return checked; 
+    };
     async function onSignup() {
         setLoading(true);
-        const currentTime = new Date().getTime();
-        if (verifiedPhoneNumber !== sdt || (verifiedPhoneNumber === sdt && currentTime - lastCheckTime >= 30 * 60 * 1000)) {
+        setChecked(true);
             const appVerifier = new RecaptchaVerifier(
                 auth,
                 "recaptcha-container",
@@ -36,25 +37,17 @@ const WarrantySearch = () => {
                     "expired-callback": () => { },
                 }
             );
-
             try {
                 const formatPh = "+84" + sdt;
                 const confirmationResult = await signInWithPhoneNumber(auth, formatPh, appVerifier);
                 window.confirmationResult = confirmationResult;
                 setLoading(false);
                 setCentredModal1(true);
-                document.getElementById("recaptcha-container").innerHTML = "";
                 message.success("OTP sent successfully!");
-                console.log(verifiedPhoneNumber)
             } catch (error) {
                 console.log(error);
                 setLoading(false);
             }
-        } else {
-            setLoading(true);
-            handleSearch();
-            setLoading(false);
-        }
     }
 
 
@@ -65,10 +58,7 @@ const WarrantySearch = () => {
             .then(async (res) => {
                 setCentredModal1(false);
                 setOTP(null);
-                const currentTime = new Date().getTime();
-                setVerifiedPhoneNumber(sdt);
-                setLastCheckTime(currentTime)
-                handleSearch();
+                await handleSearch();
                 setLoading(false);
             })
             .catch((err) => {
@@ -95,7 +85,9 @@ const WarrantySearch = () => {
     const handleSearch = async () => {
         try {
             setLoading(true);
-            const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/checkBH`, { phone: sdt });
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/order/checkBH`, { phone: sdt }, {
+                timeout: 30000 
+            });
             setData(response.data.products);
         } catch (error) {
             console.error('Error calling API:', error);
@@ -103,6 +95,7 @@ const WarrantySearch = () => {
             setLoading(false);
         }
     };
+    
 
     return (
         <WrapperWarranty>
@@ -130,8 +123,9 @@ const WarrantySearch = () => {
                             placeholder="Vui lòng nhập số điện thoại để tra cứu"
                             value={sdt}
                             onChange={(e) => setSdt(e.target.value)}
+                            disabled={handleInputDisable()}
                         />
-                        <Button style={{ backgroundColor: '#B63245', color: 'white' }} onClick={onSignup} disabled={loading}>
+                        <Button style={{ backgroundColor: '#B63245', color: 'white' }} onClick={onSignup} disabled={loading || checked}>
                             KIỂM TRA
                         </Button>
                     </Space.Compact>

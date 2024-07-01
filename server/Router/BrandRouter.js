@@ -9,4 +9,6 @@ router.get('/getBrand/:categoryId', brandController.getAllBrand);
 router.get('/getBrand', brandController.getAll);
 router.put('/updateBrand/:id',authMiddleware, brandController.updateBrand);
 router.delete('/delete/:id',authMiddleware, brandController.deleteBrand);
+router.get('/getSingleBrand/:id', authMiddleware,brandController.getSingleBrand);
+
 module.exports = router;
