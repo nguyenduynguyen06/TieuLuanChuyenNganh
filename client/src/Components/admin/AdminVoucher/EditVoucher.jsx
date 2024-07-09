@@ -74,8 +74,8 @@ const EditVoucher = ({ closeModal, voucherId }) => {
             quantity: voucherData.quantity,
             discount: voucherData.discount * 100,
             maxPrice: voucherData.maxPrice,
-            // startDate: moment(voucherData.startDate, 'dd/MM/yyyy').format('yyyy-MM-dd'),
-            // endDate: moment(voucherData.endDate, 'dd/MM/yyyy').format('yyyy-MM-dd'),
+            startDate: starDateFormat,
+            endDate: endDateFormat,
             applicablePaymentMethod: voucherData.applicablePaymentMethod,
             applicableProductTypes: voucherData.applicableProductTypes
           });
@@ -174,6 +174,7 @@ const EditVoucher = ({ closeModal, voucherId }) => {
 
       >
         <DatePicker
+        
           selected={startDate}
           onChange={(date) => setStartDate(date)}
           dateFormat="dd/MM/yyyy"
@@ -185,6 +186,7 @@ const EditVoucher = ({ closeModal, voucherId }) => {
         label="Ngày kết thúc"
       >
         <DatePicker
+   
           selected={endDate}
           onChange={(date) => setEndDate(date)}
           dateFormat="dd/MM/yyyy"

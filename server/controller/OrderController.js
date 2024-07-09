@@ -5,6 +5,7 @@ const Voucher = require('../Model/VourcherModel');
 const Product = require('../Model/ProductModel')
 const cron = require('node-cron');
 const moment = require("moment-timezone");
+const { format } = require('date-fns');
 const orderSendMail = require('../ultils/oderSendMail');
 const generateRandomOrderCode = async () => {
   const prefix = 'GGZ';
@@ -1460,26 +1461,33 @@ const getSoldProductsByCategory = async (req, res) => {
 
 
 const get7DaysTotalPay = async (req, res) => {
-  const startDate = moment().tz("Asia/Ho_Chi_Minh").subtract(7, 'days').startOf('day');
-  const endDate = moment().tz("Asia/Ho_Chi_Minh").endOf('day');
+  // Chuyển startDate và endDate thành đối tượng moment với múi giờ Asia/Ho_Chi_Minh
+  const start = moment.tz("Asia/Ho_Chi_Minh").subtract(7, 'days').startOf('day');
+  const end = moment.tz("Asia/Ho_Chi_Minh").endOf('day');
+
+  // Định dạng lại ngày tháng để so sánh
+  const formattedStartDate = start.toDate(); // Chuyển startDate thành đối tượng Date
+  const formattedEndDate = end.toDate();     // Chuyển endDate thành đối tượng Date
 
   try {
     const results = await Order.aggregate([
       {
         $match: {
           status: "Đã hoàn thành",
-          createDate: {
-            $gte: startDate.format("DD/MM/YYYY HH:mm:ss"),
-            $lte: endDate.format("DD/MM/YYYY HH:mm:ss")
+          $expr: {
+            $and: [
+              { $gte: [{ $dateFromString: { dateString: "$completeDate", format: "%d/%m/%Y %H:%M:%S", timezone: "Asia/Ho_Chi_Minh" } }, formattedStartDate] },
+              { $lte: [{ $dateFromString: { dateString: "$completeDate", format: "%d/%m/%Y %H:%M:%S", timezone: "Asia/Ho_Chi_Minh" } }, formattedEndDate] }
+            ]
           }
         }
       },
       {
         $project: {
           totalPay: 1,
-          createDate: {
+          completeDate: {
             $dateFromString: {
-              dateString: "$createDate",
+              dateString: "$completeDate",
               format: "%d/%m/%Y %H:%M:%S",
               timezone: "Asia/Ho_Chi_Minh"
             }
@@ -1491,11 +1499,14 @@ const get7DaysTotalPay = async (req, res) => {
           _id: {
             $dateToString: {
               format: "%Y-%m-%d",
-              date: "$createDate"
+              date: "$completeDate"
             }
           },
           totalPay: {
             $sum: "$totalPay"
+          },
+          orderCount: {
+            $sum: 1
           }
         }
       },
@@ -1515,26 +1526,33 @@ const get7DaysTotalPay = async (req, res) => {
 
 
 const get28DaysTotalPay = async (req, res) => {
-  const startDate = moment().tz("Asia/Ho_Chi_Minh").subtract(28, 'days').startOf('day');
-  const endDate = moment().tz("Asia/Ho_Chi_Minh").endOf('day');
+  // Chuyển startDate và endDate thành đối tượng moment với múi giờ Asia/Ho_Chi_Minh
+  const start = moment.tz("Asia/Ho_Chi_Minh").subtract(28, 'days').startOf('day');
+  const end = moment.tz("Asia/Ho_Chi_Minh").endOf('day');
+
+  // Định dạng lại ngày tháng để so sánh
+  const formattedStartDate = start.toDate(); // Chuyển startDate thành đối tượng Date
+  const formattedEndDate = end.toDate();     // Chuyển endDate thành đối tượng Date
 
   try {
     const results = await Order.aggregate([
       {
         $match: {
           status: "Đã hoàn thành",
-          createDate: {
-            $gte: startDate.format("DD/MM/YYYY HH:mm:ss"),
-            $lte: endDate.format("DD/MM/YYYY HH:mm:ss")
+          $expr: {
+            $and: [
+              { $gte: [{ $dateFromString: { dateString: "$completeDate", format: "%d/%m/%Y %H:%M:%S", timezone: "Asia/Ho_Chi_Minh" } }, formattedStartDate] },
+              { $lte: [{ $dateFromString: { dateString: "$completeDate", format: "%d/%m/%Y %H:%M:%S", timezone: "Asia/Ho_Chi_Minh" } }, formattedEndDate] }
+            ]
           }
         }
       },
       {
         $project: {
           totalPay: 1,
-          createDate: {
+          completeDate: {
             $dateFromString: {
-              dateString: "$createDate",
+              dateString: "$completeDate",
               format: "%d/%m/%Y %H:%M:%S",
               timezone: "Asia/Ho_Chi_Minh"
             }
@@ -1546,11 +1564,14 @@ const get28DaysTotalPay = async (req, res) => {
           _id: {
             $dateToString: {
               format: "%Y-%m-%d",
-              date: "$createDate"
+              date: "$completeDate"
             }
           },
           totalPay: {
             $sum: "$totalPay"
+          },
+          orderCount: {
+            $sum: 1
           }
         }
       },
@@ -1569,26 +1590,33 @@ const get28DaysTotalPay = async (req, res) => {
 };
 
 const get90DaysTotalPay = async (req, res) => {
-  const startDate = moment().tz("Asia/Ho_Chi_Minh").subtract(90, 'days').startOf('day');
-  const endDate = moment().tz("Asia/Ho_Chi_Minh").endOf('day');
+  // Chuyển startDate và endDate thành đối tượng moment với múi giờ Asia/Ho_Chi_Minh
+  const start = moment.tz("Asia/Ho_Chi_Minh").subtract(90, 'days').startOf('day');
+  const end = moment.tz("Asia/Ho_Chi_Minh").endOf('day');
+
+  // Định dạng lại ngày tháng để so sánh
+  const formattedStartDate = start.toDate(); // Chuyển startDate thành đối tượng Date
+  const formattedEndDate = end.toDate();     // Chuyển endDate thành đối tượng Date
 
   try {
     const results = await Order.aggregate([
       {
         $match: {
           status: "Đã hoàn thành",
-          createDate: {
-            $gte: startDate.format("DD/MM/YYYY HH:mm:ss"),
-            $lte: endDate.format("DD/MM/YYYY HH:mm:ss")
+          $expr: {
+            $and: [
+              { $gte: [{ $dateFromString: { dateString: "$completeDate", format: "%d/%m/%Y %H:%M:%S", timezone: "Asia/Ho_Chi_Minh" } }, formattedStartDate] },
+              { $lte: [{ $dateFromString: { dateString: "$completeDate", format: "%d/%m/%Y %H:%M:%S", timezone: "Asia/Ho_Chi_Minh" } }, formattedEndDate] }
+            ]
           }
         }
       },
       {
         $project: {
           totalPay: 1,
-          createDate: {
+          completeDate: {
             $dateFromString: {
-              dateString: "$createDate",
+              dateString: "$completeDate",
               format: "%d/%m/%Y %H:%M:%S",
               timezone: "Asia/Ho_Chi_Minh"
             }
@@ -1600,11 +1628,14 @@ const get90DaysTotalPay = async (req, res) => {
           _id: {
             $dateToString: {
               format: "%Y-%m-%d",
-              date: "$createDate"
+              date: "$completeDate"
             }
           },
           totalPay: {
             $sum: "$totalPay"
+          },
+          orderCount: {
+            $sum: 1
           }
         }
       },
@@ -1621,28 +1652,36 @@ const get90DaysTotalPay = async (req, res) => {
     throw error;
   }
 };
+
 
 const get365DaysTotalPay = async (req, res) => {
-  const startDate = moment().tz("Asia/Ho_Chi_Minh").subtract(364, 'days').startOf('day');
-  const endDate = moment().tz("Asia/Ho_Chi_Minh").endOf('day');
+  // Chuyển startDate và endDate thành đối tượng moment với múi giờ Asia/Ho_Chi_Minh
+  const start = moment.tz("Asia/Ho_Chi_Minh").subtract(365, 'days').startOf('day');
+  const end = moment.tz("Asia/Ho_Chi_Minh").endOf('day');
+
+  // Định dạng lại ngày tháng để so sánh
+  const formattedStartDate = start.toDate(); // Chuyển startDate thành đối tượng Date
+  const formattedEndDate = end.toDate();     // Chuyển endDate thành đối tượng Date
 
   try {
     const results = await Order.aggregate([
       {
         $match: {
           status: "Đã hoàn thành",
-          createDate: {
-            $gte: startDate.format("DD/MM/YYYY HH:mm:ss"),
-            $lte: endDate.format("DD/MM/YYYY HH:mm:ss")
+          $expr: {
+            $and: [
+              { $gte: [{ $dateFromString: { dateString: "$completeDate", format: "%d/%m/%Y %H:%M:%S", timezone: "Asia/Ho_Chi_Minh" } }, formattedStartDate] },
+              { $lte: [{ $dateFromString: { dateString: "$completeDate", format: "%d/%m/%Y %H:%M:%S", timezone: "Asia/Ho_Chi_Minh" } }, formattedEndDate] }
+            ]
           }
         }
       },
       {
         $project: {
           totalPay: 1,
-          createDate: {
+          completeDate: {
             $dateFromString: {
-              dateString: "$createDate",
+              dateString: "$completeDate",
               format: "%d/%m/%Y %H:%M:%S",
               timezone: "Asia/Ho_Chi_Minh"
             }
@@ -1654,11 +1693,14 @@ const get365DaysTotalPay = async (req, res) => {
           _id: {
             $dateToString: {
               format: "%Y-%m-%d",
-              date: "$createDate"
+              date: "$completeDate"
             }
           },
           totalPay: {
             $sum: "$totalPay"
+          },
+          orderCount: {
+            $sum: 1
           }
         }
       },
@@ -1675,28 +1717,36 @@ const get365DaysTotalPay = async (req, res) => {
     throw error;
   }
 };
+
 
 const getAllDaysTotalPay = async (req, res) => {
-  const startDate = moment().tz("Asia/Ho_Chi_Minh").subtract(3650, 'days').startOf('day');
-  const endDate = moment().tz("Asia/Ho_Chi_Minh").endOf('day');
+  // Chuyển startDate và endDate thành đối tượng moment với múi giờ Asia/Ho_Chi_Minh
+  const start = moment.tz("Asia/Ho_Chi_Minh").subtract(3650, 'days').startOf('day');
+  const end = moment.tz("Asia/Ho_Chi_Minh").endOf('day');
+
+  // Định dạng lại ngày tháng để so sánh
+  const formattedStartDate = start.toDate(); // Chuyển startDate thành đối tượng Date
+  const formattedEndDate = end.toDate();     // Chuyển endDate thành đối tượng Date
 
   try {
     const results = await Order.aggregate([
       {
         $match: {
           status: "Đã hoàn thành",
-          createDate: {
-            $gte: startDate.format("DD/MM/YYYY HH:mm:ss"),
-            $lte: endDate.format("DD/MM/YYYY HH:mm:ss")
+          $expr: {
+            $and: [
+              { $gte: [{ $dateFromString: { dateString: "$completeDate", format: "%d/%m/%Y %H:%M:%S", timezone: "Asia/Ho_Chi_Minh" } }, formattedStartDate] },
+              { $lte: [{ $dateFromString: { dateString: "$completeDate", format: "%d/%m/%Y %H:%M:%S", timezone: "Asia/Ho_Chi_Minh" } }, formattedEndDate] }
+            ]
           }
         }
       },
       {
         $project: {
           totalPay: 1,
-          createDate: {
+          completeDate: {
             $dateFromString: {
-              dateString: "$createDate",
+              dateString: "$completeDate",
               format: "%d/%m/%Y %H:%M:%S",
               timezone: "Asia/Ho_Chi_Minh"
             }
@@ -1708,11 +1758,14 @@ const getAllDaysTotalPay = async (req, res) => {
           _id: {
             $dateToString: {
               format: "%Y-%m-%d",
-              date: "$createDate"
+              date: "$completeDate"
             }
           },
           totalPay: {
             $sum: "$totalPay"
+          },
+          orderCount: {
+            $sum: 1
           }
         }
       },
@@ -1729,38 +1782,43 @@ const getAllDaysTotalPay = async (req, res) => {
     throw error;
   }
 };
+
 
 const calculateTotalPayByDateRange = async (req, res) => {
   const { startDate, endDate } = req.body;
 
-  // Kiểm tra nếu startDate và endDate không được cung cấp
+  // Kiểm tra nếu không có startDate hoặc endDate
   if (!startDate || !endDate) {
-    return res.status(400).json({ message: "Start date and end date are required." });
+    return res.status(400).json({ message: "Vui lòng cung cấp ngày bắt đầu và ngày kết thúc." });
   }
 
-  // Chuyển đổi startDate và endDate thành định dạng moment với múi giờ Asia/Ho_Chi_Minh
+  // Chuyển startDate và endDate thành đối tượng moment với múi giờ Asia/Ho_Chi_Minh
   const start = moment.tz(startDate, "Asia/Ho_Chi_Minh").startOf('day');
   const end = moment.tz(endDate, "Asia/Ho_Chi_Minh").endOf('day');
-  const formattedStartDate = start.format("DD/MM/YYYY HH:mm:ss");
-  const formattedEndDate = end.format("DD/MM/YYYY HH:mm:ss");
+
+  // Định dạng lại ngày tháng để so sánh
+  const formattedStartDate = start.toDate(); // Chuyển startDate thành đối tượng Date
+  const formattedEndDate = end.toDate();     // Chuyển endDate thành đối tượng Date
 
   try {
     const results = await Order.aggregate([
       {
         $match: {
           status: "Đã hoàn thành",
-          createDate: {
-            $gte: formattedStartDate,
-            $lte: formattedEndDate
+          $expr: {
+            $and: [
+              { $gte: [{ $dateFromString: { dateString: "$completeDate", format: "%d/%m/%Y %H:%M:%S", timezone: "Asia/Ho_Chi_Minh" } }, formattedStartDate] },
+              { $lte: [{ $dateFromString: { dateString: "$completeDate", format: "%d/%m/%Y %H:%M:%S", timezone: "Asia/Ho_Chi_Minh" } }, formattedEndDate] }
+            ]
           }
         }
       },
       {
         $project: {
           totalPay: 1,
-          createDate: {
+          completeDate: {
             $dateFromString: {
-              dateString: "$createDate",
+              dateString: "$completeDate",
               format: "%d/%m/%Y %H:%M:%S",
               timezone: "Asia/Ho_Chi_Minh"
             }
@@ -1772,11 +1830,14 @@ const calculateTotalPayByDateRange = async (req, res) => {
           _id: {
             $dateToString: {
               format: "%Y-%m-%d",
-              date: "$createDate"
+              date: "$completeDate"
             }
           },
           totalPay: {
             $sum: "$totalPay"
+          },
+          orderCount: {
+            $sum: 1
           }
         }
       },
@@ -1789,8 +1850,8 @@ const calculateTotalPayByDateRange = async (req, res) => {
 
     res.json({ data: results });
   } catch (error) {
-    console.error("Error aggregating orders: ", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Lỗi khi tổng hợp đơn hàng: ", error);
+    res.status(500).json({ message: "Lỗi máy chủ nội bộ" });
   }
 };
 
@@ -1872,7 +1933,6 @@ const updateChangeStatus = async (req, res) => {
     const item = order.items.find(i =>
       i.product._id.toString() === productId && i.productVariant.toString() === productVariantId
     );
-    console.log(item)
     if (!item) {
       return res.status(404).json({
         success: false,
@@ -1889,19 +1949,19 @@ const updateChangeStatus = async (req, res) => {
         item.change.changeDates = vietnamTime;
         break;
       case 'Đã hoàn thành':
-          const productVariant = await ProductVariant.findById(productVariantId);
-          const product = await Product.findById(productId);
-          if (!productVariant) {
-            return res.status(400).json({ success: false, error: 'Sản phẩm biến thể không tồn tại' });
-          }
-          const matchedAttribute = productVariant.attributes.find(attribute => attribute.sku === item.sku);
-          if (!matchedAttribute || matchedAttribute.quantity < item.quantity) {
-            return res.status(400).json({ success: false, error: `Sản phẩm ${product.name} với màu ${item.color} đã hết hàng hoặc không đủ số lượng` });
-          }
-          const quantityInCart = parseInt(item.quantity, 10);
-          const remainingQuantity = matchedAttribute.quantity - quantityInCart;
-          matchedAttribute.quantity = remainingQuantity;  
-          await productVariant.save();
+        const productVariant = await ProductVariant.findById(productVariantId);
+        const product = await Product.findById(productId);
+        if (!productVariant) {
+          return res.status(400).json({ success: false, error: 'Sản phẩm biến thể không tồn tại' });
+        }
+        const matchedAttribute = productVariant.attributes.find(attribute => attribute.sku === item.sku);
+        if (!matchedAttribute || matchedAttribute.quantity < item.quantity) {
+          return res.status(400).json({ success: false, error: `Sản phẩm ${product.name} với màu ${item.color} đã hết hàng hoặc không đủ số lượng` });
+        }
+        const quantityInCart = parseInt(item.quantity, 10);
+        const remainingQuantity = matchedAttribute.quantity - quantityInCart;
+        matchedAttribute.quantity = remainingQuantity;
+        await productVariant.save();
         item.change.status = newStatus;
         item.change.changeDateComplete = vietnamTime;
         item.change.changeCount += 1;
@@ -1973,7 +2033,8 @@ const getOrdersWithoutProcessingStatus = async (req, res) => {
     const query = {
       $and: [
         { 'items.change.status': { $nin: ['Đang xử lý'] } },
-        { $or: [
+        {
+          $or: [
             { 'items.change.status': 'Từ chối' },
             { 'items.change.status': 'Đã hoàn thành' }
           ]
@@ -2040,7 +2101,7 @@ const searchOrdersWithChangeStatus = async (req, res) => {
       .limit(pageSize)
       .lean();
 
-    
+
     res.status(200).json({
       success: true,
       data: orders,
@@ -2112,4 +2173,4 @@ const searchOrdersWithoutStatus = async (req, res) => {
   }
 };
 
-module.exports = { searchOrdersWithoutStatus,getOrdersWithoutProcessingStatus,searchOrdersWithChangeStatus, getOrdersWithChangeStatus, updateChangeStatus, requestItemChange, cancelOrderbyUser1, calculateTotalPayByDateRange, get7DaysTotalPay, get28DaysTotalPay, get90DaysTotalPay, get365DaysTotalPay, getAllDaysTotalPay, getTotalPayByDate, getSoldProductsByCategory, getSoldProductsByDate, deliveredOrder, searchOrderDelivered, getAllOrdersDelivered, searchOrderReadyCancel, getAllOrdersReadyCancel, searchOrderDelivery, searchOrderComplete, searchOrderCancel, cancelOrderWithReason, searchOrderReady, getAllOrdersCancel, getAllOrdersComplete, getAllOrdersDelivery, getAllOrdersReady, getAllOrdersDashboard, getAllOrdersPending, checkBH, changeProduct, addProductRating, addOrder, cancelOrderbyUser, completeOrderUser, getOrdersDetails, updateOrderStatus, completeOrder, getOrdersByUserId, deleteOrder, searchOrderPending };
+module.exports = { searchOrdersWithoutStatus, getOrdersWithoutProcessingStatus, searchOrdersWithChangeStatus, getOrdersWithChangeStatus, updateChangeStatus, requestItemChange, cancelOrderbyUser1, calculateTotalPayByDateRange, get7DaysTotalPay, get28DaysTotalPay, get90DaysTotalPay, get365DaysTotalPay, getAllDaysTotalPay, getTotalPayByDate, getSoldProductsByCategory, getSoldProductsByDate, deliveredOrder, searchOrderDelivered, getAllOrdersDelivered, searchOrderReadyCancel, getAllOrdersReadyCancel, searchOrderDelivery, searchOrderComplete, searchOrderCancel, cancelOrderWithReason, searchOrderReady, getAllOrdersCancel, getAllOrdersComplete, getAllOrdersDelivery, getAllOrdersReady, getAllOrdersDashboard, getAllOrdersPending, checkBH, changeProduct, addProductRating, addOrder, cancelOrderbyUser, completeOrderUser, getOrdersDetails, updateOrderStatus, completeOrder, getOrdersByUserId, deleteOrder, searchOrderPending };

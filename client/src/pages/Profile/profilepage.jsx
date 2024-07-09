@@ -109,7 +109,7 @@ const Profilepage = () => {
   ];
 
   if (user.role_id === 1) {
-    items.push(getItem('Quản lý', '/admin', <RadarChartOutlined />));
+    items.push(getItem('Quản lý', '/admin/dashboard', <RadarChartOutlined />));
   }
 
   items.push(getItem('Đăng xuất', 'logout', <LogoutOutlined />));
@@ -154,7 +154,7 @@ const Profilepage = () => {
           <NavLink to="/">Home</NavLink>
         </Breadcrumb.Item>
         <Breadcrumb.Item>
-          <NavLink to={`/profile`}>Profile</NavLink>
+          <NavLink to={`/profile/infor`}>Profile</NavLink>
         </Breadcrumb.Item>
       </Breadcrumb>
       <div style={{ display: 'flex' }}>
@@ -166,7 +166,6 @@ const Profilepage = () => {
           items={items}
         />
         <div className='content-component' style={{ minHeight: '100vh', maxHeight: '100vh', width: '100%', overflow: 'auto' }}>
-          {location.pathname === '/profile' && <UpdateUser />}
           {location.pathname === '/profile/infor' && <UpdateUser />}
           {location.pathname === '/profile/changepass' && <ChangePassword />}
           {location.pathname === '/profile/orders' && <Orders />}

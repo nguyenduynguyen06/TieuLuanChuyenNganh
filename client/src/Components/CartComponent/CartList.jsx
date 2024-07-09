@@ -39,9 +39,9 @@ function CartList() {
     const totalPrice = calculateTotalPrice(cartData);
     setTotal(totalPrice);
   };
-  const checkAllChecked = () => {
-    if (data && data.length > 0) {
-      return data.every(item => item.checked);
+  const checkAllChecked = (cartData) => {
+    if (cartData && cartData.length > 0) {
+      return cartData.every(item => item.checked);
     }
     return false;
   };
@@ -54,7 +54,7 @@ function CartList() {
       .then((response) => {
         const filteredItems = response.data.data.items.filter(item => item.checked);
         updateTotalPrice(filteredItems)
-        setSelectAll(checkAllChecked());
+        setSelectAll(checkAllChecked(updatedData));
       })
       .catch((error) => {
         console.error('Lỗi khi cập nhật trạng thái checked:', error);
@@ -82,10 +82,10 @@ function CartList() {
   const columns = [
     {
       title: (
-        <div style={{ textAlign: 'center', minWidth: 100, fontWeight:'bold'}}>
+        <div style={{ textAlign: 'center', minWidth: 100, fontWeight: 'bold' }}>
           Chọn tất cả
           <div>
-          <Checkbox checked={selectAll} onChange={handleSelectAll} />
+            <Checkbox checked={selectAll} onChange={handleSelectAll} />
 
           </div>
         </div>
@@ -102,7 +102,7 @@ function CartList() {
     },
     {
       title: (
-        <div style={{ textAlign: 'center', minWidth: 350, fontWeight:'bold' }}>
+        <div style={{ textAlign: 'center', minWidth: 350, fontWeight: 'bold' }}>
           Tên sản phẩm
         </div>
       ),
@@ -116,7 +116,7 @@ function CartList() {
     },
     {
       title: (
-        <div style={{ textAlign: 'center', minWidth: 50, fontWeight:'bold' }}>
+        <div style={{ textAlign: 'center', minWidth: 50, fontWeight: 'bold' }}>
           Màu
         </div>
       ),
@@ -126,17 +126,17 @@ function CartList() {
           {color}
         </div>
       ),
-  
+
     },
     {
       title: (
-        <div style={{ textAlign: 'center', minWidth: 100, fontWeight:'bold'}}>
+        <div style={{ textAlign: 'center', minWidth: 100, fontWeight: 'bold' }}>
           Đơn giá
         </div>
       ),
       dataIndex: 'price',
       render: price => (
-        <span style={{ fontSize: '17px', fontWeight: 'bold',display:'flex', justifyContent:'center' }}>
+        <span style={{ fontSize: '17px', fontWeight: 'bold', display: 'flex', justifyContent: 'center' }}>
           {new Intl.NumberFormat('vi-VN', {
             style: 'currency',
             currency: 'VND',
@@ -146,14 +146,14 @@ function CartList() {
     },
     {
       title: (
-        <div style={{ textAlign: 'center', minWidth: 100, fontWeight:'bold' }}>
+        <div style={{ textAlign: 'center', minWidth: 100, fontWeight: 'bold' }}>
           Số lượng
         </div>
       ),
       dataIndex: 'quantity',
       render: (text, record, index) => {
         return (
-          <div style={{display:'flex', justifyContent:'center'}}>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '0px' }} onClick={() => handleDecreaseQuantity(index)}>-</Button>
             <Input
               value={quantities[index]}
@@ -167,13 +167,13 @@ function CartList() {
     },
     {
       title: (
-        <div style={{ textAlign: 'center', minWidth: 150, fontWeight:'bold' }}>
+        <div style={{ textAlign: 'center', minWidth: 150, fontWeight: 'bold' }}>
           Tổng tiền
         </div>
       ),
       dataIndex: 'subtotal',
       render: subtotal => (
-        <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300',display:'flex', justifyContent:'center' }}>
+        <span style={{ fontSize: '17px', fontWeight: 'bold', color: '#FF3300', display: 'flex', justifyContent: 'center' }}>
           {new Intl.NumberFormat('vi-VN', {
             style: 'currency',
             currency: 'VND',
@@ -183,14 +183,14 @@ function CartList() {
     },
     {
       title: (
-        <div style={{ textAlign: 'center', minWidth: 50, fontWeight:'bold' }}>
+        <div style={{ textAlign: 'center', minWidth: 50, fontWeight: 'bold' }}>
           Thao tác
         </div>
       ),
       key: 'action',
       render: (record) => {
         return (
-          <div style={{textAlign: 'center'}}>
+          <div style={{ textAlign: 'center' }}>
             <a onClick={() => { setModalDelete(true); setCurrentCartId(record._id) }}> <DeleteOutlined /></a>
             <Modal
               title="Xoá giỏ hàng"
@@ -208,23 +208,12 @@ function CartList() {
       },
     },
   ];
+  const [reload, setReload] = useState(false);
   const handleDeleteCartItem = (cartItemId) => {
     axios.delete(`${process.env.REACT_APP_API_URL}/cart/deleteCart/${cartItemId}/${user._id}`)
       .then((response) => {
-        if (user && user._id) {
-          axios.get(`${process.env.REACT_APP_API_URL}/cart/getToCart/${user._id}`)
-            .then((response) => {
-              const cartData = response.data.data;
-              const filteredCartData = cartData.filter(item => item.checked === true);
-              const totalPrice = calculateTotalPrice(filteredCartData);
-              setTotal(totalPrice);
-              setData(cartData);
-              setLoading(false);
-            })
-            .catch((error) => {
-              console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
-            });
-        }
+        message.success('Xoá sản phẩm khỏi giỏ hàng thành công');
+        setReload(!reload);
       })
       .catch((error) => {
         console.error('Lỗi khi xóa mục giỏ hàng:', error);
@@ -241,13 +230,14 @@ function CartList() {
         const filteredCartData = cartData.filter(item => item.checked === true);
         const totalPrice = calculateTotalPrice(filteredCartData);
         setTotal(totalPrice);
+        setSelectAll(checkAllChecked(cartData));
         setLoading(false);
       })
       .catch((error) => {
         console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
         setLoading(false);
       });
-  }, [user]);
+  }, [user,reload]);
   const [data, setData] = useState(null);
   const [quantities, setQuantities] = useState('');
 
@@ -279,30 +269,49 @@ function CartList() {
 
   const handleIncreaseQuantity = (index) => {
     const updatedQuantities = [...quantities];
-    if (updatedQuantities[index] < 3) {
-      updatedQuantities[index] += 1;
+    const cartItem = data[index];
+
+    // Tìm productVariant phù hợp dựa trên SKU
+    const productVariant = cartItem.productVariant.attributes.find(attr => attr.sku === cartItem.sku);
+
+    if (productVariant) {
+      // Nếu có thuộc tính memory, số lượng tối đa là số lượng tồn kho hoặc 3 (tùy cái nào nhỏ hơn)
+      const maxQuantity = cartItem.memory ? Math.min(productVariant.quantity, 3) : productVariant.quantity;
+
+      if (updatedQuantities[index] < maxQuantity) {
+        updatedQuantities[index] += 1;
+
+        setQuantities(updatedQuantities);
+        axios.put(`${process.env.REACT_APP_API_URL}/cart/update/${data[index]._id}/${user._id}`, { quantity: updatedQuantities[index] })
+          .then((response) => {
+            if (user && user._id) {
+              axios.get(`${process.env.REACT_APP_API_URL}/cart/getToCart/${user._id}`)
+                .then((response) => {
+                  const cartData = response.data.data;
+                  const filteredCartData = cartData.filter(item => item.checked === true);
+                  const totalPrice = calculateTotalPrice(filteredCartData);
+                  setTotal(totalPrice);
+                  setData(cartData);
+                })
+                .catch((error) => {
+                  console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
+                });
+            }
+          })
+          .catch((error) => {
+            message.error(error.response.data.error);
+          });
+      } else {
+        // Thông báo cho người dùng nếu đã đạt số lượng tối đa
+        message.warning('Bạn đã đạt số lượng tối đa cho sản phẩm này.');
+      }
+    } else {
+      // Xử lý khi không tìm thấy productVariant tương ứng
+      message.error('Không tìm thấy biến thể sản phẩm tương ứng.');
     }
-    setQuantities(updatedQuantities);
-    axios.put(`${process.env.REACT_APP_API_URL}/cart/update/${data[index]._id}/${user._id}`, { quantity: updatedQuantities[index] })
-      .then((response) => {
-        if (user && user._id) {
-          axios.get(`${process.env.REACT_APP_API_URL}/cart/getToCart/${user._id}`)
-            .then((response) => {
-              const cartData = response.data.data;
-              const filteredCartData = cartData.filter(item => item.checked === true);
-              const totalPrice = calculateTotalPrice(filteredCartData);
-              setTotal(totalPrice);
-              setData(cartData);
-            })
-            .catch((error) => {
-              console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
-            });
-        }
-      })
-      .catch((error) => {
-        message.error(error.response.data.error);
-      });
   };
+
+
 
   const handleDecreaseQuantity = (index) => {
     const updatedQuantities = [...quantities];

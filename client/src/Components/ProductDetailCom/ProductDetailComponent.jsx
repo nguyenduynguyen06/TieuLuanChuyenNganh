@@ -275,8 +275,10 @@ const ProductDetailComponents = () => {
 
         if (quantity < maxQuantity) {
             setQuantity(quantity + 1);
+        } else if (quantity >= maxQuantity && maxQuantity === 3){
+            message.error(`Vượt quá số lượng cho phép (${maxQuantity}). Vui lòng liên hệ trực tiếp để mua nhiều hơn`);
         } else {
-            message.error(`Số lượng đã đạt tối đa: ${maxQuantity}`);
+            message.error(`Vượt quá số lượng tồn kho (${maxQuantity})`);
         }
     };
 

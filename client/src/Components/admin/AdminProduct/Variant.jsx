@@ -6,13 +6,13 @@ import "./admin.css"
 import { Modal, Switch, Tooltip, message } from 'antd';
 import axios from "axios";
 import { AppstoreAddOutlined, DeleteOutlined, EditOutlined, AppstoreOutlined } from '@ant-design/icons';
-import AddVariant from "./AddVariants";
+import AddVariant from "./addVariants";
 import EditVariant from "./EditVariants";
 import { useSelector } from "react-redux";
 import AttributesVariant from "./AttributesVariants";
 
 
-const Variant = ({ productId }) => {
+const Variant = ({ productId, category }) => {
     const user = useSelector((state) => state.user)
     const headers = {
         token: `Bearers ${user.access_token}`,
@@ -21,7 +21,7 @@ const Variant = ({ productId }) => {
     const [reloadProductData, setReloadProductData] = useState(false);
     const [variantId, setVariantId] = useState(null)
     const [deleteConfirmationProductId, setDeleteConfirmationProductId] = useState(null);
-    const [memory,setMemoryName] = useState(null)
+    const [memory, setMemoryName] = useState(null)
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_API_URL}/product/getVariant/${productId}`)
             .then((response) => {
@@ -67,7 +67,7 @@ const Variant = ({ productId }) => {
     };
     const [centredModal2, setCentredModal2] = useState(false);
 
-    const toggleOpen2 = (variantId,memory) => {
+    const toggleOpen2 = (variantId, memory) => {
         setCentredModal2(true);
         setVariantId(variantId);
         setMemoryName(memory)
@@ -76,19 +76,21 @@ const Variant = ({ productId }) => {
         setCentredModal2(false);
         setReloadProductData(!reloadProductData);
     };
+    const shouldHideMemoryColumn = ["Ốp lưng", "Cáp sạc", "Pin dự phòng", "Tai nghe"].includes(category);
+
     return (
         <div>
-           <WrapperHeader>Danh sách biến thể của sản phẩm {variantData.length > 0 && variantData[0].productName.name}</WrapperHeader>
+            <WrapperHeader>Danh sách biến thể của sản phẩm {variantData.length > 0 && variantData[0].productName.name}</WrapperHeader>
             <div style={{ justifyContent: 'end', width: '100%', display: 'flex' }}>
                 <MDBBtn rounded style={{ backgroundColor: '#B63245' }} onClick={toggleOpen} >
                     Thêm biến thể
                 </MDBBtn>
             </div>
-            <div style={{ marginTop: '15px',overflowX: 'auto', overflowY: 'auto' }}>
+            <div style={{ marginTop: '15px', overflowX: 'auto', overflowY: 'auto' }}>
                 <MDBTable bordered align='middle' className='floating-table'>
                     <MDBTableHead>
                         <tr style={{ textAlign: 'center', color: '#fff', backgroundColor: '#B63245' }}>
-                            <th scope='col' >Bộ nhớ</th>
+                            {!shouldHideMemoryColumn && <th scope='col'>Bộ nhớ</th>}
                             <th scope='col'>Giá nhập</th>
                             <th scope='col'>Giá cũ</th>
                             <th scope='col'>Giá bán</th>
@@ -98,9 +100,12 @@ const Variant = ({ productId }) => {
                     <MDBTableBody>
                         {variantData.map(variant => (
                             <tr key={variant._id} style={{ textAlign: 'center' }}>
-                                <td>
-                                    <p className='fw-bold mb-1'>{variant.memory}</p>
-                                </td>
+                                {!shouldHideMemoryColumn &&
+                                    <td>
+                                        <p className='fw-bold mb-1'>{variant.memory}</p>
+                                    </td>
+                                }
+
                                 <td>
                                     <MDBBadge color='success' pill style={{ fontSize: '14px', wordWrap: 'break-word' }}>
                                         {variant && variant.imPrice ? variant.imPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : ''}
@@ -124,29 +129,29 @@ const Variant = ({ productId }) => {
                                     <div style={{ display: 'flex', justifyContent: 'center' }}>
                                         <Tooltip title="Danh sách thuộc tính">
                                             <div style={{ marginRight: '10px' }}>
-                                                <AppstoreOutlined onClick={() => toggleOpen2(variant._id,variant.memory)} />
+                                                <AppstoreOutlined onClick={() => toggleOpen2(variant._id, variant.memory)} />
                                             </div>
                                         </Tooltip>
                                         <Tooltip title="Chỉnh sửa">
                                             <div style={{ marginRight: '10px' }}>
-                                            <EditOutlined onClick={() => toggleOpen1(variant._id)} />
+                                                <EditOutlined onClick={() => toggleOpen1(variant._id)} />
                                             </div>
                                         </Tooltip>
                                         <Tooltip title="Xóa">
-                                        <div>
-                                                    <DeleteOutlined onClick={() => toggleDeleteConfirmationModal(variant._id)} />
-                                                    <Modal
-                                                        title="Xác nhận xoá biến thể"
-                                                        visible={deleteConfirmationProductId === variant._id}
-                                                        onOk={() => {
-                                                            handleDeleteVariant(variant._id);
-                                                            setDeleteConfirmationProductId(null);
-                                                        }}
-                                                        onCancel={() => setDeleteConfirmationProductId(null)}
-                                                    >
-                                                        <p>Bạn có chắc chắn muốn xoá biến thể <strong>{variant.memory}</strong> này?</p>
-                                                    </Modal>
-                                                </div>
+                                            <div>
+                                                <DeleteOutlined onClick={() => toggleDeleteConfirmationModal(variant._id)} />
+                                                <Modal
+                                                    title="Xác nhận xoá biến thể"
+                                                    visible={deleteConfirmationProductId === variant._id}
+                                                    onOk={() => {
+                                                        handleDeleteVariant(variant._id);
+                                                        setDeleteConfirmationProductId(null);
+                                                    }}
+                                                    onCancel={() => setDeleteConfirmationProductId(null)}
+                                                >
+                                                    <p>Bạn có chắc chắn muốn xoá biến thể <strong>{variant.memory}</strong> này?</p>
+                                                </Modal>
+                                            </div>
                                         </Tooltip>
                                     </div>
                                 </td>
@@ -163,7 +168,7 @@ const Variant = ({ productId }) => {
                     width={1400}
                     closable={false}
                 >
-                    <AddVariant productId={productId} closeModal={closeModal} />
+                    <AddVariant productId={productId} category={category} closeModal={closeModal} />
                 </Modal>
             </>
             <>
@@ -174,7 +179,7 @@ const Variant = ({ productId }) => {
                     width={1400}
                     closable={false}
                 >
-                    <EditVariant variantId={variantId} closeModal={closeModal1} />
+                    <EditVariant variantId={variantId} category={category} closeModal={closeModal1} />
                 </Modal>
             </>
             <>
@@ -185,7 +190,7 @@ const Variant = ({ productId }) => {
                     width={1400}
                     maskClosable={false}
                 >
-                    <AttributesVariant closeModal={closeModal2} variantId={variantId} memory={memory}/>
+                    <AttributesVariant closeModal={closeModal2} variantId={variantId} memory={memory} />
                 </Modal>
             </>
         </div>

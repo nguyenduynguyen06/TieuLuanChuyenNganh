@@ -367,6 +367,8 @@ const OrderDetail = () => {
                                     <div style={{ padding: '10px', border: '1px solid #efefef', borderRadius: '4px' }}>
                                         <h6 style={{ margin: '0 0 5px 0' }}>Phương thức thanh toán:</h6>
                                         <p>{orderDetails.paymentMethod}</p>
+                                        <h6 style={{ margin: '0 0 5px 0' }}>Tình trạng thanh toán:</h6>
+                                        <p>{orderDetails.isPay}</p>
                                     </div>
                                     <div style={{ padding: '10px', background: '#fff', border: '1px solid #efefef', borderRadius: '4px' }}>
                                         <p>Mã đơn hàng:&nbsp;<span>{orderDetails.orderCode}</span></p>

@@ -4,7 +4,7 @@ import { CarouselW } from "./style";
 
 const Slide = ({ banners }) => {
   const settings = {
-    dots: true,
+    dots: false,
     infinite: true,
     speed: 1000,
     slidesToShow: 1,

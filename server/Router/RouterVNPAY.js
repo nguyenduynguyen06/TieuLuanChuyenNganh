@@ -125,6 +125,7 @@ router.get('/vnpay_return', async function (req, res, next) {
             vnp_Amount,
             vnp_BankCode,
             vnp_PayDate: formattedPayDate,
+            vnp_TxnRef
         });
     } else {
         res.status(200).json({ code: '97' });

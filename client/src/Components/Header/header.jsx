@@ -101,24 +101,6 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const user = useSelector((state) => state.user)
 
 
-  const menu = (
-    <Menu>
-      {user.role_id === 1 && (
-        <Menu.Item key="1">
-          <NavLink to="/admin">Quản lý</NavLink>
-        </Menu.Item>
-      )}
-      <Menu.Item key="2">
-        <NavLink to="/profile">Thông tin cá nhân</NavLink>
-      </Menu.Item>
-      <Menu.Item key="4">
-        <NavLink to="/orders">Đơn hàng của bạn</NavLink>
-      </Menu.Item>
-      <Menu.Item key="3">
-        <NavLink onClick={handleLogout}>Đăng xuất</NavLink>
-      </Menu.Item>
-    </Menu>
-  );
   const usermenu = (
     <Menu>
       <Menu.Item key="1">
@@ -237,7 +219,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             <div className="list-com">
               {user?.fullName ? (
                 <Tooltip title="Tài khoản" mouseEnterDelay={1}>
-                  <NavLink to={'/profile'}><UserSwitchOutlined style={{ fontSize: '20px', color: '#fff' }} /></NavLink>
+                  <NavLink to={'/profile/infor'}><UserSwitchOutlined style={{ fontSize: '20px', color: '#fff' }} /></NavLink>
                 </Tooltip>
               ) : (
                 <div className="list-com">

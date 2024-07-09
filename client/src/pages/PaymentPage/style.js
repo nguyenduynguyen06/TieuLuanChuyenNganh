@@ -10,7 +10,6 @@ export const WrapperPaymentInfo = styled.div`
         left: 0;
         margin-bottom: 10px;
         padding: 5px 15px 10px;
-        position: sticky;
         top: 0;
         width: 100%;
         z-index: 10;

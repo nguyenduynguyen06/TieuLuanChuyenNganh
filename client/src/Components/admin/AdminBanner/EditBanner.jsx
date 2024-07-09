@@ -85,6 +85,8 @@ const EditBanner = ({ closeModal, bannerId }) => {
                         title: bannerData.title,
                         page: bannerData.page,
                         location: bannerData.location,
+                        startDate: startDateFormat,
+                        endDate: endDateFormat,
                         link: bannerData.link,
                         products: productIds,
                     });

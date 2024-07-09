@@ -46,7 +46,7 @@ const AdminHomePage = () => {
   const [openKeys, setOpenKeys] = useState([]); // State để lưu trữ các SubMenu đang mở
 
   const items = [
-    { key: '/admin/dashboard', label: 'Dashboard', icon: <SignalFilled /> },
+    { key: '/admin/dashboard', label: 'Thống kê', icon: <SignalFilled /> },
     { key: '/admin/users', label: 'Người dùng', icon: <UserOutlined /> },
     { key: '/admin/products', label: 'Sản phẩm', icon: <AppstoreFilled /> },
     { key: '/admin/categories', label: 'Danh mục', icon: <ProfileFilled /> },

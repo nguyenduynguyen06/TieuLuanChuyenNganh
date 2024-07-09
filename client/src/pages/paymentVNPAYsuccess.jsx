@@ -97,8 +97,8 @@ const PaymentSuccess = () => {
                 <p style={{ fontSize: '1.25rem' }}>Ngân hàng giao dịch: {transactionData.vnp_BankCode}</p>
                 <p style={{ fontSize: '1.25rem' }}>Ngày tạo hoá đơn: {transactionData.vnp_PayDate}</p>
             </div>
-            <NavLink to={'/profile/orders'}>
-                <Button>Xem đơn hàng</Button>
+            <NavLink to={`/order-detail/${transactionData.vnp_TxnRef}`}>
+                <Button>Xem chi tiết đơn hàng</Button>
             </NavLink>
         </div>
     );

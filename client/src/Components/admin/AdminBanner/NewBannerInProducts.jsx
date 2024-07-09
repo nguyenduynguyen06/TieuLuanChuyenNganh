@@ -166,7 +166,7 @@ const NewBannerInProduct = ({ closeModal }) => {
             }
         } catch (error) {
             console.error('Lỗi khi thêm banner:', error);
-            message.error('Đã xảy ra lỗi khi thêm banner');
+            message.error(error.response.data.error);
         }
     };
 

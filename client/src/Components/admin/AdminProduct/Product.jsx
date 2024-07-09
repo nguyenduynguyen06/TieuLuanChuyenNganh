@@ -167,11 +167,14 @@ const Product = () => {
         setReloadProductData(!reloadProductData);
     };
     const [centredModal2, setCentredModal2] = useState(false);
+    const [categoryName, setCategoryName] = useState(null);
 
-    const toggleOpen2 = (productId) => {
+    const toggleOpen2 = (product) => {
         setCentredModal2(true);
-        setProductId(productId);
+        setProductId(product._id);
+        setCategoryName(product.category.name);
     };
+    
     const closeModal2 = () => {
         setCentredModal2(false);
     };
@@ -257,7 +260,7 @@ const Product = () => {
                                             <div style={{ display: 'flex', justifyContent: 'center' }}>
                                                 <Tooltip title="Danh sách biến thể">
                                                     <div style={{ marginRight: '10px' }}>
-                                                        <AppstoreOutlined onClick={() => toggleOpen2(product._id)} />
+                                                        <AppstoreOutlined onClick={() => toggleOpen2(product)} />
                                                     </div>
                                                 </Tooltip>
                                                 <Tooltip title="Chỉnh sửa">
@@ -318,7 +321,7 @@ const Product = () => {
                                             <div style={{ display: 'flex', justifyContent: 'center' }}>
                                                 <Tooltip title="Danh sách biến thể">
                                                     <div style={{ marginRight: '10px' }}>
-                                                        <AppstoreOutlined onClick={() => toggleOpen2(product._id)} />
+                                                        <AppstoreOutlined onClick={() => toggleOpen2(product)} />
                                                     </div>
                                                 </Tooltip>
                                                 <Tooltip title="Chỉnh sửa">
@@ -408,7 +411,7 @@ const Product = () => {
                     width={1400}
                     maskClosable={false}
                 >
-                    <Variant closeModal={closeModal2} productId={productId} />
+                    <Variant closeModal={closeModal2} productId={productId} category={categoryName} />
                 </Modal>
             </>
         </div>

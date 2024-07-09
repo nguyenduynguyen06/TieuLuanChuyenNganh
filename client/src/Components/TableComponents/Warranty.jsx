@@ -43,7 +43,7 @@ const WarrantySearch = () => {
                 window.confirmationResult = confirmationResult;
                 setLoading(false);
                 setCentredModal1(true);
-                message.success("OTP sent successfully!");
+                message.success("Đã gửi OTP thành công!");
             } catch (error) {
                 console.log(error);
                 setLoading(false);
@@ -188,7 +188,7 @@ const WarrantySearch = () => {
                                     className="otp-container">
                                 </OTPInput>
                                 <br></br>
-                                {info && <label className="font-bold text-xl text-white text-center">{info}</label>}
+                                {info && <label className="font-bold text-xl text-black text-center">{info}</label>}
                                 <br></br>
                                 <Loading isLoading={loading}>
                                     <button onClick={onOTPVerify} className="custom-button">

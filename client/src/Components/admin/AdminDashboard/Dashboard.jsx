@@ -44,8 +44,8 @@ function Dashboard() {
     const [pay90Days, setPay90Days] = useState([]);
     const [pay365Days, setPay365Days] = useState([]);
     const [payAllDays, setPayAllDays] = useState([]);
-    const [selectedOptionSale, setSelectedOptionSale] = useState('weekly');
-    const [selectedOptionPay, setSelectedOptionPay] = useState('weekly');
+    const [selectedOptionSale, setSelectedOptionSale] = useState('tuần');
+    const [selectedOptionPay, setSelectedOptionPay] = useState('tuần');
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [totalPayData, setTotalPayData] = useState([]);
@@ -207,8 +207,13 @@ function Dashboard() {
     }, []);
 
     const fetchTotalPay = async () => {
+        const utcStartDate = moment(startDate).utc().format(); 
+        const utcEndDate = moment(endDate).utc().format();
+        console.log("UTC start date:", startDate);
+        console.log("UTC end date:", endDate);
+
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/order/calculateTotalPayByDateRange`, { startDate, endDate });
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/order/calculateTotalPayByDateRange`, { startDate: utcStartDate, endDate: utcEndDate });
             setTotalPayData(response.data.data);
         } catch (error) {
             console.error("Error fetching total pay data: ", error);
@@ -216,12 +221,13 @@ function Dashboard() {
     };
     const handleFetchData = () => {
         if (selectedOption === 'custom' && (!startDate || !endDate)) {
-          message.error('Vui lòng chọn khoảng ngày hợp lệ.');
-          return;
+            message.error('Vui lòng chọn khoảng ngày hợp lệ.');
+            return;
         }
+        
         fetchTotalPay();
-      };
-    
+    };
+
     const newUserCountDisplay = newUsersCount > 0 ? `+${newUsersCount} trong 7 ngày qua` : 'Không có người dùng mới trong 7 ngày qua';
     const newOrdersCountDisplay = newOrdersCount > 0 ? `+${newOrdersCount} trong 7 ngày qua` : 'Không có đơn hàng mới trong 7 ngày qua';
     const topSoldProducts = soldP.sort((a, b) => b.totalSold - a.totalSold).slice(0, 5);
@@ -236,15 +242,15 @@ function Dashboard() {
         let data = [];
         let labels = [];
         switch (period) {
-            case 'weekly':
+            case 'tuần':
                 labels = weeklyPay.map(item => `Tuần ${item._id.week} - ${item._id.year}`);
                 data = weeklyPay.map(item => item.totalPay);
                 break;
-            case 'monthly':
+            case 'tháng':
                 labels = monthlyPay.map(item => `Tháng ${item._id.month}/${item._id.year}`);
                 data = monthlyPay.map(item => item.totalPay);
                 break;
-            case 'yearly':
+            case 'năm':
                 labels = yearlyPay.map(item => `Năm ${item._id.year}`);
                 data = yearlyPay.map(item => item.totalPay);
                 break;
@@ -261,22 +267,21 @@ function Dashboard() {
         let data = [];
         let labels = [];
         switch (period) {
-            case 'weekly':
+            case 'tuần':
                 labels = weeklySales.map(item => `Tuần ${item._id.week} - ${item._id.year}`);
                 data = weeklySales.map(item => item.totalSold);
                 break;
-            case 'monthly':
+            case 'tháng':
                 labels = monthlySales.map(item => `Tháng ${item._id.month}/${item._id.year}`);
                 data = monthlySales.map(item => item.totalSold);
                 break;
-            case 'yearly':
+            case 'năm':
                 labels = yearlySales.map(item => `Năm ${item._id.year}`);
                 data = yearlySales.map(item => item.totalSold);
                 break;
             default:
                 labels = weeklySales.map(item => `Tuần ${item._id.week} - ${item._id.year}`);
                 data = weeklySales.map(item => item.totalSold);
-
                 break;
         }
         return { labels, data };
@@ -302,7 +307,7 @@ function Dashboard() {
                 labels = pay365Days.map(item => item._id);
                 data = pay365Days.map(item => item.totalPay);
                 break;
-            case 'all':
+            case 'toàn bộ':
                 labels = payAllDays.map(item => item._id);
                 data = payAllDays.map(item => item.totalPay);
                 break;
@@ -320,7 +325,6 @@ function Dashboard() {
     const chartData = formatTotalPay(selectedOption);
     const chartDataSale = formatSalesData(selectedOptionSale);
     const chartDataPay = formatPayData(selectedOptionPay);
-
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', gap: '20px', overflowX: 'auto', overflowY: 'auto', padding: '20px' }}>
@@ -428,9 +432,9 @@ function Dashboard() {
                 <TabPane tab="Số lượng sản phẩm đã bán theo thời gian" key="1">
                     <div style={{ padding: '20px', width: '100%' }}>
                         <Select value={selectedOptionSale} onChange={handleSelectChangeSale} style={{ marginBottom: '20px' }}>
-                            <Option value="weekly">Theo tuần</Option>
-                            <Option value="monthly">Theo tháng</Option>
-                            <Option value="yearly">Theo năm</Option>
+                            <Option value="tuần">Theo tuần</Option>
+                            <Option value="tháng">Theo tháng</Option>
+                            <Option value="năm">Theo năm</Option>
                         </Select>
                         <Card hoverable style={{ width: '100%' }}>
                             <h4>Số lượng sản phẩm đã bán ({selectedOptionSale})</h4>
@@ -458,9 +462,9 @@ function Dashboard() {
                 <TabPane tab="Doanh số theo thời gian" key="2">
                     <div style={{ padding: '20px', width: '100%' }}>
                         <Select value={selectedOptionPay} onChange={handleSelectChangePay} style={{ marginBottom: '20px' }}>
-                            <Option value="weekly">Theo tuần</Option>
-                            <Option value="monthly">Theo tháng</Option>
-                            <Option value="yearly">Theo năm</Option>
+                            <Option value="tuần">Theo tuần</Option>
+                            <Option value="tháng">Theo tháng</Option>
+                            <Option value="năm">Theo năm</Option>
                         </Select>
                         <Card hoverable style={{ width: '100%' }}>
                             <h4>Doanh số ({selectedOptionPay})</h4>
@@ -487,13 +491,14 @@ function Dashboard() {
                 </TabPane>
                 <TabPane tab="Doanh số các ngày qua" key="3">
                     <div style={{ padding: '20px', width: '100%' }}>
-                        <Select value={selectedOption} onChange={handleSelectChange} style={{ marginBottom: '20px', width:'150px' }}>
+                        <Select value={selectedOption} onChange={handleSelectChange} style={{ marginBottom: '20px', width: '150px' }}>
                             <Option value="7">7 ngày qua</Option>
                             <Option value="28">28 ngày qua</Option>
                             <Option value="90">90 ngày qua</Option>
                             <Option value="365">365 ngày qua</Option>
-                            <Option value="all">Toàn bộ</Option>
+                            <Option value="toàn bộ">Toàn bộ</Option>
                             <Option value="custom">Tùy chỉnh</Option>
+
                         </Select>
                         <Card hoverable style={{ width: '100%' }}>
                             {selectedOption === 'custom' && (
@@ -507,9 +512,10 @@ function Dashboard() {
                                             isClearable
                                             startDate={startDate}
                                             endDate={endDate}
-                                            placeholderText="Start Date"
-                                        />                                    
-                                        </div>
+                                            maxDate={moment().subtract(1, 'day').toDate()}
+                                            placeholderText="Ngày bắt đầu"
+                                        />
+                                    </div>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
 
                                         <h7>Chọn ngày kết thúc</h7>
@@ -521,12 +527,12 @@ function Dashboard() {
                                             startDate={startDate}
                                             endDate={endDate}
                                             minDate={startDate}
-                                            maxDate={moment().subtract(1, 'day').toDate()} 
-                                            placeholderText="End Date"
+                                            maxDate={moment().subtract(1, 'day').toDate()}
+                                            placeholderText="Ngày kết thúc"
                                         />
                                     </div>
                                     <div style={{ alignItems: 'end', display: 'flex' }}>
-                                        <Button onClick={handleFetchData} style={{ background: '#B63245', color: '#fff' ,width:'150px' }}>Áp dụng</Button>
+                                        <Button onClick={handleFetchData} style={{ background: '#B63245', color: '#fff', width: '150px' }}>Áp dụng</Button>
 
                                     </div>
                                 </div>

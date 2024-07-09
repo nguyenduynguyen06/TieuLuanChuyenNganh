@@ -48,7 +48,7 @@ const tailFormItemLayout = {
   },
 };
 
-const AddVariant = ({ closeModal, productId }) => {
+const AddVariant = ({ closeModal, productId, category }) => {
   const user = useSelector((state) => state.user);
   const [form] = Form.useForm();
   const props = (name) => ({
@@ -128,6 +128,7 @@ const AddVariant = ({ closeModal, productId }) => {
       }
     }
   };
+  const shouldHideMemoryField = ["Ốp lưng", "Cáp sạc", "Pin dự phòng", "Tai nghe"].includes(category);
 
   return (
     <Form
@@ -139,18 +140,14 @@ const AddVariant = ({ closeModal, productId }) => {
       }}
       scrollToFirstError
     >
-      <Form.Item
-        name="memory"
-        label="Bộ nhớ"
-        rules={[
-          {
-            required: true,
-            message: 'Vui lòng điền bộ nhớ!',
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
+      {!shouldHideMemoryField && (
+        <Form.Item
+          name="memory"
+          label="Bộ nhớ"
+        >
+          <Input />
+        </Form.Item>
+      )}
       <Form.Item
         name="imPrice"
         label="Giá nhập"

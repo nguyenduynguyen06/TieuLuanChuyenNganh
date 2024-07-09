@@ -129,6 +129,7 @@ const getCommentsByProduct = async (req, res) => {
       .populate({
         path: 'replies',
         model: 'Comment',
+        match: { check: true },
         populate: { path: 'user' },
       }).lean();
 
@@ -224,7 +225,7 @@ const getAllCommnent = async (req, res) => {
         path: 'user',
         select: 'role_id',
       })
-      .sort({ createDate: -1 }) 
+      .sort({ createDate: 1 }) 
       .skip((page - 1) * limit)
       .limit(limit);
 

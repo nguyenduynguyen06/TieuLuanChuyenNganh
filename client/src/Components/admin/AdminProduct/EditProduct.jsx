@@ -82,7 +82,7 @@ const EditProduct = ({ closeModal, productId }) => {
                         categoryName: productData.category.name,
                         brandName: productData.brand.name,
                         include: productData.include,
-                   
+                        releaseTime: publishedDate,
                         thumnails: productData.thumnails,
                         desc: productData.desc,
                         promotion: productData.promotion,
@@ -94,10 +94,28 @@ const EditProduct = ({ closeModal, productId }) => {
                 });
         }
     }, [productId, form, reload]);
-    const handlePropertyLabelChange = (key, value) => {
-        const updatedProperties = { ...properties, [value]: properties[key] };
-        delete updatedProperties[key];
+    const handlePropertyLabelChange = (key, newLabel) => {
+        if (key === newLabel) {
+            return;
+        }
+
+        // Check if the new label already exists
+        if (properties.hasOwnProperty(newLabel)) {
+            message.error('Thuộc tính đã tồn tại.');
+            return;
+        }
+
+        const updatedProperties = {};
+        Object.keys(properties).forEach((currentKey) => {
+            if (currentKey === key) {
+                updatedProperties[newLabel] = properties[currentKey];
+            } else {
+                updatedProperties[currentKey] = properties[currentKey];
+            }
+        });
+
         setProperties(updatedProperties);
+        setSelectedProperty(newLabel); // Update selected property to the new label
     };
     const handleCloseModal = () => {
         closeModal();

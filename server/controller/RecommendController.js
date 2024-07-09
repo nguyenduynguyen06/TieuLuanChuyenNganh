@@ -37,14 +37,16 @@ const calculateSimilarityScore = (variant1, variant2) => {
     let similarityScore = 0;
 
 
-    if (variant1.productName.category.toString() === variant2.productName.category.toString()) {
+    if (variant1.productName.category && variant2.productName.category &&
+        variant1.productName.category.toString() === variant2.productName.category.toString()) {
         similarityScore += 0.5;
     }
-
-
-    if (variant1.productName.brand.toString() === variant2.productName.brand.toString()) {
+    
+    if (variant1.productName.brand && variant2.productName.brand &&
+        variant1.productName.brand.toString() === variant2.productName.brand.toString()) {
         similarityScore += 0.5;
     }
+    
 
 
     if (variant1.newPrice && variant2.newPrice) {
@@ -65,7 +67,9 @@ const calculateSimilarityScore = (variant1, variant2) => {
 };
 const generateRecommendations = async (variants, excludedVariants, userCart, limit) => {
     const recommendedProducts = new Set();
-    const excludedVariantIds = excludedVariants.map(id => id.toString());
+    const excludedVariantIds = excludedVariants
+    .filter(id => id != null)  // Ensure id is not null
+    .map(id => id.toString());
 
     const allVariantDetails = await ProductVariant.find({
         _id: { $in: variants.map(v => v._id) }
@@ -91,9 +95,11 @@ const generateRecommendations = async (variants, excludedVariants, userCart, lim
         const similarityScores = [];
 
         uniqueVariants.forEach(variant => {
-            const variantDetail = variantDetailsMap.get(variant._id.toString());
-            const similarityScore = calculateSimilarityScore(variantDetail, excludedVariant);
-            similarityScores.push({ variant: variantDetail, score: similarityScore });
+            if (variant._id) {  // Ensure _id is not null
+                const variantDetail = variantDetailsMap.get(variant._id.toString());
+                const similarityScore = calculateSimilarityScore(variantDetail, excludedVariant);
+                similarityScores.push({ variant: variantDetail, score: similarityScore });
+            }
         });
 
         similarityScores.sort((a, b) => b.score - a.score);
@@ -446,10 +452,14 @@ const generateProductRecommendations = async (req, res) => {
         if (userCart) {
             const excludedVariantIds = [
                 ...new Set([
-                    ...userAccessHistory.map(access => access.product.toString()),
-                    ...userCart.items.map(item => item.productVariant.toString())
+                    ...userAccessHistory
+                        .filter(access => access.product != null)  // Ensure product is not null
+                        .map(access => access.product.toString()),
+                    ...userCart.items
+                        .filter(item => item.productVariant != null)  // Ensure productVariant is not null
+                        .map(item => item.productVariant.toString())
                 ])
-            ];
+            ];            
             recommendations = await generateRecommendations(variants, excludedVariantIds, userCart, limit || 10);
         }
         else {

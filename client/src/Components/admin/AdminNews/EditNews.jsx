@@ -74,7 +74,7 @@ const EditNews = ({ closeModal, newsId }) => {
                         image: newsData.image,
                         content: newsData.content,
                         author: newsData.author.fullName,
-                        // publishedDate, 
+                        publishedDate : publishedDate, 
                     });
                 })
                 .catch((error) => {

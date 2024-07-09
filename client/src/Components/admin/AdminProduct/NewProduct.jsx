@@ -427,12 +427,6 @@ const NewProduct = ({ closeModal }) => {
                       name={[name, 'memory']}
                       fieldKey={[name, 'memory']}
                       label="Bộ nhớ"
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Vui lòng điền bộ nhớ!',
-                        },
-                      ]}
                     >
                       <Input />
                     </Form.Item>
@@ -626,7 +620,7 @@ const NewProduct = ({ closeModal }) => {
         okText="Xác nhận"
         cancelText="Huỷ bỏ"
       >
-        <p>Bạn có chắc chắn muốn huỷ không?</p>
+        <p>Sẽ hủy tất cả thuộc tính, bạn có chắc hủy không?</p>
       </Modal>
       </>
       <>

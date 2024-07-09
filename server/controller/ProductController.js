@@ -95,6 +95,7 @@ const getProductsByCategory = async (req, res) => {
     const products = await Product.find({ category: categoryId })
       .select('-desc  -views -include -promotion ')
       .populate('brand')
+      .populate('category')
       .populate({
         path: 'variant',
         populate: {
