@@ -36,28 +36,24 @@ const saveUserAccess = async (req, res) => {
 const calculateSimilarityScore = (variant1, variant2) => {
     let similarityScore = 0;
 
-
-    if (variant1.productName.category && variant2.productName.category &&
+    if (variant1?.productName?.category && variant2?.productName?.category &&
         variant1.productName.category.toString() === variant2.productName.category.toString()) {
         similarityScore += 0.5;
     }
     
-    if (variant1.productName.brand && variant2.productName.brand &&
+    if (variant1?.productName?.brand && variant2?.productName?.brand &&
         variant1.productName.brand.toString() === variant2.productName.brand.toString()) {
         similarityScore += 0.5;
     }
-    
 
-
-    if (variant1.newPrice && variant2.newPrice) {
+    if (variant1?.newPrice && variant2?.newPrice) {
         const priceDifference = Math.abs(variant1.newPrice - variant2.newPrice);
         const maxPrice = Math.max(variant1.newPrice, variant2.newPrice);
         const priceSimilarity = 1 - (priceDifference / maxPrice);
         similarityScore += priceSimilarity * 0.3;
     }
 
-
-    if (variant1.memory && variant2.memory) {
+    if (variant1?.memory && variant2?.memory) {
         if (variant1.memory === variant2.memory) {
             similarityScore += 0.2;
         }
@@ -65,11 +61,12 @@ const calculateSimilarityScore = (variant1, variant2) => {
 
     return similarityScore;
 };
+
 const generateRecommendations = async (variants, excludedVariants, userCart, limit) => {
     const recommendedProducts = new Set();
     const excludedVariantIds = excludedVariants
-    .filter(id => id != null)  // Ensure id is not null
-    .map(id => id.toString());
+        .filter(id => id != null)  // Ensure id is not null
+        .map(id => id.toString());
 
     const allVariantDetails = await ProductVariant.find({
         _id: { $in: variants.map(v => v._id) }
@@ -90,26 +87,29 @@ const generateRecommendations = async (variants, excludedVariants, userCart, lim
     for (const excludedVariantId of excludedVariantIds) {
         const excludedVariant = variantDetailsMap.get(excludedVariantId);
 
+        if (!excludedVariant) continue; // Ensure excludedVariant is not null
+
         const uniqueVariants = variants.filter(variant => variant._id.toString() !== excludedVariantId);
 
         const similarityScores = [];
 
         uniqueVariants.forEach(variant => {
-            if (variant._id) {  // Ensure _id is not null
+            if (variant?._id) {  // Ensure _id is not null
                 const variantDetail = variantDetailsMap.get(variant._id.toString());
-                const similarityScore = calculateSimilarityScore(variantDetail, excludedVariant);
-                similarityScores.push({ variant: variantDetail, score: similarityScore });
+                if (variantDetail) {
+                    const similarityScore = calculateSimilarityScore(variantDetail, excludedVariant);
+                    similarityScores.push({ variant: variantDetail, score: similarityScore });
+                }
             }
         });
 
         similarityScores.sort((a, b) => b.score - a.score);
 
-        
-        const topSimilarProducts = similarityScores.slice(1, 6).map(score => score.variant);
+        const topSimilarProducts = similarityScores.slice(0, 5).map(score => score.variant);
 
         topSimilarProducts.forEach(product => {
             if (userCart && userCart.items) {
-                const isProductInCart = userCart.items.some(item => item.productVariant.toString() === product._id.toString());
+                const isProductInCart = userCart.items.some(item => item?.productVariant?.toString() === product._id.toString());
                 if (!isProductInCart) {
                     recommendedProducts.add(product);
                 }
@@ -118,17 +118,19 @@ const generateRecommendations = async (variants, excludedVariants, userCart, lim
             }
         });
     }
+
     const finalRecommendedProducts = Array.from(recommendedProducts).filter(product => {
-        const quantities = product.attributes.map(attr => attr.quantity);
-        const averageQuantity = quantities.reduce((acc, val) => acc + val, 0) / quantities.length;
+        const quantities = product?.attributes?.map(attr => attr.quantity);
+        const averageQuantity = quantities?.reduce((acc, val) => acc + val, 0) / (quantities?.length || 1);
         return averageQuantity > 0;
     });
+
     return Array.from(finalRecommendedProducts).slice(0, limit).map(product => ({
-        productId: product.productName._id,
-        productName: product.productName.name,
-        ratings: product.productName.ratings,
-        isHide: product.productName.isHide,
-        thumnails: product.productName.thumnails,
+        productId: product.productName?._id,
+        productName: product.productName?.name,
+        ratings: product.productName?.ratings,
+        isHide: product.productName?.isHide,
+        thumnails: product.productName?.thumnails,
         memory: product.memory,
         imPrice: product.imPrice,
         oldPrice: product.oldPrice,
