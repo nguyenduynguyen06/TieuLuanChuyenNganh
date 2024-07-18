@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
-import { UploadOutlined } from '@ant-design/icons';
-import { message, Upload, Slider, Modal, Button, Form, Input } from 'antd';
+import { UploadOutlined, PlusOutlined } from '@ant-design/icons';
+import { message, Upload, Slider, Modal, Button, Form, Input, notification } from 'antd';
 import { useSelector } from 'react-redux';
 import AvatarEditor from 'react-avatar-editor';
 
@@ -40,7 +40,7 @@ const EditCategory = ({ closeModal, categoryId }) => {
     const [uploading, setUploading] = useState(false);
     const [uploadedFileName, setUploadedFileName] = useState(null);
     const [cropModalVisible, setCropModalVisible] = useState(false);
-
+    const [uploadedFileURL, setUploadedFileURL] = useState(null);
     useEffect(() => {
         if (categoryId) {
             axios.get(`${process.env.REACT_APP_API_URL}/category/getCategory/${categoryId}`, { headers })
@@ -48,7 +48,9 @@ const EditCategory = ({ closeModal, categoryId }) => {
                     const categoryData = response.data.data;
                     form.setFieldsValue({
                         name: categoryData.name,
+                        picture: categoryData.picture,
                     });
+                    setUploadedFileURL(categoryData.picture);
                 })
                 .catch((error) => {
                     console.error('Error fetching categories:', error);
@@ -70,7 +72,10 @@ const EditCategory = ({ closeModal, categoryId }) => {
     const checkFile = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
         if (!isJpgOrPng) {
-            message.error('Bạn chỉ có thể tải lên tệp tin JPG/PNG!');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Bạn chỉ có thể tải lên tệp tin JPG/PNG!'
+            });
         }
         return isJpgOrPng;
     };
@@ -91,15 +96,26 @@ const EditCategory = ({ closeModal, categoryId }) => {
                 });
 
                 if (response.status === 200) {
-                    message.success('Tải ảnh lên thành công!');
+                    notification.success({
+                        message: 'Thông báo',
+                        description: 'Tải ảnh lên thành công!'
+                    });
                     setUploadedFileName(file.name); // Set the uploaded file name
+                    setUploadedFileURL(response.data.imageUrl);
                     form.setFieldsValue({ picture: response.data.imageUrl });
                     setCropModalVisible(false);
                 } else {
-                    message.error('Tải ảnh lên thất bại.');
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Tải ảnh lên thất bại.'
+                    });
                 }
             } catch (error) {
-                message.error('Tải ảnh lên thất bại.');
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Tải ảnh lên thất bại.'
+                });
+
             } finally {
                 setUploading(false);
             }
@@ -116,6 +132,8 @@ const EditCategory = ({ closeModal, categoryId }) => {
     const handleCloseModal = () => {
         closeModal();
         setReload(!reload)
+        setUploadedFileURL(null);
+
     };
 
 
@@ -125,14 +143,22 @@ const EditCategory = ({ closeModal, categoryId }) => {
         };
         axios.put(`${process.env.REACT_APP_API_URL}/category/updateCategory/${categoryId}`, values, { headers })
             .then((response) => {
-                message.success('Chỉnh sửa danh mục thành công');
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Chỉnh sửa danh mục thành công'
+                });
+
                 closeModal();
             })
             .catch((error) => {
                 console.error('Lỗi khi cập nhật danh mục: ', error);
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Lỗi khi cập nhật danh mục'
+                });
+
             });
     };
-
     return (
         <Form
             {...formItemLayout}
@@ -167,11 +193,15 @@ const EditCategory = ({ closeModal, categoryId }) => {
             >
                 <Upload
                     beforeUpload={handleBeforeUpload}
-                    showUploadList={false}
+                    showUploadList={{ showPreviewIcon: false }}
+                    listType="picture-card"
+                    maxCount={1}
                 >
-                    <Button icon={<UploadOutlined />}>Ảnh</Button>
+                    <div>
+                        <PlusOutlined />
+                        <div style={{ marginTop: 8 }}>Tải lên</div>
+                    </div>
                 </Upload>
-                {uploadedFileName && <div>Tệp đã tải lên: {uploadedFileName}</div>}
             </Form.Item>
             <Form.Item >
                 <div style={{ display: 'flex', gap: '20px', justifyContent: 'end' }}>

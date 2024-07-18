@@ -37,7 +37,7 @@ const HomePage = () => {
     }
   };
   useEffect(() => {
-    document.title = "Di Động Gen Z | Trang Chủ";
+    document.title = "Trang Chủ";
 
     checkScreenWidth();
     window.addEventListener('resize', checkScreenWidth);

@@ -101,7 +101,7 @@ export const WrapperPaymentInfo = styled.div`
         flex-direction: column;
     }
     .item-price {
-        align-items: flex-end;
+        align-items: center;
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;

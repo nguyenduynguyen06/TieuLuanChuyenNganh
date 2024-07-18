@@ -12,22 +12,24 @@ function SingleNews() {
     const [newsData, setNewsData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+   
     useEffect(() => {
         if (id) {
             axios.get(`${process.env.REACT_APP_API_URL}/news/getNews/${id}`)
                 .then((response) => {
                     setNewsData(response.data.data);
+                    document.title = `${response.data.data.title}`;    
                     setLoading(false);
+
                 })
                 .catch((error) => {
                     console.error('Error fetching news:', error);
                     setError('Failed to fetch news');
                     setLoading(false);
                 });
+
         }
     }, [id]);
-
     if (loading) {
         return <div style={{ width: '90%', padding: '30px' }}>
             <Skeleton></Skeleton>

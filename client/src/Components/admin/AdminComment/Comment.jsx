@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { WrapperHeader } from "../AdminUser/style";
 import { MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody, MDBIcon } from 'mdb-react-ui-kit';
-import { Input, Modal, Switch, Tooltip, message } from 'antd';
+import { Input, Modal, Switch, Tooltip, message, notification } from 'antd';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import { EditOutlined } from '@ant-design/icons';
@@ -40,6 +40,7 @@ const Comment = () => {
         setViewContent(content);
         setIsViewModalVisible(true);
     };
+   
 
     useEffect(() => {
         fetchData(pagination.currentPage, pagination.pageSize);
@@ -77,14 +78,24 @@ const Comment = () => {
                             setCommentData(filteredComments);
                             setReloadCommentData(!reloadCommentData)
                         })
-                    message.success('Duyệt thành công');
+                    notification.success({
+                        message: 'Thông báo',
+                        description: 'Duyệt thành công'
+                      });
+    
                 } else {
-                    message.error('Lỗi khi duyệt');
-                }
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Lỗi khi duyệt'
+                      });
+                    }
             })
             .catch((error) => {
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Lỗi khi duyệt'
+                  });
 
-                message.error('Lỗi khi duyệt');
             });
     };
 
@@ -96,13 +107,23 @@ const Comment = () => {
                 if (response.data.success) {
                     setLoading(true)
                     setReloadCommentData(!reloadCommentData)
-                    message.success('Trả lời thành công');
+                    notification.success({
+                        message: 'Thông báo',
+                        description: 'Trả lời thành công'
+                      });
+
                 } else {
-                    message.error('Trả lời lỗi');
-                }
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Trả lời lỗi'
+                      });
+                    }
             })
             .catch((error) => {
-                message.error('Trả lời lỗi');
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Trả lời lỗi'
+                  });
             });
     };
 
@@ -118,14 +139,24 @@ const Comment = () => {
                     const updatedData = commentData.filter((item) => item._id !== commentId);
                     setCommentData(updatedData);
                     setReloadCommentData(!reloadCommentData)
-                    message.success('Xóa bình luận thành công');
+                    notification.success({
+                        message: 'Thông báo',
+                        description: 'Xóa bình luận thành công.'
+                      });
                 } else {
-                    message.error('Lỗi khi xóa bình luận');
-                }
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Lỗi khi xóa bình luận'
+                      });
+                    }
             })
             .catch((error) => {
                 console.error('Lỗi khi gọi API xóa bình luận: ', error);
-                message.error('Lỗi khi xóa bình luận');
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Lỗi khi xóa bình luận'
+                  });
+    
             });
     };
     const formItemLayout = {

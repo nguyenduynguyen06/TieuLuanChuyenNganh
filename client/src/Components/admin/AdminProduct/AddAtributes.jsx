@@ -4,7 +4,7 @@ import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
 import { UploadOutlined } from '@ant-design/icons';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { message, Upload, Collapse, Table, Modal } from 'antd';
+import { message, Upload, Collapse, Table, Modal, notification } from 'antd';
 import {
   Button,
   Form,
@@ -58,10 +58,17 @@ const AddAttributes = ({ closeModal, variantId }) => {
       authorization: 'authorization-text',
     },
     accept: '.jpg, .jpeg, .png',
+    listType: 'picture-card',
+    showUploadList: { showPreviewIcon: false },
+    maxCount:1,
     beforeUpload: (file) => {
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
       if (!isJpgOrPng) {
-        message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
+        notification.error({
+          message: 'Thông báo',
+          description: 'Chỉ cho phép tải lên tệp JPG hoặc PNG!'
+        });
+
       }
       return isJpgOrPng;
     },
@@ -70,7 +77,11 @@ const AddAttributes = ({ closeModal, variantId }) => {
         console.log(info.file, info.fileList);
       }
       if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
+        notification.success({
+          message: 'Thông báo',
+          description: `${info.file.name} tải lên thành công`
+        });
+
         const uploadedFilePath = info.file.response.imageUrl;
         if (typeof uploadedFilePath === 'string') {
           const updatedAttributes = form.getFieldValue('attributes');
@@ -80,7 +91,6 @@ const AddAttributes = ({ closeModal, variantId }) => {
           console.error('uploadedFilePath is not a string:', uploadedFilePath);
         }
       } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
       }
     }
   });
@@ -115,18 +125,31 @@ const AddAttributes = ({ closeModal, variantId }) => {
         { headers }
       );
       if (response.status === 200) {
-        message.success('Thêm thuộc tính thành công');
+        notification.success({
+          message: 'Thông báo',
+          description: 'Thêm thuộc tính thành công'
+        });
+
         closeModal();
         form.resetFields();
       } else {
-
-        message.error('Thêm thuộc tính thất bại');
+        notification.error({
+          message: 'Thông báo',
+          description: 'Thêm thuộc tính thất bại'
+        });
       }
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {
-        message.error(`Thêm thuộc tính thất bại: ${error.response.data.error}`);
+        notification.error({
+          message: 'Thông báo',
+          description: `Thêm thuộc tính thất bại: ${error.response.data.error}`
+        });
+
       } else {
-        message.error('Thêm thuộc tính thất bại: Đã xảy ra lỗi không mong muốn');
+        notification.error({
+          message: 'Thông báo',
+          description: 'Thêm thuộc tính thất bại: Đã xảy ra lỗi không mong muốn'
+        });
       }
     }
   };
@@ -188,7 +211,10 @@ const AddAttributes = ({ closeModal, variantId }) => {
                     ]}
                   >
                     <Upload {...props(name)}>
-                      <Button icon={<UploadOutlined />}>Ảnh</Button>
+                    <div>
+                        <PlusOutlined />
+                        <div style={{ marginTop: 8 }}>Tải lên</div>
+                      </div>
                     </Upload>
                   </Form.Item>
                   <Form.Item
@@ -232,16 +258,16 @@ const AddAttributes = ({ closeModal, variantId }) => {
         </div>
       </Form.Item>
       <>
-      <Modal
-        title="Xác nhận huỷ"
-        visible={confirmModalVisible}
-        onOk={handleConfirm}
-        onCancel={handleCancel}
-        okText="Xác nhận"
-        cancelText="Huỷ bỏ"
-      >
-        <p>Bạn có chắc chắn muốn huỷ không?</p>
-      </Modal>
+        <Modal
+          title="Xác nhận huỷ"
+          visible={confirmModalVisible}
+          onOk={handleConfirm}
+          onCancel={handleCancel}
+          okText="Xác nhận"
+          cancelText="Huỷ bỏ"
+        >
+          <p>Bạn có chắc chắn muốn huỷ không?</p>
+        </Modal>
       </>
     </Form>
   );

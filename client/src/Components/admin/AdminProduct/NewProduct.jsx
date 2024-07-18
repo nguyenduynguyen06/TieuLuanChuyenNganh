@@ -4,7 +4,7 @@ import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
 import { UploadOutlined } from '@ant-design/icons';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { message, Upload, Collapse, Table, Modal } from 'antd';
+import { message, Upload, Collapse, Table, Modal, notification } from 'antd';
 import {
   Button,
   Form,
@@ -67,10 +67,16 @@ const NewProduct = ({ closeModal }) => {
       authorization: 'authorization-text',
     },
     accept: '.jpg, .jpeg, .png',
+    listType: 'picture-card',
+    showUploadList: { showPreviewIcon: false },
+    maxCount: 1,
     beforeUpload: (file) => {
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
       if (!isJpgOrPng) {
-        message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
+        notification.error({
+          message: 'Thông báo',
+          description: 'Chỉ cho phép tải lên tệp JPG hoặc PNG!'
+        });
       }
       return isJpgOrPng;
     },
@@ -79,7 +85,10 @@ const NewProduct = ({ closeModal }) => {
         console.log(info.file, info.fileList);
       }
       if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
+        notification.success({
+          message: 'Thông báo',
+          description: `${info.file.name} file uploaded successfully`
+        });
         const uploadedFilePath = info.file.response.imageUrl;
         if (typeof uploadedFilePath === 'string') {
           form.setFieldsValue({
@@ -105,7 +114,10 @@ const NewProduct = ({ closeModal }) => {
           console.error('uploadedFilePath is not a string:', uploadedFilePath);
         }
       } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+        notification.error({
+          message: 'Thông báo',
+          description: `${info.file.name} file upload failed.`
+        });
       }
     }
   });
@@ -117,10 +129,15 @@ const NewProduct = ({ closeModal }) => {
     },
     accept: '.jpg, .jpeg, .png',
     multiple: true,
+    listType: 'picture-card',
+    showUploadList: { showPreviewIcon: false },
     beforeUpload: (file) => {
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
       if (!isJpgOrPng) {
-        message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
+        notification.error({
+          message: 'Thông báo',
+          description: 'Chỉ cho phép tải lên tệp JPG hoặc PNG!'
+        });
       }
       return isJpgOrPng;
     },
@@ -129,7 +146,10 @@ const NewProduct = ({ closeModal }) => {
         console.log(info.file, info.fileList);
       }
       if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
+        notification.success({
+          message: 'Thông báo',
+          description: `${info.file.name} file uploaded successfully`
+        });
         const uploadedFilePaths = info.fileList
           .filter((file) => file.status === 'done')
           .map((file) => file.response.imageUrls);
@@ -137,10 +157,15 @@ const NewProduct = ({ closeModal }) => {
         console.log('')
         form.setFieldsValue({ thumnails: allImageUrls });
       } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+        notification.error({
+          message: 'Thông báo',
+          description: `${info.file.name} file upload failed.`
+        });
       }
     }
   };
+
+
   const [centredModal, setCentredModal] = useState(false);
 
   const toggleOpen = () => {
@@ -258,15 +283,26 @@ const NewProduct = ({ closeModal }) => {
 
       if (response.data.success) {
         closeModal();
-        message.success('Thêm sản phẩm thành công');
+        notification.success({
+          message: 'Thông báo',
+          description: 'Thêm sản phẩm thành công.'
+        });
         form.resetFields();
         setSelectedCategory(null);
         setFormProperties([]);
       } else {
-        message.error('Thêm sản phẩm thất bại: ' + response.data.error);
+        notification.error({
+          message: 'Thông báo',
+          description: 'Thêm sản phẩm thất bại: ' + response.data.error
+        });
+
       }
     } catch (error) {
-      message.error('Thêm sản phẩm thất bại: ' + error.response.data.error);
+      notification.error({
+        message: 'Thông báo',
+        description: 'Thêm sản phẩm thất bại: ' + error.response.data.error
+      });
+
     }
   };
   const columns = [
@@ -397,7 +433,10 @@ const NewProduct = ({ closeModal }) => {
         ]}
       >
         <Upload {...propss}>
-          <Button icon={<UploadOutlined />}>Ảnh</Button>
+          <div>
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>Tải lên</div>
+          </div>
         </Upload>
       </Form.Item>
       <Form.Item
@@ -507,8 +546,12 @@ const NewProduct = ({ closeModal }) => {
                                     },
                                   ]}
                                 >
-                                  <Upload {...props(attrName, name)}>
-                                    <Button icon={<UploadOutlined />}>Ảnh</Button>
+                                  <Upload {...props(attrName, name)}
+                                  >
+                                    <div>
+                                      <PlusOutlined />
+                                      <div style={{ marginTop: 8 }}>Tải lên</div>
+                                    </div>
                                   </Upload>
                                 </Form.Item>
                                 <Form.Item
@@ -612,29 +655,29 @@ const NewProduct = ({ closeModal }) => {
         </Modal>
       </>
       <>
-      <Modal
-        title="Xác nhận huỷ"
-        visible={confirmModalVisible}
-        onOk={handleConfirm}
-        onCancel={handleCancel}
-        okText="Xác nhận"
-        cancelText="Huỷ bỏ"
-      >
-        <p>Sẽ hủy tất cả thuộc tính, bạn có chắc hủy không?</p>
-      </Modal>
+        <Modal
+          title="Xác nhận huỷ"
+          visible={confirmModalVisible}
+          onOk={handleConfirm}
+          onCancel={handleCancel}
+          okText="Xác nhận"
+          cancelText="Huỷ bỏ"
+        >
+          <p>Sẽ hủy tất cả thuộc tính, bạn có chắc hủy không?</p>
+        </Modal>
       </>
       <>
 
-      <Modal
-        title="Xác nhận huỷ"
-        visible={confirmModalVisible1}
-        onOk={handleConfirm1}
-        onCancel={handleCancel1}
-        okText="Xác nhận"
-        cancelText="Huỷ bỏ"
-      >
-        <p>Bạn có chắc chắn muốn huỷ không?</p>
-      </Modal>
+        <Modal
+          title="Xác nhận huỷ"
+          visible={confirmModalVisible1}
+          onOk={handleConfirm1}
+          onCancel={handleCancel1}
+          okText="Xác nhận"
+          cancelText="Huỷ bỏ"
+        >
+          <p>Bạn có chắc chắn muốn huỷ không?</p>
+        </Modal>
       </>
     </Form>
 

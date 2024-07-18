@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { WrapperHeader } from "../AdminUser/style";
 import { MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody, MDBIcon } from 'mdb-react-ui-kit';
-import { Modal, Switch, Tooltip, message } from 'antd';
+import { Modal, Switch, Tooltip, message, notification } from 'antd';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import { AppstoreAddOutlined, DeleteOutlined, EditOutlined, AppstoreOutlined } from '@ant-design/icons';
@@ -41,6 +41,8 @@ const Category = () => {
     };
 
     useEffect(() => {
+        document.title = "Quản Lý Danh Mục";    
+
         fetchData();
         }, []);
 
@@ -87,7 +89,10 @@ const Category = () => {
             .delete(`${process.env.REACT_APP_API_URL}/category/delete/${categoryId}`, { headers })
             .then((response) => {
                 const updatedCategories = categoryData.filter(category => category._id !== categoryId);
-                message.success('Xoá danh mục thành công')
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Xoá danh mục thành công.'
+                  });
                 setCategoryData(updatedCategories);
             })
             .catch((error) => {

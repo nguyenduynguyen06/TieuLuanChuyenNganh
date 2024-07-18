@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Switch, Table, Image, Upload, Button, message, Modal, Alert, Space, Form, Input } from 'antd';
+import { Switch, Table, Image, Upload, Button, message, Modal, Alert, Space, Form, Input, notification } from 'antd';
 import axios from "axios";
 import 'react-quill/dist/quill.snow.css';
 import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -124,14 +124,24 @@ const TableComment = () => {
         if (response.data.success) {
           const updatedData = commentData.filter((item) => item._id !== commentId);
           setcommentData(updatedData);
-          message.success('Xóa bình luận thành công');
+          notification.success({
+            message: 'Thông báo',
+            description: 'Xóa bình luận thành công.'
+          });
         } else {
-          message.error('Lỗi khi xóa bình luận');
+          notification.error({
+            message: 'Thông báo',
+            description: 'Lỗi khi xóa bình luận'
+          });
+
         }
       })
       .catch((error) => {
         console.error('Lỗi khi gọi API xóa bình luận: ', error);
-        message.error('Lỗi khi xóa bình luận');
+        notification.error({
+          message: 'Thông báo',
+          description: 'Lỗi khi xóa bình luận'
+        });
       });
   };
   const Reply = (commentId, productName, values) => {
@@ -140,14 +150,25 @@ const TableComment = () => {
       .post(`${process.env.REACT_APP_API_URL}/comment/addReplytoReply/${commentId}/${productName}?userId=${user._id || ''}`, updatedValues)
       .then((response) => {
         if (response.data.success) {
-          message.success('Trả lời thành công');
+          notification.success({
+            message: 'Thông báo',
+            description: 'Trả lời thành công.'
+          });
+
         } else {
-          message.error('Trả lời lỗi');
+          notification.error({
+            message: 'Thông báo',
+            description: 'Trả lời lỗi'
+          });
+  
         }
       })
       .catch((error) => {
-        message.error('Trả lời lỗi');
-      });
+        notification.error({
+          message: 'Thông báo',
+          description: 'Trả lời lỗi'
+        });
+    });
   };
   const handleCheckcomment = (commentId) => {
     axios
@@ -159,14 +180,23 @@ const TableComment = () => {
               const filteredComments = response.data.data.filter(comment => comment.check === false);
               setcommentData(filteredComments);
             })
-          message.success('Duyệt thành công');
+          notification.success({
+            message: 'Thông báo',
+            description: 'Duyệt thành công.'
+          });
         } else {
-          message.error('Lỗi khi duyệt');
+          notification.error({
+            message: 'Thông báo',
+            description: 'Lỗi khi duyệt.'
+          });
+
         }
       })
       .catch((error) => {
-
-        message.error('Lỗi khi duyệt');
+        notification.error({
+          message: 'Thông báo',
+          description: 'Lỗi khi duyệt.'
+        });
       });
   };
   useEffect(() => {

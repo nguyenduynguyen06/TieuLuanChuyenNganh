@@ -54,14 +54,17 @@ function ListProductNew({ minPrice, maxPrice, selectedMemory, nameProduct, sort 
                 setLoading(false);
             });
     };
+    const [categoryAndBrandLoaded, setCategoryAndBrandLoaded] = useState(false);
     useEffect(() => {
-        setLoading(true);
-        if (searchKeyword) {
-            performSearch(searchKeyword, currentPage);
-        } else {
-            fetchProducts(currentPage);
+        if (categoryAndBrandLoaded) {
+            setLoading(true);
+            if (searchKeyword) {
+                performSearch(searchKeyword, currentPage);
+            } else {
+                fetchProducts(currentPage);
+            }
         }
-    }, [minPrice, maxPrice, selectedMemory, nameProduct, categoryId, brandId, sort, currentPage, searchKeyword]);
+    }, [minPrice, maxPrice, selectedMemory, nameProduct, categoryId, brandId, sort, currentPage, searchKeyword, categoryAndBrandLoaded]);
 
 
     const fetchCategoryAndBrandIds = async () => {
@@ -70,16 +73,16 @@ function ListProductNew({ minPrice, maxPrice, selectedMemory, nameProduct, sort 
             const categoryResponse = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
             const category = categoryResponse.data.data.find(cat => cat.name === nameCategory);
             setCategoryId(category ? category._id : null);
-
+    
             const brandResponse = await axios.get(`${process.env.REACT_APP_API_URL}/brand/getBrand`);
             const brand = brandResponse.data.data.find(br => br.name === nameBrand);
             setBrandId(brand ? brand._id : null);
-
         } catch (error) {
             console.error('Error fetching category or brand:', error);
             setCategoryId(null);
             setBrandId(null);
         }
+        setCategoryAndBrandLoaded(true); // Đánh dấu đã tải xong categoryId và brandId
         setLoading(false);
     };
 
@@ -176,13 +179,13 @@ function ListProductNew({ minPrice, maxPrice, selectedMemory, nameProduct, sort 
                                             </div>
                                             <div className='desc' style={{ alignContent: 'start' }}>
                                                 <div style={{ height: '3em' }}>
-                                                    <h1 style={{ padding: 3 }}>{product.productName.name} - {product.memory}</h1>
+                                                    <h1 style={{ padding: 3, color:'#000' }}>{product.productName.name} - {product.memory}</h1>
                                                 </div>
                                                 <div>
                                                     {product.productName.ratings && product.productName.ratings.length > 0 ? (
                                                         <div style={{ display: "flex", flexDirection: 'column' }}>
                                                             <Rate className='stars' disabled allowHalf value={calculateAverageRating(product.productName.ratings)} />
-                                                            <span style={{ margin: 0, height: '25px', fontSize: '13px' }}>Lượt đánh giá: {calculateTotalRatings(product.productName)}</span>
+                                                            <span style={{ margin: 0, height: '25px', fontSize: '13px', color:'#000' }}>Lượt đánh giá: {calculateTotalRatings(product.productName)}</span>
                                                         </div>
                                                     ) : (
                                                         null
@@ -195,7 +198,7 @@ function ListProductNew({ minPrice, maxPrice, selectedMemory, nameProduct, sort 
                                                             {product.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                                                         </p>
                                                     </div>
-                                                    <div>
+                                                    {/* <div>
                                                         {propertyNames.map((propertyName, index) => {
                                                             const propertyValue = product.productName?.properties?.[propertyName];
                                                             if (propertyValue !== undefined) {
@@ -208,7 +211,7 @@ function ListProductNew({ minPrice, maxPrice, selectedMemory, nameProduct, sort 
                                                             }
                                                             return null;
                                                         })}
-                                                    </div>
+                                                    </div> */}
                                                 </div>
                                             </div>
                                         </NavLink>

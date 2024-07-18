@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { WrapperHeader } from "../AdminUser/style";
 import { MDBBtn, MDBTable, MDBTableHead, MDBTableBody, MDBIcon } from 'mdb-react-ui-kit';
-import { Modal, Switch, Tooltip, message } from 'antd';
+import { Modal, Switch, Tooltip, message, notification } from 'antd';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import { useSelector } from "react-redux";
@@ -47,6 +47,8 @@ const User = () => {
     };
 
     useEffect(() => {
+        document.title = "Quản Lý Người Dùng";    
+
         axios.get(`${process.env.REACT_APP_API_URL}/user/getAll`, { headers })
             .then((response) => {
                 setUserData(response.data.data);
@@ -115,7 +117,11 @@ const User = () => {
                 } else {
                     setUserData(updateUsers(userData));
                 }
-                message.success('Xoá người dùng thành công');
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Xoá người dùng thành công.'
+                  });
+
             })
             .catch((error) => {
                 console.error('Lỗi khi xóa người dùng: ', error);
@@ -289,7 +295,7 @@ const User = () => {
             <>
                 <Modal
                     visible={centredModal}
-                    title="Thêm admin mới"
+                    title="THÊM ADMIN MỚI"
                     footer={null}
                     width={'60%'}
                     closable={false}

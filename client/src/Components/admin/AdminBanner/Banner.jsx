@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { WrapperHeader } from "../AdminUser/style";
 import { MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody, MDBIcon } from 'mdb-react-ui-kit';
-import { Modal, Switch, Tooltip, message } from 'antd';
+import { Modal, Switch, Tooltip, message, notification } from 'antd';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import { AppstoreAddOutlined, DeleteOutlined, EditOutlined, AppstoreOutlined, AppstoreFilled } from '@ant-design/icons';
@@ -38,6 +38,7 @@ const Banner = () => {
     };
 
     useEffect(() => {
+        document.title = "Quản Lý Banner";
         if (searchQuery.trim() !== '') {
             axios.get(`${process.env.REACT_APP_API_URL}/banner/searchBanner`, {
                 headers,
@@ -99,10 +100,15 @@ const Banner = () => {
             setLoading(true)
             setBannerData(bannerData.filter(banner => banner._id !== id));
             setReloadBannerData(!reloadBannerData);
-            message.success('Xóa banner thành công');
+            notification.success({
+                message: 'Thông báo',
+                description: 'Xóa banner thành công.'
+              });
         } catch (error) {
-            console.error('Lỗi khi xóa banner: ', error);
-            message.error('Lỗi khi xóa banner');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Lỗi khi xóa banner.'
+              });
         }
     };
     const [centredModal, setCentredModal] = useState(false);

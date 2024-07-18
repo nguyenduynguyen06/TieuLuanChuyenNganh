@@ -34,6 +34,7 @@ const ChangeProductProcessced = () => {
     const [loading, setLoading] = useState(true)
     const [triggerSearch, setTriggerSearch] = useState(false);
     useEffect(() => {
+        document.title = "Quản Lý Đơn Hàng Đã Đổi Trả";
         if (!searchResults) {
             setLoading(true);
             fetchOrders(currentPage);

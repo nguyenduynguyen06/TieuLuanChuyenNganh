@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
-import { UploadOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Select, DatePicker, message, Upload, Modal, Slider } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Select, DatePicker, message, Upload, Modal, Slider, notification } from 'antd';
 import { useSelector } from 'react-redux';
 import AvatarEditor from 'react-avatar-editor';
 
@@ -62,7 +62,11 @@ const NewNews = ({ closeModal }) => {
     const checkFile = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
         if (!isJpgOrPng) {
-            message.error('Bạn chỉ có thể tải lên tệp tin JPG/PNG!');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Bạn chỉ có thể tải lên tệp tin JPG/PNG!'
+              });
+
         }
         return isJpgOrPng;
     };
@@ -84,16 +88,27 @@ const NewNews = ({ closeModal }) => {
                 });
 
                 if (response.status === 200) {
-                    message.success('Tải ảnh lên thành công!');
+                    notification.success({
+                        message: 'Thông báo',
+                        description: 'Tải ảnh lên thành công!'
+                      });
+    
                     setUploadedFileName(file.name); // Set the uploaded file name
                     form.setFieldsValue({ image: response.data.imageUrl });
                     setCropModalVisible(false);
                 } else {
-                    message.error('Tải ảnh lên thất bại.');
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Tải ảnh lên thất bại.'
+                      });
+        
                 }
             } catch (error) {
-                message.error('Tải ảnh lên thất bại.');
-            } finally {
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Tải ảnh lên thất bại.'
+                  });
+        } finally {
                 setUploading(false);
             }
         }
@@ -116,15 +131,28 @@ const NewNews = ({ closeModal }) => {
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/news/addNews`, values, { headers });
             if (response.data.success) {
-                message.success('Thêm tin tức thành công');
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Thêm tin tức thành công'
+                  });
+
                 form.resetFields();
                 closeModal();
             } else {
-                message.error(response.data.error);
+                notification.error({
+                    message: 'Thông báo',
+                    description: response.data.error
+                  });
+
             }
         } catch (error) {
             console.error('Lỗi khi thêm tin tức:', error);
-            message.error('Đã xảy ra lỗi khi thêm tin tức');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Đã xảy ra lỗi khi thêm tin tức'
+              });
+
+
         }
     };
 
@@ -151,11 +179,15 @@ const NewNews = ({ closeModal }) => {
             >
                 <Upload
                     beforeUpload={handleBeforeUpload}
-                    showUploadList={false}
+                    showUploadList={{ showPreviewIcon: false }}
+                    listType="picture-card"
+                    maxCount={1}
                 >
-                    <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                    <div>
+                        <PlusOutlined />
+                        <div style={{ marginTop: 8 }}>Tải lên</div>
+                    </div>
                 </Upload>
-                {uploadedFileName && <div>Tệp đã tải lên: {uploadedFileName}</div>}
             </Form.Item>
 
             <Form.Item

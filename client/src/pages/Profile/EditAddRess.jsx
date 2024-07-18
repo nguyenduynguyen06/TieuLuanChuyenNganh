@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody, MDBIcon } from 'mdb-react-ui-kit';
-import { Modal, Switch, Tooltip, message } from 'antd';
+import { Modal, Switch, Tooltip, message, notification } from 'antd';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import { AppstoreAddOutlined, DeleteOutlined, EditOutlined, AppstoreOutlined } from '@ant-design/icons';
@@ -34,10 +34,17 @@ const EditAddRess = ({ closeModal,address }) => {
         try {
             await axios.delete(`${process.env.REACT_APP_API_URL}/user/deleteAddress/${user._id}/${addressId}`, { headers });
             setAddressList(prevAddresses => prevAddresses.filter(address => address._id !== addressId));
-            message.success('Xoá địa chỉ thành công');
+            notification.success({
+                message: 'Thông báo',
+                description: 'Xoá địa chỉ thành công.'
+              });
         } catch (error) {
             console.error('Lỗi khi xoá địa chỉ:', error);
-            message.error('Đã xảy ra lỗi khi xoá địa chỉ');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Đã xảy ra lỗi khi xoá địa chỉ'
+              });
+
         }
     };
 

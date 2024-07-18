@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import NewsCard from '../../Components/NewsPageCom/NewsCard';
 import { Breadcrumb } from 'antd';
 import { NavLink } from 'react-router-dom';
 
 
 function NewsPage() {
+    useEffect(() => {
+        document.title = "Tin Tức";
+    }, []);
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Breadcrumb style={{ margin: '16px 16px' }}>

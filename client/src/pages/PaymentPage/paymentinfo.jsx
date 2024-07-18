@@ -11,7 +11,7 @@ import {
     MDBInput,
 } from 'mdb-react-ui-kit';
 import { PageWrapper, WrapperPaymentInfo } from "./style";
-import { Button, Cascader, Col, Row, Modal, FloatButton, message, Skeleton, Select } from "antd";
+import { Button, Cascader, Col, Row, Modal, FloatButton, message, Skeleton, Select, notification } from "antd";
 import Header from "../../Components/Header/header";
 import { ArrowLeftOutlined } from "@ant-design/icons"
 import { useSelector } from "react-redux";
@@ -25,6 +25,18 @@ const PaymentInfo = () => {
     const [totalShipping, setTotalShipping] = useState(0);
     const [shippingFee, setShippingFee] = useState(0)
     const [isLoading, setLoading] = useState(false)
+    const [vouchers, setVouchers] = useState([]);
+
+    const fetchVouchers = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/voucher/availableVouchers`);
+            const data = response.data.data;
+            setVouchers(data);
+        } catch (error) {
+            console.error('Error fetching vouchers:', error);
+        }
+    };
+
     const calculateTotalPrice = (cartData) => {
         return cartData.reduce((total, item) => {
             return total + item.price * item.quantity;
@@ -78,7 +90,11 @@ const PaymentInfo = () => {
                 setOrder({});
             })
             .catch((error) => {
-                message.error(error.response.data.error)
+                notification.error({
+                    message: 'Thông báo',
+                    description: error.response.data.error
+                });
+
             })
             .finally(() => {
                 setLoading(false);
@@ -226,6 +242,8 @@ const PaymentInfo = () => {
     ];
 
     useEffect(() => {
+        document.title = `Đặt Hàng`;
+        fetchVouchers();
         const fetchData = async () => {
             const cartItems = localStorage.getItem('cartItems');
             if (cartItems) {
@@ -305,15 +323,23 @@ const PaymentInfo = () => {
             if (response.data.success) {
                 const fee = response.data.data.shippingFee;
                 setShippingFee(fee);
-                return fee; 
+                return fee;
             } else {
-                message.error(response.data.message);
-                return 0; 
+                notification.error({
+                    message: 'Thông báo',
+                    description: response.data.message
+                });
+
+
+                return 0;
             }
         } catch (error) {
             console.error('Error fetching shipping fee:', error);
-            message.error('Không thể lấy phí vận chuyển. Vui lòng thử lại.');
-            return 0; 
+            notification.error({
+                message: 'Thông báo',
+                description: 'Không thể lấy phí vận chuyển. Vui lòng thử lại.'
+            });
+            return 0;
         }
     };
 
@@ -349,6 +375,8 @@ const PaymentInfo = () => {
     const [voucher, setVoucher] = useState(null)
     const [totalVoucher, settotalVoucher] = useState(null);
     const checkVoucher = (data) => {
+        setVoucherCode(data);
+
         axios.post(`${process.env.REACT_APP_API_URL}/voucher/useVoucher?userId=${user1._id}`, { code: data, paymentMethod: order.paymentMethod, items: order.items })
             .then((response) => {
                 if (response.data.success) {
@@ -365,13 +393,24 @@ const PaymentInfo = () => {
                     settotalVoucher(totalShipping - discountedAmount);
                     setVoucherApplied(true);
                     setVoucher(voucher)
-                    message.success('Áp dụng voucher thành công');
+                    notification.success({
+                        message: 'Thông báo',
+                        description: 'Áp dụng voucher thành công.'
+                    });
                 } else {
-                    message.error(response.data.error);
+                    notification.error({
+                        message: 'Thông báo',
+                        description: response.data.error
+                    });
+
                 }
             })
             .catch((error) => {
-                message.error('Mã voucher sai');
+                notification.error({
+                    message: 'Thông báo',
+                    description: error.response.data.error
+                });
+
             });
     };
     let discountedAmount = 0;
@@ -391,7 +430,11 @@ const PaymentInfo = () => {
             settotalVoucher(null);
             setVoucherApplied(false);
             setVoucher(null)
-            message.success('Huỷ voucher thành công');
+            notification.success({
+                message: 'Thông báo',
+                description: 'Huỷ voucher thành công.'
+            });
+
         }
     };
     const isSmallScreen = window.innerWidth <= 500;
@@ -420,11 +463,11 @@ const PaymentInfo = () => {
                                                     <img className='item__img' src={item.pictures} alt={item.product.name} />
                                                     <div className="item-info">
                                                         <div className="item-name">
-                                                            <span>{item.product.name} - {item.memory}</span>
-                                                            <span>{item.color}</span>
+                                                            <span>{item.product.name} {item.memory}</span>
+                                                            <span>Màu: {item.color}</span>
                                                         </div>
                                                         <div className="item-price">
-                                                            <div>
+                                                            <div style={{ width: '50%' }}>
                                                                 <div className="box-info__box-price">
                                                                     <span className="product__price--show">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', }).format(item.price)}</span>
                                                                     {item.productVariant.oldPrice && (
@@ -432,12 +475,12 @@ const PaymentInfo = () => {
                                                                     )}
                                                                 </div>
                                                             </div>
-                                                            <span>Số lượng : &nbsp;
-                                                                <span style={{ color: 'red' }}>{item.quantity}</span>
-                                                            </span>
-                                                            <span>Bảo hành : &nbsp;
-                                                                <span style={{ color: 'red' }}>{item.product.warrantyPeriod} tháng</span>
-                                                            </span>
+                                                            <div style={{ width: '50%', justifyContent: 'space-between', display: 'flex' }}>
+                                                                <span>Số lượng:<span style={{ color: 'red' }}> {item.quantity}</span>
+                                                                </span>
+                                                                <span>Bảo hành:<span style={{ color: 'red' }}> {item.product.warrantyPeriod} tháng</span>
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -555,18 +598,30 @@ const PaymentInfo = () => {
                                 <div className="info-payment">
                                     <div className="block-promotion">
                                         <div className="block-promotion-input" style={{ width: '75%' }}>
-                                            <MDBInput
-                                                wrapperClass='mb-4'
-                                                label='Mã giảm giá'
-                                                placeholder="Hãy điền mã giảm giá"
-                                                name="vouchercode"
+                                            <Select
+                                                placeholder="Chọn mã giảm giá"
+                                                style={{ width: '100%', height: 'auto', overflowY: 'auto'}}
+                                                onChange={checkVoucher}
                                                 value={vouchercode}
-                                                onChange={(e) => setVoucherCode(e.target.value)}
-                                                type='text'
-                                                style={{ width: '100%' }}
-                                                tabIndex="5"
                                                 disabled={voucherApplied}
-                                            />
+
+                                            >
+                                                {vouchers.map(voucher => (
+                                                    <Select.Option key={voucher._id} value={voucher.code}>
+                                                        <div style={{ display: 'flex', gap: '20px', padding:'5px'  }}>
+                                                            <img src="../../image/voucher.png" width={'170px'}></img>
+                                                            <div>
+                                                                {voucher.name}
+                                                                <div>
+                                                                    Giảm {voucher.discount * 100}% tối đa {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', }).format(voucher.maxPrice)}
+                                                                </div>
+                                                                <div>Áp dụng từ {voucher.startDate} đến {voucher.endDate}</div>
+                                                            </div>
+                                                        </div>
+                                                    </Select.Option>
+                                                ))}
+                                            </Select>
+
                                         </div>
                                         <div className="button-vou">
                                             {voucherApplied ? (
@@ -574,6 +629,7 @@ const PaymentInfo = () => {
                                                     size='middle'
                                                     className="button__voucher"
                                                     onClick={handleCancelVoucher}
+                                                    style={{color:'#B63245'}}
                                                 >
                                                     Huỷ voucher
                                                 </Button>
@@ -582,18 +638,14 @@ const PaymentInfo = () => {
                                                     size='middle'
                                                     className="button__voucher"
                                                     onClick={() => checkVoucher(vouchercode)}
+                                                    style={{background:'#B63245', color:'#fff'}}
+
                                                 >
                                                     Áp dụng
                                                 </Button>
                                             )}
                                         </div>
                                     </div>
-                                    {discountedAmount !== 0 && (
-                                        <div style={{ color: '#FF3300' }}>
-                                            Voucher giảm {voucher.discount * 100}% tối đa {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', }).format(voucher.maxPrice)}
-                                        </div>
-                                    )}
-
                                     <div className="info-quote">
                                         <div className="info-quote__block">
                                             <div className="quote-block__item">
@@ -646,7 +698,7 @@ const PaymentInfo = () => {
                                 <hr></hr>
                                 <div className="bottom-bar">
                                     <div className="btn-submit">
-                                        <button className="btn-next" type="submit">{isLoading ? 'Đang đặt hàng...' : 'Đặt hàng'}</button>
+                                        <button className="btn-next" type="submit" style={{ background: '#B63245' }}>{isLoading ? 'Đang đặt hàng...' : 'Đặt hàng'}</button>
                                     </div>
                                 </div>
                             </form>

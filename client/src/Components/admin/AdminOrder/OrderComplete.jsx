@@ -33,6 +33,7 @@ const OrderComplete = () => {
     const [triggerSearch, setTriggerSearch] = useState(false);
 
     useEffect(() => {
+        document.title = "Quản Lý Đơn Hàng Đã Hoàn Thành";    
         if (!searchResults) {
             setLoading(true);
             fetchOrders(currentPage);

@@ -32,6 +32,8 @@ const OrderCanCel = () => {
     const [triggerSearch, setTriggerSearch] = useState(false);
 
     useEffect(() => {
+        document.title = "Quản Lý Đơn Hàng Đã Hủy";    
+
         if (!searchResults) {
             setLoading(true);
             fetchOrders(currentPage);

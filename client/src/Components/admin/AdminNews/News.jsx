@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { WrapperHeader } from "../AdminUser/style";
 import { MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody, MDBIcon } from 'mdb-react-ui-kit';
-import { Modal, Switch, Tooltip, message } from 'antd';
+import { Modal, Switch, Tooltip, message, notification } from 'antd';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import { AppstoreAddOutlined, DeleteOutlined, EditOutlined, AppstoreOutlined } from '@ant-design/icons';
@@ -54,6 +54,7 @@ const News = () => {
     };
 
     useEffect(() => {
+        document.title = "Quản Lý Tin Tức";
         if (searchQuery.trim() !== '') {
             axios.get(`${process.env.REACT_APP_API_URL}/news/searchNews`, {
                 headers,
@@ -132,7 +133,11 @@ const News = () => {
                     setSearchResults(searchResults.filter(news => news._id !== newsId)) 
                 }
                 const updatedCategories = newsData.filter(news => news._id !== newsId);
-                message.success('Xoá danh mục thành công')
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Xoá danh mục thành công'
+                  });
+    
                 setNewsData(updatedCategories);
             })
             .catch((error) => {

@@ -39,7 +39,7 @@ const AdminHomePage = () => {
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
-    document.title = "Di Động Gen Z | Quản Lý";
+    document.title = "Thống Kê";
     window.scrollTo({ top: 0, behavior: "instant" });
   }, []);
 

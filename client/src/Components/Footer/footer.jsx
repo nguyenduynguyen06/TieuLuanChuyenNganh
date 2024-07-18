@@ -40,27 +40,8 @@ const Footer = () => {
                 </p>
               </MDBCol>
 
-              <MDBCol md="3" lg="4" xl="3" className='mx-auto mb-4'>
-                <h6 className='text-uppercase fw-bold mb-4'>Sản phẩm</h6>
-                <div style={{ display: 'grid' }}>
-                  <a href='http://localhost:3000/type/%C4%90i%E1%BB%87n%20tho%E1%BA%A1i' className='text-reset'>
-                    Điện thoại
-                  </a>
-                  <a href='http://localhost:3000/type/%E1%BB%90p%20l%C6%B0ng' className='text-reset'>
-                    Ốp lưng
-                  </a>
-                  <a href='http://localhost:3000/type/C%C3%A1p%20s%E1%BA%A1c' className='text-reset'>
-                    Cáp sạc
-                  </a>
-                  <a href='http://localhost:3000/type/S%E1%BA%A1c%20d%E1%BB%B1%20ph%C3%B2ng' className='text-reset'>
-                    Sạc dự phòng
-                  </a>
-                  <a href='http://localhost:3000/type/Tai%20nghe' className='text-reset'>Tai nghe</a>
-                </div>
-              </MDBCol>
-
               <MDBCol md="6" lg="4" xl="6" className='mx-auto mb-4'>
-                <h6 className='text-uppercase fw-bold mb-4'>Bản đồ</h6>
+                <h6 className='text-uppercase fw-bold mb-4'>ĐỊA CHỈ</h6>
                 <div style={{ height: '200px', width: '100%' }}>
                   <iframe
                     title="Bản đồ"

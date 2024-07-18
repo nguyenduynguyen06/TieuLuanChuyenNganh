@@ -2,9 +2,9 @@ import axios from 'axios';
 import 'react-quill/dist/quill.snow.css';
 import { useSelector } from 'react-redux';
 import AvatarEditor from 'react-avatar-editor';
-import { UploadOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import React, { useState, useEffect, useRef } from 'react';
-import { message, Upload, Button, Form, Input, Select, Modal, Slider } from 'antd';
+import { message, Upload, Button, Form, Input, Select, Modal, Slider, notification } from 'antd';
 
 
 const { Option } = Select;
@@ -90,7 +90,11 @@ const EditBrand = ({ closeModal, brandId }) => {
     const checkFile = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
         if (!isJpgOrPng) {
-            message.error('Bạn chỉ có thể tải lên tệp tin JPG/PNG!');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Bạn chỉ có thể tải lên tệp tin JPG/PNG!'
+            });
+
         }
         return isJpgOrPng;
     };
@@ -108,15 +112,25 @@ const EditBrand = ({ closeModal, brandId }) => {
                     },
                 });
                 if (response.status === 200) {
-                    message.success('Tải ảnh lên thành công!');
+                    notification.success({
+                        message: 'Thông báo',
+                        description: 'Tải ảnh lên thành công!'
+                    });
                     setUploadedFileName(file.name); // Set the uploaded file name
                     form.setFieldsValue({ picture: response.data.imageUrl });
                     setCropModalVisible(false);
                 } else {
-                    message.error('Tải ảnh lên thất bại.');
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Tải ảnh lên thất bại.'
+                    });
+
                 }
             } catch (error) {
-                message.error('Tải ảnh lên thất bại.');
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Tải ảnh lên thất bại.'
+                });
             } finally {
                 setUploading(false);
             }
@@ -136,7 +150,10 @@ const EditBrand = ({ closeModal, brandId }) => {
         };
         axios.put(`${process.env.REACT_APP_API_URL}/brand/updateBrand/${brandId}`, values, { headers })
             .then((response) => {
-                message.success('Chỉnh sửa thương hiệu thành công');
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Chỉnh sửa thương hiệu thành công.'
+                });
                 closeModal();
             })
             .catch((error) => {
@@ -196,11 +213,15 @@ const EditBrand = ({ closeModal, brandId }) => {
             >
                 <Upload
                     beforeUpload={handleBeforeUpload}
-                    showUploadList={false}
+                    showUploadList={{ showPreviewIcon: false }}
+                    listType="picture-card"
+                    maxCount={1}
                 >
-                    <Button icon={<UploadOutlined />}>Ảnh</Button>
+                    <div>
+                        <PlusOutlined />
+                        <div style={{ marginTop: 8 }}>Tải lên</div>
+                    </div>
                 </Upload>
-                                {uploadedFileName && <div>Tệp đã tải lên: {uploadedFileName}</div>}
 
             </Form.Item>
             <Form.Item
@@ -226,7 +247,7 @@ const EditBrand = ({ closeModal, brandId }) => {
                 </div>
             </Form.Item>
             <Modal
-                title="Thêm ảnh nền tin tức"
+                title="Chỉnh sửa ảnh thương hiệu"
                 width={700}
                 maskClosable={false}
                 visible={cropModalVisible}

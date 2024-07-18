@@ -166,26 +166,41 @@ const updateCartItemQuantity = async (req, res) => {
 const getCartItemsByUserId = async (req, res) => {
   const userId = req.params.userId; 
   try {
-    const cart = await Cart.findOne({ user: userId }).populate({
-      path: 'items',
-      populate: {
-        path: 'product',
-        select: 'name warrantyPeriod'
-      }
-    }).populate({
-      path: 'items',
-      populate: {
-        path: 'productVariant',
-      }
-    });
+    const cart = await Cart.findOne({ user: userId });
+
     if (!cart) {
       return res.status(404).json({ success: false, error: 'Giỏ hàng của người dùng không tồn tại' });
     }
-    res.status(200).json({ success: true, data: cart.items });
+    for (const item of cart.items) {
+      const productVariant = await ProductVariant.findById(item.productVariant);
+      if (productVariant) {
+       
+        item.price = productVariant.newPrice; 
+        item.subtotal = item.price * item.quantity; 
+      }
+    }
+
+    await cart.save(); 
+    const populatedCart = await Cart.findOne({ user: userId })
+      .populate({
+        path: 'items',
+        populate: {
+          path: 'product',
+          select: 'name warrantyPeriod'
+        }
+      })
+      .populate({
+        path: 'items',
+        populate: {
+          path: 'productVariant',
+        }
+      });
+    res.status(200).json({ success: true, data: populatedCart.items });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
 const updateCartItemChecked = async (req, res) => {
   const userId = req.params.userId;
   const cartItemId = req.params.cartItemId;
@@ -344,7 +359,63 @@ const saveToCart = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+const updateCartItemAfterPayment = async (req, res) => {
+  const userId = req.params.userId;
+  const { items } = req.body; 
+  const messages = [];
+  try {
+    const cart = await Cart.findOne({ user: userId })
+    .populate({
+      path: 'items.product',
+      select: 'name' 
+    })
+
+    if (!cart) {
+      return res.status(404).json({ success: false, error: 'Giỏ hàng không tồn tại' });
+    }
+    
+    for (const cartItem of items) {
+      const { _id, quantity } = cartItem;
+
+      const item = cart.items.find((item) => item._id.toString() === _id);
+
+      if (!item) {
+        continue; 
+      }
+
+      const productVariant = await ProductVariant.findById(item.productVariant);
+      const sku = productVariant.attributes.find(attr => attr.sku === item.sku);
+
+      if (!sku) {
+        continue; 
+      }
+
+      if (quantity > sku.quantity) {
+        messages.push({
+          productName: item.product.name, 
+          image: item.pictures,
+          availableQuantity: sku.quantity,
+        });
+        if (sku.quantity > 0) {
+          item.quantity = sku.quantity;
+          item.price = productVariant.newPrice;
+          item.subtotal = item.price* sku.quantity;
+        } else {
+          cart.items = cart.items.filter((item) => item._id.toString() !== _id);
+        }
+      } else {
+        item.quantity = quantity;
+        item.price = productVariant.newPrice;
+        item.subtotal = item.price * quantity;
+      }
+    }
+    await cart.save();
+    return res.status(200).json({ success: true, data: messages });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
 
 
 
-module.exports = { addToCart,deleteCartItem,updateCartItemQuantity,getCartItemsByUserId ,updateAllCartItemsChecked,updateCartItemChecked,getCheckedCartItemsByUserId,saveToCart};
+module.exports = { updateCartItemAfterPayment,addToCart,deleteCartItem,updateCartItemQuantity,getCartItemsByUserId ,updateAllCartItemsChecked,updateCartItemChecked,getCheckedCartItemsByUserId,saveToCart};

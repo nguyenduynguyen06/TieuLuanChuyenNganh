@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
     MDBBtn,
@@ -7,7 +7,7 @@ import {
 }
     from 'mdb-react-ui-kit';
 import axios from "axios";
-import { message } from "antd";
+import { message, notification } from "antd";
 const ChangePassword = () => {
     const user1 = useSelector((state) => state.user);
     const headers = {
@@ -30,7 +30,11 @@ const ChangePassword = () => {
     const changeHandler = async event => {
         event.preventDefault();
         if (!passwordsMatch) {
-            message.error("Nhập lại password không đúng");
+            notification.error({
+                message: 'Thông báo',
+                description: 'Nhập lại password không đúng'
+              });
+
             return;
         }
         try {
@@ -44,13 +48,23 @@ const ChangePassword = () => {
                 confirmPassword: ''
             })
       
-            message.success("Đổi mật khẩu thành công!");
+            notification.success({
+                message: 'Thông báo',
+                description: 'Đổi mật khẩu thành công!'
+              });
         } catch (error) {
             console.error('Lỗi khi thay đổi mật khẩu:', error);
-            message.error(error.response.data.msg);
+            notification.error({
+                message: 'Thông báo',
+                description: error.response.data.msg
+              });
+
         }
     }
-
+    useEffect(() => {
+        document.title = "Đổi Mật Khẩu";
+      }, []);
+    
     return (
         <form onSubmit={changeHandler} style={{paddingLeft: '30px', display: 'flex', width: '100%'}}>
             <div  style={{width:'40%'}}>

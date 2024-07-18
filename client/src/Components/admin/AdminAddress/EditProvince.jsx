@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
 import { UploadOutlined } from '@ant-design/icons';
-import { message, Upload, Select, InputNumber } from 'antd';
+import { message, Upload, Select, InputNumber, notification } from 'antd';
 import { Button, Form, Input, Modal, Slider } from 'antd';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
@@ -52,13 +52,24 @@ const EditProvince = ({ closeModal, idProvince }) => {
         try {
             const response = await axios.put(`${process.env.REACT_APP_API_URL}/province/updatedProvince/${idProvince}`, values, { headers });
             if (response.data.success) {
-                message.success('Sửa tỉnh thành công');
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Sửa tỉnh thành công.'
+                  });
                 closeModal();
             } else {
-                message.error(response.data.message);
+                notification.error({
+                    message: 'Thông báo',
+                    description: response.data.message
+                  });
+
             }
         } catch (error) {
-            message.error(error.response.data.error);
+            notification.error({
+                message: 'Thông báo',
+                description: error.response.data.error
+              });
+
         }
     };
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
-import { UploadOutlined } from '@ant-design/icons';
-import { message, Upload, Select } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { message, Upload, Select, notification } from 'antd';
 import { Button, Form, Input, Modal, Slider } from 'antd';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
@@ -61,14 +61,16 @@ const EditBanner = ({ closeModal, bannerId }) => {
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`);
                 setProducts(response.data.data);
             } catch (error) {
-                console.error('Lỗi khi lấy sản phẩm:', error);
-                message.error('Đã xảy ra lỗi khi lấy sản phẩm');
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Đã xảy ra lỗi khi lấy sản phẩm'
+                });
             }
         };
         fetchProducts();
     }, []);
 
-    
+
     useEffect(() => {
         if (bannerId) {
             axios.get(`${process.env.REACT_APP_API_URL}/banner/getBannerId/${bannerId}`)
@@ -154,21 +156,21 @@ const EditBanner = ({ closeModal, bannerId }) => {
             setModalWidth(600)
             setAvatarWidth(500);
             setAvatarHeight(140);
-            
+
         }
         else if (selectedLocation === 'adbanner') {
             setModalWidth(400)
             setAvatarWidth(317.4);
             setAvatarHeight(449);
-            
-        } 
+
+        }
         else {
             setModalWidth(700);
             setAvatarWidth(643.5);
             setAvatarHeight(165.5);
         }
     }, [selectedLocation]);
-    
+
     useEffect(() => {
         if (locationData && locationOptions.length > 0) {
             const locationOption = locationOptions.find(option => option.value === locationData);
@@ -181,13 +183,22 @@ const EditBanner = ({ closeModal, bannerId }) => {
         try {
             const response = await axios.put(`${process.env.REACT_APP_API_URL}/banner/editBanner/${bannerId}`, values, { headers });
             if (response.data.success) {
-                message.success('Sửa banner thành công');
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Sửa banner thành công.'
+                });
                 closeModal();
             } else {
-                message.error(response.data.message);
+                notification.error({
+                    message: 'Thông báo',
+                    description: response.data.message
+                });
             }
         } catch (error) {
-            message.error(error.response.data.error);
+            notification.error({
+                message: 'Thông báo',
+                description: error.response.data.error
+            });
         }
     };
 
@@ -206,7 +217,10 @@ const EditBanner = ({ closeModal, bannerId }) => {
     const checkFile = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
         if (!isJpgOrPng) {
-            message.error('Bạn chỉ có thể tải lên tệp tin JPG/PNG!');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Bạn chỉ có thể tải lên tệp tin JPG/PNG!'
+            });
         }
         return isJpgOrPng;
     };
@@ -228,16 +242,25 @@ const EditBanner = ({ closeModal, bannerId }) => {
                 });
 
                 if (response.status === 200) {
-                    message.success('Tải ảnh lên thành công!');
+                    notification.success({
+                        message: 'Thông báo',
+                        description: 'Tải ảnh lên thành công!'
+                    });
                     setUploadedFileName(file.name); // Set the uploaded file name
                     form.setFieldsValue({ image: response.data.imageUrl });
                     setCropModalVisible(false);
                 } else {
-                    message.error('Tải ảnh lên thất bại.');
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Tải ảnh lên thất bại.'
+                      });
                 }
             } catch (error) {
-                message.error('Tải ảnh lên thất bại.');
-            } finally {
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Tải ảnh lên thất bại.'
+                  });
+        } finally {
                 setUploading(false);
             }
         }
@@ -301,14 +324,17 @@ const EditBanner = ({ closeModal, bannerId }) => {
             <Form.Item name="image" label="Hình ảnh">
                 <Upload
                     beforeUpload={handleBeforeUpload}
-                    showUploadList={false}
-                    disabled={!(page && form.getFieldValue('location') || product.length !== 0) }
-
+                    showUploadList={{ showPreviewIcon: false }}
+                    listType="picture-card"
+                    maxCount={1}
+                    disabled={!(page && form.getFieldValue('location') || product.length !== 0)}
                 >
-                    <Button icon={<UploadOutlined />}
-                        disabled={!(page && form.getFieldValue('location') || product.length !== 0) }
-                    >Chọn ảnh</Button>
+                    <div disabled={!(page && form.getFieldValue('location') || product.length !== 0)}>
+                        <PlusOutlined />
+                        <div style={{ marginTop: 8 }}>Tải lên</div>
+                    </div>
                 </Upload>
+
             </Form.Item>
             <Form.Item name="link" label="Liên kết">
                 <Input />
@@ -358,7 +384,7 @@ const EditBanner = ({ closeModal, bannerId }) => {
                 </div>
             </Form.Item>
             <Modal
-                title="Thêm ảnh nền tin tức"
+                title="Sửa banner"
                 width={modalWidth}
                 maskClosable={false}
                 visible={cropModalVisible}

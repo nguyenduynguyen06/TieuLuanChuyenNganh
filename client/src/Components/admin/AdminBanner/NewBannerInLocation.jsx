@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
-import { UploadOutlined } from '@ant-design/icons';
-import { message, Upload, Select } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { message, Upload, Select, notification } from 'antd';
 import { Button, Form, Input, DatePicker, Switch, Modal, Slider } from 'antd';
 import { useSelector } from 'react-redux';
 import { Option } from 'antd/es/mentions';
@@ -58,7 +58,10 @@ const NewBannerInLocation = ({ closeModal }) => {
         beforeUpload: (file) => {
             const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
             if (!isJpgOrPng) {
-                message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Chỉ cho phép tải lên tệp JPG hoặc PNG!'
+                });
             }
             return isJpgOrPng;
         },
@@ -67,12 +70,19 @@ const NewBannerInLocation = ({ closeModal }) => {
                 console.log(info.file);
             }
             if (info.file.status === 'done') {
-                message.success(`${info.file.name} đã tải lên thành công`);
+                notification.success({
+                    message: 'Thông báo',
+                    description: `${info.file.name} đã tải lên thành công`
+                  });
                 const uploadedFilePaths = info.file.response.imageUrl;
                 form.setFieldsValue({ image: uploadedFilePaths });
                 setImageUrl(uploadedFilePaths)
             } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} tải lên thất bại.`);
+                notification.error({
+                    message: 'Thông báo',
+                    description: `${info.file.name} tải lên thất bại.`
+                });
+
             }
         }
     };
@@ -90,7 +100,10 @@ const NewBannerInLocation = ({ closeModal }) => {
     const checkFile = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
         if (!isJpgOrPng) {
-            message.error('Bạn chỉ có thể tải lên tệp tin JPG/PNG!');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Bạn chỉ có thể tải lên tệp tin JPG/PNG!'
+            });
         }
         return isJpgOrPng;
     };
@@ -112,16 +125,26 @@ const NewBannerInLocation = ({ closeModal }) => {
                 });
 
                 if (response.status === 200) {
-                    message.success('Tải ảnh lên thành công!');
+                    notification.success({
+                        message: 'Thông báo',
+                        description: 'Tải ảnh lên thành công!'
+                      });
+    
                     setUploadedFileName(file.name); // Set the uploaded file name
                     form.setFieldsValue({ image: response.data.imageUrl });
                     setCropModalVisible(false);
                 } else {
-                    message.error('Tải ảnh lên thất bại.');
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Tải ảnh lên thất bại.'
+                    });
                 }
             } catch (error) {
-                message.error('Tải ảnh lên thất bại.');
-            } finally {
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Tải ảnh lên thất bại.'
+                });
+        } finally {
                 setUploading(false);
             }
         }
@@ -145,16 +168,25 @@ const NewBannerInLocation = ({ closeModal }) => {
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/banner/addBanner`, values, { headers });
             if (response.data.success) {
-                message.success('Thêm banner thành công');
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Thêm banner thành công'
+                  });
                 form.resetFields();
                 setImageUrl('');
                 closeModal();
             } else {
-                message.error(response.data.message);
+                notification.error({
+                    message: 'Thông báo',
+                    description: response.data.message
+                });
+
             }
         } catch (error) {
-            console.error('Lỗi khi thêm banner:', error);
-            message.error('Đã xảy ra lỗi khi thêm banner');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Đã xảy ra lỗi khi thêm banner'
+            });
         }
     };
     const [page, setPage] = useState('');
@@ -278,12 +310,18 @@ const NewBannerInLocation = ({ closeModal }) => {
             >
                 <Upload
                     beforeUpload={handleBeforeUpload}
-                    showUploadList={false}
+                    showUploadList={{ showPreviewIcon: false }}
+                    listType="picture-card"
+                    maxCount={1}
                     disabled={!page || !selectedLocation}
+
                 >
-                    <Button icon={<UploadOutlined />} disabled={!page || !selectedLocation}>Chọn ảnh</Button>
+                    <div disabled={!page || !selectedLocation}>
+                        <PlusOutlined />
+                        <div style={{ marginTop: 8 }}>Tải lên</div>
+                    </div>
                 </Upload>
-                {uploadedFileName && <div>Tệp đã tải lên: {uploadedFileName}</div>}
+
             </Form.Item>
             <Form.Item
                 name="link"
@@ -334,7 +372,7 @@ const NewBannerInLocation = ({ closeModal }) => {
                 </div>
             </Form.Item>
             <Modal
-                title="Thêm ảnh nền tin tức"
+                title="Thêm banner theo vị trí"
                 width={modalWidth}
                 maskClosable={false}
                 visible={cropModalVisible}

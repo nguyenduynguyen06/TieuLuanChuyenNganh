@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
-import { DatePicker, message, Upload } from 'antd';
+import { DatePicker, message, notification, Upload } from 'antd';
 import {
   Button,
   Form,
@@ -56,13 +56,24 @@ const NewVoucher = ({ closeModal }) => {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/voucher/addVoucher`, values, { headers });
       if (response.data.success) {
         closeModal();
-        message.success('Thêm voucher thành công');
+        notification.success({
+          message: 'Thông báo',
+          description: 'Thêm voucher thành công.'
+        });
         form.resetFields();
       } else {
-        message.error(response.data.message);
+        notification.error({
+          message: 'Thông báo',
+          description: response.data.message
+        });
+
       }
     } catch (error) {
-      message.error('Đã xảy ra lỗi khi thêm: ');
+      notification.error({
+        message: 'Thông báo',
+        description: 'Đã xảy ra lỗi khi thêm'
+      });
+
     }
   };
   const [categories, setCategories] = useState([]);

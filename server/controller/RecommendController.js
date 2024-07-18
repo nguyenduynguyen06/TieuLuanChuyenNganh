@@ -65,7 +65,7 @@ const calculateSimilarityScore = (variant1, variant2) => {
 const generateRecommendations = async (variants, excludedVariants, userCart, limit) => {
     const recommendedProducts = new Set();
     const excludedVariantIds = excludedVariants
-        .filter(id => id != null)  // Ensure id is not null
+        .filter(id => id != null) 
         .map(id => id.toString());
 
     const allVariantDetails = await ProductVariant.find({
@@ -87,14 +87,14 @@ const generateRecommendations = async (variants, excludedVariants, userCart, lim
     for (const excludedVariantId of excludedVariantIds) {
         const excludedVariant = variantDetailsMap.get(excludedVariantId);
 
-        if (!excludedVariant) continue; // Ensure excludedVariant is not null
+        if (!excludedVariant) continue; 
 
         const uniqueVariants = variants.filter(variant => variant._id.toString() !== excludedVariantId);
 
         const similarityScores = [];
 
         uniqueVariants.forEach(variant => {
-            if (variant?._id) {  // Ensure _id is not null
+            if (variant?._id) {  
                 const variantDetail = variantDetailsMap.get(variant._id.toString());
                 if (variantDetail) {
                     const similarityScore = calculateSimilarityScore(variantDetail, excludedVariant);

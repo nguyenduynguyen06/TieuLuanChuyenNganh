@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
@@ -102,7 +102,9 @@ function Login({ onClose }) {
   const handleClose = () => {
     setMessage('');
   };
-
+  useEffect(() => {
+    document.title = "Đăng Nhập";
+}, []);
 
   return (
     <div>

@@ -98,6 +98,8 @@ const ProductDetailComponents = () => {
                         [productDetails._id]: defaultMemory
                     };
                     setSelectedMemories(initialMemories);
+                    document.title = `${productName} - ${memory}`;
+
                     if (productDetails && productDetails.variant) {
                         productDetails.variant.forEach((variant) => {
                             if (variant.memory === defaultMemory && variant.attributes && variant.attributes.length > 0) {
@@ -140,6 +142,7 @@ const ProductDetailComponents = () => {
                         [productDetails._id]: productDetails.variant[0].memory
                     };
                     setSelectedMemories(initialMemories);
+                    document.title = `${productName}`;
                     if (productDetails && productDetails.variant) {
                         productDetails.variant.forEach((variant) => {
                             if (variant.memory === productDetails.variant[0].memory && variant.attributes && variant.attributes.length > 0) {
@@ -183,9 +186,19 @@ const ProductDetailComponents = () => {
                     const selectedSKUName = selectedSKU[selectedVariant._id]
                     await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${encodedProductName}&SKU=${selectedSKUName}&quantity=${quantity}`)
                         .then((response) => {
-                            if (response.data.success) { message.success('Thêm vào giỏ hàng thành công') }
+                            if (response.data.success) {
+                                notification.success({
+                                    message: 'Thông báo',
+                                    description: 'Thêm vào giỏ hàng thành công.'
+                                });
+                            }
                             else {
-                                { message.error(response.data.error) }
+                                {
+                                    notification.error({
+                                        message: 'Thông báo',
+                                        description: response.data.error
+                                    });
+                                }
                             }
                         })
                 }
@@ -194,16 +207,31 @@ const ProductDetailComponents = () => {
                 const selectedColorName = selectValues[selectValues.length - 1];
                 await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${user._id}&productName=${encodedProductName}&SKU=${selectedColorName}&quantity=${quantity}`)
                     .then((response) => {
-                        if (response.data.success) { message.success('Thêm vào giỏ hàng thành công') }
+                        if (response.data.success) {
+                            notification.success({
+                                message: 'Thông báo',
+                                description: 'Thêm vào giỏ hàng thành công.'
+                            });
+                        }
                         else {
-                            { message.error(response.data.error) }
+                            { 
+                                notification.error({
+                                    message: 'Thông báo',
+                                    description: response.data.error
+                                });
+    
+                            }
                         }
                     })
 
             }
         } catch (error) {
             console.error('Lỗi:', error);
-            message.error(error.response.data.error)
+            notification.error({
+                message: 'Thông báo',
+                description: error.response.data.error
+            });
+
         }
         finally {
             setIsAddingToCart(false);
@@ -228,9 +256,16 @@ const ProductDetailComponents = () => {
 
                                 localStorage.setItem('cartItems', JSON.stringify(cartItems));
                                 window.location.href = '/payment-infor';
-                                message.success('Thêm vào giỏ hàng thành công');
+                                notification.success({
+                                    message: 'Thông báo',
+                                    description: 'Thêm vào giỏ hàng thành công.'
+                                });
                             } else {
-                                message.error(response.data.error);
+                                notification.error({
+                                    message: 'Thông báo',
+                                    description: response.data.error
+                                });
+                    
                             }
                         });
                 }
@@ -242,16 +277,27 @@ const ProductDetailComponents = () => {
                         if (response.data.success) {
                             const cartItems = response.data.data.items;
                             localStorage.setItem('cartItems', JSON.stringify(cartItems));
-                            message.success('Thêm vào giỏ hàng thành công');
+                            notification.success({
+                                message: 'Thông báo',
+                                description: 'Thêm vào giỏ hàng thành công.'
+                            });
+
                             window.location.href = '/payment-infor';
                         } else {
-                            message.error(response.data.error);
+                            notification.error({
+                                message: 'Thông báo',
+                                description: response.data.error
+                            });
+                
                         }
                     });
             }
         } catch (error) {
             console.error('Lỗi:', error);
-            message.error(error.response.data.error);
+            notification.error({
+                message: 'Thông báo',
+                description: error.response.data.error
+            });
         } finally {
             setIsAddingToCart(false);
         }
@@ -275,10 +321,18 @@ const ProductDetailComponents = () => {
 
         if (quantity < maxQuantity) {
             setQuantity(quantity + 1);
-        } else if (quantity >= maxQuantity && maxQuantity === 3){
-            message.error(`Vượt quá số lượng cho phép (${maxQuantity}). Vui lòng liên hệ trực tiếp để mua nhiều hơn`);
+        } else if (quantity >= maxQuantity && maxQuantity === 3) {
+            notification.error({
+                message: 'Thông báo',
+                description: `Vượt quá số lượng cho phép (${maxQuantity}). Vui lòng liên hệ trực tiếp để mua nhiều hơn`
+            });
+
         } else {
-            message.error(`Vượt quá số lượng tồn kho (${maxQuantity})`);
+            notification.error({
+                message: 'Thông báo',
+                description: `Vượt quá số lượng tồn kho (${maxQuantity})`
+            });
+
         }
     };
 
@@ -520,7 +574,7 @@ const ProductDetailComponents = () => {
                     ) : (
                         <Skeleton active />
                     )}
-                    <div style={{ display: 'flex',flexDirection:'column',  gap: '12px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         {productDetails?.variant && productDetails.variant.map((variant) => (
                             variant.attributes && variant.attributes.length > 0 && (
                                 <>
@@ -566,36 +620,36 @@ const ProductDetailComponents = () => {
 
                                                         </div>
                                                     </div >
-                                                    <div style={{ display: 'flex',alignItems: 'center', gap: '12px' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
 
-                                                    <ButtonComponent
-                                                        bordered={false}
-                                                        size={40}
-                                                        styleButton={{
-                                                            background: 'rgb(225,57,69)',
-                                                            height: '48px',
-                                                            width: '100%',
-                                                            border: 'none',
-                                                            borderRadius: '4px'
-                                                        }}
-                                                        onClick={handleClickNBuyNow}
-                                                        textButton={'Mua Ngay'}
-                                                        styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
-                                                    />
-                                                    <ButtonComponent
-                                                        bordered={false}
-                                                        size={40}
-                                                        styleButton={{
-                                                            background: 'rgb(225,57,69)',
-                                                            height: '48px',
-                                                            width: '100%',
-                                                            border: 'none',
-                                                            borderRadius: '4px'
-                                                        }}
-                                                        onClick={handleClickaddToCart}
-                                                        textButton={'Thêm Vào Giỏ'}
-                                                        styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
-                                                    />
+                                                        <ButtonComponent
+                                                            bordered={false}
+                                                            size={40}
+                                                            styleButton={{
+                                                                background: 'rgb(225,57,69)',
+                                                                height: '48px',
+                                                                width: '100%',
+                                                                border: 'none',
+                                                                borderRadius: '4px'
+                                                            }}
+                                                            onClick={handleClickNBuyNow}
+                                                            textButton={'Mua Ngay'}
+                                                            styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
+                                                        />
+                                                        <ButtonComponent
+                                                            bordered={false}
+                                                            size={40}
+                                                            styleButton={{
+                                                                background: 'rgb(225,57,69)',
+                                                                height: '48px',
+                                                                width: '100%',
+                                                                border: 'none',
+                                                                borderRadius: '4px'
+                                                            }}
+                                                            onClick={handleClickaddToCart}
+                                                            textButton={'Thêm Vào Giỏ'}
+                                                            styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
+                                                        />
                                                     </div>
                                                 </>
                                             ) : (

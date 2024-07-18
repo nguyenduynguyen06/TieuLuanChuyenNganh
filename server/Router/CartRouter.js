@@ -11,4 +11,5 @@ router.put('/updateChecked/:cartItemId/:userId', cartController.updateCartItemCh
 router.put('/updateCheckedAll/:userId', cartController.updateAllCartItemsChecked);
 router.get('/getToCart/:userId', cartController.getCartItemsByUserId);
 router.get('/getCartChecked/:userId', cartController.getCheckedCartItemsByUserId);
+router.put('/updateCart/:userId', cartController.updateCartItemAfterPayment);
 module.exports = router;

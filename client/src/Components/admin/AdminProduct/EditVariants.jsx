@@ -4,7 +4,7 @@ import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
 import { UploadOutlined } from '@ant-design/icons';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { message, Upload, Collapse, Table } from 'antd';
+import { message, Upload, Collapse, Table, notification } from 'antd';
 import {
   Button,
   Form,
@@ -80,9 +80,18 @@ const EditVariant = ({ closeModal, variantId, category }) => {
     try {
       axios.put(`${process.env.REACT_APP_API_URL}/product/editProductVariant/${variantId}`, values, { headers });
       closeModal();
-      message.success('Sửa biến thể thành công')
+      closeModal();
+      notification.success({
+          message: 'Thông báo',
+          description: 'Sửa biến thể thành công'
+        });
+
     } catch (error) {
-      message.error('Thêm biến thể thất bại', error)
+      notification.error({
+        message: 'Thông báo',
+        description: 'Sửa biến thể thất bại'
+      });
+
     }
   };
   const shouldHideMemoryField = ["Ốp lưng", "Cáp sạc", "Pin dự phòng", "Tai nghe"].includes(category);

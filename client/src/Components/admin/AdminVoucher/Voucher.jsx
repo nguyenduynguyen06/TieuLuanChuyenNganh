@@ -3,7 +3,7 @@ import { WrapperHeader } from "../AdminUser/style";
 import { MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
 
-import { Dropdown, Menu, Modal, Switch, Tooltip, message } from 'antd';
+import { Dropdown, Menu, Modal, Switch, Tooltip, message, notification } from 'antd';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 
@@ -26,6 +26,7 @@ const Voucher = () => {
     const [voucherId, setVoucherId] = useState(null);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
+        document.title = "Quản Lý Voucher";
         setLoading(true)
         if (searchQuery.trim() === '') {
             fetchData(currentPage);
@@ -105,7 +106,11 @@ const Voucher = () => {
             })
             .catch((error) => {
                 console.error('Lỗi khi gọi API xóa voucher: ', error);
-                message.error('Lỗi khi xóa voucher');
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Lỗi khi xóa voucher'
+                  });
+            
             });
     };
 

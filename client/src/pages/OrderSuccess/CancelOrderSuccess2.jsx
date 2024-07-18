@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { Button, Row } from 'antd';
 import { WrapperContainer } from './style';
@@ -9,6 +9,9 @@ const CancelOrderSuccess2 = () => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const orderCode = searchParams.get('orderCode');
+    useEffect(() => {
+        document.title = "Gửi Yêu Cầu Hủy Đơn Thành Công";
+    }, []);
 
     return (
         <WrapperContainer >

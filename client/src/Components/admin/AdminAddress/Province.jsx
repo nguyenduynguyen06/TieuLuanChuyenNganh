@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { WrapperHeader } from "../AdminUser/style";
 import { MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody, MDBIcon } from 'mdb-react-ui-kit';
-import { Modal, Switch, Tooltip, message } from 'antd';
+import { Modal, Switch, Tooltip, message, notification } from 'antd';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import { AppstoreAddOutlined, DeleteOutlined, EditOutlined, AppstoreOutlined, AppstoreFilled } from '@ant-design/icons';
@@ -37,6 +37,7 @@ const Province = () => {
     };
 
     useEffect(() => {
+        document.title = "Quản Lý Tỉnh Thành";
         if (searchQuery.trim() !== '') {
             axios.get(`${process.env.REACT_APP_API_URL}/province/searchProvince`, {
                 headers,
@@ -92,10 +93,15 @@ const Province = () => {
             );
             setLoading(true);
             setReloadProvinceData(!reloadProvincerData);
-            message.success(response.data.message || 'Xóa tỉnh thành công');
+            notification.success({
+                message: 'Thông báo',
+                description:response.data.message || 'Xóa tỉnh thành công'
+              });
         } catch (error) {
-            console.error('Lỗi khi xóa tỉnh: ', error);
-            message.error(error.response?.data?.message || 'Lỗi khi xóa tỉnh');
+            notification.error({
+                message: 'Thông báo',
+                description:error.response?.data?.message || 'Lỗi khi xóa tỉnh'
+              });
         }
     };
 

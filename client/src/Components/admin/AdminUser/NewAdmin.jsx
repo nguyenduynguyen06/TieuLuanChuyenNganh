@@ -165,9 +165,8 @@ function NewAdmin({ closeModal }) {
             <ErrorMessage message={message} success={success} onClose={handleClose} />
                 <MDBCol sm='14' style={{ alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
                     <div className='d-flex flex-row' style={{ paddingTop: '20px' }}>
-                        <img className="logo" src="../../image/didong3.png" alt="" style={{ maxWidth: '100%' }} />
+                        <img className="logo" src="../../image/home-logo1.png" alt="" style={{ maxWidth: '100%' }} />
                     </div>
-                    <h3 className="fw-normal" style={{ letterSpacing: '1px', color: '#B63245' }}>Tạo admin mới</h3>
                     <div className='d-flex flex-column justify-content-center h-custom-2 w-75 pt-4'>
                         <form onSubmit={signupHandler}>
                             <MDBInput wrapperClass='mb-4' label='Họ và tên' name="fullName" value={user.fullName} onChange={onChange} type='text' tabIndex="1" />
@@ -222,7 +221,7 @@ function NewAdmin({ closeModal }) {
                             <MDBInput wrapperClass='mb-4' label='Password' name="passWord" value={user.passWord} onChange={onChange} type='password' tabIndex="5" onBlur={() => { setPasswordsMatch(user.passWord === user.confirmPassword); }} />
                             <MDBInput wrapperClass='mb-4' label='Nhập lại password' name="confirmPassword" value={user.confirmPassword} onChange={onChange} type='password' tabIndex="6" onBlur={() => { setPasswordsMatch(user.passWord === user.confirmPassword); }} />
                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <MDBBtn className='w-48 mb-4' size='md' style={{ background: '#B63245', marginRight: '10px' }} type="submit">Đăng ký</MDBBtn>
+                                <MDBBtn className='w-48 mb-4' size='md' style={{ background: '#B63245', marginRight: '10px' }} type="submit">Thêm</MDBBtn>
                                 <MDBBtn className='w-48 mb-4' size='md' style={{ background: '#B63245' }} type="button" onClick={handleCloseModal}>Hủy bỏ</MDBBtn>
                             </div>
                         </form>

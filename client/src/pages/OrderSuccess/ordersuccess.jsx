@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { Button, Row } from 'antd';
 import { WrapperContainer } from './style';
@@ -9,7 +9,10 @@ const OrderSuccess = () => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const orderCode = searchParams.get('orderCode');
-
+    useEffect(() => {
+        document.title = "Đặt Hàng Thành Công";
+    }, []);
+    
     return (
         <WrapperContainer >
             <Row style={{ alignItems: 'center' }}>

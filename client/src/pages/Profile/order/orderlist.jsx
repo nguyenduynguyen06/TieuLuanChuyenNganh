@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, Pagination, message } from 'antd';
+import { Button, Modal, Pagination, message, notification } from 'antd';
 import { MDBModalContent, MDBModalDialog } from 'mdb-react-ui-kit';
 import OrderDetail from '../orderdetail';
 import axios from 'axios';
@@ -50,12 +50,18 @@ const OrderList = ({ status }) => {
           .catch((error) => {
             console.error('Lỗi khi gọi API: ', error);
           });
-
-        message.success('Đơn hàng đã hoàn thành');
+        notification.success({
+          message: 'Thông báo',
+          description: 'Đơn hàng đã hoàn thành.'
+        });
       }
     } catch (error) {
       console.error('Lỗi khi xác nhận đơn hàng:', error);
-      message.error('Đã xảy ra lỗi khi xác nhận đơn hàng');
+      notification.error({
+        message: 'Thông báo',
+        description: 'Đã xảy ra lỗi khi xác nhận đơn hàng'
+    });
+
     }
   };
   const handlePayment = (order) => {
@@ -75,6 +81,7 @@ const OrderList = ({ status }) => {
         console.error(error);
       });
   };
+  
   return (
     <WrapperList>
       <Loading isLoading={loading}>

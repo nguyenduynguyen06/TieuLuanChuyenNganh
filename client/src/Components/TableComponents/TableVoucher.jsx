@@ -202,29 +202,50 @@ const TableVoucher = () => {
             if (response.data.success) {
               const updatedData = voucherData.filter((item) => item._id !== voucherId);
               setvoucherData(updatedData);
-              message.success('Xóa voucher thành công');
+              notification.success({
+                message: 'Thông báo',
+                description: 'Xóa voucher thành công.'
+              });
             } else {
-              message.error('Lỗi khi xóa voucher');
+              notification.error({
+                message: 'Thông báo',
+                description: 'Lỗi khi xóa voucher'
+              });
+    
             }
           })
           .catch((error) => {
             console.error('Lỗi khi gọi API xóa voucher: ', error);
-            message.error('Lỗi khi xóa voucher');
-          });
+            notification.error({
+              message: 'Thông báo',
+              description: 'Lỗi khi xóa voucher'
+            });
+        });
       };
       const handleUpdateVoucher = (voucherId, updatedData) => {
         axios
           .put(`${process.env.REACT_APP_API_URL}/voucher/updateVoucher/${voucherId}`, updatedData, { headers })
           .then((response) => {
             if (response.data.success) {
-              message.success('Cập nhật voucher thành công');
+              notification.success({
+                message: 'Thông báo',
+                description: 'Cập nhật voucher thành công'
+              });
             } else {
-              message.error(response.data.error);
+              notification.error({
+                message: 'Thông báo',
+                description: response.data.error
+              });
+
             }
           })
           .catch((error) => {
             console.error('Lỗi khi gọi API cập nhật voucher: ', error);
-            message.error('Lỗi khi cập nhật voucher');
+            notification.error({
+              message: 'Thông báo',
+              description: 'Lỗi khi cập nhật voucher'
+            });
+
           });
       };
       

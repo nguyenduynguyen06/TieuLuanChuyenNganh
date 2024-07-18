@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { WrapperHeader } from "../AdminUser/style";
 import { MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody, MDBIcon } from 'mdb-react-ui-kit';
-import { Modal, Switch, Tooltip, message } from 'antd';
+import { Modal, Switch, Tooltip, message, notification } from 'antd';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import { AppstoreAddOutlined, DeleteOutlined, EditOutlined, AppstoreOutlined, AppstoreFilled } from '@ant-design/icons';
@@ -47,10 +47,17 @@ const Commune = ({ idDistrict, nameDisTrict }) => {
             );
             setLoading(true);
             setReloadCommuneData(!reloadCommuneData);
-            message.success('Xóa xã/phường thành công');
+            notification.success({
+                message: 'Thông báo',
+                description: 'Xóa xã/phường thành công'
+              });
+
         } catch (error) {
-            console.error('Lỗi khi xóa xã/phường: ', error);
-            message.error(error.response?.data?.message || 'Lỗi khi xóa xã/phường');
+            notification.error({
+                message: 'Thông báo',
+                description: error.response?.data?.message || 'Lỗi khi xóa xã/phường'
+              });
+
         }
     };
     const [centredModal, setCentredModal] = useState(false);

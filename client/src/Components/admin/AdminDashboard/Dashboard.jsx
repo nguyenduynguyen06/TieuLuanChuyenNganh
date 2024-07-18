@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Row, Skeleton, Statistic, Select, Tabs, Button, message } from 'antd';
+import { Card, Col, Row, Skeleton, Statistic, Select, Tabs, Button, message, notification } from 'antd';
 import CountUp from 'react-countup';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -77,6 +77,8 @@ function Dashboard() {
     };
 
     useEffect(() => {
+        document.title = "Thống Kê";    
+
         axios.get(`${process.env.REACT_APP_API_URL}/order/getAllOrdersDashBoard`, { headers })
             .then(response => {
                 const orders = response.data.data;
@@ -221,7 +223,10 @@ function Dashboard() {
     };
     const handleFetchData = () => {
         if (selectedOption === 'custom' && (!startDate || !endDate)) {
-            message.error('Vui lòng chọn khoảng ngày hợp lệ.');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Vui lòng chọn khoảng ngày hợp lệ.'
+              });
             return;
         }
         

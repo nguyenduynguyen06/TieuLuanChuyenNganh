@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Modal, Select, message } from "antd";
+import { Button, Input, Modal, Select, message, notification } from "antd";
 import { MDBBtn, MDBInput } from 'mdb-react-ui-kit';
 import { useSelector } from "react-redux";
 import { PlusOutlined } from '@ant-design/icons';
@@ -28,6 +28,9 @@ const UpdateUser = () => {
   const [centredModal1, setCentredModal1] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [address, setAddRess] = useState("");
+  useEffect(() => {
+    document.title = "Người Dùng";
+  }, []);
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -92,7 +95,11 @@ const UpdateUser = () => {
       setDistricts([]);
       setCommunes([]);
       setUser1({ ...user1, address: "", district: undefined, commune: undefined });
-      message.success('Thêm địa chỉ mới thành công');
+      notification.success({
+        message: 'Thông báo',
+        description: 'Thêm địa chỉ mới thành công'
+    });
+
       setIsModalVisible(false);
     } catch (error) {
       console.error('Lỗi khi thêm địa chỉ mới:', error);
@@ -106,10 +113,19 @@ const UpdateUser = () => {
         { address: defaultAddress },
         { headers }
       );
-      message.success("Đã chọn làm địa chỉ mặc định thành công!");
+      notification.success({
+        message: 'Thông báo',
+        description: 'Đã chọn làm địa chỉ mặc định thành công!'
+    });
+
       window.location.reload();
     } catch (error) {
       console.error('Lỗi khi chọn làm địa chỉ mặc định:', error);
+      notification.error({
+        message: 'Thông báo',
+        description: 'Lỗi khi chọn làm địa chỉ mặc định'
+    });
+
     }
   };
 
@@ -205,7 +221,11 @@ const UpdateUser = () => {
         width={'50%'}
         onOk={() => {
           if (!user1.address) {
-            message.error('Vui lòng nhập đủ địa chỉ trước khi tiếp tục!');
+            notification.error({
+              message: 'Thông báo',
+              description: 'Vui lòng nhập đủ địa chỉ trước khi tiếp tục!'
+          });
+
           } else {
             handleAddAddress();
           }
@@ -233,7 +253,11 @@ const UpdateUser = () => {
           </Button>,
           <Button key="ok" type="primary" onClick={() => {
             if (!user1.address) {
-              message.error('Vui lòng nhập đủ địa chỉ trước khi tiếp tục!');
+              notification.error({
+                message: 'Thông báo',
+                description: 'Vui lòng nhập đủ địa chỉ trước khi tiếp tục!'
+            });
+  
             } else {
               handleAddAddress();
             }

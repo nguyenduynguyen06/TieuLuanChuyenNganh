@@ -3,11 +3,11 @@ import { WrapperHeader } from "../AdminUser/style";
 import { MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
 import "./admin.css"
-import { Modal, Switch, Tooltip, message } from 'antd';
+import { Modal, Switch, Tooltip, message, notification } from 'antd';
 import axios from "axios";
 import { AppstoreAddOutlined, DeleteOutlined, EditOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { useSelector } from "react-redux";
-import AddVariant from "./AddVariants";
+import AddVariant from "./addVariants";
 import EditVariant from "./EditVariants";
 import AddAttributes from "./AddAtributes";
 import EditAttributes from "./EditAttributes";
@@ -35,7 +35,11 @@ const AttributesVariant = ({ variantId,memory }) => {
         axios
             .delete(`${process.env.REACT_APP_API_URL}/product/deleteAttributes/${attributeId}`, { headers })
             .then((response) => {
-                message.success('Xoá biến thể thành công')
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Xoá biến thể thành công'
+                  });
+          
                 setReloadProductData(!reloadProductData);
             })
             .catch((error) => {

@@ -4,7 +4,7 @@ import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
 import { UploadOutlined } from '@ant-design/icons';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { message, Upload, Modal, Slider } from 'antd';
+import { message, Upload, Modal, Slider, notification } from 'antd';
 import { Button, Form, Input, Select, DatePicker, InputNumber } from 'antd';
 import { useParams } from "react-router-dom";
 import { useSelector } from 'react-redux';
@@ -44,7 +44,7 @@ const NewCategory = ({ closeModal }) => {
     const [uploading, setUploading] = useState(false);
     const [uploadedFileName, setUploadedFileName] = useState(null);
     const [cropModalVisible, setCropModalVisible] = useState(false);
-
+    const [uploadedFileURL, setUploadedFileURL] = useState(null);
     const headers = {
         token: `Bearers ${user.access_token}`,
     };
@@ -64,7 +64,10 @@ const NewCategory = ({ closeModal }) => {
     const checkFile = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
         if (!isJpgOrPng) {
-            message.error('Bạn chỉ có thể tải lên tệp tin JPG/PNG!');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Bạn chỉ có thể tải lên tệp tin JPG/PNG!'
+            });
         }
         return isJpgOrPng;
     };
@@ -85,15 +88,27 @@ const NewCategory = ({ closeModal }) => {
                 });
 
                 if (response.status === 200) {
-                    message.success('Tải ảnh lên thành công!');
+                    notification.success({
+                        message: 'Thông báo',
+                        description: 'Tải ảnh lên thành công!'
+                    });
+                    setUploadedFileURL(response.data.imageUrl); // Set URL của ảnh đã tải lên
+
                     setUploadedFileName(file.name); // Set the uploaded file name
                     form.setFieldsValue({ picture: response.data.imageUrl });
                     setCropModalVisible(false);
                 } else {
-                    message.error('Tải ảnh lên thất bại.');
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Tải ảnh lên thất bại.'
+                    });
+
                 }
             } catch (error) {
-                message.error('Tải ảnh lên thất bại.');
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Tải ảnh lên thất bại.'
+                });
             } finally {
                 setUploading(false);
             }
@@ -112,21 +127,34 @@ const NewCategory = ({ closeModal }) => {
         form.resetFields();
         setFormProperties([]);
         setInitialProperty({ label: '', value: '' });
+        setUploadedFileURL(null);
     };
 
     const onFinish = async (values) => {
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/category/addCategory`, values, { headers });
             if (response.data.success) {
-                message.success('Thêm danh mục thành công');
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Thêm danh mục thành công'
+                });
+
                 form.resetFields();
                 closeModal();
             } else {
-                message.error(response.data.error);
+                notification.error({
+                    message: 'Thông báo',
+                    description: response.data.error
+                });
+
             }
         } catch (error) {
             console.error('Lỗi khi thêm danh mục:', error);
-            message.error('Đã xảy ra lỗi khi thêm danh mục');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Đã xảy ra lỗi khi thêm danh mục'
+            });
+
         }
     };
 
@@ -166,11 +194,15 @@ const NewCategory = ({ closeModal }) => {
             >
                 <Upload
                     beforeUpload={handleBeforeUpload}
-                    showUploadList={false}
+                    showUploadList={{ showPreviewIcon: false }}
+                    listType="picture-card"
+                    maxCount={1}
                 >
-                    <Button icon={<UploadOutlined />}>Ảnh</Button>
+                    <div>
+                        <PlusOutlined />
+                        <div style={{ marginTop: 8 }}>Tải lên</div>
+                    </div>
                 </Upload>
-                {uploadedFileName && <div>Tệp đã tải lên: {uploadedFileName}</div>}
             </Form.Item>
             <Form.Item>
                 <div style={{ display: 'flex', gap: '20px', justifyContent: 'end' }}>

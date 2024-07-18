@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Button, Input, Modal, message, Skeleton, Checkbox } from 'antd';
+import { Space, Table, Button, Input, Modal, message, Skeleton, Checkbox, notification } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -17,16 +17,19 @@ function CartList() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [loading, setLoading] = useState(true);
   const [selectAll, setSelectAll] = useState(false);
+  const [isDis, setIsDis] = useState(true);
+
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
-
+    document.title = `Giỏ Hàng`;
     window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+
   }, []);
   const isMobile = windowWidth < 730;
 
@@ -50,6 +53,8 @@ function CartList() {
     const updatedData = [...data];
     updatedData[index].checked = !updatedData[index].checked;
     setData(updatedData);
+    updateIsAnyItemChecked(updatedData); // Update the new state
+
     axios.put(`${process.env.REACT_APP_API_URL}/cart/updateChecked/${updatedData[index]._id}/${user._id}`, { checked: updatedData[index].checked })
       .then((response) => {
         const filteredItems = response.data.data.items.filter(item => item.checked);
@@ -60,7 +65,6 @@ function CartList() {
         console.error('Lỗi khi cập nhật trạng thái checked:', error);
       });
   };
-
   const handleSelectAll = (e) => {
     const checked = e.target.checked;
     setSelectAll(checked);
@@ -69,6 +73,8 @@ function CartList() {
       return { ...item, checked };
     });
     setData(updatedData);
+    updateIsAnyItemChecked(updatedData); // Update the new state
+
 
     axios.put(`${process.env.REACT_APP_API_URL}/cart/updateCheckedAll/${user._id}`, { checked })
       .then((response) => {
@@ -79,6 +85,11 @@ function CartList() {
         console.error('Lỗi khi cập nhật tất cả trạng thái checked:', error);
       });
   };
+  const updateIsAnyItemChecked = (cartData) => {
+    const anyChecked = cartData.some(item => item.checked);
+    setIsDis(!anyChecked);
+  };
+
   const columns = [
     {
       title: (
@@ -108,9 +119,12 @@ function CartList() {
       ),
       dataIndex: 'product',
       render: (product, record) => (
-        <div>
+        <div style={{ display: 'flex' }}>
           <img src={record.pictures} alt={record.product} style={{ width: '100px', marginRight: '10px' }} />
-          <span style={{ fontSize: "15px" }}><NavLink to={`/product/${product.name}/${record?.memory}`}>{product.name} - {record?.memory}</NavLink></span>
+          <div>
+            <NavLink to={`/product/${product.name}/${record?.memory}`}>
+              <span style={{ fontSize: "15px", color: '#000' }}>{product.name} {record?.memory}</span></NavLink>
+          </div>
         </div>
       ),
     },
@@ -212,13 +226,36 @@ function CartList() {
   const handleDeleteCartItem = (cartItemId) => {
     axios.delete(`${process.env.REACT_APP_API_URL}/cart/deleteCart/${cartItemId}/${user._id}`)
       .then((response) => {
-        message.success('Xoá sản phẩm khỏi giỏ hàng thành công');
+        notification.success({
+          message: 'Thông báo',
+          description: 'Xoá sản phẩm khỏi giỏ hàng thành công.'
+        });
+
         setReload(!reload);
       })
       .catch((error) => {
         console.error('Lỗi khi xóa mục giỏ hàng:', error);
       });
   };
+  const [soldoutpd, setSoldoutpd] = useState([]);
+
+  const handlePayment = () => {
+    const filteredItems = data.filter(item => item.checked === true);
+
+    axios.put(`${process.env.REACT_APP_API_URL}/cart/updatecart/${user._id}`, { items: filteredItems })
+      .then((response) => {
+        if (response.data.data && response.data.data.length <= 0) {
+          window.location.href = '/payment-infor';
+        } else {
+          setSoldoutpd(response.data.data);
+          setIsModalOpen(true);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   useEffect(() => {
     localStorage.removeItem('cartItems');
     axios.get(`${process.env.REACT_APP_API_URL}/cart/getToCart/${user._id}`)
@@ -231,13 +268,15 @@ function CartList() {
         const totalPrice = calculateTotalPrice(filteredCartData);
         setTotal(totalPrice);
         setSelectAll(checkAllChecked(cartData));
+        updateIsAnyItemChecked(cartData);
         setLoading(false);
       })
       .catch((error) => {
         console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
         setLoading(false);
       });
-  }, [user,reload]);
+  }, [user, reload]);
+
   const [data, setData] = useState(null);
   const [quantities, setQuantities] = useState('');
 
@@ -264,6 +303,19 @@ function CartList() {
       .catch((error) => {
         console.error('Lỗi khi cập nhật số lượng:', error);
       });
+  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+    window.location.href = '/payment-infor';
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setReload(!reload)
   };
 
 
@@ -299,15 +351,23 @@ function CartList() {
             }
           })
           .catch((error) => {
-            message.error(error.response.data.error);
+            notification.error({
+              message: 'Thông báo',
+              description: error.response.data.error
+            });
+  
           });
       } else {
-        // Thông báo cho người dùng nếu đã đạt số lượng tối đa
-        message.warning('Bạn đã đạt số lượng tối đa cho sản phẩm này.');
+        notification.warning({
+          message: 'Thông báo',
+          description: 'Bạn đã đạt số lượng tối đa cho sản phẩm này.'
+        });
       }
     } else {
-      // Xử lý khi không tìm thấy productVariant tương ứng
-      message.error('Không tìm thấy biến thể sản phẩm tương ứng.');
+      notification.error({
+        message: 'Thông báo',
+        description: 'Không tìm thấy biến thể sản phẩm tương ứng.'
+      });
     }
   };
 
@@ -394,9 +454,34 @@ function CartList() {
                   currency: 'VND',
                 }).format(total)}
               </span>
-              <Link to="/payment-infor">
-                <Button size='large' style={{ marginLeft: '100px', background: '#B63245', color: '#fff' }} disabled={isCartEmpty} >Mua hàng</Button>
-              </Link>
+
+              <Button size='large' style={{ marginLeft: '100px', background: '#B63245', color: '#fff' }} disabled={isDis} onClick={handlePayment}>Mua hàng</Button>
+              <Modal title="KHÔNG ĐỦ HÀNG" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} okText="ĐỒNG Ý" cancelText="HỦY BỎ"
+                okButtonProps={{
+                  style: {
+                    backgroundColor: '#B63245',
+                    borderColor: '#B63245',
+                    color: '#fff'
+                  }
+                }}
+                closable={false}
+                width={'50%'}>
+                {soldoutpd?.map((item) => (
+                  <div style={{ display: 'flex' }}>
+                    <img src={item.image} width={'100px'} height={'100px'} style={{ padding: '10px' }} alt={item.productName} />
+                    <div>
+                      <b style={{ fontSize: '17px' }}>{item.productName}</b>
+                      <p style={{ fontSize: '17px' }}>
+                        Chỉ còn <b style={{ color: '#B63245' }}>{item.availableQuantity}</b> sản phẩm.</p>
+                    </div>
+                  </div>
+                ))}
+                <p style={{ fontSize: '17px' }}>Bạn có muốn mua số lượng sản phẩm còn lại không?</p>
+                <div style={{ width: '100%', justifyContent: 'center', display: 'flex' }}>
+                  <img src='../../image/soldout.png' width={'200px'}></img>
+                </div>
+
+              </Modal>
             </div>
           </div>
         </Loading>

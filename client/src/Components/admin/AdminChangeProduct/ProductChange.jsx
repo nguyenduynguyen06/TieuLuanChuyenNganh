@@ -3,7 +3,7 @@ import { WrapperHeader } from "../AdminUser/style";
 import { MDBBadge, MDBTable, MDBTableHead, MDBTableBody, MDBBtn, MDBIcon } from 'mdb-react-ui-kit';
 import axios from "axios";
 import moment from 'moment';
-import { Modal, Tooltip, message } from "antd";
+import { Modal, Tooltip, message, notification } from "antd";
 import { EditOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { useSelector } from "react-redux";
 import Loading from "../../LoadingComponents/Loading";
@@ -30,10 +30,17 @@ const ProductChange = ({ items, orderCode, orderVoucher, orderSubtotal, ordertot
             }, { headers });
             if (response.data.success) {
                 setUpdatedItems(response.data.order.items)
-                message.success(`Đổi thành công`);
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Đổi thành công'
+                  });
             }
         } catch (error) {
-            message.error(error.response.data.error);
+            notification.error({
+                message: 'Thông báo',
+                description: error.response.data.error
+              });
+
         } finally {
             setLoading(false);
         }

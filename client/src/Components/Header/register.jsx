@@ -53,6 +53,7 @@ function Register() {
   const [districts, setDistricts] = useState([]);
   const [communes, setCommunes] = useState([]);
   useEffect(() => {
+      document.title = "Đăng Ký";
     axios.get(`${process.env.REACT_APP_API_URL}/province/getProvince`)
       .then(response => {
         setProvinces(response.data.data);

@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
-import { UploadOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Select, message, Upload, Slider, Modal } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Select, message, Upload, Slider, Modal, notification } from 'antd';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
@@ -97,7 +97,11 @@ const EditNews = ({ closeModal, newsId }) => {
     const checkFile = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
         if (!isJpgOrPng) {
-            message.error('Bạn chỉ có thể tải lên tệp tin JPG/PNG!');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Bạn chỉ có thể tải lên tệp tin JPG/PNG!'
+              });
+
         }
         return isJpgOrPng;
     };
@@ -118,16 +122,27 @@ const EditNews = ({ closeModal, newsId }) => {
                 });
 
                 if (response.status === 200) {
-                    message.success('Tải ảnh lên thành công!');
+                    notification.success({
+                        message: 'Thông báo',
+                        description: 'Tải ảnh lên thành công!'
+                      });
+
                     setUploadedFileName(file.name); // Set the uploaded file name
                     form.setFieldsValue({ image: response.data.imageUrl });
                     setCropModalVisible(false);
                 } else {
-                    message.error('Tải ảnh lên thất bại.');
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Tải ảnh lên thất bại.'
+                      });
+        
                 }
             } catch (error) {
-                message.error('Tải ảnh lên thất bại.');
-            } finally {
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Tải ảnh lên thất bại.'
+                  });
+        } finally {
                 setUploading(false);
             }
         }
@@ -154,7 +169,10 @@ const EditNews = ({ closeModal, newsId }) => {
         axios
             .put(`${process.env.REACT_APP_API_URL}/news/editNews/${newsId}`, editedValues, { headers })
             .then((response) => {
-                message.success('Sửa tin tức thành công');
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Sửa tin tức thành công'
+                  });
                 closeModal();
             })
             .catch((error) => {
@@ -192,11 +210,15 @@ const EditNews = ({ closeModal, newsId }) => {
             >
                 <Upload
                     beforeUpload={handleBeforeUpload}
-                    showUploadList={false}
+                    showUploadList={{ showPreviewIcon: false }}
+                    listType="picture-card"
+                    maxCount={1}
                 >
-                    <Button icon={<UploadOutlined />}>Ảnh</Button>
+                    <div>
+                        <PlusOutlined />
+                        <div style={{ marginTop: 8 }}>Tải lên</div>
+                    </div>
                 </Upload>
-                {uploadedFileName && <div>Tệp đã tải lên: {uploadedFileName}</div>}
             </Form.Item>
 
             <Form.Item
@@ -259,7 +281,7 @@ const EditNews = ({ closeModal, newsId }) => {
                 </div>
             </Form.Item>
             <Modal
-                title="Thêm ảnh nền tin tức"
+                title="Sửa ảnh nền tin tức"
                 width={700}
                 maskClosable={false}
                 visible={cropModalVisible}

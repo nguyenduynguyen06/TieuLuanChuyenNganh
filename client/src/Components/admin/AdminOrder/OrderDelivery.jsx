@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { WrapperHeader } from "../AdminUser/style";
 import { MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
-import { Button, Dropdown, Input, Menu, Modal, Tooltip, message } from 'antd';
+import { Button, Dropdown, Input, Menu, Modal, Tooltip, message, notification } from 'antd';
 import { AppstoreFilled, CaretDownOutlined } from '@ant-design/icons';
 import axios from "axios";
 import Search from "antd/es/input/Search";
@@ -39,6 +39,7 @@ const OrderDelivery = () => {
     };
 
     useEffect(() => {
+        document.title = "Quản Lý Đơn Hàng Đang Giao Hàng";
         if (!searchResults) {
             setLoading(true);
             fetchOrders(currentPage);
@@ -160,7 +161,11 @@ const OrderDelivery = () => {
             .put(`${process.env.REACT_APP_API_URL}/order/completeOrder/${orderId}`, null, { headers })
             .then((response) => {
                 setLoading(true)
-                message.success('Xác nhận thành công')
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Xác nhận thành công'
+                  });
+
                 if (!searchResults) {
                     fetchOrders(currentPage);
                 }
@@ -178,7 +183,10 @@ const OrderDelivery = () => {
             .put(`${process.env.REACT_APP_API_URL}/order/cancelOrderWithReason/${orderId}`, { reason }, { headers })
             .then((response) => {
                 setLoading(true)
-                message.success('Huỷ thành công')
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Huỷ thành công'
+                  });
                 if (!searchResults) {
                     fetchOrders(currentPage);
                 }
@@ -195,7 +203,11 @@ const OrderDelivery = () => {
             .put(`${process.env.REACT_APP_API_URL}/order/deliveredOrder/${orderId}`, {}, { headers })
             .then((response) => {
                 setLoading(true)
-                message.success('Xác nhận thành công')
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Xác nhận thành công'
+                  });
+
                 if (!searchResults) {
                     fetchOrders(currentPage);
                 }

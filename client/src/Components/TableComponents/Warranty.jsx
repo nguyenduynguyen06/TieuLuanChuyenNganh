@@ -1,5 +1,5 @@
-import { Breadcrumb, Button, Input, Radio, Space, message } from 'antd';
-import React, { useState } from 'react';
+import { Breadcrumb, Button, Input, Radio, Space, message, notification } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { WrapperWarranty } from './style';
 import Loading from '../LoadingComponents/Loading';
 import axios from 'axios';
@@ -43,7 +43,10 @@ const WarrantySearch = () => {
                 window.confirmationResult = confirmationResult;
                 setLoading(false);
                 setCentredModal1(true);
-                message.success("Đã gửi OTP thành công!");
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Đã gửi OTP thành công!'
+                  });
             } catch (error) {
                 console.log(error);
                 setLoading(false);
@@ -96,6 +99,9 @@ const WarrantySearch = () => {
         }
     };
     
+    useEffect(() => {
+        document.title = "Tra Cứu Bảo Hành";
+    }, []);
 
     return (
         <WrapperWarranty>

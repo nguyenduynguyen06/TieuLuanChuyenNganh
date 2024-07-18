@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
-import { UploadOutlined } from '@ant-design/icons';
-import { message, Upload} from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { message, notification, Upload } from 'antd';
 import {
     Button,
     Form,
@@ -18,34 +18,34 @@ import '../AdminNews/datepicker.css'
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
-      xs: {
-        span: 3,
-      },
-      sm: {
-        span: 5,
-      },
+        xs: {
+            span: 3,
+        },
+        sm: {
+            span: 5,
+        },
     },
     wrapperCol: {
-      xs: {
-        span: 30,
-      },
-      sm: {
-        span: 29,
-      },
+        xs: {
+            span: 30,
+        },
+        sm: {
+            span: 29,
+        },
     },
-  };
-  const tailFormItemLayout = {
+};
+const tailFormItemLayout = {
     wrapperCol: {
-      xs: {
-        span: 24,
-        offset: 0,
-      },
-      sm: {
-        span: 20,
-        offset: 21,
-      },
+        xs: {
+            span: 24,
+            offset: 0,
+        },
+        sm: {
+            span: 20,
+            offset: 21,
+        },
     },
-  };
+};
 
 const EditProduct = ({ closeModal, productId }) => {
     const user = useSelector((state) => state.user);
@@ -101,7 +101,11 @@ const EditProduct = ({ closeModal, productId }) => {
 
         // Check if the new label already exists
         if (properties.hasOwnProperty(newLabel)) {
-            message.error('Thuộc tính đã tồn tại.');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Thuộc tính đã tồn tại'
+            });
+
             return;
         }
 
@@ -153,10 +157,16 @@ const EditProduct = ({ closeModal, productId }) => {
         },
         accept: '.jpg, .jpeg, .png',
         multiple: true,
+        listType: 'picture-card',
+        showUploadList: { showPreviewIcon: false },
+    
         beforeUpload: (file) => {
             const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
             if (!isJpgOrPng) {
-                message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Chỉ cho phép tải lên tệp JPG hoặc PNG!'
+                });
             }
             return isJpgOrPng;
         },
@@ -165,7 +175,10 @@ const EditProduct = ({ closeModal, productId }) => {
                 console.log(info.file, info.fileList);
             }
             if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
+                notification.success({
+                    message: 'Thông báo',
+                    description: `${info.file.name} file uploaded successfully`
+                });
                 const uploadedFilePaths = info.fileList
                     .filter((file) => file.status === 'done')
                     .map((file) => file.response.imageUrls);
@@ -173,7 +186,10 @@ const EditProduct = ({ closeModal, productId }) => {
                 console.log('')
                 form.setFieldsValue({ thumnails: allImageUrls });
             } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
+                notification.error({
+                    message: 'Thông báo',
+                    description: `${info.file.name} file upload failed.`
+                });
             }
         }
     };
@@ -200,7 +216,11 @@ const EditProduct = ({ closeModal, productId }) => {
             .put(`${process.env.REACT_APP_API_URL}/product/editProduct/${productId}`, editedValues, { headers })
             .then((response) => {
                 closeModal();
-                message.success('Sửa sản phẩm thành công');
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Sửa sản phẩm thành công'
+                });
+
             })
             .catch((error) => {
                 console.error('Lỗi khi cập nhật sản phẩm: ', error);
@@ -282,7 +302,7 @@ const EditProduct = ({ closeModal, productId }) => {
                 name="releaseTime"
                 label="Ngày ra mắt"
             >
-                  <DatePicker
+                <DatePicker
                     selected={publishedDate}
                     onChange={(date) => setPublishedDate(date)}
                     dateFormat="dd/MM/yyyy"
@@ -306,7 +326,10 @@ const EditProduct = ({ closeModal, productId }) => {
                 ]}
             >
                 <Upload {...propss}>
-                    <Button icon={<UploadOutlined />}>Ảnh</Button>
+                    <div>
+                        <PlusOutlined />
+                        <div style={{ marginTop: 8 }}>Tải lên</div>
+                    </div>
                 </Upload>
             </Form.Item>
             <Form.Item
@@ -372,7 +395,7 @@ const EditProduct = ({ closeModal, productId }) => {
                 </div>
             </Form.Item>
             <Form.Item >
-            <div style={{ display: 'flex', gap: '20px', justifyContent: 'end' }}>
+                <div style={{ display: 'flex', gap: '20px', justifyContent: 'end' }}>
                     <Button type="primary" size="large" htmlType="submit">
                         Sửa sản phẩm
                     </Button>

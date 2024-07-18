@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { WrapperHeader } from "../AdminUser/style";
 import { MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
-import { Button, Dropdown, Input, Menu, Modal, Tooltip, message  } from 'antd';
+import { Button, Dropdown, Input, Menu, Modal, Tooltip, message, notification  } from 'antd';
 import { AppstoreFilled, CaretDownOutlined } from '@ant-design/icons';
 import axios from "axios";
 import Search from "antd/es/input/Search";
@@ -33,6 +33,7 @@ const OrderPending = () => {
     const [loading, setLoading] = useState(true)
     const [triggerSearch, setTriggerSearch] = useState(false);
     useEffect(() => {
+        document.title = "Quản Lý Đơn Hàng Chờ Xác Nhận";
         if (!searchResults) {
             setLoading(true);
             fetchOrders(currentPage);
@@ -139,7 +140,10 @@ const OrderPending = () => {
             .put(`${process.env.REACT_APP_API_URL}/order/updateOrder/${orderId}`, { newStatus: 'Đang chuẩn bị đơn hàng' }, { headers })
             .then((response) => {
                 setLoading(true)
-                message.success('Xác nhận thành công')
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Xác nhận thành công'
+                  });
                 if (!searchResults) {
                     fetchOrders(currentPage);
                 }
@@ -157,7 +161,10 @@ const OrderPending = () => {
             .delete(`${process.env.REACT_APP_API_URL}/order/delete/${orderId}`, { headers })
             .then((response) => {
                 setLoading(true)
-                message.success('Huỷ thành công')
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Hủy thành công'
+                  });
                 if (!searchResults) {
                     fetchOrders(currentPage);
                 }

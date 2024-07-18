@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
-import { message, Upload } from 'antd';
+import { message, notification, Upload } from 'antd';
 import {
   Button,
   Form,
@@ -102,12 +102,24 @@ const EditVoucher = ({ closeModal, voucherId }) => {
       const response = await axios.put(`${process.env.REACT_APP_API_URL}/voucher/updateVoucher/${voucherId}`, values, { headers });
       if (response.data.success) {
         closeModal();
-        message.success('Chỉnh sửa thành công');
+        notification.success({
+          message: 'Thông báo',
+          description: 'Chỉnh sửa thành công.'
+        });
+
       } else {
-        message.error(response.data.error || 'Đã xảy ra lỗi khi cập nhật voucher');
+        notification.error({
+          message: 'Thông báo',
+          description: response.data.error || 'Đã xảy ra lỗi khi cập nhật voucher'
+        });
+
       }
     } catch (error) {
-      message.error(error.response.data.error);
+      notification.error({
+        message: 'Thông báo',
+        description: error.response.data.error
+      });
+
     }
   };
   return (

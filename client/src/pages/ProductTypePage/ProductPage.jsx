@@ -239,6 +239,32 @@ const ProductPage = () => {
             setNameProduct(productName);
         }
     };
+    useEffect(() => {
+        let title = 'Tìm kiếm';
+        
+        if (searchKeyword) {
+          if (nameCategory && nameBrand) {
+            title = `Kết quả cho "${searchKeyword}" trong ${nameBrand}, ${nameCategory}`;
+          } else if (nameCategory) {
+            title = `Kết quả cho "${searchKeyword}" trong ${nameCategory}`;
+          } else if (nameBrand) {
+            title = `Kết quả cho "${searchKeyword}" trong ${nameBrand}`;
+          } else {
+            title = `Kết quả cho "${searchKeyword}"`;
+          }
+        } else {
+          if (nameCategory && nameBrand) {
+            title = `Tìm kiếm trong ${nameBrand}, ${nameCategory}`;
+          } else if (nameCategory) {
+            title = `Tìm kiếm trong ${nameCategory}`;
+          } else if (nameBrand) {
+            title = `Tìm kiếm trong ${nameBrand}`;
+          }
+        }
+    
+        document.title = title;
+      }, [nameCategory, nameBrand, searchKeyword]);
+        
     return (
         <WrapperType>
             <div className="container" style={{ width: '80%', paddingLeft: '10px', paddingRight: '10px', marginTop: '15px' }}>

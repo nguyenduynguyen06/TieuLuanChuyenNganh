@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { WrapperHeader } from "../AdminUser/style";
 import { MDBBtn, MDBTable, MDBTableHead, MDBTableBody, MDBIcon } from 'mdb-react-ui-kit';
 import "../AdminProduct/admin.css"
-import { Modal, Switch, Tooltip, message } from 'antd';
+import { Modal, Switch, Tooltip, message, notification } from 'antd';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
@@ -41,15 +41,24 @@ const Brand = () => {
                 if (response.data.success) {
                     const updatedBrands = brandData.filter((brand) => brand._id !== brandId);
                     setBrandData(updatedBrands);
-                    message.success('Xóa thương hiệu thành công');
+                    notification.success({
+                        message: 'Thông báo',
+                        description: 'Xóa thương hiệu thành công.'
+                      });
                 } else {
-                    message.error('Lỗi khi xóa thương hiệu');
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Lỗi khi xóa thương hiệu.'
+                      });
                 }
             })
             .catch((error) => {
                 console.error('Lỗi khi gọi API xóa thương hiệu: ', error);
-                message.error('Lỗi khi xóa thương hiệu');
-            });
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Lỗi khi xóa thương hiệu.'
+                  });
+        });
     };
     const fetchData = async () => {
         try {
@@ -67,6 +76,8 @@ const Brand = () => {
     };
 
     useEffect(() => {
+        document.title = "Quản Lý Thương Hiệu";    
+
         fetchData();
     }, [reloadBrandData]);
 

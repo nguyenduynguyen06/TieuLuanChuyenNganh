@@ -264,6 +264,28 @@ const searchVoucher = async (req, res) => {
   }
 };
 
+const getAvailableVouchers = async (req, res) => {
+  try {
+    const currentDate = new Date();
 
-module.exports = { searchVoucher, addVoucher, updateVoucher, deleteVoucher, getVouchers, useVoucher, getVoucherDetail }
+    // Lấy tất cả các voucher từ cơ sở dữ liệu
+    const vouchers = await Voucher.find();
+
+    // Lọc các voucher còn hạn sử dụng
+    const availableVouchers = vouchers.filter(voucher => {
+      const startDateParts = voucher.startDate.split('/');
+      const startDate1 = new Date(`${startDateParts[2]}-${startDateParts[1]}-${startDateParts[0]}`);
+      const endDateParts = voucher.endDate.split('/');
+      const endDate1 = new Date(`${endDateParts[2]}-${endDateParts[1]}-${endDateParts[0]}`);
+
+      return (currentDate >= startDate1 && currentDate <= endDate1) || currentDate < startDate1;
+    });
+
+    res.status(200).json({ success: true, data: availableVouchers });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports = { searchVoucher, addVoucher, updateVoucher, deleteVoucher, getVouchers, useVoucher, getVoucherDetail, getAvailableVouchers }
 

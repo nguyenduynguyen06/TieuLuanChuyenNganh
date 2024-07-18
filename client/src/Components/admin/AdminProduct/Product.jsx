@@ -3,7 +3,7 @@ import { WrapperHeader } from "../AdminUser/style";
 import { MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
 import "./admin.css"
-import { Modal, Switch, Tooltip, message } from 'antd';
+import { Modal, Switch, Tooltip, message, notification } from 'antd';
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import NewProduct from "./NewProduct";
@@ -32,7 +32,7 @@ const Product = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [loading, setLoading] = useState(true)
-
+    
     const [triggerSearch, setTriggerSearch] = useState(false);
     const handleSearch = (query) => {
         setLoading(true)
@@ -40,6 +40,8 @@ const Product = () => {
         setTriggerSearch(!triggerSearch);
     };
     useEffect(() => {
+        document.title = "Quản Lý Sản Phẩm";    
+
         if (searchQuery.trim() !== '') {
             axios.get(`${process.env.REACT_APP_API_URL}/product/searchProductAdmin?keyword=${searchQuery}`)
                 .then((response) => {
@@ -69,7 +71,10 @@ const Product = () => {
                     setSearchResults(updatedProducts)
                 }
                 const updatedProducts = productData.filter(product => product._id !== productId);
-                message.success('Xoá sản phẩm thành công')
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Xoá sản phẩm thành công.'
+                  });
                 setProductData(updatedProducts);
 
             })
@@ -211,15 +216,14 @@ const Product = () => {
             <div style={{ marginTop: '15px', overflowY: 'auto', overflowX: 'auto' }}>
                 <Loading isLoading={loading}>
                     <MDBTable bordered align='middle' className='floating-table'>
-
                         <MDBTableHead>
                             <tr style={{ textAlign: 'center', color: '#fff', backgroundColor: '#B63245' }}>
-                                <th scope='col' >Sản phẩm</th>
-                                <th scope='col'>Thương hiệu</th>
-                                <th scope='col'>Ngày ra mắt</th>
-                                <th scope='col'>Bảo hành/tháng</th>
-                                <th scope='col'>Ẩn/Hiện</th>
-                                <th scope='col'>Thao tác</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', maxWidth: '400px' }}>Sản phẩm</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '100px' }}>Thương hiệu</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '100px' }}>Ngày ra mắt</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '100px' }}>Bảo hành/tháng</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '150px' }}>Ẩn/Hiện</th>
+                                <th scope='col' style={{ verticalAlign: 'middle', minWidth: '150px' }}>Thao tác</th>
                             </tr>
                         </MDBTableHead>
                         <MDBTableBody>
@@ -237,8 +241,8 @@ const Product = () => {
                                                     alt={product.name}
                                                     style={{ width: '45px', height: '45px' }}
                                                 />
-                                                <div className='ms-3'>
-                                                    <p className='fw-bold mb-1'>{product.name}</p>
+                                                <div>
+                                                    <p className='fw-bold mb-1' style={{textAlign:'left'}}>{product.name}</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -299,7 +303,7 @@ const Product = () => {
                                                     style={{ width: '45px', height: '45px' }}
                                                 />
                                                 <div className='ms-3'>
-                                                    <p className='fw-bold mb-1'>{product.name}</p>
+                                                    <p className='fw-bold mb-1' style={{textAlign:'left'}}>{product.name}</p>
                                                 </div>
                                             </div>
                                         </td>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { WrapperHeader } from "../AdminUser/style";
 import { MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
-import { Button, Dropdown, Input, Menu, Modal, Tooltip, message } from 'antd';
+import { Button, Dropdown, Input, Menu, Modal, Tooltip, message, notification } from 'antd';
 import { AppstoreFilled, CaretDownOutlined, PrinterFilled } from '@ant-design/icons';
 import axios from "axios";
 import Search from "antd/es/input/Search";
@@ -39,6 +39,7 @@ const OrderReady = () => {
     };
 
     useEffect(() => {
+        document.title = "Quản Lý Đơn Hàng Đang Chuẩn Bị";
         if (!searchResults) {
             setLoading(true);
             fetchOrders(currentPage);
@@ -145,7 +146,10 @@ const OrderReady = () => {
             .put(`${process.env.REACT_APP_API_URL}/order/updateOrder/${orderId}`, { newStatus: 'Đang giao hàng' }, { headers })
             .then((response) => {
                 setLoading(true)
-                message.success('Chuyển giao hàng thành công')
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Chuyển giao hàng thành công'
+                  });
                 if (!searchResults) {
                     fetchOrders(currentPage);
                 }
@@ -163,7 +167,11 @@ const OrderReady = () => {
             .put(`${process.env.REACT_APP_API_URL}/order/cancelOrderWithReason/${orderId}`, { reason }, { headers })
             .then((response) => {
                 setLoading(true)
-                message.success('Huỷ thành công')
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Huỷ thành công'
+                  });
+
                 if (!searchResults) {
                     fetchOrders(currentPage);
                 }

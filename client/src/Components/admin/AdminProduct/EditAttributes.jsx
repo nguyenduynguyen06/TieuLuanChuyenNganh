@@ -4,7 +4,7 @@ import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
 import { UploadOutlined } from '@ant-design/icons';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { message, Upload, Collapse, Table } from 'antd';
+import { message, Upload, Collapse, Table, notification } from 'antd';
 import {
     Button,
     Form,
@@ -58,34 +58,46 @@ const EditAttributes = ({ closeModal, attributesId }) => {
         name: 'image',
         action: `${process.env.REACT_APP_API_URL}/upload`,
         headers: {
-          authorization: 'authorization-text',
+            authorization: 'authorization-text',
         },
         accept: '.jpg, .jpeg, .png',
+        listType: 'picture-card',
+        showUploadList: { showPreviewIcon: false },
+        maxCount: 1,
         beforeUpload: (file) => {
-          const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-          if (!isJpgOrPng) {
-            message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
-          }
-          return isJpgOrPng;
+            const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+            if (!isJpgOrPng) {
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Chỉ cho phép tải lên tệp JPG hoặc PNG!'
+                });
+            }
+            return isJpgOrPng;
         },
         onChange(info) {
-          if (info.file.status !== 'uploading') {
-            console.log(info.file, info.fileList);
-          }
-          if (info.file.status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully`);
-            const uploadedFilePath = info.file.response.imageUrl;
-            if (typeof uploadedFilePath === 'string') {
-              form.setFieldsValue({ pictures: uploadedFilePath });
-            } else {
-              console.error('uploadedFilePath is not a string:', uploadedFilePath);
+            if (info.file.status !== 'uploading') {
+                console.log(info.file, info.fileList);
             }
-          } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-          }
+            if (info.file.status === 'done') {
+                notification.success({
+                    message: 'Thông báo',
+                    description: `${info.file.name} file uploaded successfully`
+                });
+                const uploadedFilePath = info.file.response.imageUrl;
+                if (typeof uploadedFilePath === 'string') {
+                    form.setFieldsValue({ pictures: uploadedFilePath });
+                } else {
+                    console.error('uploadedFilePath is not a string:', uploadedFilePath);
+                }
+            } else if (info.file.status === 'error') {
+                notification.error({
+                    message: 'Thông báo',
+                    description: `${info.file.name} file upload failed.`
+                });
+            }
         }
-      });
-      
+    });
+
     useEffect(() => {
         if (attributesId) {
             axios.get(`${process.env.REACT_APP_API_URL}/product/getDetailsAttributes/${attributesId}`)
@@ -109,9 +121,17 @@ const EditAttributes = ({ closeModal, attributesId }) => {
         try {
             axios.put(`${process.env.REACT_APP_API_URL}/product/editAttributes/${attributesId}`, values, { headers });
             closeModal();
-            message.success('Sửa thuộc tính thành công')
+            notification.success({
+                message: 'Thông báo',
+                description: 'Sửa thuộc tính thành công'
+            });
+
         } catch (error) {
-            message.error('Sửa thuộc tính thất bại', error)
+            notification.error({
+                message: 'Thông báo',
+                description: 'Sửa thuộc tính thất bại'
+            });
+
         }
     };
     const handleCloseModal = () => {
@@ -152,11 +172,14 @@ const EditAttributes = ({ closeModal, attributesId }) => {
                 label="Hình ảnh"
             >
                 <Upload {...props}>
-                    <Button icon={<UploadOutlined />}>Ảnh</Button>
+                    <div>
+                        <PlusOutlined />
+                        <div style={{ marginTop: 8 }}>Tải lên</div>
+                    </div>
                 </Upload>
             </Form.Item>
             <Form.Item >
-            <div style={{ display: 'flex', gap: '20px', justifyContent: 'end' }}>
+                <div style={{ display: 'flex', gap: '20px', justifyContent: 'end' }}>
                     <Button type="primary" size="large" htmlType="submit">
                         Sửa thuộc tính
                     </Button>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { MDBBtn } from 'mdb-react-ui-kit';
 import { AppstoreOutlined, CameraOutlined, LockOutlined, LogoutOutlined, RadarChartOutlined } from '@ant-design/icons';
-import { Breadcrumb, message, Upload, Menu, Modal, Slider, Button } from 'antd';
+import { Breadcrumb, message, Upload, Menu, Modal, Slider, Button, notification } from 'antd';
 import UpdateUser from './updateUser';
 import ChangePassword from './changepass';
 import { useSelector, useDispatch } from "react-redux";
@@ -44,7 +44,10 @@ const Profilepage = () => {
   function checkFile(file) {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
-      message.error('Bạn chỉ có thể tải lên tệp tin JPG/PNG!');
+      notification.error({
+        message: 'Thông báo',
+        description: 'Bạn chỉ có thể tải lên tệp tin JPG/PNG!'
+    });
     }
     return isJpgOrPng;
   }
@@ -77,13 +80,24 @@ const Profilepage = () => {
         });
 
         if (response.status === 200) {
-          message.success('Tải ảnh lên thành công!');
+          notification.success({
+            message: 'Thông báo',
+            description: 'Tải ảnh lên thành công!'
+        });
+  
           window.location.reload();
         } else {
-          message.error('Tải ảnh lên thất bại.');
-        }
+          notification.error({
+            message: 'Thông báo',
+            description: 'Tải ảnh lên thất bại!'
+        });
+          }
       } catch (error) {
-        message.error('Tải ảnh lên thất bại.');
+        notification.error({
+          message: 'Thông báo',
+          description: 'Tải ảnh lên thất bại!'
+      });
+  
       } finally {
         setUploading(false);
         setCropModalVisible(false);
@@ -130,7 +144,7 @@ const Profilepage = () => {
   };
 
   useEffect(() => {
-    document.title = "Di Động Gen Z | Người Dùng";
+    document.title = "Người Dùng";
   }, []);
 
   return (

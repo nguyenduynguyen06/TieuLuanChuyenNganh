@@ -32,6 +32,7 @@ const OrderDelivered = () => {
 
 
     useEffect(() => {
+        document.title = "Quản Lý Đơn Hàng Đã Giao Hàng";
         if (!searchResults) {
             setLoading(true);
             fetchOrders(currentPage);

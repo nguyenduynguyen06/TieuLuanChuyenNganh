@@ -1,14 +1,14 @@
 import axios from 'axios';
 import React, { useState } from "react";
-import { Upload, message, Rate, Button } from "antd";
+import { Upload, message, Rate, Button, notification } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 
-const ReviewModal = ({  onClose, productId,orderCode }) => {
+const ReviewModal = ({ onClose, productId, orderCode }) => {
     const [rating, setRating] = useState(0);
     const [content, setContent] = useState('');
     const [thumbnails, setThumbnails] = useState([]);
-    const user = useSelector((state)=> state.user)
+    const user = useSelector((state) => state.user)
     console.log('User:', user);
 
     const props = {
@@ -22,7 +22,10 @@ const ReviewModal = ({  onClose, productId,orderCode }) => {
         beforeUpload: (file) => {
             const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
             if (!isJpgOrPng) {
-                message.error('Chỉ cho phép tải lên tệp JPG hoặc PNG!');
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Chỉ cho phép tải lên tệp JPG hoặc PNG!'
+                });
             }
             return isJpgOrPng;
         },
@@ -31,14 +34,20 @@ const ReviewModal = ({  onClose, productId,orderCode }) => {
                 console.log(info.file, info.fileList);
             }
             if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
+                notification.success({
+                    message: 'Thông báo',
+                    description: `${info.file.name} file uploaded successfully`
+                });
                 const uploadedFilePaths = info.fileList
                     .filter((file) => file.status === 'done')
                     .map((file) => file.response.imageUrls);
                 const allImageUrls = [].concat(...uploadedFilePaths);
                 setThumbnails(allImageUrls);
             } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
+                notification.error({
+                    message: 'Thông báo',
+                    description: `${info.file.name} file upload failed.`
+                });
             }
         }
     };
@@ -59,44 +68,55 @@ const ReviewModal = ({  onClose, productId,orderCode }) => {
                 pictures: thumbnails,
             });
             if (response.data.success) {
-                message.success('Đã gửi đánh giá thành công');
+                notification.success({
+                    message: 'Thông báo',
+                    description: 'Đã gửi đánh giá thành công!'
+                });
+
                 setRating(0)
                 setContent('')
                 setThumbnails([])
-                onClose(); 
+                onClose();
             } else {
-                message.error('Lỗi khi gửi đánh giá');
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Lỗi khi gửi đánh giá!'
+                });
+
             }
         } catch (error) {
-            message.error('Lỗi khi gửi đánh giá');
+            notification.error({
+                message: 'Thông báo',
+                description: 'Lỗi khi gửi đánh giá!'
+            });
         }
     };
 
     return (
-            <div className="modal-content" style={{ padding: '10px', boxShadow:'none' }}>
-                <h4 style={{ textAlign: 'center' }}>Đánh giá sản phẩm</h4>
-                <label>Đánh giá:</label>
-                <Rate value={rating} onChange={handleRatingChange} />
-                <br />
+        <div className="modal-content" style={{ padding: '10px', boxShadow: 'none' }}>
+            <h4 style={{ textAlign: 'center' }}>Đánh giá sản phẩm</h4>
+            <label>Đánh giá:</label>
+            <Rate value={rating} onChange={handleRatingChange} />
+            <br />
 
-                <label>Nội dung đánh giá:</label>
-                <textarea
-                    style={{ padding: '10px' }}
-                    className='textarea'
-                    placeholder='Đánh giá của bạn'
-                    value={content}
-                    onChange={handleContentChange}
-                    name='content'
-                ></textarea>
-                <br />
+            <label>Nội dung đánh giá:</label>
+            <textarea
+                style={{ padding: '10px' }}
+                className='textarea'
+                placeholder='Đánh giá của bạn'
+                value={content}
+                onChange={handleContentChange}
+                name='content'
+            ></textarea>
+            <br />
 
-                <label>Hình ảnh:</label>
-                <Upload {...props}>
-                    <Button icon={<UploadOutlined />}>Ảnh</Button>
-                </Upload>
-                <br />
-                <Button style={{ background: '#C13346', color: '#fff' }} onClick={submitReview} disabled={rating === 0}>Gửi đánh giá</Button>
-            </div>
+            <label>Hình ảnh:</label>
+            <Upload {...props}>
+                <Button icon={<UploadOutlined />}>Ảnh</Button>
+            </Upload>
+            <br />
+            <Button style={{ background: '#C13346', color: '#fff' }} onClick={submitReview} disabled={rating === 0}>Gửi đánh giá</Button>
+        </div>
     );
 };
 

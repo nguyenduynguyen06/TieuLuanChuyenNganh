@@ -17,8 +17,9 @@ export const WrapperDetailOrder = styled.div`
     display: flex;
     justify-content: center;
     .mainContainer{
-        width: 60%; 
+        width: 80%; 
         padding: 10px;
+    justify-content: center;
     }
     .container{
         display: flex; 
@@ -32,7 +33,7 @@ export const WrapperDetailOrder = styled.div`
         display: flex;
         padding: 10px; 
         width: 100%;
-        border: 1px solid #ccc; 
+        border: 1px solid #efefef; 
         height: auto;
         flex-direction:row;
     }
@@ -43,8 +44,8 @@ export const WrapperDetailOrder = styled.div`
         align-items: center;
     }
     .img-product{
-        height: auto; 
-        width: 100%;
+        height: 100px; 
+        width: 100px;
     }
     .inf-con{
         width: 87%; 
@@ -66,7 +67,6 @@ export const WrapperDetailOrder = styled.div`
         display: flex;
         align-items: center;
         background-color: #fff;
-        position: sticky;
         justify-content: space-between;
         top: 0;
         width: 100%;
