@@ -987,13 +987,22 @@ const getOrdersByUserId = async (req, res) => {
         select: 'name warrantyPeriod'
       })
       .populate('voucher')
-      .sort({ createDate: -1 })
       .lean();
+
+   
+    orders.forEach(order => {
+     
+      order.orderCodeNumber = parseInt(order.orderCode.replace(/\D/g, ''), 10);
+    });
+
+    orders.sort((a, b) => b.orderCodeNumber - a.orderCodeNumber);
+
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
 
 const getOrdersDetails = async (req, res) => {
   try {
